@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
+using KeePass.App;
 using KeePass.App.Configuration;
+using KeePass.Forms;
 using KeePass.Resources;
 using KeePass.Util;
 
@@ -109,15 +111,9 @@ namespace KeePass.UI
 
 		public static bool ShowNewDatabaseIntro(Form fParent)
 		{
-			StringBuilder sb = new StringBuilder();
-
-			sb.AppendLine(KPRes.DatabaseFileIntro);
-			sb.AppendLine();
-			sb.AppendLine(KPRes.DatabaseFileRem);
-			sb.AppendLine();
-			sb.AppendLine(KPRes.BackupDatabase);
-
-			string str = sb.ToString();
+			string str = KPRes.DatabaseFileIntro + MessageService.NewParagraph +
+				KPRes.DatabaseFileRem + MessageService.NewParagraph +
+				KPRes.BackupDatabase;
 
 			int r = VistaTaskDialog.ShowMessageBoxEx(str, KPRes.NewDatabase,
 				PwDefs.ShortProductName, VtdIcon.Information, fParent, KPRes.Ok,
@@ -208,6 +204,52 @@ namespace KeePass.UI
 
 				MessageService.ShowWarning(KPRes.ConfigError + "!", strText);
 			}
+		}
+
+		private static string ShowFileDialog(bool bSaveMode, string strTitle,
+			string strSuggestedFileName, string strFilter, int iFilterIndex,
+			string strDefaultExt, string strContext, bool bSecureDesktop)
+		{
+			if(bSecureDesktop)
+			{
+				FileBrowserForm fbf = new FileBrowserForm();
+				fbf.InitEx(bSaveMode, strTitle, KPRes.SecDeskFileDialogHint, strContext);
+
+				try
+				{
+					DialogResult drF = fbf.ShowDialog();
+					return ((drF == DialogResult.OK) ? fbf.SelectedFile : null);
+				}
+				finally { UIUtil.DestroyForm(fbf); }
+			}
+
+			if(bSaveMode)
+			{
+				SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(strTitle,
+					strSuggestedFileName, strFilter, iFilterIndex, strDefaultExt,
+					strContext);
+				DialogResult drS = sfd.ShowDialog();
+				return ((drS == DialogResult.OK) ? sfd.FileName : null);
+			}
+
+			OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(strTitle,
+				strFilter, iFilterIndex, strDefaultExt, false, strContext);
+			DialogResult drO = ofd.ShowDialog();
+			return ((drO == DialogResult.OK) ? ofd.FileName : null);
+		}
+
+		internal static string ShowKeyFileDialog(bool bSaveMode, string strTitle,
+			string strSuggestedFileName, bool bAllFilesByDefault, bool bSecureDesktop)
+		{
+			Debug.Assert(!bSaveMode || !bAllFilesByDefault); // Not all files when saving
+
+			string strFilter = AppDefs.GetKeyFileFilter();
+			int iFilterIndex = (bAllFilesByDefault ? 2 : 1);
+			string strExt = (bSaveMode ? AppDefs.FileExtension.KeyFile : null);
+			string strContext = AppDefs.FileDialogContext.KeyFile;
+
+			return ShowFileDialog(bSaveMode, strTitle, strSuggestedFileName,
+				strFilter, iFilterIndex, strExt, strContext, bSecureDesktop);
 		}
 	}
 

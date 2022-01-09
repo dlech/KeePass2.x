@@ -174,6 +174,7 @@ namespace KeePass.Resources
 			m_strCopy = TryGetEx(dictNew, "Copy", m_strCopy);
 			m_strCopyAll = TryGetEx(dictNew, "CopyAll", m_strCopyAll);
 			m_strCopyLink = TryGetEx(dictNew, "CopyLink", m_strCopyLink);
+			m_strCopyObject = TryGetEx(dictNew, "CopyObject", m_strCopyObject);
 			m_strCopyOfItem = TryGetEx(dictNew, "CopyOfItem", m_strCopyOfItem);
 			m_strCopyPasswordMenu = TryGetEx(dictNew, "CopyPasswordMenu", m_strCopyPasswordMenu);
 			m_strCopyTanMenu = TryGetEx(dictNew, "CopyTanMenu", m_strCopyTanMenu);
@@ -465,7 +466,7 @@ namespace KeePass.Resources
 			m_strKeyFileCreateTitle = TryGetEx(dictNew, "KeyFileCreateTitle", m_strKeyFileCreateTitle);
 			m_strKeyFileError = TryGetEx(dictNew, "KeyFileError", m_strKeyFileError);
 			m_strKeyFileFromBackup = TryGetEx(dictNew, "KeyFileFromBackup", m_strKeyFileFromBackup);
-			m_strKeyFileFromBackupF = TryGetEx(dictNew, "KeyFileFromBackupF", m_strKeyFileFromBackupF);
+			m_strKeyFileFromBackupF2 = TryGetEx(dictNew, "KeyFileFromBackupF2", m_strKeyFileFromBackupF2);
 			m_strKeyFileFromBackupT = TryGetEx(dictNew, "KeyFileFromBackupT", m_strKeyFileFromBackupT);
 			m_strKeyFileGenHint = TryGetEx(dictNew, "KeyFileGenHint", m_strKeyFileGenHint);
 			m_strKeyFileNoXml = TryGetEx(dictNew, "KeyFileNoXml", m_strKeyFileNoXml);
@@ -477,6 +478,7 @@ namespace KeePass.Resources
 			m_strKeyFileSelect = TryGetEx(dictNew, "KeyFileSelect", m_strKeyFileSelect);
 			m_strKeyFileUseAnywayQ = TryGetEx(dictNew, "KeyFileUseAnywayQ", m_strKeyFileUseAnywayQ);
 			m_strKeyFileUseExisting = TryGetEx(dictNew, "KeyFileUseExisting", m_strKeyFileUseExisting);
+			m_strKeyProvExclusive = TryGetEx(dictNew, "KeyProvExclusive", m_strKeyProvExclusive);
 			m_strKeyProvider = TryGetEx(dictNew, "KeyProvider", m_strKeyProvider);
 			m_strKeyProvIncmpWithSD = TryGetEx(dictNew, "KeyProvIncmpWithSD", m_strKeyProvIncmpWithSD);
 			m_strKeyProvIncmpWithSDHint = TryGetEx(dictNew, "KeyProvIncmpWithSDHint", m_strKeyProvIncmpWithSDHint);
@@ -504,6 +506,7 @@ namespace KeePass.Resources
 			m_strLockOnSessionSwitch = TryGetEx(dictNew, "LockOnSessionSwitch", m_strLockOnSessionSwitch);
 			m_strLockOnSuspend = TryGetEx(dictNew, "LockOnSuspend", m_strLockOnSuspend);
 			m_strLockWorkspace = TryGetEx(dictNew, "LockWorkspace", m_strLockWorkspace);
+			m_strMacAddress = TryGetEx(dictNew, "MacAddress", m_strMacAddress);
 			m_strMainInstruction = TryGetEx(dictNew, "MainInstruction", m_strMainInstruction);
 			m_strMainWindow = TryGetEx(dictNew, "MainWindow", m_strMainWindow);
 			m_strMasterKey = TryGetEx(dictNew, "MasterKey", m_strMasterKey);
@@ -616,6 +619,7 @@ namespace KeePass.Resources
 			m_strPasswordRepeatFailed = TryGetEx(dictNew, "PasswordRepeatFailed", m_strPasswordRepeatFailed);
 			m_strPasswordRepeatHint = TryGetEx(dictNew, "PasswordRepeatHint", m_strPasswordRepeatHint);
 			m_strPaste = TryGetEx(dictNew, "Paste", m_strPaste);
+			m_strPath = TryGetEx(dictNew, "Path", m_strPath);
 			m_strPerformAutoType = TryGetEx(dictNew, "PerformAutoType", m_strPerformAutoType);
 			m_strPerformGlobalAutoType = TryGetEx(dictNew, "PerformGlobalAutoType", m_strPerformGlobalAutoType);
 			m_strPerformSelectedAutoType = TryGetEx(dictNew, "PerformSelectedAutoType", m_strPerformSelectedAutoType);
@@ -666,6 +670,7 @@ namespace KeePass.Resources
 			m_strProfileSave = TryGetEx(dictNew, "ProfileSave", m_strProfileSave);
 			m_strProfileSaveDesc = TryGetEx(dictNew, "ProfileSaveDesc", m_strProfileSaveDesc);
 			m_strProfileSavePrompt = TryGetEx(dictNew, "ProfileSavePrompt", m_strProfileSavePrompt);
+			m_strPwGenOpen = TryGetEx(dictNew, "PwGenOpen", m_strPwGenOpen);
 			m_strQuality = TryGetEx(dictNew, "Quality", m_strQuality);
 			m_strQualityCheckToggle = TryGetEx(dictNew, "QualityCheckToggle", m_strQualityCheckToggle);
 			m_strQuick = TryGetEx(dictNew, "Quick", m_strQuick);
@@ -674,7 +679,6 @@ namespace KeePass.Resources
 			m_strQuickSearchInPwFields = TryGetEx(dictNew, "QuickSearchInPwFields", m_strQuickSearchInPwFields);
 			m_strQuickSearchQ = TryGetEx(dictNew, "QuickSearchQ", m_strQuickSearchQ);
 			m_strQuickSearchTb = TryGetEx(dictNew, "QuickSearchTb", m_strQuickSearchTb);
-			m_strRandomMacAddress = TryGetEx(dictNew, "RandomMacAddress", m_strRandomMacAddress);
 			m_strReady = TryGetEx(dictNew, "Ready", m_strReady);
 			m_strRecommended = TryGetEx(dictNew, "Recommended", m_strRecommended);
 			m_strRecommendedCmd = TryGetEx(dictNew, "RecommendedCmd", m_strRecommendedCmd);
@@ -732,6 +736,8 @@ namespace KeePass.Resources
 			m_strSearchResultsInSeparator = TryGetEx(dictNew, "SearchResultsInSeparator", m_strSearchResultsInSeparator);
 			m_strSearchTitle = TryGetEx(dictNew, "SearchTitle", m_strSearchTitle);
 			m_strSecDeskFileDialogHint = TryGetEx(dictNew, "SecDeskFileDialogHint", m_strSecDeskFileDialogHint);
+			m_strSecDeskOpContinueOnNormal = TryGetEx(dictNew, "SecDeskOpContinueOnNormal", m_strSecDeskOpContinueOnNormal);
+			m_strSecDeskOpUnsupported = TryGetEx(dictNew, "SecDeskOpUnsupported", m_strSecDeskOpUnsupported);
 			m_strSecDeskOtherSwitched = TryGetEx(dictNew, "SecDeskOtherSwitched", m_strSecDeskOtherSwitched);
 			m_strSecDeskPlaySound = TryGetEx(dictNew, "SecDeskPlaySound", m_strSecDeskPlaySound);
 			m_strSecDeskSwitchBack = TryGetEx(dictNew, "SecDeskSwitchBack", m_strSecDeskSwitchBack);
@@ -759,6 +765,7 @@ namespace KeePass.Resources
 			m_strShowIn = TryGetEx(dictNew, "ShowIn", m_strShowIn);
 			m_strShowMessageBox = TryGetEx(dictNew, "ShowMessageBox", m_strShowMessageBox);
 			m_strShowMore = TryGetEx(dictNew, "ShowMore", m_strShowMore);
+			m_strShowWithFileManager = TryGetEx(dictNew, "ShowWithFileManager", m_strShowWithFileManager);
 			m_strSimilarPasswords = TryGetEx(dictNew, "SimilarPasswords", m_strSimilarPasswords);
 			m_strSimilarPasswordsGroup = TryGetEx(dictNew, "SimilarPasswordsGroup", m_strSimilarPasswordsGroup);
 			m_strSimilarPasswordsList2 = TryGetEx(dictNew, "SimilarPasswordsList2", m_strSimilarPasswordsList2);
@@ -1059,6 +1066,7 @@ namespace KeePass.Resources
 			"Copy",
 			"CopyAll",
 			"CopyLink",
+			"CopyObject",
 			"CopyOfItem",
 			"CopyPasswordMenu",
 			"CopyTanMenu",
@@ -1350,7 +1358,7 @@ namespace KeePass.Resources
 			"KeyFileCreateTitle",
 			"KeyFileError",
 			"KeyFileFromBackup",
-			"KeyFileFromBackupF",
+			"KeyFileFromBackupF2",
 			"KeyFileFromBackupT",
 			"KeyFileGenHint",
 			"KeyFileNoXml",
@@ -1362,6 +1370,7 @@ namespace KeePass.Resources
 			"KeyFileSelect",
 			"KeyFileUseAnywayQ",
 			"KeyFileUseExisting",
+			"KeyProvExclusive",
 			"KeyProvider",
 			"KeyProvIncmpWithSD",
 			"KeyProvIncmpWithSDHint",
@@ -1389,6 +1398,7 @@ namespace KeePass.Resources
 			"LockOnSessionSwitch",
 			"LockOnSuspend",
 			"LockWorkspace",
+			"MacAddress",
 			"MainInstruction",
 			"MainWindow",
 			"MasterKey",
@@ -1501,6 +1511,7 @@ namespace KeePass.Resources
 			"PasswordRepeatFailed",
 			"PasswordRepeatHint",
 			"Paste",
+			"Path",
 			"PerformAutoType",
 			"PerformGlobalAutoType",
 			"PerformSelectedAutoType",
@@ -1551,6 +1562,7 @@ namespace KeePass.Resources
 			"ProfileSave",
 			"ProfileSaveDesc",
 			"ProfileSavePrompt",
+			"PwGenOpen",
 			"Quality",
 			"QualityCheckToggle",
 			"Quick",
@@ -1559,7 +1571,6 @@ namespace KeePass.Resources
 			"QuickSearchInPwFields",
 			"QuickSearchQ",
 			"QuickSearchTb",
-			"RandomMacAddress",
 			"Ready",
 			"Recommended",
 			"RecommendedCmd",
@@ -1617,6 +1628,8 @@ namespace KeePass.Resources
 			"SearchResultsInSeparator",
 			"SearchTitle",
 			"SecDeskFileDialogHint",
+			"SecDeskOpContinueOnNormal",
+			"SecDeskOpUnsupported",
 			"SecDeskOtherSwitched",
 			"SecDeskPlaySound",
 			"SecDeskSwitchBack",
@@ -1644,6 +1657,7 @@ namespace KeePass.Resources
 			"ShowIn",
 			"ShowMessageBox",
 			"ShowMore",
+			"ShowWithFileManager",
 			"SimilarPasswords",
 			"SimilarPasswordsGroup",
 			"SimilarPasswordsList2",
@@ -3426,6 +3440,17 @@ namespace KeePass.Resources
 		public static string CopyLink
 		{
 			get { return m_strCopyLink; }
+		}
+
+		private static string m_strCopyObject =
+			@"Copy {PARAM}";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Copy {PARAM}'.
+		/// </summary>
+		public static string CopyObject
+		{
+			get { return m_strCopyObject; }
 		}
 
 		private static string m_strCopyOfItem =
@@ -6629,15 +6654,15 @@ namespace KeePass.Resources
 			get { return m_strKeyFileFromBackup; }
 		}
 
-		private static string m_strKeyFileFromBackupF =
-			@"Start KeePass, click on 'Tools' -> 'Advanced Tools' -> 'Create Key File', and fill out the form that is displayed on the screen.";
+		private static string m_strKeyFileFromBackupF2 =
+			@"Start KeePass, click on 'Tools' -> 'Advanced Tools' -> 'Recreate Key File From Printed Backup', and fill out the form that is displayed on the screen.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Start KeePass, click on &#39;Tools&#39; -&gt; &#39;Advanced Tools&#39; -&gt; &#39;Create Key File&#39;, and fill out the form that is displayed on the screen.'.
+		/// 'Start KeePass, click on &#39;Tools&#39; -&gt; &#39;Advanced Tools&#39; -&gt; &#39;Recreate Key File From Printed Backup&#39;, and fill out the form that is displayed on the screen.'.
 		/// </summary>
-		public static string KeyFileFromBackupF
+		public static string KeyFileFromBackupF2
 		{
-			get { return m_strKeyFileFromBackupF; }
+			get { return m_strKeyFileFromBackupF2; }
 		}
 
 		private static string m_strKeyFileFromBackupT =
@@ -6759,6 +6784,17 @@ namespace KeePass.Resources
 		public static string KeyFileUseExisting
 		{
 			get { return m_strKeyFileUseExisting; }
+		}
+
+		private static string m_strKeyProvExclusive =
+			@"The selected key provider disallows combining it with any other master key component.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The selected key provider disallows combining it with any other master key component.'.
+		/// </summary>
+		public static string KeyProvExclusive
+		{
+			get { return m_strKeyProvExclusive; }
 		}
 
 		private static string m_strKeyProvider =
@@ -7056,6 +7092,17 @@ namespace KeePass.Resources
 		public static string LockWorkspace
 		{
 			get { return m_strLockWorkspace; }
+		}
+
+		private static string m_strMacAddress =
+			@"MAC Address";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'MAC Address'.
+		/// </summary>
+		public static string MacAddress
+		{
+			get { return m_strMacAddress; }
 		}
 
 		private static string m_strMainInstruction =
@@ -8290,6 +8337,17 @@ namespace KeePass.Resources
 			get { return m_strPaste; }
 		}
 
+		private static string m_strPath =
+			@"Path";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Path'.
+		/// </summary>
+		public static string Path
+		{
+			get { return m_strPath; }
+		}
+
 		private static string m_strPerformAutoType =
 			@"Perform Auto-&Type";
 		/// <summary>
@@ -8840,6 +8898,17 @@ namespace KeePass.Resources
 			get { return m_strProfileSavePrompt; }
 		}
 
+		private static string m_strPwGenOpen =
+			@"Open Password Generator...";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Open Password Generator...'.
+		/// </summary>
+		public static string PwGenOpen
+		{
+			get { return m_strPwGenOpen; }
+		}
+
 		private static string m_strQuality =
 			@"Quality";
 		/// <summary>
@@ -8926,17 +8995,6 @@ namespace KeePass.Resources
 		public static string QuickSearchTb
 		{
 			get { return m_strQuickSearchTb; }
-		}
-
-		private static string m_strRandomMacAddress =
-			@"Random MAC Address";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Random MAC Address'.
-		/// </summary>
-		public static string RandomMacAddress
-		{
-			get { return m_strRandomMacAddress; }
 		}
 
 		private static string m_strReady =
@@ -9566,6 +9624,28 @@ namespace KeePass.Resources
 			get { return m_strSecDeskFileDialogHint; }
 		}
 
+		private static string m_strSecDeskOpContinueOnNormal =
+			@"KeePass will cancel the current dialog and switch to the normal desktop. The requested operation will then be performed on the normal desktop.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'KeePass will cancel the current dialog and switch to the normal desktop. The requested operation will then be performed on the normal desktop.'.
+		/// </summary>
+		public static string SecDeskOpContinueOnNormal
+		{
+			get { return m_strSecDeskOpContinueOnNormal; }
+		}
+
+		private static string m_strSecDeskOpUnsupported =
+			@"This operation cannot be performed on the secure desktop.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'This operation cannot be performed on the secure desktop.'.
+		/// </summary>
+		public static string SecDeskOpUnsupported
+		{
+			get { return m_strSecDeskOpUnsupported; }
+		}
+
 		private static string m_strSecDeskOtherSwitched =
 			@"An application has switched from the secure desktop to a different desktop.";
 		/// <summary>
@@ -9861,6 +9941,17 @@ namespace KeePass.Resources
 		public static string ShowMore
 		{
 			get { return m_strShowMore; }
+		}
+
+		private static string m_strShowWithFileManager =
+			@"&Show with File Manager";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;Show with File Manager'.
+		/// </summary>
+		public static string ShowWithFileManager
+		{
+			get { return m_strShowWithFileManager; }
 		}
 
 		private static string m_strSimilarPasswords =

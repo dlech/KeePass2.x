@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,11 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
-using System.Globalization;
-using System.Drawing;
+using System.IO;
+using System.Text;
 
 using KeePass.Resources;
 
@@ -33,7 +31,7 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 4.7.35
+	// 4.7.35-6.2.7+
 	internal sealed class DataVaultCsv47 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -45,19 +43,16 @@ namespace KeePass.DataExchange.Formats
 		
 		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		public override Image SmallIcon
-		{
-			get { return KeePass.Properties.Resources.B16x16_Imp_DataVault; }
-		}
-
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+			string strData;
+			using(StreamReader sr = new StreamReader(sInput, Encoding.Default))
+			{
+				strData = sr.ReadToEnd();
+			}
 
-			// Fix broken newlines
+			// Fix new-line sequences
 			strData = strData.Replace("\r\r\n", "\r\n");
 
 			CsvStreamReader csv = new CsvStreamReader(strData, false);
@@ -70,8 +65,7 @@ namespace KeePass.DataExchange.Formats
 				PwEntry pe = new PwEntry(true, true);
 				pwStorage.RootGroup.AddEntry(pe, true);
 
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectTitle, v[0]));
+				ImportUtil.AppendToField(pe, PwDefs.TitleField, v[0], pwStorage);
 
 				int p = 1;
 				while((p + 1) < v.Length)
@@ -82,24 +76,20 @@ namespace KeePass.DataExchange.Formats
 
 					p += 2;
 
-					if((strKey.Length == 0) && (strValue.Length == 0)) continue;
+					if(strKey.Length == 0)
+					{
+						if(strValue.Length == 0) continue;
 
-					AppendToString(pe, strKey, strValue);
+						Debug.Assert(false);
+						strKey = PwDefs.NotesField;
+					}
+
+					ImportUtil.AppendToField(pe, strKey, strValue, pwStorage);
 				}
 
 				if((p < v.Length) && !string.IsNullOrEmpty(v[p]))
-					AppendToString(pe, PwDefs.NotesField, v[p]);
+					ImportUtil.AppendToField(pe, PwDefs.NotesField, v[p], pwStorage);
 			}
-		}
-
-		private static void AppendToString(PwEntry pe, string strKey, string strValue)
-		{
-			if(pe.Strings.ReadSafe(strKey).Length > 0)
-			{
-				pe.Strings.Set(strKey, new ProtectedString(false,
-					pe.Strings.ReadSafe(strKey) + ", " + strValue));
-			}
-			else pe.Strings.Set(strKey, new ProtectedString(false, strValue));
 		}
 	}
 }

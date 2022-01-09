@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,15 +26,26 @@ namespace TrlUtil.Native
 {
 	internal static class NativeMethods
 	{
-		[DllImport("User32.dll")]
-		internal static extern IntPtr SendMessage(IntPtr hWnd, int nMsg,
-			IntPtr wParam, IntPtr lParam);
-
 		internal const int WM_UPDATEUISTATE = 0x0128;
 
 		internal const int UIS_CLEAR = 2;
 
 		internal const int UISF_HIDEACCEL = 0x2;
+
+		internal enum ProcessDpiAwareness : uint
+		{
+			Unaware = 0,
+			SystemAware = 1,
+			PerMonitorAware = 2
+		}
+
+		[DllImport("User32.dll")]
+		internal static extern IntPtr SendMessage(IntPtr hWnd, int nMsg,
+			IntPtr wParam, IntPtr lParam);
+
+		[DllImport("ShCore.dll")]
+		internal static extern int SetProcessDpiAwareness(
+			[MarshalAs(UnmanagedType.U4)] ProcessDpiAwareness a);
 
 		internal static int MakeLong(int wLow, int wHigh)
 		{

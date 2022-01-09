@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -469,13 +469,13 @@ namespace KeePass.Forms
 		{
 			if(AbortKdfThread()) { Debug.Assert(false); }
 
-			GlobalWindowManager.RemoveWindow(this);
-
 			foreach(ColorMenuItem mi in m_vColorItems)
 				mi.Click -= this.HandleColorButtonClicked;
 			m_vColorItems.Clear();
 
 			UIUtil.DisposeButtonImage(m_btnColor, ref m_imgColor);
+
+			GlobalWindowManager.RemoveWindow(this);
 		}
 
 		private void OnKeyRecCheckedChanged(object sender, EventArgs e)

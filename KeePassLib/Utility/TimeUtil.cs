@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -478,5 +478,20 @@ namespace KeePassLib.Utility
 			Debug.Assert(dtRnd.ToString("u") == dt.ToString("u"));
 			return dtRnd;
 		} */
+
+		/// <summary>
+		/// Check equality of two times with precision 1 s, floor-rounded.
+		/// Ticks finer than 1 s are ignored.
+		/// </summary>
+		internal static bool EqualsFloor(DateTime dtA, DateTime dtB)
+		{
+			// DateTime.Equals ignores the kind
+			Debug.Assert(dtA.Kind == dtB.Kind);
+
+			long sA = dtA.Ticks / TimeSpan.TicksPerSecond;
+			long sB = dtB.Ticks / TimeSpan.TicksPerSecond;
+
+			return (sA == sB);
+		}
 	}
 }

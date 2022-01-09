@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -177,7 +177,15 @@ namespace KeePass.Forms
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
-			CleanUpEx();
+			string strRect = UIUtil.GetWindowScreenRect(this);
+			if(strRect != m_strInitialFormRect) // Don't overwrite ""
+				Program.Config.UI.CharPickerRect = strRect;
+
+			m_tbSelected.TextChanged -= this.OnSelectedTextChangedEx;
+
+			RemoveAllCharButtons();
+			m_fontChars.Dispose();
+
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
@@ -188,18 +196,6 @@ namespace KeePass.Forms
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-		}
-
-		private void CleanUpEx()
-		{
-			string strRect = UIUtil.GetWindowScreenRect(this);
-			if(strRect != m_strInitialFormRect) // Don't overwrite ""
-				Program.Config.UI.CharPickerRect = strRect;
-
-			m_tbSelected.TextChanged -= this.OnSelectedTextChangedEx;
-
-			RemoveAllCharButtons();
-			m_fontChars.Dispose();
 		}
 
 		private void RemoveAllCharButtons()

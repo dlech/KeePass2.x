@@ -56,7 +56,7 @@
 			this.m_lblCopyright.Location = new System.Drawing.Point(10, 72);
 			this.m_lblCopyright.Name = "m_lblCopyright";
 			this.m_lblCopyright.Size = new System.Drawing.Size(402, 15);
-			this.m_lblCopyright.TabIndex = 1;
+			this.m_lblCopyright.TabIndex = 0;
 			this.m_lblCopyright.Text = "<>";
 			// 
 			// m_lblOsi
@@ -64,7 +64,7 @@
 			this.m_lblOsi.Location = new System.Drawing.Point(10, 95);
 			this.m_lblOsi.Name = "m_lblOsi";
 			this.m_lblOsi.Size = new System.Drawing.Size(402, 15);
-			this.m_lblOsi.TabIndex = 2;
+			this.m_lblOsi.TabIndex = 1;
 			this.m_lblOsi.Text = "KeePass is OSI Certified Open Source Software.";
 			// 
 			// m_lblGpl
@@ -72,7 +72,7 @@
 			this.m_lblGpl.Location = new System.Drawing.Point(10, 118);
 			this.m_lblGpl.Name = "m_lblGpl";
 			this.m_lblGpl.Size = new System.Drawing.Size(402, 27);
-			this.m_lblGpl.TabIndex = 3;
+			this.m_lblGpl.TabIndex = 2;
 			this.m_lblGpl.Text = "The program is distributed under the terms of the GNU General Public License v2 o" +
 				"r later.";
 			// 
@@ -82,7 +82,7 @@
 			this.m_linkHomepage.Location = new System.Drawing.Point(10, 154);
 			this.m_linkHomepage.Name = "m_linkHomepage";
 			this.m_linkHomepage.Size = new System.Drawing.Size(91, 13);
-			this.m_linkHomepage.TabIndex = 4;
+			this.m_linkHomepage.TabIndex = 3;
 			this.m_linkHomepage.TabStop = true;
 			this.m_linkHomepage.Text = "KeePass Website";
 			this.m_linkHomepage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkHomepage);
@@ -93,7 +93,7 @@
 			this.m_linkHelp.Location = new System.Drawing.Point(213, 154);
 			this.m_linkHelp.Name = "m_linkHelp";
 			this.m_linkHelp.Size = new System.Drawing.Size(29, 13);
-			this.m_linkHelp.TabIndex = 6;
+			this.m_linkHelp.TabIndex = 5;
 			this.m_linkHelp.TabStop = true;
 			this.m_linkHelp.Text = "Help";
 			this.m_linkHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkHelpFile);
@@ -104,7 +104,7 @@
 			this.m_linkLicense.Location = new System.Drawing.Point(10, 176);
 			this.m_linkLicense.Name = "m_linkLicense";
 			this.m_linkLicense.Size = new System.Drawing.Size(44, 13);
-			this.m_linkLicense.TabIndex = 7;
+			this.m_linkLicense.TabIndex = 6;
 			this.m_linkLicense.TabStop = true;
 			this.m_linkLicense.Text = "License";
 			this.m_linkLicense.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkLicenseFile);
@@ -115,7 +115,7 @@
 			this.m_linkAcknowledgements.Location = new System.Drawing.Point(107, 154);
 			this.m_linkAcknowledgements.Name = "m_linkAcknowledgements";
 			this.m_linkAcknowledgements.Size = new System.Drawing.Size(100, 13);
-			this.m_linkAcknowledgements.TabIndex = 5;
+			this.m_linkAcknowledgements.TabIndex = 4;
 			this.m_linkAcknowledgements.TabStop = true;
 			this.m_linkAcknowledgements.Text = "Acknowledgements";
 			this.m_linkAcknowledgements.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkAcknowledgements);
@@ -126,7 +126,7 @@
 			this.m_linkDonate.Location = new System.Drawing.Point(107, 176);
 			this.m_linkDonate.Name = "m_linkDonate";
 			this.m_linkDonate.Size = new System.Drawing.Size(42, 13);
-			this.m_linkDonate.TabIndex = 8;
+			this.m_linkDonate.TabIndex = 7;
 			this.m_linkDonate.TabStop = true;
 			this.m_linkDonate.Text = "Donate";
 			this.m_linkDonate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkDonate);
@@ -137,7 +137,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(337, 315);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.TabIndex = 9;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			// 
@@ -146,11 +146,14 @@
 			this.m_lvComponents.FullRowSelect = true;
 			this.m_lvComponents.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvComponents.Location = new System.Drawing.Point(13, 202);
+			this.m_lvComponents.MultiSelect = false;
 			this.m_lvComponents.Name = "m_lvComponents";
+			this.m_lvComponents.ShowItemToolTips = true;
 			this.m_lvComponents.Size = new System.Drawing.Size(398, 102);
-			this.m_lvComponents.TabIndex = 9;
+			this.m_lvComponents.TabIndex = 8;
 			this.m_lvComponents.UseCompatibleStateImageBehavior = false;
 			this.m_lvComponents.View = System.Windows.Forms.View.Details;
+			this.m_lvComponents.ItemActivate += new System.EventHandler(this.OnComponentShow);
 			// 
 			// AboutForm
 			// 

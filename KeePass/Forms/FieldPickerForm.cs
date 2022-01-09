@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -179,25 +179,6 @@ namespace KeePass.Forms
 		private void OnFieldClick(object sender, EventArgs e)
 		{
 			ProcessItemSelection();
-		}
-	}
-
-	public sealed class FpField
-	{
-		private readonly string m_strName;
-		public string Name { get { return m_strName; } }
-
-		private readonly ProtectedString m_psValue;
-		public ProtectedString Value { get { return m_psValue; } }
-
-		private readonly string m_strGroup;
-		public string Group { get { return m_strGroup; } }
-
-		public FpField(string strName, ProtectedString psValue, string strGroup)
-		{
-			m_strName = (strName ?? string.Empty);
-			m_psValue = (psValue ?? ProtectedString.Empty);
-			m_strGroup = (strGroup ?? string.Empty);
 		}
 	}
 }

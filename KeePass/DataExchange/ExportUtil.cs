@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -151,18 +151,15 @@ namespace KeePass.DataExchange
 				if(pwExportInfo.ExportMasterKeySpec && fileFormat.RequiresKey &&
 					(pd != null))
 				{
-					KeyCreationForm kcf = new KeyCreationForm();
-					kcf.InitEx((iocOutput ?? new IOConnectionInfo()), true);
-
-					if(UIUtil.ShowDialogNotValue(kcf, DialogResult.OK)) return false;
+					KeyCreationFormResult r;
+					DialogResult dr = KeyCreationForm.ShowDialog(iocOutput, true, out r);
+					if((dr != DialogResult.OK) || (r == null)) return false;
 
 					ckOrgMasterKey = pd.MasterKey;
 					dtOrgMasterKey = pd.MasterKeyChanged;
 
-					pd.MasterKey = kcf.CompositeKey;
+					pd.MasterKey = r.CompositeKey;
 					pd.MasterKeyChanged = DateTime.UtcNow;
-
-					UIUtil.DestroyForm(kcf);
 				}
 
 				if(bParentGroups)

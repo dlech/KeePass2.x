@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dominik Reichl")]
 [assembly: AssemblyProduct("KeePass Translation Utility")]
-[assembly: AssemblyCopyright("Copyright © 2008-2021 Dominik Reichl")]
+[assembly: AssemblyCopyright("Copyright © 2008-2022 Dominik Reichl")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -38,5 +38,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid("39aa6f93-a1c9-497f-bad2-cc42a61d5710")]
 
 // Assembly version information
-[assembly: AssemblyVersion("2.49.0.*")]
-[assembly: AssemblyFileVersion("2.49.0.0")]
+[assembly: AssemblyVersion("2.50.0.*")]
+[assembly: AssemblyFileVersion("2.50.0.0")]

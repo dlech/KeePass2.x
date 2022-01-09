@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2021 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2022 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -46,8 +46,8 @@
 <li><a href="#portable">Portable version (KeePass-2.xx.zip file)</a></li>
 <!-- <li>Other operating systems than Windows:
 <ul> -->
-<li><a href="#mono">Running KeePass under Mono (Linux, Mac OS X, BSD, ...)</a></li>
-<li><a href="#wine">Running KeePass under Wine (Linux, Mac OS X, BSD, ...)</a></li>
+<li><a href="#mono">Running KeePass under Mono (Linux, MacOS, BSD, ...)</a></li>
+<li><a href="#wine">Running KeePass under Wine (Linux, MacOS, BSD, ...)</a></li>
 <!-- <li><a href="#monoportable">Portable KeePass using Mono</a></li> -->
 <!-- </ul>
 </li> -->
@@ -191,10 +191,10 @@ your system.</p>
 
 <a name="mono"></a>
 <h2 class="sectiontitle"><img src="../images/b16x16_package_system.png" alt="System" />
-Running KeePass under Mono (Linux, Mac OS X, BSD, ...)</h2>
+Running KeePass under Mono (Linux, MacOS, BSD, ...)</h2>
 
 <p>In addition to Windows, KeePass 2.x runs under Mono,
-i.e. Linux, Mac OS X, BSD, etc.</p>
+i.e. Linux, MacOS, BSD, etc.</p>
 
 <p>Links to all supported packages can be found on the
 <a href="https://keepass.info/download.html" target="_blank">Downloads</a> page.</p>
@@ -227,8 +227,8 @@ Install the <em>keepass</em> package
 (from the Arch Linux repository; link on the downloads page).<br />
 <br /></li>
 
-<li><strong>Mac OS X:</strong><br />
-Install the <em>KeePass 2.x for Mac OS X</em> package
+<li><strong>MacOS:</strong><br />
+Install the <em>KeePass 2.x for MacOS</em> package
 (link on the downloads page).<br />
 <br /></li>
 
@@ -254,7 +254,7 @@ is offered as a separate package. KeePass requires this package; so if you see o
 <li>On some platforms, the Runtime namespace (System.Runtime)
 is offered as a separate package. KeePass requires this package; so if you see one, install it, too.</li>
 
-<li>If you want to use auto-type on Linux / Mac OS X / BSD / etc., you additionally
+<li>If you want to use auto-type on Linux/MacOS/BSD/etc., you additionally
 need the <code>xdotool</code> package.</li>
 
 <li>Download the portable version of KeePass (ZIP package)
@@ -335,6 +335,14 @@ If you want to use auto-type on a system with a Wayland compositor,
 see the <a href="https://keepass.info/help/kb/autotype_wayland.html"
 target="_blank">Auto-Type on Wayland</a> page.</p>
 
+<p><strong>AES-KDF:</strong><br />
+For fast <a href="../base/security.html#secdictprotect">key transformations</a>
+using AES-KDF, make sure that the <code>libgcrypt</code> library is installed.</p>
+
+<p><strong>Argon2:</strong><br />
+For fast <a href="../base/security.html#secdictprotect">key transformations</a>
+using Argon2, make sure that the <code>libargon2</code> library is installed.</p>
+
 <p><strong>Plugins:</strong><br />
 On some Linux systems, the <code>mono-complete</code> package may be
 required for plugins to work properly.</p>
@@ -349,7 +357,7 @@ is required.</p>
 
 <a name="wine"></a>
 <h2 class="sectiontitle"><img src="../images/b16x16_package_system.png" alt="System" />
-Running KeePass under Wine (Linux, Mac OS X, BSD, ...)</h2>
+Running KeePass under Wine (Linux, MacOS, BSD, ...)</h2>
 
 <p>Although you can run KeePass 2.x more or less natively on Unix-like systems
 using Mono (see above), the user interface does not always look pretty.
@@ -383,8 +391,8 @@ target="_blank">Wikipedia: Windows XP visual styles</a>.</p>
 Wine currently does not implement all Windows API functions required for
 auto-type, i.e. auto-type does not work when running KeePass under Wine.</p>
 
-<!-- <p><strong>Mac OS X.</strong>
-In order to make a Mac application bundle wrapper, you can use
+<!-- <p><strong>MacOS.</strong>
+In order to make a MacOS application bundle wrapper, you can use
 <a href="http://wineskin.urgesoftware.com/" target="_blank">Wineskin</a>.
 In the wrapper settings, we recommend to go to 'Screen Options' and turn on
 the option 'Use Mac Driver instead of X11'.</p> -->
@@ -400,7 +408,7 @@ However, as this type of Mono installation is nowhere mentioned on the Mono
 website, it might stop working with a future Mono release.</i></p>
 
 <p>Although almost all of today's PCs can run .NET applications (the .NET Framework
-is already preinstalled on Windows &ge; Vista, and for all major Linux / Mac OS X
+is already preinstalled on Windows &ge; Vista, and for all major Linux/MacOS
 distributions Mono is available, which actually even is a dependency of the GNOME
 &ge; 2.16 desktop), you still might want to run KeePass 2.x on a PC without
 any .NET support, like an old Windows XP system where you don't have administrative

@@ -12,7 +12,7 @@ namespace KeePass.Util.XmlSerialization
 {
 	public sealed partial class XmlSerializerEx : IXmlSerializerEx
 	{
-		private static char[] m_vEnumSeps = new char[] {
+		private static readonly char[] g_vEnumSeps = new char[] {
 			' ', '\t', '\r', '\n', '|', ',', ';', ':'
 		};
 
@@ -2669,7 +2669,7 @@ namespace KeePass.Util.XmlSerialization
 
 			string strValue = xr.ReadElementString();
 			System.Drawing.FontStyle eResult = (System.Drawing.FontStyle)0;
-			string[] vValues = strValue.Split(m_vEnumSeps, StringSplitOptions.RemoveEmptyEntries);
+			string[] vValues = strValue.Split(g_vEnumSeps, StringSplitOptions.RemoveEmptyEntries);
 			foreach(string strPart in vValues)
 			{
 				System.Drawing.FontStyle ePart;

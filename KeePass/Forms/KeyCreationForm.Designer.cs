@@ -40,7 +40,7 @@
 			this.m_cbUserAccount = new System.Windows.Forms.CheckBox();
 			this.m_lblWindowsAccDesc = new System.Windows.Forms.Label();
 			this.m_btnCancel = new System.Windows.Forms.Button();
-			this.m_btnCreate = new System.Windows.Forms.Button();
+			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_ttRect = new System.Windows.Forms.ToolTip(this.components);
 			this.m_cbHidePassword = new System.Windows.Forms.CheckBox();
 			this.m_btnSaveKeyFile = new System.Windows.Forms.Button();
@@ -90,7 +90,7 @@
 			this.m_cbPassword.TabIndex = 4;
 			this.m_cbPassword.Text = "&Master password:";
 			this.m_cbPassword.UseVisualStyleBackColor = true;
-			this.m_cbPassword.CheckedChanged += new System.EventHandler(this.OnCheckedPassword);
+			this.m_cbPassword.CheckedChanged += new System.EventHandler(this.OnPasswordCheckedChanged);
 			// 
 			// m_tbPassword
 			// 
@@ -122,11 +122,11 @@
 			this.m_cbKeyFile.AutoSize = true;
 			this.m_cbKeyFile.Location = new System.Drawing.Point(12, 249);
 			this.m_cbKeyFile.Name = "m_cbKeyFile";
-			this.m_cbKeyFile.Size = new System.Drawing.Size(112, 17);
+			this.m_cbKeyFile.Size = new System.Drawing.Size(106, 17);
 			this.m_cbKeyFile.TabIndex = 13;
-			this.m_cbKeyFile.Text = "&Key file / provider:";
+			this.m_cbKeyFile.Text = "&Key file/provider:";
 			this.m_cbKeyFile.UseVisualStyleBackColor = true;
-			this.m_cbKeyFile.CheckedChanged += new System.EventHandler(this.OnCheckedKeyFile);
+			this.m_cbKeyFile.CheckedChanged += new System.EventHandler(this.OnKeyFileCheckedChanged);
 			// 
 			// m_cbUserAccount
 			// 
@@ -135,9 +135,9 @@
 			this.m_cbUserAccount.Name = "m_cbUserAccount";
 			this.m_cbUserAccount.Size = new System.Drawing.Size(135, 17);
 			this.m_cbUserAccount.TabIndex = 20;
-			this.m_cbUserAccount.Text = "Windows &user account";
+			this.m_cbUserAccount.Text = "&Windows user account";
 			this.m_cbUserAccount.UseVisualStyleBackColor = true;
-			this.m_cbUserAccount.CheckedChanged += new System.EventHandler(this.OnWinUserCheckedChanged);
+			this.m_cbUserAccount.CheckedChanged += new System.EventHandler(this.OnUserAccountCheckedChanged);
 			// 
 			// m_lblWindowsAccDesc
 			// 
@@ -160,17 +160,17 @@
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
 			// 
-			// m_btnCreate
+			// m_btnOK
 			// 
-			this.m_btnCreate.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnCreate.Location = new System.Drawing.Point(351, 542);
-			this.m_btnCreate.Name = "m_btnCreate";
-			this.m_btnCreate.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCreate.TabIndex = 0;
-			this.m_btnCreate.Text = "OK";
-			this.m_btnCreate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.m_btnCreate.UseVisualStyleBackColor = true;
-			this.m_btnCreate.Click += new System.EventHandler(this.OnBtnOK);
+			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.m_btnOK.Location = new System.Drawing.Point(351, 542);
+			this.m_btnOK.Name = "m_btnOK";
+			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
+			this.m_btnOK.TabIndex = 0;
+			this.m_btnOK.Text = "OK";
+			this.m_btnOK.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.m_btnOK.UseVisualStyleBackColor = true;
+			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
 			// 
 			// m_cbHidePassword
 			// 
@@ -287,7 +287,7 @@
 			this.m_cbExpert.Name = "m_cbExpert";
 			this.m_cbExpert.Size = new System.Drawing.Size(125, 17);
 			this.m_cbExpert.TabIndex = 12;
-			this.m_cbExpert.Text = "Show &expert options:";
+			this.m_cbExpert.Text = "&Show expert options:";
 			this.m_cbExpert.UseVisualStyleBackColor = true;
 			this.m_cbExpert.CheckedChanged += new System.EventHandler(this.OnExpertCheckedChanged);
 			// 
@@ -351,7 +351,7 @@
 			// 
 			// KeyCreationForm
 			// 
-			this.AcceptButton = this.m_btnCreate;
+			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
@@ -374,7 +374,7 @@
 			this.Controls.Add(this.m_cbHidePassword);
 			this.Controls.Add(this.m_bannerImage);
 			this.Controls.Add(this.m_btnCancel);
-			this.Controls.Add(this.m_btnCreate);
+			this.Controls.Add(this.m_btnOK);
 			this.Controls.Add(this.m_cbUserAccount);
 			this.Controls.Add(this.m_btnSaveKeyFile);
 			this.Controls.Add(this.m_btnOpenKeyFile);
@@ -396,7 +396,6 @@
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			this.Shown += new System.EventHandler(this.OnFormShown);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_picAccWarning)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_picKeyFileWarning)).EndInit();
@@ -417,7 +416,7 @@
 		private System.Windows.Forms.Button m_btnOpenKeyFile;
 		private System.Windows.Forms.Button m_btnSaveKeyFile;
 		private System.Windows.Forms.CheckBox m_cbUserAccount;
-		private System.Windows.Forms.Button m_btnCreate;
+		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.CheckBox m_cbHidePassword;

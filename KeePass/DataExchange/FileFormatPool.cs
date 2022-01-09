@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Text;
 
 using KeePass.DataExchange.Formats;
+using KeePass.UI;
 
 using KeePassLib.Utility;
 
@@ -31,21 +32,18 @@ namespace KeePass.DataExchange
 {
 	public sealed class FileFormatPool : IEnumerable<FileFormatProvider>
 	{
-		private List<FileFormatProvider> m_vFormats = null;
+		private readonly List<FileFormatProvider> m_lFormats = new List<FileFormatProvider>();
 
 		public IEnumerable<FileFormatProvider> Importers
 		{
 			get
 			{
-				EnsurePoolInitialized();
-
-				List<FileFormatProvider> v = new List<FileFormatProvider>();
-				foreach(FileFormatProvider prov in m_vFormats)
+				List<FileFormatProvider> l = new List<FileFormatProvider>();
+				foreach(FileFormatProvider p in m_lFormats)
 				{
-					if(prov.SupportsImport) v.Add(prov);
+					if(p.SupportsImport) l.Add(p);
 				}
-
-				return v;
+				return l;
 			}
 		}
 
@@ -53,179 +51,171 @@ namespace KeePass.DataExchange
 		{
 			get
 			{
-				EnsurePoolInitialized();
-
-				List<FileFormatProvider> v = new List<FileFormatProvider>();
-				foreach(FileFormatProvider prov in m_vFormats)
+				List<FileFormatProvider> l = new List<FileFormatProvider>();
+				foreach(FileFormatProvider p in m_lFormats)
 				{
-					if(prov.SupportsExport) v.Add(prov);
+					if(p.SupportsExport) l.Add(p);
 				}
-
-				return v;
+				return l;
 			}
 		}
 
 		public int Count
 		{
-			get
-			{
-				EnsurePoolInitialized();
-				return m_vFormats.Count;
-			}
+			get { return m_lFormats.Count; }
 		}
 
-		public FileFormatPool() { }
-
-		IEnumerator IEnumerable.GetEnumerator()
+		public FileFormatPool()
 		{
-			EnsurePoolInitialized();
-			return m_vFormats.GetEnumerator();
-		}
+			List<FileFormatProvider> l = m_lFormats;
 
-		public IEnumerator<FileFormatProvider> GetEnumerator()
-		{
-			EnsurePoolInitialized();
-			return m_vFormats.GetEnumerator();
-		}
+			l.Add(new KeePassCsv1x());
+			l.Add(new KeePassKdb1x());
+			l.Add(new KeePassKdb2x());
+			l.Add(new KeePassKdb2xRepair());
+			l.Add(new KeePassKdb2x3());
+			l.Add(new KeePassXml1x());
+			l.Add(new KeePassXml2x());
 
-		private void EnsurePoolInitialized()
-		{
-			if(m_vFormats != null) return;
+			l.Add(new GenericCsv());
 
-			InitializePool();
-		}
+			l.Add(new KeePassHtml2x());
+			l.Add(new XslTransform2x());
+			l.Add(new WinFavorites10(false));
+			l.Add(new WinFavorites10(true));
 
-		private void InitializePool()
-		{
-			Debug.Assert(m_vFormats == null);
-			m_vFormats = new List<FileFormatProvider>();
+			l.Add(new OnePwProCsv599());
+			l.Add(new AmpXml250());
+			l.Add(new AnyPwCsv144());
+			l.Add(new BitwardenJson112());
+			l.Add(new CodeWalletTxt605());
+			l.Add(new DashlaneCsv2());
+			l.Add(new DashlaneJson6());
+			l.Add(new DataVaultCsv47());
+			l.Add(new DesktopKnoxXml32());
+			l.Add(new EnpassTxt5());
+			l.Add(new FlexWalletXml17());
+			l.Add(new HandySafeTxt512());
+			l.Add(new HandySafeProXml12());
+			l.Add(new KasperskyPwMgrTxt90());
+			l.Add(new KasperskyPwMgrXml50());
+			l.Add(new KeePassXXml041());
+			l.Add(new KeeperJson16());
+			l.Add(new LastPassCsv2());
+			l.Add(new MSecureCsv355());
+			l.Add(new NetworkPwMgrCsv4());
+			l.Add(new NortonIdSafeCsv2013());
+			l.Add(new NPasswordNpw102());
+			l.Add(new PassKeeper12());
+			l.Add(new PpKeeperHtml270());
+			l.Add(new PwAgentXml3());
+			l.Add(new PwDepotXml26());
+			l.Add(new PwKeeperCsv70());
+			l.Add(new PwMemory2008Xml104());
+			l.Add(new PwPrompterDat12());
+			l.Add(new PwSafeXml302());
+			l.Add(new PwSaverXml412());
+			l.Add(new PwsPlusCsv1007());
+			l.Add(new PwTresorXml100());
+			l.Add(new PVaultTxt14());
+			l.Add(new PinsTxt450());
+			l.Add(new RevelationXml04());
+			l.Add(new RoboFormHtml69());
+			l.Add(new SafeWalletXml3());
+			l.Add(new SecurityTxt12());
+			l.Add(new SplashIdCsv402());
+			l.Add(new SteganosCsv20());
+			l.Add(new SteganosUI2007());
+			l.Add(new StickyPwXml50());
+			l.Add(new TrueKeyCsv4());
+			l.Add(new TurboPwsCsv5());
+			l.Add(new VisKeeperTxt3());
+			l.Add(new Whisper32Csv116());
+			l.Add(new ZdnPwProTxt314());
 
-			m_vFormats.Add(new KeePassCsv1x());
-			m_vFormats.Add(new KeePassKdb1x());
-			m_vFormats.Add(new KeePassKdb2x());
-			m_vFormats.Add(new KeePassKdb2xRepair());
-			m_vFormats.Add(new KeePassKdb2x3());
-			m_vFormats.Add(new KeePassXml1x());
-			m_vFormats.Add(new KeePassXml2x());
+			l.Add(new ChromeCsv66());
+			l.Add(new MozillaBookmarksHtml100());
+			l.Add(new MozillaBookmarksJson100());
+			l.Add(new PwExporterXml105());
 
-			m_vFormats.Add(new GenericCsv());
-
-			m_vFormats.Add(new KeePassHtml2x());
-			m_vFormats.Add(new XslTransform2x());
-			m_vFormats.Add(new WinFavorites10(false));
-			m_vFormats.Add(new WinFavorites10(true));
-
-			m_vFormats.Add(new OnePwProCsv599());
-			m_vFormats.Add(new AmpXml250());
-			m_vFormats.Add(new AnyPwCsv144());
-			m_vFormats.Add(new BitwardenJson112());
-			m_vFormats.Add(new CodeWalletTxt605());
-			m_vFormats.Add(new DashlaneCsv2());
-			m_vFormats.Add(new DashlaneJson6());
-			m_vFormats.Add(new DataVaultCsv47());
-			m_vFormats.Add(new DesktopKnoxXml32());
-			m_vFormats.Add(new EnpassTxt5());
-			m_vFormats.Add(new FlexWalletXml17());
-			m_vFormats.Add(new HandySafeTxt512());
-			m_vFormats.Add(new HandySafeProXml12());
-			m_vFormats.Add(new KasperskyPwMgrXml50());
-			m_vFormats.Add(new KeePassXXml041());
-			m_vFormats.Add(new KeeperJson16());
-			m_vFormats.Add(new LastPassCsv2());
-			m_vFormats.Add(new MSecureCsv355());
-			m_vFormats.Add(new NetworkPwMgrCsv4());
-			m_vFormats.Add(new NortonIdSafeCsv2013());
-			m_vFormats.Add(new NPasswordNpw102());
-			m_vFormats.Add(new PassKeeper12());
-			m_vFormats.Add(new PpKeeperHtml270());
-			m_vFormats.Add(new PwAgentXml3());
-			m_vFormats.Add(new PwDepotXml26());
-			m_vFormats.Add(new PwKeeperCsv70());
-			m_vFormats.Add(new PwMemory2008Xml104());
-			m_vFormats.Add(new PwPrompterDat12());
-			m_vFormats.Add(new PwSafeXml302());
-			m_vFormats.Add(new PwSaverXml412());
-			m_vFormats.Add(new PwsPlusCsv1007());
-			m_vFormats.Add(new PwTresorXml100());
-			m_vFormats.Add(new PVaultTxt14());
-			m_vFormats.Add(new PinsTxt450());
-			m_vFormats.Add(new RevelationXml04());
-			m_vFormats.Add(new RoboFormHtml69());
-			m_vFormats.Add(new SafeWalletXml3());
-			m_vFormats.Add(new SecurityTxt12());
-			m_vFormats.Add(new SplashIdCsv402());
-			m_vFormats.Add(new SteganosCsv20());
-			m_vFormats.Add(new SteganosUI2007());
-			m_vFormats.Add(new StickyPwXml50());
-			m_vFormats.Add(new TrueKeyCsv4());
-			m_vFormats.Add(new TurboPwsCsv5());
-			m_vFormats.Add(new VisKeeperTxt3());
-			m_vFormats.Add(new Whisper32Csv116());
-			m_vFormats.Add(new ZdnPwProTxt314());
-
-			m_vFormats.Add(new ChromeCsv66());
-			m_vFormats.Add(new MozillaBookmarksHtml100());
-			m_vFormats.Add(new MozillaBookmarksJson100());
-			m_vFormats.Add(new PwExporterXml105());
-
-			m_vFormats.Add(new Spamex20070328());
+			l.Add(new Spamex20070328());
 
 #if DEBUG
 			// Ensure name uniqueness
-			for(int i = 0; i < m_vFormats.Count; ++i)
+			for(int i = 0; i < l.Count; ++i)
 			{
-				FileFormatProvider pi = m_vFormats[i];
-				for(int j = i + 1; j < m_vFormats.Count; ++j)
+				FileFormatProvider pi = l[i];
+				for(int j = i + 1; j < l.Count; ++j)
 				{
-					FileFormatProvider pj = m_vFormats[j];
+					FileFormatProvider pj = l[j];
 					Debug.Assert(!string.Equals(pi.FormatName, pj.FormatName, StrUtil.CaseIgnoreCmp));
 					Debug.Assert(!string.Equals(pi.FormatName, pj.DisplayName, StrUtil.CaseIgnoreCmp));
 					Debug.Assert(!string.Equals(pi.DisplayName, pj.FormatName, StrUtil.CaseIgnoreCmp));
 					Debug.Assert(!string.Equals(pi.DisplayName, pj.DisplayName, StrUtil.CaseIgnoreCmp));
 				}
 			}
+
+			foreach(FileFormatProvider p in l)
+			{
+				Type t = p.GetType();
+				Debug.Assert(t.IsNotPublic);
+				Debug.Assert(t.IsSealed || l.Exists(px => px.GetType().IsSubclassOf(t)));
+
+				string strExts = p.DefaultExtension;
+				if(!string.IsNullOrEmpty(strExts))
+				{
+					Debug.Assert(!strExts.StartsWith("."));
+					Debug.Assert(strExts.ToLower() == strExts);
+
+					string strExtU = UIUtil.GetPrimaryFileTypeExt(strExts).ToUpper();
+					Debug.Assert(p.DisplayName.EndsWith(" " + strExtU) ||
+						p.DisplayName.Contains(" " + strExtU + " "));
+				}
+			}
 #endif
 		}
 
-		public void Add(FileFormatProvider prov)
+		IEnumerator IEnumerable.GetEnumerator()
 		{
-			Debug.Assert(prov != null);
-			if(prov == null) throw new ArgumentNullException("prov");
-
-			EnsurePoolInitialized();
-
-			m_vFormats.Add(prov);
+			return m_lFormats.GetEnumerator();
 		}
 
-		public bool Remove(FileFormatProvider prov)
+		public IEnumerator<FileFormatProvider> GetEnumerator()
 		{
-			Debug.Assert(prov != null);
-			if(prov == null) throw new ArgumentNullException("prov");
-
-			EnsurePoolInitialized();
-
-			return m_vFormats.Remove(prov);
+			return m_lFormats.GetEnumerator();
 		}
 
-		public FileFormatProvider Find(string strFormatName)
+		public void Add(FileFormatProvider p)
 		{
-			if(strFormatName == null) return null;
+			if(p == null) { Debug.Assert(false); throw new ArgumentNullException("p"); }
 
-			EnsurePoolInitialized();
+			m_lFormats.Add(p);
+		}
+
+		public bool Remove(FileFormatProvider p)
+		{
+			if(p == null) { Debug.Assert(false); throw new ArgumentNullException("p"); }
+
+			return m_lFormats.Remove(p);
+		}
+
+		public FileFormatProvider Find(string strName)
+		{
+			if(string.IsNullOrEmpty(strName)) return null;
 
 			// Format and display names may differ (e.g. the Generic
-			// CSV Importer has a different format name)
+			// CSV Importer has different names)
 
-			foreach(FileFormatProvider f in m_vFormats)
+			foreach(FileFormatProvider p in m_lFormats)
 			{
-				if(string.Equals(strFormatName, f.DisplayName, StrUtil.CaseIgnoreCmp))
-					return f;
+				if(string.Equals(strName, p.DisplayName, StrUtil.CaseIgnoreCmp))
+					return p;
 			}
 
-			foreach(FileFormatProvider f in m_vFormats)
+			foreach(FileFormatProvider p in m_lFormats)
 			{
-				if(string.Equals(strFormatName, f.FormatName, StrUtil.CaseIgnoreCmp))
-					return f;
+				if(string.Equals(strName, p.FormatName, StrUtil.CaseIgnoreCmp))
+					return p;
 			}
 
 			return null;

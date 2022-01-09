@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ using KeePassLibSD;
 namespace KeePassLib.Collections
 {
 	/// <summary>
-	/// A list of <c>ProtectedString</c> objects (dictionary).
+	/// A dictionary of <c>ProtectedString</c> objects.
 	/// </summary>
 	public sealed class ProtectedStringDictionary :
 		IDeepCloneable<ProtectedStringDictionary>,
@@ -44,7 +44,7 @@ namespace KeePassLib.Collections
 			new SortedDictionary<string, ProtectedString>();
 
 		/// <summary>
-		/// Get the number of strings in this entry.
+		/// Get the number of strings.
 		/// </summary>
 		public uint UCount
 		{
@@ -52,7 +52,7 @@ namespace KeePassLib.Collections
 		}
 
 		/// <summary>
-		/// Construct a new list of protected strings.
+		/// Construct a new dictionary of protected strings.
 		/// </summary>
 		public ProtectedStringDictionary()
 		{
@@ -73,22 +73,22 @@ namespace KeePassLib.Collections
 			m_vStrings.Clear();
 		}
 
-		/// <summary>
-		/// Clone the current <c>ProtectedStringList</c> object, including all
-		/// stored protected strings.
-		/// </summary>
-		/// <returns>New <c>ProtectedStringList</c> object.</returns>
 		public ProtectedStringDictionary CloneDeep()
 		{
-			ProtectedStringDictionary plNew = new ProtectedStringDictionary();
+			ProtectedStringDictionary d = new ProtectedStringDictionary();
+			CopyTo(d);
+			return d;
+		}
 
-			foreach(KeyValuePair<string, ProtectedString> kvpStr in m_vStrings)
+		internal void CopyTo(ProtectedStringDictionary d)
+		{
+			if(d == null) { Debug.Assert(false); return; }
+
+			foreach(KeyValuePair<string, ProtectedString> kvp in m_vStrings)
 			{
 				// ProtectedString objects are immutable
-				plNew.Set(kvpStr.Key, kvpStr.Value);
+				d.Set(kvp.Key, kvp.Value);
 			}
-
-			return plNew;
 		}
 
 		[Obsolete]
@@ -161,8 +161,8 @@ namespace KeePassLib.Collections
 		/// <returns>Protected string. If the string identified by
 		/// <paramref name="strName" /> cannot be found, the function
 		/// returns <c>null</c>.</returns>
-		/// <exception cref="System.ArgumentNullException">Thrown if the input parameter
-		/// is <c>null</c>.</exception>
+		/// <exception cref="System.ArgumentNullException">Thrown if the input
+		/// parameter is <c>null</c>.</exception>
 		public ProtectedString Get(string strName)
 		{
 			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");

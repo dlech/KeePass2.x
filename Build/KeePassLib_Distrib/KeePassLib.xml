@@ -35,8 +35,7 @@
             the returned string is <c>My File.kdb</c>.
             </summary>
             <param name="strPath">Full path of a file.</param>
-            <returns>File name of the specified file. The return value is
-            an empty string (<c>""</c>) if the input parameter is <c>null</c>.</returns>
+            <returns>File name of the specified file.</returns>
         </member>
         <member name="M:KeePassLib.Utility.UrlUtil.StripExtension(System.String)">
             <summary>
@@ -371,7 +370,7 @@
             <param name="strKey">Key to validate.</param>
             <param name="t">Type of the validation to perform.</param>
             <returns>Returns <c>null</c>, if the validation is successful.
-            If there's a problem with the key, the returned string describes
+            If there is a problem with the key, the returned string describes
             the problem.</returns>
         </member>
         <member name="P:KeePassLib.Keys.KeyValidator.Name">
@@ -386,20 +385,13 @@
         </member>
         <member name="T:KeePassLib.Collections.ProtectedStringDictionary">
             <summary>
-            A list of <c>ProtectedString</c> objects (dictionary).
+            A dictionary of <c>ProtectedString</c> objects.
             </summary>
         </member>
         <member name="M:KeePassLib.Collections.ProtectedStringDictionary.#ctor">
             <summary>
-            Construct a new list of protected strings.
+            Construct a new dictionary of protected strings.
             </summary>
-        </member>
-        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.CloneDeep">
-            <summary>
-            Clone the current <c>ProtectedStringList</c> object, including all
-            stored protected strings.
-            </summary>
-            <returns>New <c>ProtectedStringList</c> object.</returns>
         </member>
         <member name="M:KeePassLib.Collections.ProtectedStringDictionary.Get(System.String)">
             <summary>
@@ -409,8 +401,8 @@
             <returns>Protected string. If the string identified by
             <paramref name="strName"/> cannot be found, the function
             returns <c>null</c>.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input parameter
-            is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
         </member>
         <member name="M:KeePassLib.Collections.ProtectedStringDictionary.GetSafe(System.String)">
             <summary>
@@ -477,7 +469,7 @@
         </member>
         <member name="P:KeePassLib.Collections.ProtectedStringDictionary.UCount">
             <summary>
-            Get the number of strings in this entry.
+            Get the number of strings.
             </summary>
         </member>
         <member name="T:KeePassLib.Resources.KLRes">
@@ -891,7 +883,7 @@
             Normalize new line characters in a string. Input strings may
             contain mixed new line character sequences from all commonly
             used operating systems (i.e. \r\n from Windows, \n from Unix
-            and \r from Mac OS.
+            and \r from MacOS.
             </summary>
             <param name="str">String with mixed new line characters.</param>
             <param name="bWindows">If <c>true</c>, new line characters
@@ -1034,6 +1026,12 @@
         <member name="M:KeePassLib.Utility.TimeUtil.ParseUSTextDate(System.String,System.DateTimeKind)">
             <summary>
             Parse a US textual date string, like e.g. "January 02, 2012".
+            </summary>
+        </member>
+        <member name="M:KeePassLib.Utility.TimeUtil.EqualsFloor(System.DateTime,System.DateTime)">
+            <summary>
+            Check equality of two times with precision 1 s, floor-rounded.
+            Ticks finer than 1 s are ignored.
             </summary>
         </member>
         <member name="F:KeePassLib.Serialization.IOCredSaveMode.NoSave">
@@ -1730,11 +1728,11 @@
         <member name="P:KeePassLib.Keys.KeyProvider.Exclusive">
             <summary>
             Property indicating whether the provider is exclusive.
-            If the provider is exclusive, KeePass doesn't allow other
+            If the provider is exclusive, KeePass does not allow other
             key sources (master password, Windows user account, ...)
             to be combined with the provider.
             Key providers typically should return <c>false</c>
-            (to allow non-exclusive use), i.e. don't override this
+            (to allow non-exclusive use), i.e. do not override this
             property.
             </summary>
         </member>
@@ -1873,8 +1871,8 @@
             <summary>
             Transform a key.
             </summary>
-            <param name="pBuf256">Source and destination buffer.</param>
-            <param name="pKey256">Key to use in the transformation.</param>
+            <param name="pbBuf256">Source and destination buffer.</param>
+            <param name="pbKey256">Key to use for the transformation.</param>
             <param name="uRounds">Number of transformation rounds.</param>
             <returns>Returns <c>true</c>, if the key was transformed successfully.</returns>
         </member>
@@ -1888,8 +1886,7 @@
         </member>
         <member name="P:KeePassLib.Native.NativeLib.AllowNative">
             <summary>
-            If this property is set to <c>true</c>, the native library is used.
-            If it is <c>false</c>, all calls to functions in this class will fail.
+            If <c>true</c>, the native library is used.
             </summary>
         </member>
         <member name="M:KeePassLib.Utility.GfxUtil.ScaleImage(System.Drawing.Image,System.Int32,System.Int32,KeePassLib.ScaleTransformFlags)">
@@ -2658,19 +2655,6 @@
             Construct a new, empty password entry. Member variables will be initialized
             to their default values.
             </summary>
-            <param name="bCreateNewUuid">If <c>true</c>, a new UUID will be created
-            for this entry. If <c>false</c>, the UUID is zero and you must set it
-            manually later.</param>
-            <param name="bSetTimes">If <c>true</c>, the creation, last modification
-            and last access times will be set to the current system time.</param>
-        </member>
-        <member name="M:KeePassLib.PwEntry.#ctor(KeePassLib.PwGroup,System.Boolean,System.Boolean)">
-            <summary>
-            Construct a new, empty password entry. Member variables will be initialized
-            to their default values.
-            </summary>
-            <param name="pwParentGroup">Reference to the containing group, this
-            parameter may be <c>null</c> and set later manually.</param>
             <param name="bCreateNewUuid">If <c>true</c>, a new UUID will be created
             for this entry. If <c>false</c>, the UUID is zero and you must set it
             manually later.</param>

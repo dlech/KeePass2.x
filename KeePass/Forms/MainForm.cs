@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -598,21 +598,15 @@ namespace KeePass.Forms
 			if(dr != DialogResult.OK) return;
 
 			string strPath = sfd.FileName;
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
 
-			KeyCreationForm kcf = new KeyCreationForm();
-			kcf.InitEx(IOConnectionInfo.FromPath(strPath), true);
-			dr = kcf.ShowDialog();
-			if((dr == DialogResult.Cancel) || (dr == DialogResult.Abort))
-			{
-				UIUtil.DestroyForm(kcf);
-				return;
-			}
+			KeyCreationFormResult kcfr;
+			dr = KeyCreationForm.ShowDialog(ioc, true, out kcfr);
+			if((dr != DialogResult.OK) || (kcfr == null)) return;
 
 			PwDocument dsPrevActive = m_docMgr.ActiveDocument;
 			PwDatabase pd = m_docMgr.CreateNewDocument(true).Database;
-			pd.New(IOConnectionInfo.FromPath(strPath), kcf.CompositeKey);
-
-			UIUtil.DestroyForm(kcf);
+			pd.New(ioc, kcfr.CompositeKey);
 
 			DatabaseSettingsForm dsf = new DatabaseSettingsForm();
 			dsf.InitEx(true, pd);
@@ -935,7 +929,7 @@ namespace KeePass.Forms
 		private void OnEntryCopyUserName(object sender, EventArgs e)
 		{
 			PwEntry pe = GetSelectedEntry(false);
-			Debug.Assert(pe != null); if(pe == null) return;
+			if(pe == null) { Debug.Assert(false); return; }
 
 			if(ClipboardUtil.CopyAndMinimize(pe.Strings.GetSafe(PwDefs.UserNameField),
 				true, this, pe, m_docMgr.SafeFindContainerOf(pe)))
@@ -945,7 +939,7 @@ namespace KeePass.Forms
 		private void OnEntryCopyPassword(object sender, EventArgs e)
 		{
 			PwEntry pe = GetSelectedEntry(false);
-			Debug.Assert(pe != null); if(pe == null) return;
+			if(pe == null) { Debug.Assert(false); return; }
 
 			if(EntryUtil.ExpireTanEntryIfOption(pe, m_docMgr.ActiveDatabase))
 			{
@@ -1020,9 +1014,7 @@ namespace KeePass.Forms
 			}
 
 			AddEntriesToList(lNewEntries);
-			SelectEntries(lNewEntries, true, true);
-			EnsureVisibleSelected(null);
-
+			SelectEntries(lNewEntries, true, true, true, false);
 			UpdateUIState(true, m_lvEntries);
 		}
 
@@ -1920,11 +1912,7 @@ namespace KeePass.Forms
 							pwDb.MemoryProtection.ProtectPassword));
 
 						UpdateUI(false, null, false, null, true, null, true, m_lvEntries);
-
-						PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
-						l.Add(pe);
-						SelectEntries(l, true, true);
-						EnsureVisibleSelected(false);
+						SelectEntry(pe, true, true, true, true);
 					}
 					else pg.Entries.Remove(pe);
 				}
@@ -2004,11 +1992,7 @@ namespace KeePass.Forms
 				{
 					UpdateUI(false, null, true, peRef.ParentGroup, true, null,
 						false, m_lvEntries);
-					PwObjectList<PwEntry> lSel = new PwObjectList<PwEntry>();
-					lSel.Add(peRef);
-					SelectEntries(lSel, true, true);
-					EnsureVisibleSelected(false);
-					UpdateUIState(false);
+					SelectEntry(peRef, true, true, true, true);
 				}
 			}
 			else WinUtil.OpenUrl(strLink, pe);
@@ -2038,12 +2022,7 @@ namespace KeePass.Forms
 
 			bool b = ((l != null) && (l.UCount != 0));
 			UpdateUI(false, null, false, null, b, null, b);
-
-			if(b)
-			{
-				SelectEntries(l, true, true);
-				EnsureVisibleSelected(null);
-			}
+			if(b) SelectEntries(l, true, true, true, true);
 		}
 
 		private void OnEntryColorStandard(object sender, EventArgs e)
@@ -2155,9 +2134,7 @@ namespace KeePass.Forms
 					}
 
 					UpdateUI(false, null, false, null, true, null, true, m_lvEntries);
-
-					SelectEntries(l, true, true);
-					EnsureVisibleSelected(null);
+					SelectEntries(l, true, true, true, true);
 				}
 				UIUtil.DestroyForm(dlgCount);
 			}
@@ -2876,12 +2853,13 @@ namespace KeePass.Forms
 			EmergencySheet.Print(m_docMgr.ActiveDatabase, false, true);
 		}
 
-		private void OnToolsCreateKeyFile(object sender, EventArgs e)
+		private void OnToolsRecreateKeyFile(object sender, EventArgs e)
 		{
 			PwDatabase pd = m_docMgr.ActiveDatabase;
 
 			KeyFileCreationForm dlg = new KeyFileCreationForm();
 			dlg.InitEx(((pd != null) && pd.IsOpen) ? pd.IOConnectionInfo : null);
+			dlg.RecreateOnly = true;
 
 			UIUtil.ShowDialogAndDestroy(dlg);
 		}

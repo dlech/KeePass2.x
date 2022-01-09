@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,45 +31,9 @@ namespace KeePassLib.Cryptography.KeyDerivation
 {
 	public sealed partial class AesKdf : KdfEngine
 	{
-		private static bool TransformKeyGCrypt(byte[] pbData32, byte[] pbSeed32,
-			ulong uRounds)
-		{
-			byte[] pbNewData32 = null;
-			try
-			{
-				if(GCryptInitLib())
-				{
-					pbNewData32 = new byte[32];
-					Array.Copy(pbData32, pbNewData32, 32);
+		private const int GCryptBufBlocks = 4096;
 
-					if(TransformKeyGCryptPriv(pbNewData32, pbSeed32, uRounds))
-					{
-						Array.Copy(pbNewData32, pbData32, 32);
-						return true;
-					}
-				}
-			}
-			catch(Exception) { }
-			finally { if(pbNewData32 != null) MemUtil.ZeroByteArray(pbNewData32); }
-
-			return false;
-		}
-
-		private static bool TransformKeyBenchmarkGCrypt(uint uTimeMs, out ulong uRounds)
-		{
-			uRounds = 0;
-
-			try
-			{
-				if(GCryptInitLib())
-					return TransformKeyBenchmarkGCryptPriv(uTimeMs, ref uRounds);
-			}
-			catch(Exception) { }
-
-			return false;
-		}
-
-		private static bool GCryptInitLib()
+		private static bool GCryptInit()
 		{
 			if(!NativeLib.IsUnix()) return false; // Independent of workaround state
 			if(!MonoWorkarounds.IsRequired(1468)) return false; // Can be turned off
@@ -80,320 +44,180 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			return true;
 		}
 
-		// =============================================================
-		// Multi-threaded implementation
-
-		// For some reason, the following multi-threaded implementation
-		// is slower than the single-threaded implementation below
-		// (threading overhead by Mono? LibGCrypt threading issues?)
-		/* private sealed class GCryptTransformInfo : IDisposable
+		private static bool GCryptEncrypt(IntPtr h, IntPtr pbZero, IntPtr pbBuf,
+			ulong uRounds, byte[] pbOut16)
 		{
-			public IntPtr Data16;
-			public IntPtr Seed32;
-			public ulong Rounds;
-			public uint TimeMs;
+			ulong r = 0;
 
-			public bool Success = false;
-
-			public GCryptTransformInfo(byte[] pbData32, int iDataOffset,
-				byte[] pbSeed32, ulong uRounds, uint uTimeMs)
+			while(uRounds != 0)
 			{
-				this.Data16 = Marshal.AllocCoTaskMem(16);
-				Marshal.Copy(pbData32, iDataOffset, this.Data16, 16);
+				r = Math.Min(uRounds, (ulong)GCryptBufBlocks);
+				IntPtr cb = new IntPtr((int)r << 4);
 
-				this.Seed32 = Marshal.AllocCoTaskMem(32);
-				Marshal.Copy(pbSeed32, 0, this.Seed32, 32);
-
-				this.Rounds = uRounds;
-				this.TimeMs = uTimeMs;
-			}
-
-			public void Dispose()
-			{
-				if(this.Data16 != IntPtr.Zero)
+				if(NativeMethods.gcry_cipher_encrypt(h, pbBuf, cb, pbZero, cb) != 0)
 				{
-					Marshal.WriteInt64(this.Data16, 0);
-					Marshal.WriteInt64(this.Data16, 8, 0);
-					Marshal.FreeCoTaskMem(this.Data16);
-					this.Data16 = IntPtr.Zero;
+					Debug.Assert(false);
+					return false;
 				}
 
-				if(this.Seed32 != IntPtr.Zero)
-				{
-					Marshal.FreeCoTaskMem(this.Seed32);
-					this.Seed32 = IntPtr.Zero;
-				}
-			}
-		}
-
-		private static GCryptTransformInfo[] GCryptRun(byte[] pbData32,
-			byte[] pbSeed32, ulong uRounds, uint uTimeMs, ParameterizedThreadStart fL,
-			ParameterizedThreadStart fR)
-		{
-			GCryptTransformInfo tiL = new GCryptTransformInfo(pbData32, 0,
-				pbSeed32, uRounds, uTimeMs);
-			GCryptTransformInfo tiR = new GCryptTransformInfo(pbData32, 16,
-				pbSeed32, uRounds, uTimeMs);
-
-			Thread th = new Thread(fL);
-			th.Start(tiL);
-
-			fR(tiR);
-
-			th.Join();
-
-			Marshal.Copy(tiL.Data16, pbData32, 0, 16);
-			Marshal.Copy(tiR.Data16, pbData32, 16, 16);
-
-			tiL.Dispose();
-			tiR.Dispose();
-
-			if(tiL.Success && tiR.Success)
-				return new GCryptTransformInfo[2] { tiL, tiR };
-			return null;
-		}
-
-		private static bool TransformKeyGCryptPriv(byte[] pbData32, byte[] pbSeed32,
-			ulong uRounds)
-		{
-			return (GCryptRun(pbData32, pbSeed32, uRounds, 0,
-				new ParameterizedThreadStart(AesKdf.GCryptTransformTh),
-				new ParameterizedThreadStart(AesKdf.GCryptTransformTh)) != null);
-		}
-
-		private static bool GCryptInitCipher(ref IntPtr h, GCryptTransformInfo ti)
-		{
-			NativeMethods.gcry_cipher_open(ref h, NativeMethods.GCRY_CIPHER_AES256,
-				NativeMethods.GCRY_CIPHER_MODE_ECB, 0);
-			if(h == IntPtr.Zero) { Debug.Assert(false); return false; }
-
-			IntPtr n32 = new IntPtr(32);
-			if(NativeMethods.gcry_cipher_setkey(h, ti.Seed32, n32) != 0)
-			{
-				Debug.Assert(false);
-				return false;
+				uRounds -= r;
 			}
 
+			if((pbOut16 != null) && (r != 0))
+				Marshal.Copy(MemUtil.AddPtr(pbBuf, ((long)r - 1) << 4), pbOut16, 0, 16);
 			return true;
 		}
 
-		private static void GCryptTransformTh(object o)
+		private static bool GCryptRun16(byte[] pbData16, byte[] pbKey32,
+			ref ulong uRounds, uint uTimeMs)
 		{
 			IntPtr h = IntPtr.Zero;
 			try
 			{
-				GCryptTransformInfo ti = (o as GCryptTransformInfo);
-				if(ti == null) { Debug.Assert(false); return; }
-
-				if(!GCryptInitCipher(ref h, ti)) return;
-
-				IntPtr n16 = new IntPtr(16);
-				for(ulong u = 0; u < ti.Rounds; ++u)
+				if(NativeMethods.gcry_cipher_open(ref h, NativeMethods.GCRY_CIPHER_AES256,
+					NativeMethods.GCRY_CIPHER_MODE_CBC, 0) != 0)
 				{
-					if(NativeMethods.gcry_cipher_encrypt(h, ti.Data16, n16,
-						IntPtr.Zero, IntPtr.Zero) != 0)
-					{
-						Debug.Assert(false);
-						return;
-					}
+					Debug.Assert(false);
+					return false;
 				}
 
-				ti.Success = true;
-			}
-			catch(Exception) { Debug.Assert(false); }
-			finally
-			{
-				try { if(h != IntPtr.Zero) NativeMethods.gcry_cipher_close(h); }
-				catch(Exception) { Debug.Assert(false); }
-			}
-		}
-
-		private static bool TransformKeyBenchmarkGCryptPriv(uint uTimeMs, ref ulong uRounds)
-		{
-			GCryptTransformInfo[] v = GCryptRun(new byte[32], new byte[32],
-				0, uTimeMs,
-				new ParameterizedThreadStart(AesKdf.GCryptBenchmarkTh),
-				new ParameterizedThreadStart(AesKdf.GCryptBenchmarkTh));
-
-			if(v != null)
-			{
-				ulong uL = Math.Min(v[0].Rounds, ulong.MaxValue >> 1);
-				ulong uR = Math.Min(v[1].Rounds, ulong.MaxValue >> 1);
-				uRounds = (uL + uR) / 2;
-
-				return true;
-			}
-			return false;
-		}
-
-		private static void GCryptBenchmarkTh(object o)
-		{
-			IntPtr h = IntPtr.Zero;
-			try
-			{
-				GCryptTransformInfo ti = (o as GCryptTransformInfo);
-				if(ti == null) { Debug.Assert(false); return; }
-
-				if(!GCryptInitCipher(ref h, ti)) return;
-
-				ulong r = 0;
-				IntPtr n16 = new IntPtr(16);
-				int tStart = Environment.TickCount;
-				while(true)
+				using(NativeBufferEx nbKey = new NativeBufferEx(pbKey32, true, true, 16))
 				{
-					for(ulong j = 0; j < BenchStep; ++j)
-					{
-						if(NativeMethods.gcry_cipher_encrypt(h, ti.Data16, n16,
-							IntPtr.Zero, IntPtr.Zero) != 0)
-						{
-							Debug.Assert(false);
-							return;
-						}
-					}
-
-					r += BenchStep;
-					if(r < BenchStep) // Overflow check
-					{
-						r = ulong.MaxValue;
-						break;
-					}
-
-					uint tElapsed = (uint)(Environment.TickCount - tStart);
-					if(tElapsed > ti.TimeMs) break;
-				}
-
-				ti.Rounds = r;
-				ti.Success = true;
-			}
-			catch(Exception) { Debug.Assert(false); }
-			finally
-			{
-				try { if(h != IntPtr.Zero) NativeMethods.gcry_cipher_close(h); }
-				catch(Exception) { Debug.Assert(false); }
-			}
-		} */
-
-		// =============================================================
-		// Single-threaded implementation
-
-		private static bool GCryptInitCipher(ref IntPtr h, IntPtr pSeed32)
-		{
-			NativeMethods.gcry_cipher_open(ref h, NativeMethods.GCRY_CIPHER_AES256,
-				NativeMethods.GCRY_CIPHER_MODE_ECB, 0);
-			if(h == IntPtr.Zero) { Debug.Assert(false); return false; }
-
-			IntPtr n32 = new IntPtr(32);
-			if(NativeMethods.gcry_cipher_setkey(h, pSeed32, n32) != 0)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			return true;
-		}
-
-		private static bool GCryptBegin(byte[] pbData32, byte[] pbSeed32,
-			ref IntPtr h, ref IntPtr pData32, ref IntPtr pSeed32)
-		{
-			pData32 = Marshal.AllocCoTaskMem(32);
-			pSeed32 = Marshal.AllocCoTaskMem(32);
-
-			Marshal.Copy(pbData32, 0, pData32, 32);
-			Marshal.Copy(pbSeed32, 0, pSeed32, 32);
-
-			return GCryptInitCipher(ref h, pSeed32);
-		}
-
-		private static void GCryptEnd(IntPtr h, IntPtr pData32, IntPtr pSeed32)
-		{
-			NativeMethods.gcry_cipher_close(h);
-
-			Marshal.WriteInt64(pData32, 0);
-			Marshal.WriteInt64(pData32, 8, 0);
-			Marshal.WriteInt64(pData32, 16, 0);
-			Marshal.WriteInt64(pData32, 24, 0);
-
-			Marshal.FreeCoTaskMem(pData32);
-			Marshal.FreeCoTaskMem(pSeed32);
-		}
-
-		private static bool TransformKeyGCryptPriv(byte[] pbData32, byte[] pbSeed32,
-			ulong uRounds)
-		{
-			IntPtr h = IntPtr.Zero, pData32 = IntPtr.Zero, pSeed32 = IntPtr.Zero;
-			if(!GCryptBegin(pbData32, pbSeed32, ref h, ref pData32, ref pSeed32))
-				return false;
-
-			try
-			{
-				IntPtr n32 = new IntPtr(32);
-				for(ulong i = 0; i < uRounds; ++i)
-				{
-					if(NativeMethods.gcry_cipher_encrypt(h, pData32, n32,
-						IntPtr.Zero, IntPtr.Zero) != 0)
+					if(NativeMethods.gcry_cipher_setkey(h, nbKey.Data, new IntPtr(32)) != 0)
 					{
 						Debug.Assert(false);
 						return false;
 					}
 				}
 
-				Marshal.Copy(pData32, pbData32, 0, 32);
+				using(NativeBufferEx nbData = new NativeBufferEx(pbData16, true, true, 16))
+				{
+					if(NativeMethods.gcry_cipher_setiv(h, nbData.Data, new IntPtr(16)) != 0)
+					{
+						Debug.Assert(false);
+						return false;
+					}
+				}
+
+				using(NativeBufferEx nbZero = new NativeBufferEx(GCryptBufBlocks << 4,
+					true, false, true, 16))
+				{
+					using(NativeBufferEx nbBuf = new NativeBufferEx(GCryptBufBlocks << 4,
+						false, true, true, 16))
+					{
+						if(uTimeMs == 0)
+						{
+							if(!GCryptEncrypt(h, nbZero.Data, nbBuf.Data, uRounds,
+								pbData16)) return false;
+						}
+						else
+						{
+							const ulong uStep = 4096; // Cf. GCryptBufBlocks
+
+							int tStart = Environment.TickCount;
+							while((uint)(Environment.TickCount - tStart) < uTimeMs)
+							{
+								if(!GCryptEncrypt(h, nbZero.Data, nbBuf.Data, uStep,
+									null)) return false;
+
+								uRounds += uStep;
+								if(uRounds < uStep) // Overflow
+								{
+									uRounds = unchecked(ulong.MaxValue - 8UL);
+									break;
+								}
+							}
+						}
+					}
+				}
+
 				return true;
 			}
 			catch(Exception) { Debug.Assert(false); }
-			finally { GCryptEnd(h, pData32, pSeed32); }
+			finally
+			{
+				if(h != IntPtr.Zero)
+				{
+					try { NativeMethods.gcry_cipher_close(h); }
+					catch(Exception) { Debug.Assert(false); }
+				}
+			}
 
 			return false;
 		}
 
-		private static bool TransformKeyBenchmarkGCryptPriv(uint uTimeMs, ref ulong uRounds)
+		private static bool GCryptRun32(byte[] pbData32, byte[] pbKey32,
+			ref ulong uRounds, uint uTimeMs)
 		{
-			byte[] pbData32 = new byte[32];
-			byte[] pbSeed32 = new byte[32];
+			if(pbData32 == null) { Debug.Assert(false); return false; }
+			if(pbData32.Length != 32) { Debug.Assert(false); return false; }
+			if(pbKey32 == null) { Debug.Assert(false); return false; }
+			if(pbKey32.Length != 32) { Debug.Assert(false); return false; }
 
-			IntPtr h = IntPtr.Zero, pData32 = IntPtr.Zero, pSeed32 = IntPtr.Zero;
-			if(!GCryptBegin(pbData32, pbSeed32, ref h, ref pData32, ref pSeed32))
-				return false;
-
-			uint uMaxMs = uTimeMs;
-			ulong uDiv = 1;
-			if(uMaxMs <= (uint.MaxValue >> 1)) { uMaxMs *= 2U; uDiv = 2; }
+			byte[] pbData16L = new byte[16];
+			byte[] pbData16R = new byte[16];
 
 			try
 			{
-				ulong r = 0;
-				IntPtr n32 = new IntPtr(32);
-				int tStart = Environment.TickCount;
-				while(true)
+				if(!GCryptInit()) return false;
+
+				Array.Copy(pbData32, 0, pbData16L, 0, 16);
+				Array.Copy(pbData32, 16, pbData16R, 0, 16);
+
+				ulong uRoundsL = uRounds, uRoundsR = uRounds;
+				bool bR = false;
+
+				Thread thR = new Thread(new ThreadStart(delegate()
 				{
-					for(ulong j = 0; j < BenchStep; ++j)
-					{
-						if(NativeMethods.gcry_cipher_encrypt(h, pData32, n32,
-							IntPtr.Zero, IntPtr.Zero) != 0)
-						{
-							Debug.Assert(false);
-							return false;
-						}
-					}
+					bR = GCryptRun16(pbData16R, pbKey32, ref uRoundsR, uTimeMs);
+				}));
+				thR.Start();
 
-					r += BenchStep;
-					if(r < BenchStep) // Overflow check
-					{
-						r = ulong.MaxValue;
-						break;
-					}
+				bool bL = GCryptRun16(pbData16L, pbKey32, ref uRoundsL, uTimeMs);
 
-					uint tElapsed = (uint)(Environment.TickCount - tStart);
-					if(tElapsed > uMaxMs) break;
+				thR.Join();
+
+				if(bL && bR)
+				{
+					if(uTimeMs == 0)
+					{
+						Array.Copy(pbData16L, 0, pbData32, 0, 16);
+						Array.Copy(pbData16R, 0, pbData32, 16, 16);
+					}
+					else
+						uRounds = (Math.Min(uRoundsL, ulong.MaxValue >> 1) +
+							Math.Min(uRoundsR, ulong.MaxValue >> 1)) >> 1;
+
+					return true;
 				}
-
-				uRounds = r / uDiv;
-				return true;
 			}
 			catch(Exception) { Debug.Assert(false); }
-			finally { GCryptEnd(h, pData32, pSeed32); }
+			finally
+			{
+				MemUtil.ZeroByteArray(pbData16L);
+				MemUtil.ZeroByteArray(pbData16R);
+			}
 
 			return false;
+		}
+
+		private static bool TransformKeyGCrypt(byte[] pbData32, byte[] pbKey32,
+			ulong uRounds)
+		{
+			return GCryptRun32(pbData32, pbKey32, ref uRounds, 0);
+		}
+
+		private static bool TransformKeyBenchmarkGCrypt(uint uTimeMs, out ulong uRounds)
+		{
+			uRounds = 0;
+			if(uTimeMs == 0) { Debug.Assert(false); return true; }
+
+			byte[] pbData32 = new byte[32];
+			pbData32[0] = 0x7E;
+			byte[] pbKey32 = new byte[32];
+			pbKey32[0] = 0x4B;
+
+			return GCryptRun32(pbData32, pbKey32, ref uRounds, uTimeMs);
 		}
 	}
 }

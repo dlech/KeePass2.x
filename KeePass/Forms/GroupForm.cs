@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,15 +38,6 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	internal enum GroupFormTab
-	{
-		None = 0,
-		General,
-		Properties,
-		AutoType,
-		CustomData
-	}
-
 	public partial class GroupForm : Form
 	{
 		private PwGroup m_pwGroup = null;
@@ -201,6 +192,13 @@ namespace KeePass.Forms
 			}
 		}
 
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			m_cgExpiry.Release();
+
+			GlobalWindowManager.RemoveWindow(this);
+		}
+
 		private void EnableControlsEx()
 		{
 			m_tbDefaultAutoTypeSeq.Enabled = m_btnAutoTypeEdit.Enabled =
@@ -235,11 +233,6 @@ namespace KeePass.Forms
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-		}
-
-		private void CleanUpEx()
-		{
-			m_cgExpiry.Release();
 		}
 
 		private void OnBtnIcon(object sender, EventArgs e)
@@ -284,12 +277,6 @@ namespace KeePass.Forms
 
 			UIUtil.DestroyForm(dlg);
 			EnableControlsEx();
-		}
-
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			CleanUpEx();
-			GlobalWindowManager.RemoveWindow(this);
 		}
 
 		private void OnCustomDataSelectedIndexChanged(object sender, EventArgs e)

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,11 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Xml;
-using System.IO;
-using System.Diagnostics;
-using System.Drawing;
 
 using KeePass.Resources;
 using KeePass.Util;
@@ -44,11 +43,6 @@ namespace KeePass.DataExchange.Formats
 		public override string FormatName { get { return "FlexWallet XML"; } }
 		public override string DefaultExtension { get { return "xml"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
-
-		public override Image SmallIcon
-		{
-			get { return KeePass.Properties.Resources.B16x16_Imp_FlexWallet; }
-		}
 
 		private const string ElemRoot = "FlexWallet";
 
@@ -184,7 +178,7 @@ namespace KeePass.DataExchange.Formats
 				if(strData.Length > 0)
 				{
 					pe.Strings.Set(strTo, new ProtectedString(false, strData));
-					if(pe.Strings.Remove(strFrom) == false) { Debug.Assert(false); }
+					if(!pe.Strings.Remove(strFrom)) { Debug.Assert(false); }
 				}
 			}
 		} */

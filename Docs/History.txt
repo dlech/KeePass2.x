@@ -1,3 +1,102 @@
+2022-01-09: 2.50
+- On most Windows systems, AES-KDF is now about twice as fast
+  as before
+- On most Linux systems, AES-KDF is now about 4 times as fast
+  as before, if the 'libgcrypt' library is installed
+- On most Windows systems, Argon2d and Argon2id are now about
+  twice as fast as before (for default parameters)
+- On most Linux systems, Argon2d and Argon2id are now about 3
+  times as fast as before (for default parameters), if the
+  'libargon2' library is installed
+- The option 'Enter master key on secure desktop' is now also
+  supported by master key prompt dialogs shown during imports,
+  confirmations (before exporting, printing, changing the
+  master key, ...) and trigger actions
+- The option 'Enter master key on secure desktop' is now also
+  supported by master key creation/change dialogs
+- The key file/provider combo boxes in the master key dialogs
+  now have a tooltip that shows the current value, if the value
+  is very long
+- When running on .NET 4.7.2 or higher, GZip decompression is
+  faster now (i.e. most databases are opened a bit faster,
+  pasting entries from the clipboard is a bit faster, ...)
+- Added password generation button in the entry string field
+  dialog
+- When double-clicking the title cell of an entry in the main
+  entry list while holding down the Shift key, the title is now
+  copied to the clipboard
+- Added support for opening URLs with Pale Moon, Epiphany and
+  Midori in private mode
+- Enhanced application detection on Unix-like systems (support
+  for certain Snap packages, ...)
+- Added support for detecting the latest versions of Chromium
+  on Unix-like systems (for 'Open with ...' commands in the
+  'URL(s)' menu, for the {GOOGLECHROME} placeholder, ...)
+- In the 'URL(s)' menu, there now are separate commands for
+  Google Chrome and Chromium, if both are installed
+- Enhanced support for detecting Vivaldi, Brave, Pale Moon and
+  Epiphany
+- Added support for importing Kaspersky Password Manager 9.0.2
+  TXT files
+- Bitwarden import module: added support for importing
+  subfolders, and collection names are now imported as tags
+- In the 'About KeePass' dialog, each item in the components
+  list now has a tooltip that shows the file/folder path of the
+  component, if it is installed
+- In the 'About KeePass' dialog, a double-click onto a
+  component now shows the component file/folder with the file
+  manager
+- In the 'About KeePass' dialog, the components list now has a
+  context menu that provides the following new commands: 'Show
+  with File Manager', 'Copy Version/Status' and 'Copy Path'
+
+- If the option 'An entry matches if one of its tags is
+  contained in the target window title' is turned on, auto-type
+  now additionally considers tags inherited from groups
+- The built-in password generation patterns 'Hex Key - *-Bit'
+  now use upper-case hexadecimal symbols
+- Improved Spr variance check of the password generator (custom
+  string references, ...)
+- All commands in the password generator menu (shown by the
+  password generator buttons in entry/string dialogs) support
+  the option 'Show dialog for collecting user input as
+  additional entropy' now
+- Improved entropy collection dialog
+- Improved control state updating in the master key prompt
+  dialog and in the master key creation/change dialog
+- Improved key file existence check in the master key
+  creation/change dialog
+- Improved master key construction
+- Improved handling of exclusive key providers
+- Improved compatibility of some dialogs with plugins that can
+  cancel closing the dialog
+- Improved automatic entry selections in the main entry list
+- Access key improvements
+- Improved entry equality test in order to prevent the creation
+  of unnecessary history entries during certain operations
+- XML Replace: improved entry modification detection
+- Improved initial input focus in the single edit dialog
+- In the import/export dialog, the icon of an import/export
+  module now matches the file/procedure type
+- DataVault CSV import module: improved importing of notes
+- Improved native buffer handling
+- When opening/copying the URL of an entry, the last access
+  time of the entry is updated now
+- TrlUtil: added DPI awareness mode declaration
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- Column header context menus are not shown for non-report list
+  views anymore
+- When copying a URL to the clipboard fails, the main entry
+  list is updated now
+- Toggling the password generator option 'Show dialog for
+  collecting user input as additional entropy' now causes a
+  switch to the '(Custom)' profile
+- In the TAN wizard dialog, group names containing ampersands
+  are displayed correctly now
+
 2021-09-10: 2.49
 - Added dedicated context menu for custom string fields in the
   entry dialog, which provides the following new commands:
@@ -1125,7 +1224,7 @@
   the entry editing dialog
 - Added workaround for a Mono timer bug that caused high CPU
   load while showing a file save confirmation dialog
-- Added Mono workaround: when running on Mac OS X, KeePass now
+- Added Mono workaround: when running on MacOS, KeePass now
   does not try to instantiate a tray icon anymore
 - Added workaround for XDoTool sending diacritic characters in
   incorrect case
@@ -1315,7 +1414,7 @@
   anymore; if you want a tray icon on Unity/Pantheon, use the
   application indicator plugin
 - Added workaround for Mono not implementing the property
-  SystemInformation.SmallIconSize for Mac OS X systems
+  SystemInformation.SmallIconSize for MacOS systems
 - Added command line parameter '-wa-disable:' for disabling
   specific Mono workarounds (IDs separated by commas)
 - KPScript: if the value of a '-ref-*:' parameter is enclosed
@@ -1444,7 +1543,7 @@
 - Various code optimizations
 - Minor other improvements
 
-- When running under Mono (Linux, Mac OS X, ...), two options
+- When running under Mono (Linux, MacOS, ...), two options
   related to window minimization are disabled now (because they
   do not work properly due to a Mono bug)
 
@@ -1608,7 +1707,7 @@
 - Added own process memory protection for Unix-like systems (as
   Mono doesn't provide any effective memory protection method)
 - On Unix-like systems, Shift+F10 (and Ctrl+Alt+5 and
-  Ctrl+NumPad5 on Mac OS X) now shows the context menu in most
+  Ctrl+NumPad5 on MacOS) now shows the context menu in most
   list/tree view controls and rich text boxes (like on Windows)
 - KPScript: for the 'Import' command, a different master key
   can now be specified using the standard master key command
@@ -2209,7 +2308,7 @@
   in $XDG_RUNTIME_DIR)
 - Added detection support for the following web browsers on
   Unix-like systems: Rekonq, Midori and Dooble
-- KeePass does not try to set the WM_CLASS property on Mac OS X
+- KeePass does not try to set the WM_CLASS property on MacOS
   systems anymore
 - Modified some icons to work around unsupported PNG
   transparency keys in Mono
@@ -2270,7 +2369,7 @@
   it fails due to the policy 'Unhide Passwords' being disabled
 - Improved menu accelerator and shortcut keys
 - Changed I/O connection name display format
-- Improved browser detection on Mac OS X
+- Improved browser detection on MacOS
 - Task dialog thread safety improvements
 - Added UI check during import for KPScript
 - Upgraded and improved installer (now uses Unicode, LZMA2
@@ -2346,7 +2445,7 @@
   'Always on Top' option now works even when switching to a
   different window while KeePass is starting up)
 - Added workaround for Mono dialog event ordering bug
-- Added workaround for Mono clipboard bugs on Mac OS X
+- Added workaround for Mono clipboard bugs on MacOS
 - KPScript: added 'MoveEntry', 'GetEntryString' and 'GenPw'
   commands
 - KPScript: added '-refx-UUID' and '-refx-Tags' entry
@@ -2864,7 +2963,7 @@
 - Window titles are now trimmed, such that auto-type also works
   with windows whose titles have leading or trailing whitespace
   characters
-- Detection of XSL files works under Linux / Mac OS X now, too
+- Detection of XSL files works under Linux/MacOS now, too
 
 2011-01-02: 2.14
 - Added option to lock after some time of global user
@@ -3417,7 +3516,7 @@
 - Added FIPS compliance problems self-test (see FAQ for details
   about FIPS compliance)
 - Added Rijndael/AES block size validation and configuration
-- Added NotifyIcon workaround for Mono under Mac OS X
+- Added NotifyIcon workaround for Mono under MacOS
 - Added confirmation box for empty master passwords
 - Added radio buttons in auto-type sequence editing dialog to
   choose between the default entry sequence and a custom one
@@ -3613,7 +3712,7 @@
   the KDBX file association
 - Improved warning message when trying to directly open KeePass
   1.x KDB files
-- Improved Linux / Mac OS X compatibility
+- Improved Linux/MacOS compatibility
 - Improved MSI package (removed unnecessary dependency)
 - TrlUtil: improved NumericUpDown and RichTextBox handling
 - Installer now checks for minimum operating system version

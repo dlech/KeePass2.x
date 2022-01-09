@@ -151,8 +151,6 @@
 			this.m_lvHistory = new KeePass.UI.CustomListViewEx();
 			this.m_btnTools = new System.Windows.Forms.Button();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
-			this.m_ctxPwGen = new KeePass.UI.CustomContextMenuStripEx(this.components);
-			this.m_ctxPwGenOpen = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxTools = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxToolsHelp = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsSep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -182,7 +180,6 @@
 			this.m_ctxAutoType.SuspendLayout();
 			this.m_tabHistory.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
-			this.m_ctxPwGen.SuspendLayout();
 			this.m_ctxTools.SuspendLayout();
 			this.m_ctxBinAttach.SuspendLayout();
 			this.SuspendLayout();
@@ -346,7 +343,6 @@
 			this.m_btnGenPw.Size = new System.Drawing.Size(32, 23);
 			this.m_btnGenPw.TabIndex = 11;
 			this.m_btnGenPw.UseVisualStyleBackColor = true;
-			this.m_btnGenPw.Click += new System.EventHandler(this.OnPwGenClick);
 			// 
 			// m_cbHidePassword
 			// 
@@ -1373,21 +1369,6 @@
 			this.m_bannerImage.TabIndex = 16;
 			this.m_bannerImage.TabStop = false;
 			// 
-			// m_ctxPwGen
-			// 
-			this.m_ctxPwGen.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_ctxPwGenOpen});
-			this.m_ctxPwGen.Name = "m_ctxPwGen";
-			this.m_ctxPwGen.Size = new System.Drawing.Size(221, 26);
-			// 
-			// m_ctxPwGenOpen
-			// 
-			this.m_ctxPwGenOpen.Image = global::KeePass.Properties.Resources.B16x16_Key_New;
-			this.m_ctxPwGenOpen.Name = "m_ctxPwGenOpen";
-			this.m_ctxPwGenOpen.Size = new System.Drawing.Size(220, 22);
-			this.m_ctxPwGenOpen.Text = "&Open Password Generator...";
-			this.m_ctxPwGenOpen.Click += new System.EventHandler(this.OnPwGenOpen);
-			// 
 			// m_ctxTools
 			// 
 			this.m_ctxTools.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1559,7 +1540,6 @@
 			this.m_tabHistory.ResumeLayout(false);
 			this.m_tabHistory.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
-			this.m_ctxPwGen.ResumeLayout(false);
 			this.m_ctxTools.ResumeLayout(false);
 			this.m_ctxBinAttach.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -1640,8 +1620,6 @@
 		private System.Windows.Forms.RadioButton m_rbAutoTypeSeqInherit;
 		private System.Windows.Forms.Button m_btnAutoTypeEditDefault;
 		private System.Windows.Forms.Button m_btnStrMore;
-		private KeePass.UI.CustomContextMenuStripEx m_ctxPwGen;
-		private System.Windows.Forms.ToolStripMenuItem m_ctxPwGenOpen;
 		private System.Windows.Forms.TabPage m_tabProperties;
 		private System.Windows.Forms.Button m_btnPickBgColor;
 		private System.Windows.Forms.CheckBox m_cbCustomBackgroundColor;

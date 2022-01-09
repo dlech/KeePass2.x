@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ namespace KeePassLib.Keys
 		/// <param name="strKey">Key to validate.</param>
 		/// <param name="t">Type of the validation to perform.</param>
 		/// <returns>Returns <c>null</c>, if the validation is successful.
-		/// If there's a problem with the key, the returned string describes
+		/// If there is a problem with the key, the returned string describes
 		/// the problem.</returns>
 		public abstract string Validate(string strKey, KeyValidationType t);
 	}

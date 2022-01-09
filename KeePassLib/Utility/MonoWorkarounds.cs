@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ namespace KeePassLib.Utility
 		//   Mono's clipboard functions don't work properly.
 		//   https://sourceforge.net/p/keepass/bugs/1530/
 		// 1574:
-		//   Finalizer of NotifyIcon throws on Mac OS X.
+		//   Finalizer of NotifyIcon throws on MacOS.
 		//   See also 1354.
 		//   https://sourceforge.net/p/keepass/bugs/1574/
 		// 1632:
@@ -155,6 +155,9 @@ namespace KeePassLib.Utility
 		//   [NoRef]
 		// 100003:
 		//   Icon.ExtractAssociatedIcon always returns the same icon.
+		//   [NoRef]
+		// 100004:
+		//   Use native Argon2 implementation.
 		//   [NoRef]
 		// 190417:
 		//   Mono's Process.Start method replaces '\\' by '/'.

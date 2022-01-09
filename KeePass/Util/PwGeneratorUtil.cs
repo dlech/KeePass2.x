@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -62,12 +62,12 @@ namespace KeePass.Util
 		{
 			m_lBuiltIn = new List<PwProfile>();
 
-			AddStdPattern(KPRes.RandomMacAddress, @"HH\-HH\-HH\-HH\-HH\-HH");
-
 			string strHex = KPRes.HexKeyEx;
-			AddStdPattern(strHex.Replace(@"{PARAM}", "40"), @"h{10}");
-			AddStdPattern(strHex.Replace(@"{PARAM}", "128"), @"h{32}");
-			AddStdPattern(strHex.Replace(@"{PARAM}", "256"), @"h{64}");
+			AddStdPattern(strHex.Replace(@"{PARAM}", "40"), @"H{10}");
+			AddStdPattern(strHex.Replace(@"{PARAM}", "128"), @"H{32}");
+			AddStdPattern(strHex.Replace(@"{PARAM}", "256"), @"H{64}");
+
+			AddStdPattern(KPRes.MacAddress, "HH\\-HH\\-HH\\-HH\\-HH\\-HH");
 		}
 
 		private static void AddStdPattern(string strName, string strPattern)

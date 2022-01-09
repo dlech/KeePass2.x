@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,11 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Drawing;
-using System.IO;
-using System.Diagnostics;
 
 using KeePass.Resources;
 
@@ -41,20 +40,13 @@ namespace KeePass.DataExchange.Formats
 		public override bool SupportsExport { get { return false; } }
 
 		public override string FormatName { get { return "Passphrase Keeper HTML"; } }
-		public override string DefaultExtension { get { return @"html|htm"; } }
+		public override string DefaultExtension { get { return "html|htm"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
 		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		public override Image SmallIcon
-		{
-			// Passphrase Keeper uses the same standard XP keys icon
-			// as Whisper 32
-			get { return KeePass.Properties.Resources.B16x16_Imp_Whisper32; }
-		}
-
 		private const string m_strStartTd = "<td class=\"c0\" nowrap>";
-		private const string m_strEndTd = @"</td>";
+		private const string m_strEndTd = "</td>";
 
 		private const string m_strModifiedField = @"{0530D298-F983-454C-B5A3-BFB0775844D1}";
 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -148,12 +148,21 @@ namespace KeePass.Forms
 				lvi.Group = grp.Group;
 				lvi.Tag = f;
 
-				Image imgSmallIcon = f.SmallIcon;
-				if(imgSmallIcon == null)
-					imgSmallIcon = Properties.Resources.B16x16_Folder_Inbox;
+				img = f.SmallIcon;
+				if(img == null)
+				{
+					string strExt = f.DefaultExtension;
+					if(!string.IsNullOrEmpty(strExt))
+						strExt = UIUtil.GetPrimaryFileTypeExt(strExt);
+					if(!string.IsNullOrEmpty(strExt))
+						img = FileIcons.GetImageForExtension(strExt, null);
+				}
+				if(img == null)
+					img = Properties.Resources.B16x16_Folder_Inbox;
 
-				lvi.ImageIndex = lImages.Count;
-				lImages.Add(imgSmallIcon);
+				int iImage = lImages.IndexOf(img);
+				if(iImage < 0) { iImage = lImages.Count; lImages.Add(img); }
+				lvi.ImageIndex = iImage;
 
 				grp.Items.Add(lvi);
 			}
@@ -197,7 +206,7 @@ namespace KeePass.Forms
 			UpdateUIState();
 		}
 
-		private void CleanUpEx()
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			Program.Config.Defaults.ExportMasterKeySpec = m_cbExportMasterKeySpec.Checked;
 			Program.Config.Defaults.ExportParentGroups = m_cbExportParentGroups.Checked;
@@ -210,6 +219,8 @@ namespace KeePass.Forms
 				m_ilFormats.Dispose();
 				m_ilFormats = null;
 			}
+
+			GlobalWindowManager.RemoveWindow(this);
 		}
 
 		private void OnLinkFileFormats(object sender, LinkLabelLinkClickedEventArgs e)
@@ -372,12 +383,6 @@ namespace KeePass.Forms
 		private void OnFormatsSelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
-		}
-
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			CleanUpEx();
-			GlobalWindowManager.RemoveWindow(this);
 		}
 
 		private void OnImportFileTextChanged(object sender, EventArgs e)

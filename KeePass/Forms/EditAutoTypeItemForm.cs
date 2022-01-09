@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -234,7 +234,7 @@ namespace KeePass.Forms
 			{
 				if(!PwDefs.IsStandardField(kvp.Key))
 				{
-					if(bCustomInitialized == false)
+					if(!bCustomInitialized)
 					{
 						rb.AppendLine();
 						rb.AppendLine();
@@ -317,7 +317,7 @@ namespace KeePass.Forms
 			else UIUtil.SetFocus(m_btnOK, this, true);
 		}
 
-		private void CleanUpEx()
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			lock(m_objDialogSync) { m_bDialogClosed = true; }
 
@@ -334,6 +334,8 @@ namespace KeePass.Forms
 #if DEBUG
 			lock(m_oWndTasksSync) { Debug.Assert(m_dWndTasks.Count == 0); }
 #endif
+
+			GlobalWindowManager.RemoveWindow(this);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
@@ -517,11 +519,6 @@ namespace KeePass.Forms
 			EnableControlsEx();
 		}
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
-
 		private void OnWildcardRegexLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.AutoType, AppDefs.HelpTopics.AutoTypeWindowFilters);
@@ -535,11 +532,6 @@ namespace KeePass.Forms
 		private void OnSeqCustomCheckedChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
-		}
-
-		private void OnFormClosing(object sender, FormClosingEventArgs e)
-		{
-			CleanUpEx();
 		}
 
 		private sealed class PwlwInfo

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -262,8 +262,9 @@ namespace KeePass.Util
 			PwGroup pgRootNew = pd.RootGroup;
 			if(pgRootNew == null) { Debug.Assert(false); return; }
 
-			PwCompareOptions pwCmp = (PwCompareOptions.IgnoreParentGroup |
-				PwCompareOptions.NullEmptyEquivStd);
+			const PwCompareOptions cmpOpt = (PwCompareOptions.IgnoreParentGroup |
+				PwCompareOptions.IgnoreHistory | PwCompareOptions.NullEmptyEquivStd);
+			const MemProtCmpMode cmpMem = MemProtCmpMode.CustomOnly;
 			DateTime dtNow = DateTime.UtcNow;
 
 			GroupHandler ghOrg = delegate(PwGroup pg)
@@ -275,8 +276,8 @@ namespace KeePass.Util
 					return true;
 				}
 
-				if(!pgNew.EqualsGroup(pg, (pwCmp | PwCompareOptions.PropertiesOnly),
-					MemProtCmpMode.Full))
+				if(!pgNew.EqualsGroup(pg, (cmpOpt | PwCompareOptions.PropertiesOnly),
+					cmpMem))
 					pgNew.Touch(true, false);
 
 				PwGroup pgParentA = pg.ParentGroup;
@@ -301,33 +302,13 @@ namespace KeePass.Util
 					return true;
 				}
 
-				if(!peNew.EqualsEntry(pe, pwCmp, MemProtCmpMode.Full))
-				{
+				// Restore history entries
+				peNew.History = pe.History.CloneDeep();
+				foreach(PwEntry peHistNew in peNew.History)
+					peHistNew.ParentGroup = peNew.ParentGroup;
+
+				if(!peNew.EqualsEntry(pe, cmpOpt, cmpMem))
 					peNew.Touch(true, false);
-
-					bool bRestoreHistory = false;
-					if(peNew.History.UCount != pe.History.UCount)
-						bRestoreHistory = true;
-					else
-					{
-						for(uint u = 0; u < pe.History.UCount; ++u)
-						{
-							if(!peNew.History.GetAt(u).EqualsEntry(
-								pe.History.GetAt(u), pwCmp, MemProtCmpMode.CustomOnly))
-							{
-								bRestoreHistory = true;
-								break;
-							}
-						}
-					}
-
-					if(bRestoreHistory)
-					{
-						peNew.History = pe.History.CloneDeep();
-						foreach(PwEntry peHistNew in peNew.History)
-							peHistNew.ParentGroup = peNew.ParentGroup;
-					}
-				}
 
 				PwGroup pgParentA = pe.ParentGroup;
 				PwGroup pgParentB = peNew.ParentGroup;

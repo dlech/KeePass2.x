@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -471,7 +471,8 @@ namespace KeePassLib
 			if((pwOpt & PwCompareOptions.IgnoreParentGroup) == PwCompareOptions.None)
 			{
 				if(m_pParentGroup != pg.m_pParentGroup) return false;
-				if(!bIgnoreLastMod && (m_tParentGroupLastMod != pg.m_tParentGroupLastMod))
+				if(!bIgnoreLastMod && !TimeUtil.EqualsFloor(m_tParentGroupLastMod,
+					pg.m_tParentGroupLastMod))
 					return false;
 				if(!m_puPrevParentGroup.Equals(pg.m_puPrevParentGroup))
 					return false;
@@ -483,10 +484,10 @@ namespace KeePassLib
 			if(m_pwIcon != pg.m_pwIcon) return false;
 			if(!m_pwCustomIconID.Equals(pg.m_pwCustomIconID)) return false;
 
-			if(m_tCreation != pg.m_tCreation) return false;
-			if(!bIgnoreLastMod && (m_tLastMod != pg.m_tLastMod)) return false;
-			if(!bIgnoreLastAccess && (m_tLastAccess != pg.m_tLastAccess)) return false;
-			if(m_tExpire != pg.m_tExpire) return false;
+			if(!TimeUtil.EqualsFloor(m_tCreation, pg.m_tCreation)) return false;
+			if(!bIgnoreLastMod && !TimeUtil.EqualsFloor(m_tLastMod, pg.m_tLastMod)) return false;
+			if(!bIgnoreLastAccess && !TimeUtil.EqualsFloor(m_tLastAccess, pg.m_tLastAccess)) return false;
+			if(!TimeUtil.EqualsFloor(m_tExpire, pg.m_tExpire)) return false;
 			if(m_bExpires != pg.m_bExpires) return false;
 			if(!bIgnoreLastAccess && (m_uUsageCount != pg.m_uUsageCount)) return false;
 

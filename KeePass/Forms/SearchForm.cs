@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ namespace KeePass.Forms
 	{
 		private readonly string ProfileCustom = "(" + KPRes.Custom + ")";
 
-		private PwDatabase m_pdContext = null;
+		// private PwDatabase m_pdContext = null;
 		private PwGroup m_pgRoot = null;
 
 		private uint m_uBlockProfileAuto = 0;
@@ -80,7 +80,7 @@ namespace KeePass.Forms
 		/// </summary>
 		public void InitEx(PwDatabase pdContext, PwGroup pgRoot)
 		{
-			m_pdContext = pdContext;
+			// m_pdContext = pdContext;
 			m_pgRoot = pgRoot;
 		}
 

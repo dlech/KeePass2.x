@@ -227,7 +227,7 @@
 			this.m_menuToolsDbSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuToolsDbXmlRep = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsAdv = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuToolsCreateKeyFile = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsRecreateKeyFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuToolsTriggers = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuToolsPlugins = new System.Windows.Forms.ToolStripMenuItem();
@@ -1899,18 +1899,18 @@
 			// m_menuToolsAdv
 			// 
 			this.m_menuToolsAdv.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_menuToolsCreateKeyFile});
+            this.m_menuToolsRecreateKeyFile});
 			this.m_menuToolsAdv.Name = "m_menuToolsAdv";
 			this.m_menuToolsAdv.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsAdv.Text = "&Advanced Tools";
 			// 
-			// m_menuToolsCreateKeyFile
+			// m_menuToolsRecreateKeyFile
 			// 
-			this.m_menuToolsCreateKeyFile.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
-			this.m_menuToolsCreateKeyFile.Name = "m_menuToolsCreateKeyFile";
-			this.m_menuToolsCreateKeyFile.Size = new System.Drawing.Size(160, 22);
-			this.m_menuToolsCreateKeyFile.Text = "&Create Key File...";
-			this.m_menuToolsCreateKeyFile.Click += new System.EventHandler(this.OnToolsCreateKeyFile);
+			this.m_menuToolsRecreateKeyFile.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
+			this.m_menuToolsRecreateKeyFile.Name = "m_menuToolsRecreateKeyFile";
+			this.m_menuToolsRecreateKeyFile.Size = new System.Drawing.Size(285, 22);
+			this.m_menuToolsRecreateKeyFile.Text = "&Recreate Key File From Printed Backup...";
+			this.m_menuToolsRecreateKeyFile.Click += new System.EventHandler(this.OnToolsRecreateKeyFile);
 			// 
 			// m_menuToolsSep1
 			// 
@@ -2783,7 +2783,7 @@
 		private System.Windows.Forms.ToolStripSeparator m_menuFilePrintSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFilePrintKeyFile;
 		private System.Windows.Forms.ToolStripMenuItem m_menuToolsAdv;
-		private System.Windows.Forms.ToolStripMenuItem m_menuToolsCreateKeyFile;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsRecreateKeyFile;
 		private System.Windows.Forms.ToolStripSeparator m_menuGroupMoveSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_menuGroupMoveToPreviousParent;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryMoveToPreviousParent;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,16 +40,17 @@ namespace KeePass.Forms
 {
 	public partial class EditStringForm : Form
 	{
-		private ProtectedStringDictionary m_vStringDict = null;
-		private string m_strStringName = null;
-		private ProtectedString m_psStringInitialValue = null;
-		private PwDatabase m_pwContext = null;
+		private ProtectedStringDictionary m_dStrings = null;
+		private string m_strInitName = null;
+		private ProtectedString m_psInitValue = null;
+		private PwDatabase m_pdContext = null;
 
 		private List<string> m_lSuggestedNames = new List<string>();
 		private List<string> m_lStdNames = PwDefs.GetStandardFields();
-		private char[] m_vInvalidChars = new char[] { '{', '}' };
+		private readonly char[] m_vInvalidChars = new char[] { '{', '}' };
 
 		private RichTextBoxContextMenu m_ctxValue = new RichTextBoxContextMenu();
+		private PwGeneratorMenu m_pgm = null;
 
 		private bool m_bReadOnly = false;
 		[Browsable(false)]
@@ -83,31 +84,25 @@ namespace KeePass.Forms
 		/// <summary>
 		/// Initialize the dialog. Needs to be called before the dialog is shown.
 		/// </summary>
-		/// <param name="vStringDict">String container. Must not be <c>null</c>.</param>
-		/// <param name="strStringName">Initial name of the string. May be <c>null</c>.</param>
-		/// <param name="psStringInitialValue">Initial value. May be <c>null</c>.</param>
-		public void InitEx(ProtectedStringDictionary vStringDict, string strStringName,
-			ProtectedString psStringInitialValue, PwDatabase pwContext)
+		public void InitEx(ProtectedStringDictionary dStrings, string strInitName,
+			ProtectedString psInitValue, PwDatabase pdContext)
 		{
-			Debug.Assert(vStringDict != null); if(vStringDict == null) throw new ArgumentNullException("vStringDict");
-			m_vStringDict = vStringDict;
+			if(dStrings == null) { Debug.Assert(false); throw new ArgumentNullException("dStrings"); }
 
-			m_strStringName = strStringName;
-			m_psStringInitialValue = psStringInitialValue;
-
-			m_pwContext = pwContext;
+			m_dStrings = dStrings;
+			m_strInitName = strInitName;
+			m_psInitValue = psInitValue;
+			m_pdContext = pdContext;
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_vStringDict != null); if(m_vStringDict == null) throw new InvalidOperationException();
+			if(m_dStrings == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			GlobalWindowManager.AddWindow(this);
 
-			m_ctxValue.Attach(m_richStringValue, this);
-
 			string strTitle, strDesc;
-			if(m_strStringName == null)
+			if(m_strInitName == null)
 			{
 				strTitle = KPRes.AddStringField;
 				strDesc = KPRes.AddStringFieldDesc;
@@ -122,15 +117,27 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_Font, strTitle, strDesc);
 			this.Icon = AppIcons.Default;
 
-			UIUtil.EnableAutoCompletion(m_cmbStringName, true);
-			UIUtil.PrepareStandardMultilineControl(m_richStringValue, true, true);
+			UIUtil.ConfigureToolTip(m_ttRect);
 
-			if(m_strStringName != null) m_cmbStringName.Text = m_strStringName;
-			if(m_psStringInitialValue != null)
+			UIUtil.EnableAutoCompletion(m_cmbName, true);
+
+			UIUtil.PrepareStandardMultilineControl(m_rtbValue, true, true);
+			m_ctxValue.Attach(m_rtbValue, this);
+
+			GFunc<PwEntry> fGetContextEntry = delegate()
 			{
-				m_richStringValue.Text = StrUtil.NormalizeNewLines(
-					m_psStringInitialValue.ReadString(), true);
-				UIUtil.SetChecked(m_cbProtect, m_psStringInitialValue.IsProtected);
+				return PwEntry.CreateVirtual(((m_pdContext != null) ? m_pdContext.RootGroup :
+					null) ?? new PwGroup(true, true), m_dStrings);
+			};
+			m_pgm = new PwGeneratorMenu(m_btnGenPw, m_ttRect, m_rtbValue,
+				fGetContextEntry, m_pdContext, (m_mvec != null));
+
+			if(m_strInitName != null) m_cmbName.Text = m_strInitName;
+			if(m_psInitValue != null)
+			{
+				m_rtbValue.Text = StrUtil.NormalizeNewLines(
+					m_psInitValue.ReadString(), true);
+				UIUtil.SetChecked(m_cbProtect, m_psInitValue.IsProtected);
 			}
 
 			ValidateStringNameUI();
@@ -138,37 +145,51 @@ namespace KeePass.Forms
 
 			if(m_mvec != null)
 			{
-				m_cmbStringName.Enabled = false;
-				MultipleValuesEx.ConfigureText(m_richStringValue, true);
+				m_cmbName.Enabled = false;
+				MultipleValuesEx.ConfigureText(m_rtbValue, true);
 
 				bool bMultiProt;
-				m_mvec.MultiStringProt.TryGetValue(m_cmbStringName.Text, out bMultiProt);
+				m_mvec.MultiStringProt.TryGetValue(m_cmbName.Text, out bMultiProt);
 				if(bMultiProt)
 					MultipleValuesEx.ConfigureState(m_cbProtect, true);
 			}
 
 			if(m_bReadOnly)
 			{
-				m_cmbStringName.Enabled = false;
-				m_richStringValue.ReadOnly = true;
+				m_cmbName.Enabled = false;
+				m_rtbValue.ReadOnly = true;
 				m_cbProtect.Enabled = false;
+				m_btnGenPw.Enabled = false;
 				// m_btnOK.Enabled = false; // See ValidateStringNameUI
 			}
 
 			// UIUtil.SetFocus(..., this); // See PopulateNamesComboBox
 		}
 
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			m_ctxValue.Detach();
+
+			if(m_pgm != null)
+			{
+				m_pgm.Dispose();
+				m_pgm = null;
+			}
+			else { Debug.Assert(false); }
+
+			GlobalWindowManager.RemoveWindow(this);
+		}
+
 		private bool ValidateStringNameUI()
 		{
 			string strResult;
 			bool bError;
-			bool b = ValidateStringName(m_cmbStringName.Text, out strResult,
-				out bError);
+			bool b = ValidateStringName(m_cmbName.Text, out strResult, out bError);
 
 			Debug.Assert(!m_lblValidationInfo.AutoSize); // For RTL support
 			m_lblValidationInfo.Text = strResult;
-			if(bError) m_cmbStringName.BackColor = AppDefs.ColorEditError;
-			else m_cmbStringName.ResetBackColor();
+			if(bError) m_cmbName.BackColor = AppDefs.ColorEditError;
+			else m_cmbName.ResetBackColor();
 
 			b &= !m_bReadOnly;
 			m_btnOK.Enabled = b;
@@ -197,7 +218,7 @@ namespace KeePass.Forms
 				return false;
 			}
 
-			if(str == m_strStringName) // Case-sensitive
+			if(str == m_strInitName) // Case-sensitive
 			{
 				strResult = string.Empty;
 				bError = false;
@@ -212,11 +233,11 @@ namespace KeePass.Forms
 
 			if(str.IndexOfAny(m_vInvalidChars) >= 0) return false;
 
-			if(str.Equals(m_strStringName, StrUtil.CaseIgnoreCmp) &&
-				!m_vStringDict.Exists(str)) { } // Just changing case
+			if(str.Equals(m_strInitName, StrUtil.CaseIgnoreCmp) &&
+				!m_dStrings.Exists(str)) { } // Just changing case
 			else
 			{
-				foreach(string strExisting in m_vStringDict.GetKeys())
+				foreach(string strExisting in m_dStrings.GetKeys())
 				{
 					if(str.Equals(strExisting, StrUtil.CaseIgnoreCmp))
 					{
@@ -235,7 +256,7 @@ namespace KeePass.Forms
 		{
 			if(m_bReadOnly) { Debug.Assert(false); return; }
 
-			string strName = m_cmbStringName.Text;
+			string strName = m_cmbName.Text;
 
 			if(!ValidateStringNameUI())
 			{
@@ -243,20 +264,20 @@ namespace KeePass.Forms
 				return;
 			}
 
-			if(m_strStringName == null) // Add string field
+			if(m_strInitName == null) // Add string field
 			{
-				Debug.Assert(!m_vStringDict.Exists(strName));
+				Debug.Assert(!m_dStrings.Exists(strName));
 			}
 			else // Edit string field
 			{
-				if(!m_strStringName.Equals(strName))
-					m_vStringDict.Remove(m_strStringName);
+				if(strName != m_strInitName)
+					m_dStrings.Remove(m_strInitName);
 			}
 
-			string strValue = StrUtil.NormalizeNewLines(m_richStringValue.Text, true);
-			if(m_psStringInitialValue != null)
+			string strValue = StrUtil.NormalizeNewLines(m_rtbValue.Text, true);
+			if(m_psInitValue != null)
 			{
-				string strValueIn = m_psStringInitialValue.ReadString();
+				string strValueIn = m_psInitValue.ReadString();
 
 				// If the initial and the new value differ only by
 				// new-line encoding, use the initial value to avoid
@@ -269,7 +290,7 @@ namespace KeePass.Forms
 			CheckState cs = m_cbProtect.CheckState;
 
 			ProtectedString ps = new ProtectedString((cs == CheckState.Checked), strValue);
-			m_vStringDict.Set(strName, ps);
+			m_dStrings.Set(strName, ps);
 
 			if(m_mvec != null)
 				m_mvec.MultiStringProt[strName] = (cs == CheckState.Indeterminate);
@@ -277,11 +298,6 @@ namespace KeePass.Forms
 
 		private void OnBtnCancel(object sender, EventArgs e)
 		{
-		}
-
-		private void CleanUpEx()
-		{
-			m_ctxValue.Detach();
 		}
 
 		private void PopulateNamesComboBox()
@@ -299,7 +315,7 @@ namespace KeePass.Forms
 
 		private void PopulateNamesCollectFuncPriv()
 		{
-			if(m_pwContext == null) { Debug.Assert(false); return; }
+			if(m_pdContext == null) { Debug.Assert(false); return; }
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
@@ -313,7 +329,7 @@ namespace KeePass.Forms
 						// Do not suggest any case-insensitive variant of the
 						// initial string, otherwise the string case cannot
 						// be changed (due to auto-completion resetting it)
-						if(!kvp.Key.Equals(m_strStringName, StrUtil.CaseIgnoreCmp))
+						if(!kvp.Key.Equals(m_strInitName, StrUtil.CaseIgnoreCmp))
 							m_lSuggestedNames.Add(kvp.Key);
 					}
 				}
@@ -321,12 +337,12 @@ namespace KeePass.Forms
 				return true;
 			};
 
-			m_pwContext.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
+			m_pdContext.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 
 			m_lSuggestedNames.Sort();
 
-			if(m_cmbStringName.InvokeRequired)
-				m_cmbStringName.Invoke(new VoidDelegate(this.PopulateNamesAddFunc));
+			if(m_cmbName.InvokeRequired)
+				m_cmbName.Invoke(new VoidDelegate(this.PopulateNamesAddFunc));
 			else PopulateNamesAddFunc();
 		}
 
@@ -334,11 +350,11 @@ namespace KeePass.Forms
 		{
 			List<object> l = m_lSuggestedNames.ConvertAll<object>(
 				delegate(string str) { return (object)str; });
-			m_cmbStringName.Items.AddRange(l.ToArray());
+			m_cmbName.Items.AddRange(l.ToArray());
 
-			if(m_strStringName == null)
-				UIUtil.SetFocus(m_cmbStringName, this, true);
-			else UIUtil.SetFocus(m_richStringValue, this, true);
+			if(m_strInitName == null)
+				UIUtil.SetFocus(m_cmbName, this, true);
+			else UIUtil.SetFocus(m_rtbValue, this, true);
 		}
 
 		private void OnBtnHelp(object sender, EventArgs e)
@@ -346,19 +362,9 @@ namespace KeePass.Forms
 			AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryStrings);
 		}
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
-
 		private void OnNameTextChanged(object sender, EventArgs e)
 		{
 			ValidateStringNameUI();
-		}
-
-		private void OnFormClosing(object sender, FormClosingEventArgs e)
-		{
-			CleanUpEx();
 		}
 	}
 }

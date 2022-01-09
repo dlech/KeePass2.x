@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,9 +38,6 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	public delegate void AceColumnDelegate(AceColumn c);
-	// public delegate void UpdateUIDelegate(bool bGuiToInternal);
-
 	public partial class ColumnsForm : Form
 	{
 		private bool m_bIgnoreHideCheckEvent = false;
@@ -139,7 +136,7 @@ namespace KeePass.Forms
 
 		private void AddAceColumn(List<AceColumn> lContainer, AceColumn c)
 		{
-			m_lvColumns.Invoke(new AceColumnDelegate(AddAceColumnTh), c);
+			m_lvColumns.Invoke(new GAction<AceColumn>(AddAceColumnTh), c);
 			lContainer.Add(c);
 		}
 

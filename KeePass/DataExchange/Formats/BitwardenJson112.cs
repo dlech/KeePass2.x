@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Text;
 
@@ -42,11 +41,6 @@ namespace KeePass.DataExchange.Formats
 		public override string FormatName { get { return "Bitwarden JSON"; } }
 		public override string DefaultExtension { get { return "json"; } }
 		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
-
-		public override Image SmallIcon
-		{
-			get { return KeePass.Properties.Resources.B16x16_Imp_Bitwarden; }
-		}
 
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
@@ -72,13 +66,19 @@ namespace KeePass.DataExchange.Formats
 			if(vGroups != null) ImportGroups(vGroups, dGroups, pd);
 			dGroups[string.Empty] = pd.RootGroup; // Also when vGroups is null
 
+			Dictionary<string, string> dCollections = new Dictionary<string, string>();
+			JsonObject[] vCollections = jo.GetValueArray<JsonObject>("collections");
+			if(vCollections != null) ImportCollections(vCollections, dCollections);
+
 			JsonObject[] vEntries = jo.GetValueArray<JsonObject>("items");
-			if(vEntries != null) ImportEntries(vEntries, dGroups, pd);
+			if(vEntries != null) ImportEntries(vEntries, dGroups, dCollections, pd);
 		}
 
 		private static void ImportGroups(JsonObject[] vGroups,
 			Dictionary<string, PwGroup> dGroups, PwDatabase pd)
 		{
+			char[] vSep = new char[] { '/' };
+
 			foreach(JsonObject jo in vGroups)
 			{
 				if(jo == null) { Debug.Assert(false); continue; }
@@ -86,27 +86,40 @@ namespace KeePass.DataExchange.Formats
 				string strID = (jo.GetValue<string>("id") ?? string.Empty);
 				string strName = (jo.GetValue<string>("name") ?? string.Empty);
 
-				PwGroup pg = new PwGroup(true, true);
-				pg.Name = strName;
+				dGroups[strID] = pd.RootGroup.FindCreateSubTree(strName, vSep);
+			}
+		}
 
-				pd.RootGroup.AddGroup(pg, true);
-				dGroups[strID] = pg;
+		private static void ImportCollections(JsonObject[] vCollections,
+			Dictionary<string, string> dCollections)
+		{
+			foreach(JsonObject jo in vCollections)
+			{
+				if(jo == null) { Debug.Assert(false); continue; }
+
+				string strID = jo.GetValue<string>("id");
+				string strName = jo.GetValue<string>("name");
+
+				if(!string.IsNullOrEmpty(strID) && !string.IsNullOrEmpty(strName))
+					dCollections[strID] = strName.Replace("/", " / ");
+				else { Debug.Assert(false); }
 			}
 		}
 
 		private static void ImportEntries(JsonObject[] vEntries,
-			Dictionary<string, PwGroup> dGroups, PwDatabase pd)
+			Dictionary<string, PwGroup> dGroups, Dictionary<string, string> dCollections,
+			PwDatabase pd)
 		{
 			foreach(JsonObject jo in vEntries)
 			{
 				if(jo == null) { Debug.Assert(false); continue; }
 
-				ImportEntry(jo, dGroups, pd);
+				ImportEntry(jo, dGroups, dCollections, pd);
 			}
 		}
 
 		private static void ImportEntry(JsonObject jo, Dictionary<string, PwGroup> dGroups,
-			PwDatabase pd)
+			Dictionary<string, string> dCollections, PwDatabase pd)
 		{
 			PwEntry pe = new PwEntry(true, true);
 
@@ -115,6 +128,20 @@ namespace KeePass.DataExchange.Formats
 			dGroups.TryGetValue(strGroupID, out pg);
 			if(pg == null) { Debug.Assert(false); pg = dGroups[string.Empty]; }
 			pg.AddEntry(pe, true);
+
+			string[] vCollections = jo.GetValueArray<string>("collectionIds");
+			if(vCollections != null)
+			{
+				foreach(string strID in vCollections)
+				{
+					if(string.IsNullOrEmpty(strID)) { Debug.Assert(false); continue; }
+
+					string strName;
+					if(dCollections.TryGetValue(strID, out strName))
+						pe.AddTag(strName);
+					else { Debug.Assert(false); }
+				}
+			}
 
 			ImportString(jo, "name", pe, PwDefs.TitleField, pd);
 			ImportString(jo, "notes", pe, PwDefs.NotesField, pd);
