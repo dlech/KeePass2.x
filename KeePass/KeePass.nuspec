@@ -8,11 +8,17 @@
     <owners>dlech</owners>
     <license type="expression">GPL-2.0-or-later</license>
     <projectUrl>https://keepass.info</projectUrl>
-    <iconUrl>https://keepass.info/images/icons/keepass_64x64.png</iconUrl>
+    <icon>content/keepass_256x256.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Unofficial debug build of KeePass for extension development.</description>
-    <copyright>Copyright (C) 2003-2021 Dominik Reichl</copyright>
+    <copyright>Copyright (C) 2003-2022 Dominik Reichl</copyright>
     <tags>KeePass</tags>
     <repository type="git" url="https://github.com/dlech/KeePass2.x" />
+    <dependencies>
+      <group targetFramework=".NETFramework4.6.2" />
+    </dependencies>
   </metadata>
+  <files>
+    <file src="..\keepass_256x256.png" target="content\" />
+  </files>
 </package>
