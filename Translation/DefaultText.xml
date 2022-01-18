@@ -445,6 +445,9 @@
 		<Data Name="CopyLink">
 			<Value>Copy Link</Value>
 		</Data>
+		<Data Name="CopyObject">
+			<Value>Copy {PARAM}</Value>
+		</Data>
 		<Data Name="CopyOfItem">
 			<Value>Copy</Value>
 		</Data>
@@ -1318,8 +1321,8 @@
 		<Data Name="KeyFileFromBackup">
 			<Value>There are two ways to recreate a key file from this backup</Value>
 		</Data>
-		<Data Name="KeyFileFromBackupF">
-			<Value>Start KeePass, click on 'Tools' -&gt; 'Advanced Tools' -&gt; 'Create Key File', and fill out the form that is displayed on the screen.</Value>
+		<Data Name="KeyFileFromBackupF2">
+			<Value>Start KeePass, click on 'Tools' -&gt; 'Advanced Tools' -&gt; 'Recreate Key File From Printed Backup', and fill out the form that is displayed on the screen.</Value>
 		</Data>
 		<Data Name="KeyFileFromBackupT">
 			<Value>Alternatively, start a text editor (e.g. Notepad), type the content above, and save it to a new file (with file extension 'keyx').</Value>
@@ -1353,6 +1356,9 @@
 		</Data>
 		<Data Name="KeyFileUseExisting">
 			<Value>Use an existing key file</Value>
+		</Data>
+		<Data Name="KeyProvExclusive">
+			<Value>The selected key provider disallows combining it with any other master key component.</Value>
 		</Data>
 		<Data Name="KeyProvider">
 			<Value>Key provider</Value>
@@ -1434,6 +1440,9 @@
 		</Data>
 		<Data Name="LockWorkspace">
 			<Value>Lock workspace</Value>
+		</Data>
+		<Data Name="MacAddress">
+			<Value>MAC Address</Value>
 		</Data>
 		<Data Name="MainInstruction">
 			<Value>Main instruction</Value>
@@ -1771,6 +1780,9 @@
 		<Data Name="Paste">
 			<Value>Paste</Value>
 		</Data>
+		<Data Name="Path">
+			<Value>Path</Value>
+		</Data>
 		<Data Name="PerformAutoType">
 			<Value>Perform Auto-&amp;Type</Value>
 		</Data>
@@ -1921,6 +1933,9 @@
 		<Data Name="ProfileSavePrompt">
 			<Value>Enter a name for the new profile or select an existing profile to overwrite it:</Value>
 		</Data>
+		<Data Name="PwGenOpen">
+			<Value>Open Password Generator...</Value>
+		</Data>
 		<Data Name="Quality">
 			<Value>Quality</Value>
 		</Data>
@@ -1944,9 +1959,6 @@
 		</Data>
 		<Data Name="QuickSearchTb">
 			<Value>Quick Search (Toolbar)</Value>
-		</Data>
-		<Data Name="RandomMacAddress">
-			<Value>Random MAC Address</Value>
 		</Data>
 		<Data Name="Ready">
 			<Value>Ready.</Value>
@@ -2119,6 +2131,12 @@
 		<Data Name="SecDeskFileDialogHint">
 			<Value>Note: KeePass shows this simple file browser dialog, because standard Windows file dialogs cannot be shown on the secure desktop for security reasons.</Value>
 		</Data>
+		<Data Name="SecDeskOpContinueOnNormal">
+			<Value>KeePass will cancel the current dialog and switch to the normal desktop. The requested operation will then be performed on the normal desktop.</Value>
+		</Data>
+		<Data Name="SecDeskOpUnsupported">
+			<Value>This operation cannot be performed on the secure desktop.</Value>
+		</Data>
 		<Data Name="SecDeskOtherSwitched">
 			<Value>An application has switched from the secure desktop to a different desktop.</Value>
 		</Data>
@@ -2199,6 +2217,9 @@
 		</Data>
 		<Data Name="ShowMore">
 			<Value>Show more</Value>
+		</Data>
+		<Data Name="ShowWithFileManager">
+			<Value>&amp;Show with File Manager</Value>
 		</Data>
 		<Data Name="SimilarPasswords">
 			<Value>Similar Passwords</Value>

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -815,7 +815,7 @@ namespace KeePass.Forms
 			Program.Config.Apply(AceApplyFlags.All);
 		}
 
-		private void CleanUpEx()
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			int nTab = m_tabMain.SelectedIndex;
 			if((nTab >= 0) && (nTab < m_tabMain.TabPages.Count))
@@ -831,6 +831,8 @@ namespace KeePass.Forms
 			m_cdxAdvanced.Release();
 
 			AppConfigEx.ClearXmlPathCache();
+
+			GlobalWindowManager.RemoveWindow(this);
 		}
 
 		private static void ChangeHotKey(ref Keys kPrev, HotKeyControlEx hkControl,
@@ -981,8 +983,7 @@ namespace KeePass.Forms
 			if(bRequested != bCurrent)
 			{
 				string strPath = WinUtil.GetExecutable().Trim();
-				if(strPath.StartsWith("\"") == false)
-					strPath = "\"" + strPath + "\"";
+				if(!strPath.StartsWith("\"")) strPath = "\"" + strPath + "\"";
 				ShellUtil.SetStartWithWindows(AppDefs.AutoRunName, strPath,
 					bRequested);
 
@@ -991,12 +992,6 @@ namespace KeePass.Forms
 				if(bNew != bRequested)
 					m_cbAutoRun.Checked = bNew;
 			}
-		}
-
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			CleanUpEx();
-			GlobalWindowManager.RemoveWindow(this);
 		}
 
 		private void OnPolicyInfoLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

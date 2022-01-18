@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,9 +32,11 @@ using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Cryptography;
+using KeePassLib.Delegates;
 using KeePassLib.Utility;
 
-// using KpLibNativeMethods = KeePassLib.Native.NativeMethods;
+using NativeLib = KeePassLib.Native.NativeLib;
+// using KplNativeMethods = KeePassLib.Native.NativeMethods;
 
 namespace KeePass.UI
 {
@@ -64,6 +66,11 @@ namespace KeePass.UI
 			public object ResultObject = null;
 
 			public SecureThreadState State = SecureThreadState.None;
+		}
+
+		internal static bool IsSupported
+		{
+			get { return (WinUtil.IsAtLeastWindows2000 && !NativeLib.IsUnix()); }
 		}
 
 		public ProtectedDialog(UIFormConstructor fnConstruct,
@@ -195,9 +202,13 @@ namespace KeePass.UI
 			if(dr == DialogResult.None)
 			{
 				Form f = m_fnConstruct(objConstructParam);
-				dr = f.ShowDialog();
-				objResult = m_fnResultBuilder(f);
-				UIUtil.DestroyForm(f);
+
+				try
+				{
+					dr = f.ShowDialog();
+					objResult = m_fnResultBuilder(f); // Always
+				}
+				finally { if(f != null) UIUtil.DestroyForm(f); }
 			}
 
 			return dr;
@@ -218,6 +229,7 @@ namespace KeePass.UI
 			List<BackgroundForm> lBackForms = new List<BackgroundForm>();
 			BackgroundForm formBackPrimary = null;
 			// bool bLangBar = false;
+			Form f = null;
 
 			try
 			{
@@ -230,8 +242,8 @@ namespace KeePass.UI
 				ProcessMessagesEx();
 
 				// Test whether we're really on the secure desktop
-				if(NativeMethods.GetThreadDesktop(NativeMethods.GetCurrentThreadId()) !=
-					stp.ThreadDesktop)
+				uint uThreadId = NativeMethods.GetCurrentThreadId();
+				if(NativeMethods.GetThreadDesktop(uThreadId) != stp.ThreadDesktop)
 				{
 					Debug.Assert(false);
 					return;
@@ -285,7 +297,7 @@ namespace KeePass.UI
 
 				ProcessMessagesEx();
 
-				Form f = m_fnConstruct(stp.FormConstructParam);
+				f = m_fnConstruct(stp.FormConstructParam);
 				if(f == null) { Debug.Assert(false); return; }
 
 				if(Program.Config.UI.SecureDesktopPlaySound)
@@ -295,13 +307,13 @@ namespace KeePass.UI
 
 				lock(stp) { stp.State = SecureThreadState.ShowingDialog; }
 				stp.DialogResult = f.ShowDialog(formBackPrimary);
-				stp.ResultObject = m_fnResultBuilder(f);
-
-				UIUtil.DestroyForm(f);
+				stp.ResultObject = m_fnResultBuilder(f); // Always
 			}
 			catch(Exception) { Debug.Assert(false); }
 			finally
 			{
+				if(f != null) UIUtil.DestroyForm(f);
+
 				// if(bLangBar) ShowLangBar(false);
 
 				foreach(BackgroundForm formBack in lBackForms)
@@ -322,9 +334,8 @@ namespace KeePass.UI
 		{
 			try
 			{
-				return KpLibNativeMethods.TfShowLangBar(bShow ?
-					KpLibNativeMethods.TF_SFT_SHOWNORMAL :
-					KpLibNativeMethods.TF_SFT_HIDDEN);
+				return KplNativeMethods.TfShowLangBar(bShow ?
+					KplNativeMethods.TF_SFT_SHOWNORMAL : KplNativeMethods.TF_SFT_HIDDEN);
 			}
 			catch(Exception) { }
 
@@ -385,5 +396,75 @@ namespace KeePass.UI
 			}
 			catch(Exception) { Debug.Assert(false); }
 		} */
+
+		internal static DialogResult ShowDialog<TForm, TResult>(bool bProtect,
+			GFunc<TForm> fnConstruct, GFunc<TForm, TResult> fnResultBuilder,
+			out TResult r)
+			where TForm : Form
+			where TResult : class
+		{
+			if(fnConstruct == null) { Debug.Assert(false); throw new ArgumentNullException("fnConstruct"); }
+			if(fnResultBuilder == null) { Debug.Assert(false); throw new ArgumentNullException("fnResultBuilder"); }
+
+			r = null;
+
+			if(!bProtect)
+			{
+				TForm tf = fnConstruct();
+				if(tf == null) { Debug.Assert(false); return DialogResult.None; }
+
+				try
+				{
+					DialogResult drDirect = tf.ShowDialog();
+					r = fnResultBuilder(tf); // Always
+					return drDirect;
+				}
+				finally { UIUtil.DestroyForm(tf); }
+			}
+
+			UIFormConstructor fnUifC = delegate(object objParam)
+			{
+				return fnConstruct();
+			};
+
+			UIFormResultBuilder fnUifRB = delegate(Form f)
+			{
+				TForm tf = (f as TForm);
+				if(tf == null) { Debug.Assert(false); return null; }
+
+				return fnResultBuilder(tf);
+			};
+
+			ProtectedDialog dlg = new ProtectedDialog(fnUifC, fnUifRB);
+
+			object objResult;
+			DialogResult dr = dlg.ShowDialog(out objResult, null);
+			r = (objResult as TResult);
+			return dr;
+		}
+
+		private static bool AskContinueOnNormalDesktop()
+		{
+			return MessageService.AskYesNo(KPRes.SecDeskOpUnsupported +
+				MessageService.NewParagraph + KPRes.SecDeskOpContinueOnNormal +
+				MessageService.NewParagraph + KPRes.AskContinue);
+		}
+
+		internal static void ContinueOnNormalDesktop(GAction fn, Form form,
+			ref GAction fnInvokeAfterClose, bool bSecureDesktop)
+		{
+			if(fn == null) { Debug.Assert(false); return; }
+			if(form == null) { Debug.Assert(false); return; }
+			Debug.Assert(fnInvokeAfterClose == null);
+
+			if(bSecureDesktop)
+			{
+				if(!AskContinueOnNormalDesktop()) return;
+
+				fnInvokeAfterClose = fn;
+				form.DialogResult = DialogResult.Cancel;
+			}
+			else fn();
+		}
 	}
 }

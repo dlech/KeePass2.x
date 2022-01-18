@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1155,7 +1155,7 @@ namespace KeePassLib.Utility
 		/// Normalize new line characters in a string. Input strings may
 		/// contain mixed new line character sequences from all commonly
 		/// used operating systems (i.e. \r\n from Windows, \n from Unix
-		/// and \r from Mac OS.
+		/// and \r from MacOS.
 		/// </summary>
 		/// <param name="str">String with mixed new line characters.</param>
 		/// <param name="bWindows">If <c>true</c>, new line characters

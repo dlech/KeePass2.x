@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@ namespace KeePass.DataExchange.Formats
 		public override string DefaultExtension { get { return AppDefs.FileExtension.FileExt; } }
 		public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
 
-		public override bool SupportsUuids { get { return true; } }
 		public override bool RequiresKey { get { return true; } }
+		public override bool SupportsUuids { get { return true; } }
 
 		public override Image SmallIcon
 		{

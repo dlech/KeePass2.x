@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,59 +45,23 @@ namespace KeePassLib.Native
 		// internal const uint TF_SFT_SHOWNORMAL = 0x00000001;
 		// internal const uint TF_SFT_HIDDEN = 0x00000008;
 
-		/* [DllImport("KeePassNtv32.dll", EntryPoint = "TransformKey")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKey32(IntPtr pBuf256,
-			IntPtr pKey256, UInt64 uRounds);
-
-		[DllImport("KeePassNtv64.dll", EntryPoint = "TransformKey")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKey64(IntPtr pBuf256,
-			IntPtr pKey256, UInt64 uRounds);
-
-		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
-			UInt64 uRounds)
-		{
-			if(IntPtr.Size == 4)
-				return TransformKey32(pBuf256, pKey256, uRounds);
-			return TransformKey64(pBuf256, pKey256, uRounds);
-		}
-
-		[DllImport("KeePassNtv32.dll", EntryPoint = "TransformKeyTimed")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKeyTimed32(IntPtr pBuf256,
-			IntPtr pKey256, ref UInt64 puRounds, UInt32 uSeconds);
-
-		[DllImport("KeePassNtv64.dll", EntryPoint = "TransformKeyTimed")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKeyTimed64(IntPtr pBuf256,
-			IntPtr pKey256, ref UInt64 puRounds, UInt32 uSeconds);
-
-		internal static bool TransformKeyTimed(IntPtr pBuf256, IntPtr pKey256,
-			ref UInt64 puRounds, UInt32 uSeconds)
-		{
-			if(IntPtr.Size == 4)
-				return TransformKeyTimed32(pBuf256, pKey256, ref puRounds, uSeconds);
-			return TransformKeyTimed64(pBuf256, pKey256, ref puRounds, uSeconds);
-		} */
-
 #if !KeePassUAP
 		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKey256")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKey32(IntPtr pBuf256,
-			IntPtr pKey256, UInt64 uRounds);
+		private static extern bool TransformKey32(IntPtr pbBuf256,
+			IntPtr pbKey256, UInt64 uRounds);
 
 		[DllImport("KeePassLibC64.dll", EntryPoint = "TransformKey256")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKey64(IntPtr pBuf256,
-			IntPtr pKey256, UInt64 uRounds);
+		private static extern bool TransformKey64(IntPtr pbBuf256,
+			IntPtr pbKey256, UInt64 uRounds);
 
-		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
+		internal static bool TransformKey(IntPtr pbBuf256, IntPtr pbKey256,
 			UInt64 uRounds)
 		{
 			if(IntPtr.Size == 4)
-				return TransformKey32(pBuf256, pKey256, uRounds);
-			return TransformKey64(pBuf256, pKey256, uRounds);
+				return TransformKey32(pbBuf256, pbKey256, uRounds);
+			return TransformKey64(pbBuf256, pbKey256, uRounds);
 		}
 
 		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKeyBenchmark256")]
@@ -113,6 +77,21 @@ namespace KeePassLib.Native
 			return TransformKeyBenchmark64(uTimeMs);
 		}
 #endif
+
+		// =============================================================
+		// LibArgon2 20190702+
+
+		[DllImport("KeePassLibC32.dll", EntryPoint = "argon2_hash")]
+		internal static extern int argon2_hash_w32(uint t_cost, uint m_cost,
+			uint parallelism, IntPtr pwd, IntPtr pwdlen, IntPtr salt,
+			IntPtr saltlen, IntPtr hash, IntPtr hashlen, IntPtr encoded,
+			IntPtr encodedlen, int type, uint version);
+		[DllImport("KeePassLibC64.dll", EntryPoint = "argon2_hash")]
+		internal static extern int argon2_hash_w64(uint t_cost, uint m_cost,
+			uint parallelism, IntPtr pwd, IntPtr pwdlen, IntPtr salt,
+			IntPtr saltlen, IntPtr hash, IntPtr hashlen, IntPtr encoded,
+			IntPtr encodedlen, int type, uint version);
+		// Cf. argon2_hash_u0 and argon2_hash_u1
 
 		/* [DllImport("KeePassLibC32.dll", EntryPoint = "TF_ShowLangBar")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -275,7 +254,7 @@ namespace KeePassLib.Native
 				{
 					if(pszPath != IntPtr.Zero)
 						return Marshal.PtrToStringUni(pszPath);
-					else { Debug.Assert(false); }
+					Debug.Assert(false);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }

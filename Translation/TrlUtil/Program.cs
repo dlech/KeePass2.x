@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,15 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+
+using KeePass.Util;
 
 using KeePassLib.Utility;
 
 using TrlUtil.App;
 using TrlUtil.App.Configuration;
+using TrlUtil.Native;
 
 namespace TrlUtil
 {
@@ -50,6 +52,8 @@ namespace TrlUtil
 		{
 			try
 			{
+				ConfigureDpi();
+
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 
@@ -81,6 +85,23 @@ namespace TrlUtil
 			}
 
 			Application.Run(new MainForm());
+		}
+
+		private static void ConfigureDpi()
+		{
+			// Ensure that base hashes are computed with respect to 100% DPI
+			try
+			{
+				if(WinUtil.IsAtLeastWindows10) // 8.1 partially
+				{
+					if(NativeMethods.SetProcessDpiAwareness(
+						NativeMethods.ProcessDpiAwareness.Unaware) < 0)
+					{
+						Debug.Assert(false);
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		private static void ExecuteCmd(string strCmd, string strFile)

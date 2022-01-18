@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -337,32 +337,11 @@ namespace KeePassLib
 			}
 		}
 
-		/// <summary>
-		/// Construct a new, empty password entry. Member variables will be initialized
-		/// to their default values.
-		/// </summary>
-		/// <param name="pwParentGroup">Reference to the containing group, this
-		/// parameter may be <c>null</c> and set later manually.</param>
-		/// <param name="bCreateNewUuid">If <c>true</c>, a new UUID will be created
-		/// for this entry. If <c>false</c>, the UUID is zero and you must set it
-		/// manually later.</param>
-		/// <param name="bSetTimes">If <c>true</c>, the creation, last modification
-		/// and last access times will be set to the current system time.</param>
-		[Obsolete("Use a different constructor. To add an entry to a group, use AddEntry of PwGroup.")]
-		public PwEntry(PwGroup pwParentGroup, bool bCreateNewUuid, bool bSetTimes)
+		[Obsolete("Use a different constructor. To add an entry to a group, use the AddEntry method of PwGroup.")]
+		public PwEntry(PwGroup pgParent, bool bCreateNewUuid, bool bSetTimes) :
+			this(bCreateNewUuid, bSetTimes)
 		{
-			m_pParentGroup = pwParentGroup;
-
-			if(bCreateNewUuid) m_uuid = new PwUuid(true);
-
-			if(bSetTimes)
-			{
-				DateTime dtNow = DateTime.UtcNow;
-				m_tCreation = dtNow;
-				m_tLastMod = dtNow;
-				m_tLastAccess = dtNow;
-				m_tParentGroupLastMod = dtNow;
-			}
+			m_pParentGroup = pgParent;
 		}
 
 #if DEBUG
@@ -474,7 +453,8 @@ namespace KeePassLib
 			if((pwOpt & PwCompareOptions.IgnoreParentGroup) == PwCompareOptions.None)
 			{
 				if(m_pParentGroup != pe.m_pParentGroup) return false;
-				if(!bIgnoreLastMod && (m_tParentGroupLastMod != pe.m_tParentGroupLastMod))
+				if(!bIgnoreLastMod && !TimeUtil.EqualsFloor(m_tParentGroupLastMod,
+					pe.m_tParentGroupLastMod))
 					return false;
 				if(!m_puPrevParentGroup.Equals(pe.m_puPrevParentGroup))
 					return false;
@@ -520,10 +500,10 @@ namespace KeePassLib
 			if(m_clrForeground != pe.m_clrForeground) return false;
 			if(m_clrBackground != pe.m_clrBackground) return false;
 
-			if(m_tCreation != pe.m_tCreation) return false;
-			if(!bIgnoreLastMod && (m_tLastMod != pe.m_tLastMod)) return false;
-			if(!bIgnoreLastAccess && (m_tLastAccess != pe.m_tLastAccess)) return false;
-			if(m_tExpire != pe.m_tExpire) return false;
+			if(!TimeUtil.EqualsFloor(m_tCreation, pe.m_tCreation)) return false;
+			if(!bIgnoreLastMod && !TimeUtil.EqualsFloor(m_tLastMod, pe.m_tLastMod)) return false;
+			if(!bIgnoreLastAccess && !TimeUtil.EqualsFloor(m_tLastAccess, pe.m_tLastAccess)) return false;
+			if(!TimeUtil.EqualsFloor(m_tExpire, pe.m_tExpire)) return false;
 			if(m_bExpires != pe.m_bExpires) return false;
 			if(!bIgnoreLastAccess && (m_uUsageCount != pe.m_uUsageCount)) return false;
 
@@ -937,6 +917,17 @@ namespace KeePassLib
 
 			pe.SetUuid(new PwUuid(true), true);
 			pe.SetCreatedNow();
+
+			return pe;
+		}
+
+		internal static PwEntry CreateVirtual(PwGroup pgParent,
+			ProtectedStringDictionary dStrings)
+		{
+			PwEntry pe = new PwEntry(true, true);
+
+			pe.ParentGroup = pgParent; // Do not add to group
+			if(dStrings != null) pe.Strings = dStrings; // No clone
 
 			return pe;
 		}

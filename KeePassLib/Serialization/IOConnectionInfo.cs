@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -312,10 +312,7 @@ namespace KeePassLib.Serialization
 		public static IOConnectionInfo FromPath(string strPath)
 		{
 			IOConnectionInfo ioc = new IOConnectionInfo();
-
 			ioc.Path = strPath;
-			ioc.CredSaveMode = IOCredSaveMode.NoSave;
-
 			return ioc;
 		}
 
@@ -335,18 +332,14 @@ namespace KeePassLib.Serialization
 
 		public void ClearCredentials(bool bDependingOnRememberMode)
 		{
-			if((bDependingOnRememberMode == false) ||
-				(m_ioCredSaveMode == IOCredSaveMode.NoSave))
-			{
+			if((m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
+				!bDependingOnRememberMode)
 				m_strUser = string.Empty;
-			}
 
-			if((bDependingOnRememberMode == false) ||
-				(m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
-				(m_ioCredSaveMode == IOCredSaveMode.UserNameOnly))
-			{
+			if((m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
+				(m_ioCredSaveMode == IOCredSaveMode.UserNameOnly) ||
+				!bDependingOnRememberMode)
 				m_strPassword = string.Empty;
-			}
 		}
 
 		public void Obfuscate(bool bObf)

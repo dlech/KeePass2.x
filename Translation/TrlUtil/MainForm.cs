@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -153,7 +153,6 @@ namespace TrlUtil
 			KPStringTable kpstME = fAddST("KeePass.Forms.MainForm.m_ctxPwList");
 			KPStringTable kpstMT = fAddST("KeePass.Forms.MainForm.m_ctxTray");
 			KPStringTable kpstET = fAddST("KeePass.Forms.PwEntryForm.m_ctxTools");
-			KPStringTable kpstEP = fAddST("KeePass.Forms.PwEntryForm.m_ctxPwGen");
 			KPStringTable kpstED = fAddST("KeePass.Forms.PwEntryForm.m_ctxDefaultTimes");
 			KPStringTable kpstES = fAddST("KeePass.Forms.PwEntryForm.m_ctxStr");
 			KPStringTable kpstEB = fAddST("KeePass.Forms.PwEntryForm.m_ctxBinAttach");
@@ -170,7 +169,6 @@ namespace TrlUtil
 			fAddMI(kpstME, mf.EntryContextMenu, "Entry Context Menu Commands");
 			fAddMI(kpstMT, mf.TrayContextMenu, "System Tray Context Menu Commands");
 			fAddMI(kpstET, ef.ToolsContextMenu, "Entry Tools Context Menu Commands");
-			fAddMI(kpstEP, ef.PasswordGeneratorContextMenu, "Password Generator Context Menu Commands");
 			fAddMI(kpstED, ef.DefaultTimesContextMenu, "Default Times Context Menu Commands");
 			fAddMI(kpstES, ef.StringsContextMenu, "Strings Context Menu Commands");
 			fAddMI(kpstEB, ef.AttachmentsContextMenu, "Entry Attachments Context Menu Commands");

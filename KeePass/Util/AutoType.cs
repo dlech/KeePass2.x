@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -350,7 +350,7 @@ namespace KeePass.Util
 
 			if(Program.Config.Integration.AutoTypeMatchByTagInTitle)
 			{
-				foreach(string strTag in pwe.Tags)
+				foreach(string strTag in pwe.GetTagsInherited())
 				{
 					if(IsMatchSub(strWindow, strTag))
 					{

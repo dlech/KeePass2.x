@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 using Microsoft.Win32;
 
@@ -312,6 +312,8 @@ namespace KeePass.Util
 			{
 				string str = FindAppUnix("google-chrome");
 				if(!string.IsNullOrEmpty(str)) return str;
+				str = FindAppUnix("chromium");
+				if(!string.IsNullOrEmpty(str)) return str;
 				return FindAppUnix("chromium-browser");
 			}
 
@@ -425,22 +427,31 @@ namespace KeePass.Util
 
 		public static string FindAppUnix(string strApp)
 		{
-			string strArgPrefix = "-b ";
+			if(string.IsNullOrEmpty(strApp)) { Debug.Assert(false); return null; }
+
+			string strOpt = "-b ";
 			if(NativeLib.GetPlatformID() == PlatformID.MacOSX)
-				strArgPrefix = string.Empty; // FR 3535696
+				strOpt = string.Empty; // FR 3535696
 
-			string str = NativeLib.RunConsoleApp("whereis", strArgPrefix + strApp);
-			if(str == null) return null;
+			string str = NativeLib.RunConsoleApp("whereis", strOpt + strApp);
+			if(string.IsNullOrEmpty(str)) return null;
 
-			str = str.Trim();
+			int iSep = str.IndexOf(':');
+			if(iSep >= 0) str = str.Substring(iSep + 1);
 
-			int iPrefix = str.IndexOf(':');
-			if(iPrefix >= 0) str = str.Substring(iPrefix + 1).Trim();
+			string[] v = str.Split(new char[] { ' ', '\t', '\r', '\n' });
 
-			int iSep = str.IndexOfAny(new char[] { ' ', '\t', '\r', '\n' });
-			if(iSep >= 0) str = str.Substring(0, iSep);
+			foreach(string strPath in v)
+			{
+				if(string.IsNullOrEmpty(strPath)) continue;
 
-			return ((str.Length > 0) ? str : null);
+				// Sometimes the first item is a directory
+				// (e.g. Chromium Snap package on Kubuntu 21.10)
+				try { if(File.Exists(strPath)) return strPath; }
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			return null;
 		}
 	}
 }

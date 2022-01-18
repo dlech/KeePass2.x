@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1770,6 +1770,7 @@ namespace KeePass.Forms
 				if(args.Cancel) return;
 			}
 
+			bool bShift = ((Control.ModifierKeys & Keys.Shift) != Keys.None);
 			bool bCnt = false;
 
 			AceColumn col = GetAceColumn(colID);
@@ -1777,8 +1778,14 @@ namespace KeePass.Forms
 			switch(colType)
 			{
 				case AceColumnType.Title:
-					if(PwDefs.IsTanEntry(pe)) OnEntryCopyPassword(sender, e);
-					else OnEntryEdit(sender, e);
+					if(bShift)
+						bCnt = ClipboardUtil.CopyAndMinimize(pe.Strings.GetSafe(
+							PwDefs.TitleField), true, this, pe, m_docMgr.ActiveDatabase);
+					else
+					{
+						if(PwDefs.IsTanEntry(pe)) OnEntryCopyPassword(sender, e);
+						else OnEntryEdit(sender, e);
+					}
 					break;
 				case AceColumnType.UserName:
 					OnEntryCopyUserName(sender, e);
@@ -1900,8 +1907,20 @@ namespace KeePass.Forms
 
 			if(bCopy)
 			{
-				if(ClipboardUtil.CopyAndMinimize(UrlsToString(v, true), true, this, null, null))
-					StartClipboardCountdown();
+				bool bCnt;
+				// When copying multiple URLs, the entry list is refreshed twice:
+				// once by UrlsToString (required for the case that copying to
+				// the clipboard fails) and once by CopyAndMinimize
+				if((v.Length == 1) && (v[0] != null))
+					bCnt = ClipboardUtil.CopyAndMinimize(v[0].Strings.GetSafe(PwDefs.UrlField),
+						true, this, v[0], m_docMgr.SafeFindContainerOf(v[0]));
+				else
+				{
+					string str = UrlsToString(v, true, true);
+					bCnt = ClipboardUtil.CopyAndMinimize(str, true, this, null, null);
+				}
+
+				if(bCnt) StartClipboardCountdown();
 			}
 			else // Open
 			{
@@ -1931,14 +1950,17 @@ namespace KeePass.Forms
 			OnEntryBinaryOpen(null, args);
 		}
 
-		private string UrlsToString(PwEntry[] vEntries, bool bActive)
+		private string UrlsToString(PwEntry[] vEntries, bool bActive, bool bTouch)
 		{
 			if((vEntries == null) || (vEntries.Length == 0)) return string.Empty;
 
 			StringBuilder sb = new StringBuilder();
-			foreach(PwEntry pe in vEntries)
+			for(int i = 0; i < vEntries.Length; ++i)
 			{
-				if(sb.Length > 0) sb.Append(MessageService.NewLine);
+				PwEntry pe = vEntries[i];
+				if(pe == null) { Debug.Assert(false); continue; }
+
+				if(i != 0) sb.AppendLine();
 
 				PwDatabase pd = m_docMgr.SafeFindContainerOf(pe);
 
@@ -1946,10 +1968,18 @@ namespace KeePass.Forms
 				strUrl = SprEngine.Compile(strUrl, new SprContext(pe, pd,
 					(bActive ? SprCompileFlags.All : SprCompileFlags.NonActive)));
 
+				if(bTouch) pe.Touch(false);
+
 				sb.Append(strUrl);
 			}
 
-			UpdateUIState(false); // SprEngine.Compile might have modified the database
+			if(bActive || bTouch)
+			{
+				// SprEngine.Compile might have modified the database
+				RefreshEntriesList();
+				UpdateUIState(false);
+			}
+
 			return sb.ToString();
 		}
 
@@ -2107,44 +2137,6 @@ namespace KeePass.Forms
 			return ioc;
 		}
 
-		private sealed class OdKpfConstructParams
-		{
-			public IOConnectionInfo IOConnectionInfo = null;
-			public bool CanExit = false;
-			public bool SecureDesktopMode = false; // Must be false by default
-		}
-
-		private static Form OdKpfConstruct(object objParam)
-		{
-			OdKpfConstructParams p = (objParam as OdKpfConstructParams);
-			if(p == null) { Debug.Assert(false); return null; }
-
-			KeyPromptForm kpf = new KeyPromptForm();
-			kpf.InitEx(p.IOConnectionInfo, p.CanExit, true);
-			kpf.SecureDesktopMode = p.SecureDesktopMode;
-			return kpf;
-		}
-
-		private sealed class OdKpfResult
-		{
-			public CompositeKey Key = null;
-			public bool ShowHelpAfterClose = false;
-			public bool HasClosedWithExit = false;
-		}
-
-		private static object OdKpfBuildResult(Form f)
-		{
-			KeyPromptForm kpf = (f as KeyPromptForm);
-			if(kpf == null) { Debug.Assert(false); return null; }
-
-			OdKpfResult kpfResult = new OdKpfResult();
-			kpfResult.Key = kpf.CompositeKey;
-			kpfResult.ShowHelpAfterClose = kpf.ShowHelpAfterClose;
-			kpfResult.HasClosedWithExit = kpf.HasClosedWithExit;
-
-			return kpfResult;
-		}
-
 		/// <summary>
 		/// Open a database. This function opens the specified database and
 		/// updates the user interface.
@@ -2217,50 +2209,20 @@ namespace KeePass.Forms
 			{
 				for(int iTry = 0; iTry < Program.Config.Security.MasterKeyTries; ++iTry)
 				{
-					OdKpfConstructParams kpfParams = new OdKpfConstructParams();
-					kpfParams.IOConnectionInfo = ioc;
-					kpfParams.CanExit = IsFileLocked(null);
+					KeyPromptFormResult r;
+					DialogResult dr = KeyPromptForm.ShowDialog(ioc, IsFileLocked(null),
+						null, out r);
 
-					DialogResult dr;
-					OdKpfResult kpfResult;
-
-					if(Program.Config.Security.MasterKeyOnSecureDesktop &&
-						WinUtil.IsAtLeastWindows2000 && !NativeLib.IsUnix())
-					{
-						kpfParams.SecureDesktopMode = true;
-
-						ProtectedDialog dlg = new ProtectedDialog(OdKpfConstruct,
-							OdKpfBuildResult);
-						object objResult;
-						dr = dlg.ShowDialog(out objResult, kpfParams);
-						if(dr == DialogResult.None) { Debug.Assert(false); dr = DialogResult.Cancel; }
-						
-						kpfResult = (objResult as OdKpfResult);
-						if(kpfResult == null) { Debug.Assert(false); continue; }
-
-						if(kpfResult.ShowHelpAfterClose)
-							AppHelp.ShowHelp(AppDefs.HelpTopics.KeySources, null);
-					}
-					else // Show dialog on normal desktop
-					{
-						Form dlg = OdKpfConstruct(kpfParams);
-						dr = dlg.ShowDialog();
-
-						kpfResult = (OdKpfBuildResult(dlg) as OdKpfResult);
-						UIUtil.DestroyForm(dlg);
-						if(kpfResult == null) { Debug.Assert(false); continue; }
-					}
-
-					if(dr == DialogResult.Cancel) break;
-					else if(kpfResult.HasClosedWithExit)
+					if(r == null) { Debug.Assert(false); break; }
+					if(r.HasClosedWithExit)
 					{
 						Debug.Assert(dr == DialogResult.Abort);
-						OnFileExit(null, null);
+						OnFileExit(null, EventArgs.Empty);
 						return;
 					}
+					if(dr != DialogResult.OK) break;
 
-					pwOpenedDb = OpenDatabaseInternal(ioc, kpfResult.Key,
-						out bAbort);
+					pwOpenedDb = OpenDatabaseInternal(ioc, r.CompositeKey, out bAbort);
 					if((pwOpenedDb != null) || bAbort) break;
 				}
 			}
@@ -3098,7 +3060,8 @@ namespace KeePass.Forms
 				bMod = true;
 			}
 
-			SelectEntries(new PwObjectList<PwEntry>(), true, false); // Ensure color visible
+			SelectEntries(new PwObjectList<PwEntry>(), true, false, false,
+				false); // Ensure color visible
 			RefreshEntriesList();
 			UpdateUIState(bMod);
 		}
@@ -4201,12 +4164,23 @@ namespace KeePass.Forms
 		public void SelectEntries(PwObjectList<PwEntry> lEntries,
 			bool bDeselectOthers, bool bFocusFirst)
 		{
-			if(lEntries == null) { Debug.Assert(false); return; }
+			SelectEntries(lEntries, bDeselectOthers, bFocusFirst, false, false);
+		}
+
+		private void SelectEntries(PwObjectList<PwEntry> lEntries,
+			bool bDeselectOthers, bool bFocusFirst, bool bEnsureVisible,
+			bool bUpdateUIState)
+		{
+			if(lEntries == null) { Debug.Assert(false); lEntries = new PwObjectList<PwEntry>(); }
+
+			Dictionary<PwEntry, bool> d = new Dictionary<PwEntry, bool>();
+			foreach(PwEntry pe in lEntries) d[pe] = true;
+
+			bool bDoFocus = bFocusFirst;
 
 			++m_uBlockEntrySelectionEvent;
 			try
 			{
-				bool bDoFocus = bFocusFirst;
 				foreach(ListViewItem lvi in m_lvEntries.Items)
 				{
 					if(lvi == null) { Debug.Assert(false); continue; }
@@ -4217,7 +4191,7 @@ namespace KeePass.Forms
 					PwEntry pe = pli.Entry;
 					if(pe == null) { Debug.Assert(false); continue; }
 
-					if(lEntries.IndexOf(pe) >= 0)
+					if(d.ContainsKey(pe))
 					{
 						lvi.Selected = true;
 
@@ -4232,6 +4206,19 @@ namespace KeePass.Forms
 			}
 			catch(Exception) { Debug.Assert(false); }
 			finally { --m_uBlockEntrySelectionEvent; }
+
+			if(bEnsureVisible) EnsureVisibleSelected(null);
+			if(bUpdateUIState) UpdateUIState(false);
+		}
+
+		private void SelectEntry(PwEntry pe, bool bDeselectOthers, bool bFocus,
+			bool bEnsureVisible, bool bUpdateUIState)
+		{
+			PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
+			if(pe != null) l.Add(pe);
+			else { Debug.Assert(false); }
+
+			SelectEntries(l, bDeselectOthers, bFocus, bEnsureVisible, bUpdateUIState);
 		}
 
 		internal PwGroup GetCurrentEntries()
@@ -5033,17 +5020,15 @@ namespace KeePass.Forms
 				if(!KeyUtil.ReAskKey(pd, true)) return false;
 			}
 
-			KeyCreationForm kcf = new KeyCreationForm();
-			kcf.InitEx(pd.IOConnectionInfo, false);
+			KeyCreationFormResult r;
+			DialogResult dr = KeyCreationForm.ShowDialog(pd.IOConnectionInfo, false, out r);
+			if((dr != DialogResult.OK) || (r == null)) return false;
 
-			if(UIUtil.ShowDialogNotValue(kcf, DialogResult.OK)) return false;
-
-			pd.MasterKey = kcf.CompositeKey;
+			pd.MasterKey = r.CompositeKey;
 			pd.MasterKeyChanged = DateTime.UtcNow;
 			// pd.MasterKeyChangeForceOnce = false;
 			pd.Modified = true;
 
-			UIUtil.DestroyForm(kcf);
 			UpdateUIState(false); // Show modified state in the UI
 
 			string str = KPRes.MasterKeyChanged + MessageService.NewParagraph +
@@ -6179,14 +6164,7 @@ namespace KeePass.Forms
 
 				if(bDisableSorting) SortPasswordList(false, 0, null, true);
 
-				if(pe != null)
-				{
-					PwObjectList<PwEntry> lSel = new PwObjectList<PwEntry>();
-					lSel.Add(pe);
-					SelectEntries(lSel, true, true);
-
-					EnsureVisibleSelected(false);
-				}
+				if(pe != null) SelectEntry(pe, true, true, true, false);
 				else SelectFirstEntryIfNoneSelected();
 
 				UpdateUIState(false); // For selected entry
@@ -6320,12 +6298,7 @@ namespace KeePass.Forms
 				pg.AddEntry(pe, true);
 				UpdateUI(false, null, pd.UINeedsIconUpdate, null, true,
 					null, true, m_lvEntries);
-
-				PwObjectList<PwEntry> lSelect = new PwObjectList<PwEntry>();
-				lSelect.Add(pe);
-				SelectEntries(lSelect, true, true);
-				EnsureVisibleSelected(false);
-				UpdateUIState(false);
+				SelectEntry(pe, true, true, true, true);
 
 				if(Program.Config.Application.AutoSaveAfterEntryEdit)
 					SaveDatabase(pd, sender);

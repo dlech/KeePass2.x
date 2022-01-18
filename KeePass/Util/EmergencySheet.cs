@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -521,7 +521,7 @@ namespace KeePass.Util
 			sb.AppendLine("<ul class=\"withspc\">");
 			sb.AppendLine("<li>" + h(KPRes.KeyFileFromBackup) + ":");
 			sb.AppendLine("<ul class=\"withspc\">");
-			sb.AppendLine("<li><p>" + Beautify(h(KPRes.KeyFileFromBackupF)) + "</p></li>");
+			sb.AppendLine("<li><p>" + Beautify(h(KPRes.KeyFileFromBackupF2)) + "</p></li>");
 			sb.AppendLine("<li><p>" + h(KPRes.KeyFileFromBackupT) + "</p></li>");
 			sb.AppendLine("</ul></li>");
 			sb.AppendLine("<li>" + h(KPRes.LatestVersionWeb) + ": <a href=\"" +

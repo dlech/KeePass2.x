@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using System.Resources;
 using System.Security.AccessControl;
@@ -339,10 +340,10 @@ namespace KeePass
 			/* if(m_cmdLineArgs[AppDefs.CommandLineOptions.PreLoadRegister] != null)
 			{
 				string strPreLoadPath = WinUtil.GetExecutable().Trim();
-				if(strPreLoadPath.StartsWith("\"") == false)
+				if(!strPreLoadPath.StartsWith("\""))
 					strPreLoadPath = "\"" + strPreLoadPath + "\"";
 				ShellUtil.RegisterPreLoad(AppDefs.PreLoadName, strPreLoadPath,
-					@"--" + AppDefs.CommandLineOptions.PreLoad, true);
+					"--" + AppDefs.CommandLineOptions.PreLoad, true);
 				MainCleanUp();
 				return;
 			}
@@ -749,6 +750,7 @@ namespace KeePass
 
 				f("Switch.System.Drawing.DontSupportPngFramesInIcons", false); // 4.6
 				f("Switch.System.Drawing.Printing.OptimizePrintPreview", true); // 4.6, optional
+				f("Switch.System.IO.Compression.DoNotUseNativeZipLibraryForDecompression", false); // 4.7.2
 				f("Switch.System.IO.Compression.ZipFile.UseBackslash", false); // 4.6.1
 				f("Switch.System.Security.Cryptography.AesCryptoServiceProvider.DontCorrectlyResetDecryptor", false); // 4.6.2
 				f("Switch.System.Windows.Forms.DoNotLoadLatestRichEditControl", false); // 4.7
@@ -767,38 +769,40 @@ namespace KeePass
 				const BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
 					BindingFlags.Static;
 
+				GAction<Type, string, bool> fCheckB = delegate(Type tClass,
+					string strProperty, bool bValue)
+				{
+					PropertyInfo pi = tClass.GetProperty(strProperty, bf);
+					string strFullName = tClass.FullName + "." + strProperty;
+					if(pi == null) { Debug.Assert(false, strFullName + " not found!"); return; }
+					Debug.Assert(((bool)pi.GetValue(null, null) == bValue),
+						strFullName + " returned an unexpected value!");
+				};
+
+				Type tS = typeof(GZipStream).Assembly.GetType(
+					"System.LocalAppContextSwitches", false);
+				if(tS == null) { Debug.Assert(false); return; }
+
 				Type tD = typeof(Image).Assembly.GetType(
 					"System.Drawing.LocalAppContextSwitches", false);
 				if(tD == null) { Debug.Assert(false); return; }
 
-				PropertyInfo pi = tD.GetProperty("DontSupportPngFramesInIcons", bf);
-				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
-
-				pi = tD.GetProperty("OptimizePrintPreview", bf);
-				Debug.Assert((pi != null) && (bool)pi.GetValue(null, null));
-
-				Type tWF = typeof(ListViewItem).Assembly.GetType(
+				Type tW = typeof(ListViewItem).Assembly.GetType(
 					"System.Windows.Forms.LocalAppContextSwitches", false);
-				if(tWF == null) { Debug.Assert(false); return; }
+				if(tW == null) { Debug.Assert(false); return; }
 
-				pi = tWF.GetProperty("DoNotLoadLatestRichEditControl", bf);
-				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
-
-				pi = tWF.GetProperty("DoNotSupportSelectAllShortcutInMultilineTextBox", bf);
-				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
-
-				pi = tWF.GetProperty("DontSupportReentrantFilterMessage", bf);
-				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
-
-				pi = tWF.GetProperty("EnableVisualStyleValidation", bf);
-				Debug.Assert((pi != null) && !(bool)pi.GetValue(null, null));
-
-				Type tAI = typeof(ListViewItem).Assembly.GetType(
+				Type tA = typeof(ListViewItem).Assembly.GetType(
 					"System.AccessibilityImprovements", false);
-				if(tAI == null) { Debug.Assert(false); return; }
+				if(tA == null) { Debug.Assert(false); return; }
 
-				pi = tAI.GetProperty("Level4", bf);
-				Debug.Assert((pi != null) && (bool)pi.GetValue(null, null));
+				fCheckB(tD, "DontSupportPngFramesInIcons", false);
+				fCheckB(tD, "OptimizePrintPreview", true);
+				fCheckB(tS, "DoNotUseNativeZipLibraryForDecompression", false);
+				fCheckB(tW, "DoNotLoadLatestRichEditControl", false);
+				fCheckB(tW, "DoNotSupportSelectAllShortcutInMultilineTextBox", false);
+				fCheckB(tW, "DontSupportReentrantFilterMessage", false);
+				fCheckB(tW, "EnableVisualStyleValidation", false);
+				fCheckB(tA, "Level4", true);
 #endif
 			}
 			catch(Exception) { Debug.Assert(false); }

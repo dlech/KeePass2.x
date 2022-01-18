@@ -53,7 +53,7 @@
 			this.m_btnOK.Location = new System.Drawing.Point(462, 388);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
-			this.m_btnOK.TabIndex = 1;
+			this.m_btnOK.TabIndex = 2;
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.UseVisualStyleBackColor = true;
 			this.m_btnOK.Click += new System.EventHandler(this.OnBtnOK);
@@ -64,7 +64,7 @@
 			this.m_btnCancel.Location = new System.Drawing.Point(543, 388);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.m_btnCancel.TabIndex = 2;
+			this.m_btnCancel.TabIndex = 3;
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.OnBtnCancel);
@@ -124,7 +124,7 @@
 			this.m_grpMouse.Location = new System.Drawing.Point(12, 66);
 			this.m_grpMouse.Name = "m_grpMouse";
 			this.m_grpMouse.Size = new System.Drawing.Size(302, 316);
-			this.m_grpMouse.TabIndex = 3;
+			this.m_grpMouse.TabIndex = 0;
 			this.m_grpMouse.TabStop = false;
 			this.m_grpMouse.Text = "Random mouse input";
 			// 
@@ -144,7 +144,7 @@
 			this.m_grpKeyboard.Location = new System.Drawing.Point(320, 66);
 			this.m_grpKeyboard.Name = "m_grpKeyboard";
 			this.m_grpKeyboard.Size = new System.Drawing.Size(298, 316);
-			this.m_grpKeyboard.TabIndex = 0;
+			this.m_grpKeyboard.TabIndex = 1;
 			this.m_grpKeyboard.TabStop = false;
 			this.m_grpKeyboard.Text = "Random keyboard input";
 			// 

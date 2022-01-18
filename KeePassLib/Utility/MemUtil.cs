@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -213,6 +213,33 @@ namespace KeePassLib.Utility
 			if(v == null) { Debug.Assert(false); return; }
 
 			Array.Clear(v, 0, v.Length);
+		}
+
+		private static byte[] g_pbZero = null;
+		[MethodImpl(MioNoOptimize)]
+		public static void ZeroMemory(IntPtr pb, long cb)
+		{
+			if(pb == IntPtr.Zero) { Debug.Assert(false); return; }
+			if(cb < 0) { Debug.Assert(false); return; }
+
+			byte[] pbZero = g_pbZero;
+			if(pbZero == null)
+			{
+				pbZero = new byte[4096];
+				g_pbZero = pbZero;
+			}
+
+			long cbZero = pbZero.Length;
+
+			while(cb != 0)
+			{
+				long cbBlock = Math.Min(cb, cbZero);
+
+				Marshal.Copy(pbZero, 0, pb, (int)cbBlock);
+
+				pb = AddPtr(pb, cbBlock);
+				cb -= cbBlock;
+			}
 		}
 
 		/// <summary>
@@ -886,6 +913,15 @@ namespace KeePassLib.Utility
 			finally { Marshal.FreeCoTaskMem(p); }
 
 			return pb;
+		}
+
+		internal static IntPtr AddPtr(IntPtr p, long cb)
+		{
+			// IntPtr.operator+ and IntPtr.Add are not available in .NET 2.0
+
+			if(IntPtr.Size >= 8)
+				return new IntPtr(unchecked(p.ToInt64() + cb));
+			return new IntPtr(unchecked(p.ToInt32() + (int)cb));
 		}
 	}
 

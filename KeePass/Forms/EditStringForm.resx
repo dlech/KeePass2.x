@@ -120,4 +120,7 @@
   <data name="m_lblIDIntro.Text" xml:space="preserve">
     <value>A string field consists of a name and a value. A string field name is a generic string describing the field ("User Name", "Credit Card Number", ...). Names must be unique. An entry for example cannot have two string fields named "URL".</value>
   </data>
+  <metadata name="m_ttRect.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
 </root>

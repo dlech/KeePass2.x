@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,11 +39,12 @@ namespace KeePass.Forms
 		private string m_strDefaultText = string.Empty;
 		private string[] m_vSelectable = null;
 
-		private string m_strResultString = string.Empty;
+		private Control m_cEdit = null;
 
+		private string m_strResult = string.Empty;
 		public string ResultString
 		{
-			get { return m_strResultString; }
+			get { return m_strResult; }
 		}
 
 		public SingleLineEditForm()
@@ -73,8 +74,8 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
-			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				m_imgIcon, m_strTitle, m_strDesc);
+			BannerFactory.CreateBannerEx(this, m_bannerImage, m_imgIcon,
+				m_strTitle, m_strDesc);
 			this.Icon = AppIcons.Default;
 
 			this.Text = m_strTitle;
@@ -82,48 +83,50 @@ namespace KeePass.Forms
 			Debug.Assert(!m_lblLongDesc.AutoSize); // For RTL support
 			m_lblLongDesc.Text = m_strLongDesc;
 
-			Control cFocus = null;
 			if((m_vSelectable == null) || (m_vSelectable.Length == 0))
 			{
 				m_cmbEdit.Enabled = false;
 				m_cmbEdit.Visible = false;
 
-				cFocus = m_tbEdit;
+				m_cEdit = m_tbEdit;
 			}
 			else // With selectable values
 			{
 				m_tbEdit.Enabled = false;
 				m_tbEdit.Visible = false;
 
-				cFocus = m_cmbEdit;
+				m_cEdit = m_cmbEdit;
 
-				foreach(string strPreDef in m_vSelectable)
-					m_cmbEdit.Items.Add(strPreDef);
+				m_cmbEdit.BeginUpdate();
+				foreach(string strItem in m_vSelectable)
+					m_cmbEdit.Items.Add(strItem);
+				m_cmbEdit.EndUpdate();
 
 				UIUtil.EnableAutoCompletion(m_cmbEdit, false);
 			}
 
-			cFocus.Text = m_strDefaultText;
-
-			Invalidate();
-			UIUtil.SetFocus(cFocus, this);
+			m_cEdit.Text = m_strDefaultText;
 		}
 
-		private void OnBtnOK(object sender, EventArgs e)
+		private void OnFormShown(object sender, EventArgs e)
 		{
-			if((m_vSelectable == null) || (m_vSelectable.Length == 0))
-				m_strResultString = m_tbEdit.Text;
-			else
-				m_strResultString = m_cmbEdit.Text;
-		}
-
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
+			if(m_cEdit != null) UIUtil.SetFocus(m_cEdit, this, true);
+			else { Debug.Assert(false); }
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			GlobalWindowManager.RemoveWindow(this);
+		}
+
+		private void OnBtnOK(object sender, EventArgs e)
+		{
+			if(m_cEdit != null) m_strResult = (m_cEdit.Text ?? string.Empty);
+			else { Debug.Assert(false); }
+		}
+
+		private void OnBtnCancel(object sender, EventArgs e)
+		{
 		}
 	}
 }

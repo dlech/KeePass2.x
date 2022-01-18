@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2021 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2022 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -350,7 +350,7 @@ entry (overwriting any existing data in the title field).</td></tr>
 <td><code>//Entry/String[(Key = 'UserName') and (Value = '')]/..</code></td></tr>
 <tr><td>Action:</td><td>Replace data</td></tr>
 <tr><td>Data:</td><td>Inner XML</td></tr>
-<tr><td>Find what:</td><td><code>(?s)(&lt;Key&gt;Title&lt;/Key&gt;\s*?&lt;Value&gt;)(.*?)(&lt;/Value&gt;.+?&lt;Key&gt;UserName&lt;/Key&gt;\s*?)&lt;Value /&gt;</code></td></tr>
+<tr><td>Find what:</td><td><code>(?s)(&lt;Key&gt;Title&lt;/Key&gt;\s*&lt;Value&gt;)(.*?)(&lt;/Value&gt;.*?&lt;Key&gt;UserName&lt;/Key&gt;\s*)(&lt;Value&gt;&lt;/Value&gt;|&lt;Value\s*/&gt;)</code></td></tr>
 <tr><td>Replace with:</td><td><code>$1$2$3&lt;Value&gt;$2&lt;/Value&gt;</code></td></tr>
 <tr><td>Options:</td><td>&#9745; Case-sensitive<br />
 &#9745; Regular expressions</td></tr>

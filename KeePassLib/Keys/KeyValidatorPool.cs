@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using KeePassLib.Utility;
 
@@ -29,45 +29,45 @@ namespace KeePassLib.Keys
 {
 	public sealed class KeyValidatorPool : IEnumerable<KeyValidator>
 	{
-		private List<KeyValidator> m_vValidators = new List<KeyValidator>();
+		private readonly List<KeyValidator> m_l = new List<KeyValidator>();
 
 		public int Count
 		{
-			get { return m_vValidators.Count; }
+			get { return m_l.Count; }
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_vValidators.GetEnumerator();
+			return m_l.GetEnumerator();
 		}
 
 		public IEnumerator<KeyValidator> GetEnumerator()
 		{
-			return m_vValidators.GetEnumerator();
+			return m_l.GetEnumerator();
 		}
 
-		public void Add(KeyValidator v)
+		public void Add(KeyValidator kv)
 		{
-			Debug.Assert(v != null); if(v == null) throw new ArgumentNullException("v");
+			if(kv == null) { Debug.Assert(false); throw new ArgumentNullException("kv"); }
 
-			m_vValidators.Add(v);
+			m_l.Add(kv);
 		}
 
-		public bool Remove(KeyValidator v)
+		public bool Remove(KeyValidator kv)
 		{
-			Debug.Assert(v != null); if(v == null) throw new ArgumentNullException("v");
+			if(kv == null) { Debug.Assert(false); throw new ArgumentNullException("kv"); }
 
-			return m_vValidators.Remove(v);
+			return m_l.Remove(kv);
 		}
 
 		public string Validate(string strKey, KeyValidationType t)
 		{
-			Debug.Assert(strKey != null); if(strKey == null) throw new ArgumentNullException("strKey");
+			if(strKey == null) { Debug.Assert(false); throw new ArgumentNullException("strKey"); }
 
-			foreach(KeyValidator v in m_vValidators)
+			foreach(KeyValidator kv in m_l)
 			{
-				string strResult = v.Validate(strKey, t);
-				if(strResult != null) return strResult;
+				string strError = kv.Validate(strKey, t);
+				if(strError != null) return strError;
 			}
 
 			return null;
@@ -75,11 +75,11 @@ namespace KeePassLib.Keys
 
 		public string Validate(byte[] pbKeyUtf8, KeyValidationType t)
 		{
-			Debug.Assert(pbKeyUtf8 != null); if(pbKeyUtf8 == null) throw new ArgumentNullException("pbKeyUtf8");
+			if(pbKeyUtf8 == null) { Debug.Assert(false); throw new ArgumentNullException("pbKeyUtf8"); }
 
-			if(m_vValidators.Count == 0) return null;
+			if(m_l.Count == 0) return null;
 
-			string strKey = StrUtil.Utf8.GetString(pbKeyUtf8, 0, pbKeyUtf8.Length);
+			string strKey = StrUtil.Utf8.GetString(pbKeyUtf8);
 			return Validate(strKey, t);
 		}
 	}

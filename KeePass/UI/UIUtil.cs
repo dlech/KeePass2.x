@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1561,6 +1561,31 @@ namespace KeePass.UI
 			if(bAcc) AccSetName(tsch.Control, strText);
 		}
 
+		internal static void SetToolTipByText(ToolTip tt, Control c)
+		{
+			if(tt == null) { Debug.Assert(false); return; }
+			if(c == null) { Debug.Assert(false); return; }
+
+			string str = null;
+			try
+			{
+				str = c.Text;
+				if(!string.IsNullOrEmpty(str))
+				{
+					int wSmall = GetSmallIconSize().Width;
+
+					int wClient = c.Width - (wSmall / 2);
+					if(c is ComboBox) wClient -= wSmall; // Drop-down arrow
+
+					int wText = TextRenderer.MeasureText(str, c.Font).Width;
+					if(wText <= wClient) str = null;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			UIUtil.SetToolTip(tt, c, str, false);
+		}
+
 		public static void CreateGroupList(PwGroup pgContainer, ComboBox cmb,
 			Dictionary<int, PwUuid> outCreatedItems, PwUuid uuidToSelect,
 			out int iSelectIndex)
@@ -3055,6 +3080,8 @@ namespace KeePass.UI
 
 		public static bool PlayUacSound()
 		{
+			if(NativeLib.IsUnix()) return false;
+
 			try
 			{
 				string strRoot = "HKEY_CURRENT_USER\\AppEvents\\Schemes\\Apps\\.Default\\WindowsUAC\\";
@@ -3065,19 +3092,22 @@ namespace KeePass.UI
 					strWav = (Registry.GetValue(strRoot + ".Default",
 						string.Empty, string.Empty) as string);
 				if(string.IsNullOrEmpty(strWav))
-					strWav = @"%SystemRoot%\Media\Windows User Account Control.wav";
+					strWav = "%SystemRoot%\\Media\\Windows User Account Control.wav";
 
-				strWav = SprEngine.Compile(strWav, null);
+				strWav = Environment.ExpandEnvironmentVariables(strWav);
 
-				if(!File.Exists(strWav)) throw new FileNotFoundException();
-
-				NativeMethods.PlaySound(strWav, IntPtr.Zero, NativeMethods.SND_FILENAME |
-					NativeMethods.SND_ASYNC | NativeMethods.SND_NODEFAULT);
-				return true;
+				if(File.Exists(strWav))
+				{
+					bool b = NativeMethods.PlaySound(strWav, IntPtr.Zero,
+						NativeMethods.SND_FILENAME | NativeMethods.SND_ASYNC |
+						NativeMethods.SND_NODEFAULT);
+					Debug.Assert(b);
+					return b;
+				}
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 
-			Debug.Assert(NativeLib.IsUnix() || !WinUtil.IsAtLeastWindowsVista);
+			Debug.Assert(!WinUtil.IsAtLeastWindowsVista);
 			// Do not play a standard sound here
 			return false;
 		}
@@ -3561,7 +3591,7 @@ namespace KeePass.UI
 			}
 #endif
 
-			// Throws under Mono 4.2.1 on Mac OS X;
+			// Throws under Mono 4.2.1 on MacOS;
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/7c096cfc/
 			try { return SystemInformation.SmallIconSize; }
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }

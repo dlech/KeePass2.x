@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -670,30 +670,6 @@ namespace KeePass.Forms
 			}
 
 			return iBest;
-		}
-	}
-
-	public sealed class DvfContextEventArgs : CancellableOperationEventArgs
-	{
-		private DataViewerForm m_form;
-		public DataViewerForm Form { get { return m_form; } }
-
-		private byte[] m_pbData;
-		public byte[] Data { get { return m_pbData; } }
-
-		private string m_strDataDesc;
-		public string DataDescription { get { return m_strDataDesc; } }
-
-		private ToolStripComboBox m_tscViewers;
-		public ToolStripComboBox ViewersComboBox { get { return m_tscViewers; } }
-
-		public DvfContextEventArgs(DataViewerForm form, byte[] pbData,
-			string strDataDesc, ToolStripComboBox cbViewers)
-		{
-			m_form = form;
-			m_pbData = pbData;
-			m_strDataDesc = strDataDesc;
-			m_tscViewers = cbViewers;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -369,35 +369,24 @@ namespace KeePass.Ecas
 			IOConnectionInfo ioc = IOFromParameters(strPath, strIOUserName, strIOPassword);
 			if(ioc == null) return;
 
-			CompositeKey cmpKey = KeyFromParams(a, 3, 4, 5);
+			CompositeKey ck = KeyFromParams(a, 3, 4, 5, ioc);
 
-			Program.MainForm.OpenDatabase(ioc, cmpKey, ioc.IsLocalFile());
+			Program.MainForm.OpenDatabase(ioc, ck, ioc.IsLocalFile());
 		}
 
 		private static CompositeKey KeyFromParams(EcasAction a, int iPassword,
-			int iKeyFile, int iUserAccount)
+			int iKeyFile, int iUserAccount, IOConnectionInfo ioc)
 		{
 			string strPassword = EcasUtil.GetParamString(a.Parameters, iPassword, true);
 			string strKeyFile = EcasUtil.GetParamString(a.Parameters, iKeyFile, true);
 			bool bUserAccount = EcasUtil.GetParamBool(a.Parameters, iUserAccount);
 
-			CompositeKey cmpKey = null;
-			if(!string.IsNullOrEmpty(strPassword) || !string.IsNullOrEmpty(strKeyFile) ||
-				bUserAccount)
-			{
-				List<string> vArgs = new List<string>();
-				if(!string.IsNullOrEmpty(strPassword))
-					vArgs.Add("-" + AppDefs.CommandLineOptions.Password + ":" + strPassword);
-				if(!string.IsNullOrEmpty(strKeyFile))
-					vArgs.Add("-" + AppDefs.CommandLineOptions.KeyFile + ":" + strKeyFile);
-				if(bUserAccount)
-					vArgs.Add("-" + AppDefs.CommandLineOptions.UserAccount);
+			byte[] pbPasswordUtf8 = null;
+			if(!string.IsNullOrEmpty(strPassword))
+				pbPasswordUtf8 = StrUtil.Utf8.GetBytes(strPassword);
 
-				CommandLineArgs cmdArgs = new CommandLineArgs(vArgs.ToArray());
-				cmpKey = KeyUtil.KeyFromCommandLine(cmdArgs);
-			}
-
-			return cmpKey;
+			return KeyUtil.CreateKey(pbPasswordUtf8, strKeyFile, bUserAccount,
+				ioc, false, false);
 		}
 
 		private static void SaveDatabaseFile(EcasAction a, EcasContext ctx)
@@ -471,20 +460,18 @@ namespace KeePass.Ecas
 			else { Debug.Assert(false); }
 			if(mm == PwMergeMethod.None) mm = PwMergeMethod.CreateNewUuids;
 
-			CompositeKey cmpKey = KeyFromParams(a, 3, 4, 5);
-			if((cmpKey == null) && ff.RequiresKey)
+			CompositeKey ck = KeyFromParams(a, 3, 4, 5, ioc);
+			if((ck == null) && ff.RequiresKey)
 			{
-				KeyPromptForm kpf = new KeyPromptForm();
-				kpf.InitEx(ioc, false, true);
+				KeyPromptFormResult r;
+				DialogResult dr = KeyPromptForm.ShowDialog(ioc, false, null, out r);
+				if((dr != DialogResult.OK) || (r == null)) return;
 
-				if(UIUtil.ShowDialogNotValue(kpf, DialogResult.OK)) return;
-
-				cmpKey = kpf.CompositeKey;
-				UIUtil.DestroyForm(kpf);
+				ck = r.CompositeKey;
 			}
 
 			bool? b = true;
-			try { b = ImportUtil.Import(pd, ff, ioc, mm, cmpKey); }
+			try { b = ImportUtil.Import(pd, ff, ioc, mm, ck); }
 			finally
 			{
 				if(b.GetValueOrDefault(false))

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -73,11 +73,11 @@ namespace KeePassLib.Keys
 
 		/// <summary>
 		/// Property indicating whether the provider is exclusive.
-		/// If the provider is exclusive, KeePass doesn't allow other
+		/// If the provider is exclusive, KeePass does not allow other
 		/// key sources (master password, Windows user account, ...)
 		/// to be combined with the provider.
 		/// Key providers typically should return <c>false</c>
-		/// (to allow non-exclusive use), i.e. don't override this
+		/// (to allow non-exclusive use), i.e. do not override this
 		/// property.
 		/// </summary>
 		public virtual bool Exclusive

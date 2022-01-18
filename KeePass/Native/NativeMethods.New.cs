@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -60,9 +60,7 @@ namespace KeePass.Native
 				int cb = (cc + 2) * cbChar;
 				p = Marshal.AllocCoTaskMem(cb);
 				if(p == IntPtr.Zero) { Debug.Assert(false); return string.Empty; }
-
-				byte[] pbZero = new byte[cb];
-				Marshal.Copy(pbZero, 0, p, cb);
+				MemUtil.ZeroMemory(p, cb);
 
 				int ccReal = GetWindowText(hWnd, p, cc + 1);
 				if(ccReal <= 0) { Debug.Assert(false); return string.Empty; }
@@ -682,41 +680,40 @@ namespace KeePass.Native
 			strAnsi = null;
 			strUni = null;
 
-			const uint cbZ = 12; // Minimal number of terminating zeros
-			const uint uBufSize = 64 + cbZ;
-			IntPtr pBuf = Marshal.AllocCoTaskMem((int)uBufSize);
-			byte[] pbZero = new byte[uBufSize];
-			Marshal.Copy(pbZero, 0, pBuf, pbZero.Length);
+			const uint cbZ = 12; // Minimal number of terminating zero bytes
+
+			uint cb = 64 + cbZ;
+			IntPtr p = Marshal.AllocCoTaskMem((int)cb);
+			MemUtil.ZeroMemory(p, (long)cb);
 
 			try
 			{
-				uint uReqSize = uBufSize - cbZ;
-				bool bSuccess = GetUserObjectInformation(hDesk, 2, pBuf,
-					uBufSize - cbZ, ref uReqSize);
-				if(uReqSize > (uBufSize - cbZ))
+				uint cbReq = cb - cbZ;
+				bool bSuccess = GetUserObjectInformation(hDesk, 2, p, cbReq, ref cbReq);
+				if(cbReq > (cb - cbZ))
 				{
-					Marshal.FreeCoTaskMem(pBuf);
-					pBuf = Marshal.AllocCoTaskMem((int)(uReqSize + cbZ));
-					pbZero = new byte[uReqSize + cbZ];
-					Marshal.Copy(pbZero, 0, pBuf, pbZero.Length);
+					Marshal.FreeCoTaskMem(p);
 
-					bSuccess = GetUserObjectInformation(hDesk, 2, pBuf,
-						uReqSize, ref uReqSize);
-					Debug.Assert((uReqSize + cbZ) == (uint)pbZero.Length);
+					cb = cbReq + cbZ;
+					p = Marshal.AllocCoTaskMem((int)cb);
+					MemUtil.ZeroMemory(p, (long)cb);
+
+					bSuccess = GetUserObjectInformation(hDesk, 2, p, cbReq, ref cbReq);
+					Debug.Assert((cbReq + cbZ) == cb);
 				}
 
 				if(bSuccess)
 				{
-					try { strAnsi = Marshal.PtrToStringAnsi(pBuf).Trim(); }
+					try { strAnsi = Marshal.PtrToStringAnsi(p).Trim(); }
 					catch(Exception) { }
 
-					try { strUni = Marshal.PtrToStringUni(pBuf).Trim(); }
+					try { strUni = Marshal.PtrToStringUni(p).Trim(); }
 					catch(Exception) { }
 
 					return true;
 				}
 			}
-			finally { Marshal.FreeCoTaskMem(pBuf); }
+			finally { Marshal.FreeCoTaskMem(p); }
 
 			Debug.Assert(false);
 			return false;

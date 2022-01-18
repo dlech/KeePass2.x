@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -63,6 +63,16 @@ namespace KeePass.Forms
 			new KfcfInfo(0x0001000000000000, "1.0")
 		};
 
+		private bool m_bRecreateOnly = false;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue(false)]
+		internal bool RecreateOnly
+		{
+			get { return m_bRecreateOnly; }
+			set { m_bRecreateOnly = value; }
+		}
+
 		private string m_strResultFile = null;
 		public string ResultFile
 		{
@@ -77,7 +87,7 @@ namespace KeePass.Forms
 
 		public void InitEx(IOConnectionInfo ioInfo)
 		{
-			if(ioInfo != null) m_ioInfo = ioInfo;
+			m_ioInfo = (ioInfo ?? new IOConnectionInfo());
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -97,7 +107,13 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultMono(m_tbRecKeyHash, false);
 			FontUtil.AssignDefaultMono(m_tbRecKey, false);
 
-			m_rbCreate.Checked = true;
+			if(m_bRecreateOnly)
+			{
+				m_rbRecreate.Checked = true;
+				m_rbCreate.Enabled = false;
+			}
+			else m_rbCreate.Checked = true;
+
 			m_cbNewEntropy.Checked = true;
 
 			Debug.Assert(!m_cmbNewFormat.Sorted);
@@ -170,17 +186,12 @@ namespace KeePass.Forms
 
 		private string GetKeyFilePath()
 		{
-			string strExt = AppDefs.FileExtension.KeyFile;
-			string strFilter = AppDefs.GetKeyFileFilter();
-
 			string strName = UrlUtil.StripExtension(UrlUtil.GetFileName(m_ioInfo.Path));
 			if(string.IsNullOrEmpty(strName)) strName = KPRes.KeyFileSafe;
+			strName += "." + AppDefs.FileExtension.KeyFile;
 
-			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.KeyFileCreateTitle,
-				strName + "." + strExt, strFilter, 1, strExt, AppDefs.FileDialogContext.KeyFile);
-
-			if(sfd.ShowDialog() == DialogResult.OK) return sfd.FileName;
-			return null;
+			return FileDialogsEx.ShowKeyFileDialog(true, KPRes.KeyFileCreateTitle,
+				strName, false, false);
 		}
 
 		private string CreateKeyFile()

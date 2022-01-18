@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -457,7 +457,7 @@ namespace KeePass.Ecas
 					else if(t == EcasValueType.EnumStrings)
 					{
 						uint uEnumID;
-						if(uint.TryParse(strParam, out uEnumID) == false) { Debug.Assert(false); }
+						if(!uint.TryParse(strParam, out uEnumID)) { Debug.Assert(false); }
 						EcasEnum ee = vParamInfo[i].EnumValues;
 						if(ee != null) strAppend = ee.GetItemString(uEnumID, string.Empty);
 						else { Debug.Assert(false); strAppend = strParam; }

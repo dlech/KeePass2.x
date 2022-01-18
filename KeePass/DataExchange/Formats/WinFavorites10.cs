@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2021 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -56,16 +56,17 @@ namespace KeePass.DataExchange.Formats
 			get
 			{
 				return (KPRes.WindowsFavorites + " (" + (m_bInRoot ?
-					KPRes.RootDirectory : (KPRes.Folder + @" '" +
-					GetFolderName(true, null, null) + @"'")) + ")");
+					KPRes.RootDirectory : (KPRes.Folder + " '" +
+					GetFolderName(true, null, null) + "'")) + ")");
 			}
 		}
-		public override bool RequiresFile { get { return false; } }
 		public override string ApplicationGroup { get { return KPRes.General; } }
+
+		public override bool RequiresFile { get { return false; } }
 
 		public override Image SmallIcon
 		{
-			get { return Properties.Resources.B16x16_WinFavs; }
+			get { return KeePass.Properties.Resources.B16x16_Services; }
 		}
 
 		public WinFavorites10(bool bInRoot) : base()
