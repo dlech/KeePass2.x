@@ -44,7 +44,7 @@ namespace KeePass.Forms
 	public partial class KeyCreationForm : Form
 	{
 		private IOConnectionInfo m_ioInfo = new IOConnectionInfo();
-		private bool m_bCreatingNew = false;
+		private bool m_bCreatingNew = true;
 
 		private uint m_uUIAutoBlocked = 0;
 
@@ -133,11 +133,14 @@ namespace KeePass.Forms
 
 			GlobalWindowManager.AddWindow(this);
 
+			string strTitle = (m_bCreatingNew ? KPRes.CreateMasterKey :
+				KPRes.ChangeMasterKey);
+
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				Properties.Resources.B48x48_KGPG_Sign, KPRes.CreateMasterKey,
+				Properties.Resources.B48x48_KGPG_Sign, strTitle,
 				m_ioInfo.GetDisplayName());
 			this.Icon = AppIcons.Default;
-			this.Text = KPRes.CreateMasterKey;
+			this.Text = strTitle;
 
 			FontUtil.SetDefaultFont(m_cbPassword);
 			FontUtil.AssignDefaultBold(m_cbPassword);
@@ -145,18 +148,17 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_cbUserAccount);
 
 			UIUtil.ConfigureToolTip(m_ttRect);
-			UIUtil.SetToolTip(m_ttRect, m_tbRepeatPassword, KPRes.PasswordRepeatHint, false);
 			UIUtil.SetToolTip(m_ttRect, m_btnSaveKeyFile, KPRes.KeyFileCreate, false);
 			UIUtil.SetToolTip(m_ttRect, m_btnOpenKeyFile, KPRes.KeyFileUseExisting, false);
 
-			UIUtil.AccSetName(m_tbPassword, m_cbPassword);
-			UIUtil.AccSetName(m_cmbKeyFile, m_cbKeyFile);
-			UIUtil.AccSetName(m_picKeyFileWarning, KPRes.Warning);
-			UIUtil.AccSetName(m_picAccWarning, KPRes.Warning);
+			AccessibilityEx.SetContext(m_tbPassword, m_cbPassword);
+			AccessibilityEx.SetContext(m_cmbKeyFile, m_cbKeyFile);
+			AccessibilityEx.SetName(m_picKeyFileWarning, KPRes.Warning);
+			AccessibilityEx.SetName(m_picAccWarning, KPRes.Warning);
 
-			Debug.Assert(!m_lblIntro.AutoSize); // For RTL support
-			if(!m_bCreatingNew)
-				m_lblIntro.Text = KPRes.ChangeMasterKeyIntroShort;
+			// Debug.Assert(!m_lblIntro.AutoSize); // For RTL support
+			// if(!m_bCreatingNew)
+			//	m_lblIntro.Text = KPRes.ChangeMasterKeyIntroShort;
 
 			m_cbPassword.Checked = true;
 			m_icgPassword.Attach(m_tbPassword, m_cbHidePassword, m_lblRepeatPassword,

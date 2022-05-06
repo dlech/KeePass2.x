@@ -98,8 +98,8 @@ namespace KeePass.Forms
 				AppConfigEx.IsOptionEnforced(tsCfg, "Enabled"))
 				m_cbEnableTriggers.Enabled = false;
 
-			UIUtil.AccSetName(m_btnMoveUp, KPRes.MoveUp);
-			UIUtil.AccSetName(m_btnMoveDown, KPRes.MoveDown);
+			AccessibilityEx.SetName(m_btnMoveUp, KPRes.MoveUp);
+			AccessibilityEx.SetName(m_btnMoveDown, KPRes.MoveDown);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

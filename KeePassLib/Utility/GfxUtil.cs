@@ -555,5 +555,26 @@ namespace KeePassLib.Utility
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+		// Compatible with System.Drawing.FontConverter
+		internal static string GraphicsUnitToString(GraphicsUnit gu)
+		{
+			string str;
+
+			switch(gu)
+			{
+				case GraphicsUnit.Display: str = "display"; break;
+				case GraphicsUnit.Document: str = "doc"; break;
+				case GraphicsUnit.Inch: str = "in"; break;
+				case GraphicsUnit.Millimeter: str = "mm"; break;
+				case GraphicsUnit.Pixel: str = "px"; break;
+				case GraphicsUnit.Point: str = "pt"; break;
+				case GraphicsUnit.World: str = "world"; break;
+
+				default: Debug.Assert(false); str = gu.ToString(); break;
+			}
+
+			return str;
+		}
 	}
 }

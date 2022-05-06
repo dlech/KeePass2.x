@@ -315,8 +315,7 @@ namespace KeePass.Util
 			sb.AppendLine("<td style=\"text-align: " + strLogLeft + ";\">");
 			Debug.Assert(Properties.Resources.B16x16_KeePass != null); // Name ref.
 			sb.AppendLine("<img src=\"" + GfxUtil.ImageToDataUri(ia.GetForObject(
-				"KeePass")) + "\" width=\"48\" height=\"48\" alt=\"" +
-				h(PwDefs.ShortProductName) + "\" /></td>");
+				"KeePass")) + "\" width=\"48\" height=\"48\" alt=\"\" /></td>");
 			sb.AppendLine("<td style=\"text-align: center;\">");
 			sb.AppendLine("<h1>" + h(PwDefs.ShortProductName) + "</h1>");
 			sb.AppendLine("<h2>" + h(strDocKind) + "</h2>");
@@ -324,8 +323,7 @@ namespace KeePass.Util
 			sb.AppendLine("<td style=\"text-align: " + strLogRight + ";\">");
 			Debug.Assert(Properties.Resources.B16x16_KOrganizer != null); // Name ref.
 			sb.AppendLine("<img src=\"" + GfxUtil.ImageToDataUri(ia.GetForObject(
-				"KOrganizer")) + "\" width=\"48\" height=\"48\" alt=\"" +
-				h(strDocKind) + "\" /></td>");
+				"KOrganizer")) + "\" width=\"48\" height=\"48\" alt=\"\" /></td>");
 			sb.AppendLine("</tr></table>");
 
 			sb.AppendLine("<p style=\"text-align: " + strLogRight + ";\">" +
@@ -496,7 +494,7 @@ namespace KeePass.Util
 			strContent = StrUtil.NormalizeNewLines(strContent, false);
 			strContent = strContent.Replace("\n", strNlCode); // Prevent <br />
 
-			strContent = StrUtil.StringToHtml(strContent, false);
+			strContent = StrUtil.StringToHtml(strContent);
 
 			strContent = strContent.Replace(strNlCode, MessageService.NewLine);
 

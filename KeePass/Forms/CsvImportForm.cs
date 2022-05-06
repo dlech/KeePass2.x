@@ -164,8 +164,8 @@ namespace KeePass.Forms
 
 			m_cmbFieldFormat.Text = string.Empty;
 
-			UIUtil.AccSetName(m_btnFieldMoveUp, KPRes.MoveUp);
-			UIUtil.AccSetName(m_btnFieldMoveDown, KPRes.MoveDown);
+			AccessibilityEx.SetName(m_btnFieldMoveUp, KPRes.MoveUp);
+			AccessibilityEx.SetName(m_btnFieldMoveDown, KPRes.MoveDown);
 
 			m_bInitializing = false;
 

@@ -69,7 +69,7 @@ namespace KeePass.Forms
 				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
 			m_picWarning.Image = m_imgWarning;
 
-			UIUtil.AccSetName(m_picWarning, KPRes.Warning);
+			AccessibilityEx.SetName(m_picWarning, KPRes.Warning);
 
 			FontUtil.AssignDefaultBold(m_rbRemove);
 			FontUtil.AssignDefaultBold(m_rbReplace);

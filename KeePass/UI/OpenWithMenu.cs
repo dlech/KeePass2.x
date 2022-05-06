@@ -145,11 +145,12 @@ namespace KeePass.UI
 			m_tsmiHost.DropDownOpening += this.OnMenuOpening;
 		}
 
+#if DEBUG
 		~OpenWithMenu()
 		{
-			try { Debug.Assert(m_dynMenu == null); Destroy(); }
-			catch(Exception) { Debug.Assert(false); }
+			Debug.Assert(m_dynMenu == null);
 		}
+#endif
 
 		public void Destroy()
 		{
@@ -451,7 +452,7 @@ namespace KeePass.UI
 					AddAppVariant(it, KPRes.Private, "--inprivate");
 					bFoundEdge = true;
 				}
-				else if((s == "firefox") || (s == "palemoon"))
+				else if((s == "firefox") || (s == "palemoon") || (s == "waterfox"))
 				{
 					// The command line options -private and -private-window work
 					// correctly with Firefox 49.0.1 (before, they did not);

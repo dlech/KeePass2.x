@@ -46,7 +46,7 @@
 			<param name="Local" value="help\v2\plugins.html">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Compatibility / SxS">
+			<param name="Name" value="Compatibility">
 			<param name="Local" value="help\v2\version.html">
 			</OBJECT>
 	</UL>

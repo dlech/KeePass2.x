@@ -1,3 +1,103 @@
+2022-05-06: 2.51
+- Most dialogs with fixed size now detect whether they fit onto
+  the current screen, and when a dialog does not fit (e.g. due
+  to a very high DPI factor), its size is reduced and scroll
+  bars are displayed
+- Added plural entry command names in the main window (e.g. the
+  command for editing the currently selected entry/entries is
+  now called either 'Edit Entry' or 'Edit Entries', depending
+  on the number of selected entries)
+- Added tooltip for the main part of the status bar of the main
+  window
+- Enhanced color buttons (tooltips, accessible names, ...) in
+  the entry dialog, in the database settings dialog and in the
+  options dialog
+- Added 'Interface (2)' tab page in the options dialog, renamed
+  the existing 'Interface' tab page to 'Interface (1)', moved
+  some controls from 'Interface (1)' to 'Interface (2)'
+- Enhanced font selection controls (with a checkbox that allows
+  to return to the default, the button shows the currently
+  selected font, tooltip, improved accessibility, ...) in the
+  options dialog
+- Added help links 'Dark theme' and 'Main font (size)' in the
+  options dialog
+- The options 'Custom alt. item color' and 'Esc keypress in
+  main window' are now disabled if they are enforced (by an
+  enforced configuration file)
+- Added support for opening URLs with Waterfox in private mode
+- Added dialog for editing (HMAC-based and time-based) one-time
+  password generator settings (can be opened using the 'OTP
+  Generator Settings' commands in the entry dialog or in the
+  'Edit Entry (Quick)' menu of the main window)
+- Added entry commands 'Copy HMAC-Based OTP', 'Show HMAC-Based
+  OTP', 'Copy Time-Based OTP' and 'Show Time-Based OTP' (in the
+  'Other Data' menu)
+- Added entry commands 'Copy Title' and 'Copy Notes' (in the
+  'Other Data' menu)
+- When switching to the 'Generate' tab page of the password
+  generator dialog (no database open), the entropy collection
+  dialog is displayed now, if the option 'Show dialog for
+  collecting user input as additional entropy' is turned on
+- Added option 'Colorize password characters' in the HTML
+  export/print dialog; the colors are customizable
+- Added options 'Custom main font' and 'Custom password font'
+  in the HTML export/print dialog
+- Added horizontal entry separator lines in tabular HTML
+  exports/printouts
+- In the plugins dialog, the 'Delete old files from cache
+  automatically' option and the 'Clear' button are now disabled
+  if they are enforced (by an enforced configuration file)
+- Plugins can now change the expiry date of an entry more
+  easily
+- Added workaround for Wine bug 52457
+
+- Improved main window initialization performance
+- Improved initial emergence of a minimized or maximized main
+  window (less flickering, improved performance, ...)
+- Improved names/tooltips of the database toolbar buttons in
+  the main window
+- Improved handling of bold/italic list fonts
+- Improved entry list update performance in certain situations
+- Improved dynamic menu deconstruction performance
+- Fields starting with 'HmacOtp-' or 'TimeOtp-' are not shown
+  in the entry string copy menu anymore
+- Improved tooltips and accessibility of password repetition
+  text boxes
+- When a dark theme is active, the error background color of
+  text boxes is darker now
+- Improved accessibility of expiry control groups
+- The title of the master key creation/change dialog is now
+  adjusted to the context
+- Improved 'Compression' tab page of the database settings
+  dialog (extended 'None' option description, improved
+  accessibility, ...)
+- If no color has been specified, the 'Custom alt. item color'
+  button in the options dialog now shows the default color
+- Improved HTML generation for HTML exports/printouts
+- Improved default fonts used when printing or exporting to
+  HTML
+- In block HTML exports/printouts, field names are not italic
+  anymore (unless the user has selected an italic main font)
+- In HTML exports/printouts, all field values except passwords
+  are trimmed now
+- HTML exports/printouts: improved encoding of white-space
+  characters in passwords
+- Improved horizontal entry separator lines in block HTML
+  exports/printouts
+- TrlUtil: improved control classification
+- Increased Authenticode certificate key length
+- Various CHM/help improvements
+- Upgraded installer
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- The command line parameter '-preselect:' now works as
+  expected when the option 'Clear master key command line
+  parameters after using them once' is turned on
+- Font selections in the options dialog are now applied only
+  when closing the dialog with [OK]
+
 2022-01-09: 2.50
 - On most Windows systems, AES-KDF is now about twice as fast
   as before

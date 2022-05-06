@@ -410,7 +410,7 @@ namespace KeePass.Forms
 						cmb.DropDownStyle = ComboBoxStyle.DropDownList;
 						cmb.Size = new Size(wCell, hComboBox);
 
-						cmb.Items.Add(KPRes.Auto);
+						cmb.Items.Add(KPRes.Automatic);
 						cmb.Items.Add(KPRes.Yes);
 						cmb.Items.Add(KPRes.No);
 

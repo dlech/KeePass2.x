@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -36,6 +37,10 @@ namespace KeePass.UI
 {
 	public sealed class CustomListViewEx : ListView
 	{
+		private int m_cUpdating = 0;
+		private IComparer m_cmpUpdatingPre = null;
+		private SortOrder m_soUpdatingPre = SortOrder.None;
+
 		private ContextMenuStrip m_ctxHeader = null;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -53,6 +58,15 @@ namespace KeePass.UI
 			try { this.DoubleBuffered = true; }
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+#if DEBUG
+		protected override void Dispose(bool disposing)
+		{
+			Debug.Assert(m_cUpdating == 0);
+
+			base.Dispose(disposing);
+		}
+#endif
 
 		protected override void OnHandleCreated(EventArgs e)
 		{
@@ -291,6 +305,43 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 
 			base.WndProc(ref m);
+		}
+
+		internal void BeginUpdateEx()
+		{
+			BeginUpdate();
+
+			if(++m_cUpdating == 1) // Increment before setting properties
+			{
+				m_cmpUpdatingPre = this.ListViewItemSorter;
+				m_soUpdatingPre = this.Sorting;
+
+				this.Sorting = SortOrder.None;
+				this.ListViewItemSorter = null;
+			}
+		}
+
+		internal void EndUpdateEx()
+		{
+			Debug.Assert(m_cUpdating > 0);
+
+			if(m_cUpdating == 1)
+			{
+				// The caller should not change the sorting while updating
+				Debug.Assert(this.ListViewItemSorter == null);
+				Debug.Assert(this.Sorting == SortOrder.None);
+
+				this.ListViewItemSorter = m_cmpUpdatingPre;
+				if(m_soUpdatingPre != SortOrder.None)
+					this.Sorting = m_soUpdatingPre;
+
+				m_cmpUpdatingPre = null;
+				// m_soUpdatingPre = SortOrder.None;
+			}
+
+			--m_cUpdating; // Decrement after setting properties
+
+			EndUpdate();
 		}
 	}
 }

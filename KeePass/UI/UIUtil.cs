@@ -77,8 +77,6 @@ namespace KeePass.UI
 		private const int FwsNormal = 0;
 		private const int FwsMaximized = 2; // Compatible with FormWindowState
 
-		private static bool g_bScreenReaderActive = false;
-
 		private static bool g_bVistaStyleLists = false;
 		public static bool VistaStyleListsSupported
 		{
@@ -118,32 +116,7 @@ namespace KeePass.UI
 			g_bVistaStyleLists = (WinUtil.IsAtLeastWindowsVista &&
 				(Environment.Version.Major >= 2));
 
-			OnSystemSettingChange();
-		}
-
-		internal static void OnSystemSettingChange()
-		{
-			try
-			{
-				if(NativeLib.IsUnix()) return;
-
-				Debug.Assert(Marshal.SizeOf(typeof(bool)) == 4);
-				Debug.Assert(Marshal.SizeOf(typeof(int)) == 4);
-				int i = 0;
-				if(NativeMethods.SystemParametersInfoI32(
-					NativeMethods.SPI_GETSCREENREADER, 0, ref i, 0))
-				{
-					bool b = (i != 0);
-#if DEBUG
-					if(b != g_bScreenReaderActive)
-						Trace.WriteLine("Screen reader is " + (b ?
-							string.Empty : "in") + "active.");
-#endif
-					g_bScreenReaderActive = b;
-				}
-				else { Debug.Assert(false); }
-			}
-			catch(Exception) { Debug.Assert(false); }
+			AccessibilityEx.OnSystemSettingChange();
 		}
 
 		internal static NativeMethods.CHARFORMAT2 RtfGetCharFormat(RichTextBox rtb)
@@ -941,12 +914,20 @@ namespace KeePass.UI
 			UIUtil.ResizeColumns(lv, true);
 		}
 
+		public static int GetHScrollBarHeight()
+		{
+			try { return SystemInformation.HorizontalScrollBarHeight; }
+			catch(Exception) { Debug.Assert(false); }
+
+			return DpiUtil.ScaleIntY(18); // Default theme on Windows Vista
+		}
+
 		public static int GetVScrollBarWidth()
 		{
 			try { return SystemInformation.VerticalScrollBarWidth; }
 			catch(Exception) { Debug.Assert(false); }
 
-			return 18; // Default theme on Windows Vista
+			return DpiUtil.ScaleIntX(18); // Default theme on Windows Vista
 		}
 
 		/// <summary>
@@ -1168,6 +1149,8 @@ namespace KeePass.UI
 
 			dlg.FontMustExist = true;
 			dlg.ShowEffects = bEffects;
+
+			Debug.Assert(!dlg.ShowColor);
 
 			return dlg;
 		}
@@ -1446,8 +1429,8 @@ namespace KeePass.UI
 			string strT = (strText ?? string.Empty);
 			string strTT = (strToolTip ?? strT);
 
-			strT = StrUtil.TrimDots(StrUtil.RemoveAccelerator(strT), true);
-			strTT = StrUtil.TrimDots(StrUtil.RemoveAccelerator(strTT), true);
+			strT = StrUtil.CommandToText(strT);
+			strTT = StrUtil.CommandToText(strTT);
 
 			Debug.Assert((strT.Length >= 1) || (tb.Text.Length == 0));
 			tb.Text = strT;
@@ -1465,7 +1448,7 @@ namespace KeePass.UI
 			if(strT.Length == 0)
 			{
 				ToolStripControlHost tsch = (tb as ToolStripControlHost);
-				if(tsch != null) AccSetName(tsch.Control, strTT);
+				if(tsch != null) AccessibilityEx.SetName(tsch.Control, strTT);
 				else { Debug.Assert(false); }
 			}
 		}
@@ -1547,7 +1530,7 @@ namespace KeePass.UI
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			if(bAcc) AccSetName(c, strText);
+			if(bAcc) AccessibilityEx.SetName(c, strText);
 		}
 
 		internal static void SetToolTip(ToolStripControlHost tsch, string strText,
@@ -1558,7 +1541,7 @@ namespace KeePass.UI
 			try { tsch.ToolTipText = strText; }
 			catch(Exception) { Debug.Assert(false); }
 
-			if(bAcc) AccSetName(tsch.Control, strText);
+			if(bAcc) AccessibilityEx.SetName(tsch.Control, strText);
 		}
 
 		internal static void SetToolTipByText(ToolTip tt, Control c)
@@ -2723,11 +2706,10 @@ namespace KeePass.UI
 			if(c == null) { Debug.Assert(false); return; }
 			// fParent may be null
 
-			try
-			{
-				Debug.Assert(c.Visible && c.Enabled);
-				if(fParent != null) fParent.ActiveControl = c;
-			}
+			Debug.Assert(c.Enabled);
+			Debug.Assert(c.Visible || (fParent == null) || !fParent.Visible);
+
+			try { if(fParent != null) fParent.ActiveControl = c; }
 			catch(Exception) { Debug.Assert(false); }
 
 			try
@@ -3610,6 +3592,7 @@ namespace KeePass.UI
 			return true;
 		} */
 
+		[Obsolete]
 		public static void RemoveBannerIfNecessary(Form f)
 		{
 			if(f == null) { Debug.Assert(false); return; }
@@ -3619,8 +3602,9 @@ namespace KeePass.UI
 				Screen s = Screen.FromControl(f);
 				if(s == null) { Debug.Assert(false); return; }
 
-				int hForm = f.Height;
-				if(s.WorkingArea.Height >= hForm) return;
+				Rectangle rW = s.WorkingArea;
+				Rectangle rF = f.Bounds;
+				if(rF.Height <= rW.Height) return;
 
 				PictureBox pbBanner = null;
 				foreach(Control c in f.Controls)
@@ -3652,8 +3636,8 @@ namespace KeePass.UI
 				if(pbBanner == null) return; // No assert
 				Debug.Assert(pbBanner.Name == "m_bannerImage");
 
-				int dy = pbBanner.Height;
-				if((dy <= 0) || (dy >= hForm)) { Debug.Assert(false); return; }
+				int hB = pbBanner.Height;
+				if((hB <= 0) || (hB >= rF.Height)) { Debug.Assert(false); return; }
 
 				f.SuspendLayout();
 				try
@@ -3663,14 +3647,21 @@ namespace KeePass.UI
 					foreach(Control c in f.Controls)
 					{
 						if(c == null) { Debug.Assert(false); }
+						else if(c.Dock != DockStyle.None) { }
 						else if(c != pbBanner)
 						{
 							Point pt = c.Location;
-							c.Location = new Point(pt.X, pt.Y - dy);
+							c.Location = new Point(pt.X, pt.Y - hB);
 						}
 					}
 
-					f.Height = hForm - dy;
+					rF.Height -= hB;
+
+					if(rF.Height < rW.Height)
+						rF.Y = rW.Y + ((rW.Height - rF.Height) / 2);
+					else rF.Y = rW.Y;
+
+					f.Bounds = rF;
 				}
 				catch(Exception) { Debug.Assert(false); }
 				finally { f.ResumeLayout(); }
@@ -3827,55 +3818,45 @@ namespace KeePass.UI
 			}
 		}
 
-		internal static bool AccIsEnabled()
+		private static string GetColorName(Color clr)
 		{
-			return (Program.Config.UI.OptimizeForScreenReader || g_bScreenReaderActive);
-		}
+			int iClr = clr.ToArgb();
 
-		internal static void AccSetName(Control c, string strName)
-		{
-			AccSetName(c, strName, null);
-		}
-
-		internal static void AccSetName(Control c, string strName, string strNameSub)
-		{
-			if(Program.DesignMode) return; // For quality progress bar, ...
-			if(c == null) { Debug.Assert(false); return; }
-
-			try
+			foreach(KnownColor kc in Enum.GetValues(typeof(KnownColor)))
 			{
-				if(!AccIsEnabled()) return;
+				if(((kc >= KnownColor.ActiveBorder) && (kc <= KnownColor.WindowText)) ||
+					((kc >= KnownColor.ButtonFace) && (kc <= KnownColor.MenuHighlight)))
+					continue; // Ignore dynamic colors
 
-				string str;
-				if(!string.IsNullOrEmpty(strName))
-				{
-					if(!string.IsNullOrEmpty(strNameSub))
-						str = strName + " \u2013 " + strNameSub;
-					else str = strName;
-				}
-				else str = strNameSub;
-
-				c.AccessibleName = str; // Null is allowed
-
-				if((c is PictureBox) || (c is QualityProgressBar))
-					c.AccessibleRole = AccessibleRole.StaticText;
+				Color clrKnown = Color.FromKnownColor(kc);
+				if(clrKnown.ToArgb() == iClr) return clrKnown.Name;
 			}
-			catch(Exception) { Debug.Assert(false); }
+
+			return null;
 		}
 
-		internal static void AccSetName(Control c, Control cNameSource)
+		internal static string ColorToString(Color clr)
 		{
-			if(cNameSource == null) { Debug.Assert(false); return; }
+			if(ColorsEqual(clr, Color.Empty)) return KPRes.None;
 
-			try
+			StringBuilder sb = new StringBuilder();
+			sb.Append(StrUtil.ColorToUnnamedHtml(clr, false));
+
+			if(clr.A != 255)
 			{
-				Debug.Assert((c != null) && (c.TabIndex == (cNameSource.TabIndex + 1)));
-				Debug.Assert(c != cNameSource);
-
-				string str = StrUtil.RemoveAccelerator(cNameSource.Text ?? string.Empty);
-				AccSetName(c, str, null);
+				sb.Append(", A = #");
+				sb.Append(clr.A.ToString("X2"));
 			}
-			catch(Exception) { Debug.Assert(false); }
+
+			string strName = GetColorName(clr);
+			if(!string.IsNullOrEmpty(strName))
+			{
+				sb.Append(" (");
+				sb.Append(strName);
+				sb.Append(')');
+			}
+
+			return sb.ToString();
 		}
 	}
 }

@@ -114,8 +114,8 @@ namespace KeePass.Forms
 			UIUtil.SetToolTip(m_ttMain, m_btnProfileAdd, KPRes.ProfileSaveDesc, false);
 			UIUtil.SetToolTip(m_ttMain, m_btnProfileDelete, KPRes.ProfileDeleteDesc, false);
 
-			UIUtil.AccSetName(m_btnProfileAdd, KPRes.ProfileSave);
-			UIUtil.AccSetName(m_btnProfileDelete, KPRes.ProfileDelete);
+			AccessibilityEx.SetName(m_btnProfileAdd, KPRes.ProfileSave);
+			AccessibilityEx.SetName(m_btnProfileDelete, KPRes.ProfileDelete);
 
 			SearchParameters sp = (!string.IsNullOrEmpty(m_strInitProfile) ?
 				Program.Config.Search.FindProfile(m_strInitProfile) : null);

@@ -190,6 +190,17 @@ namespace KeePassLib.Utility
 			return l.ToArray();
 		}
 
+		internal static byte[] ParseBase32(string str, bool bAutoPad)
+		{
+			if(str == null) { Debug.Assert(false); return null; }
+
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/59b61fddea/
+			if(bAutoPad && ((str.Length % 8) != 0))
+				str = str.PadRight((str.Length & ~7) + 8, '=');
+
+			return ParseBase32(str);
+		}
+
 		/// <summary>
 		/// Set all bytes in a byte array to zero.
 		/// </summary>

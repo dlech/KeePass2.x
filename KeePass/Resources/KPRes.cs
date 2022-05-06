@@ -24,26 +24,80 @@ using System.Text;
 using KeePass.App;
 
 using KeePassLib.Resources;
+using KeePassLib.Utility;
 
 namespace KeePass.Resources
 {
 	public static partial class KPRes
 	{
-		// For backward compatibility with plugins
+		// Obsoletes: for backward compatibility with plugins
+
 		[Obsolete]
-		public static string NewDatabaseFileName
+		public static string ChangeMasterKeyIntroShort
 		{
-			get
-			{
-				return (KPRes.Database + "." + AppDefs.FileExtension.FileExt);
-			}
+			get { return string.Empty; }
 		}
 
-		// For backward compatibility with plugins
 		[Obsolete]
 		public static string CreateNewDatabase
 		{
 			get { return KPRes.CreateNewDatabase2; }
+		}
+
+		public static string DeleteEntriesTitle
+		{
+			get { return StrUtil.CommandToText(KPRes.DeleteEntriesCmd); }
+		}
+
+		public static string DeleteEntriesTitleSingle
+		{
+			get { return StrUtil.CommandToText(KPRes.DeleteEntryCmd); }
+		}
+
+		[Obsolete]
+		public static string EditCmd
+		{
+			get { return @"&Edit"; }
+		}
+
+		public static string EditEntries
+		{
+			get { return StrUtil.CommandToText(KPRes.EditEntriesCmd); }
+		}
+
+		public static string EditEntry
+		{
+			get { return StrUtil.CommandToText(KPRes.EditEntryCmd); }
+		}
+
+		[Obsolete]
+		public static string GeneratedPasswordSamples
+		{
+			get { return KPRes.GeneratedPasswords; }
+		}
+
+		[Obsolete]
+		public static string NewDatabaseFileName
+		{
+			get { return (KPRes.Database + "." + AppDefs.FileExtension.FileExt); }
+		}
+
+		[Obsolete]
+		public static string ToolBarNew
+		{
+			get { return KPRes.NewDatabase; }
+		}
+
+		[Obsolete]
+		public static string ToolBarOpen
+		{
+			get { return KPRes.OpenDatabase; }
+		}
+
+		[Obsolete]
+		public static string ToolBarSaveAll
+		{
+			get { return KPRes.SaveAllDatabases; }
 		}
 
 		[Obsolete]

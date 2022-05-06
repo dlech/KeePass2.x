@@ -232,25 +232,28 @@ namespace KeePass.Util
 			finally
 			{
 				if(pbPasswordUtf8 != null) MemUtil.ZeroByteArray(pbPasswordUtf8);
-				ClearKeyOptions(args, true);
+				ClearKeyOptions(args, false, false);
 			}
 
 			return null;
 		}
 
-		private static void ClearKeyOptions(CommandLineArgs args, bool bOnlyIfOptionEnabled)
+		internal static void ClearKeyOptions(CommandLineArgs args, bool bForce,
+			bool bClearPreSelect)
 		{
 			if(args == null) { Debug.Assert(false); return; }
 
-			if(bOnlyIfOptionEnabled && !Program.Config.Security.ClearKeyCommandLineParams)
+			if(!bForce && !Program.Config.Security.ClearKeyCommandLineParams)
 				return;
 
 			args.Remove(AppDefs.CommandLineOptions.Password);
 			args.Remove(AppDefs.CommandLineOptions.PasswordEncrypted);
 			args.Remove(AppDefs.CommandLineOptions.PasswordStdIn);
 			args.Remove(AppDefs.CommandLineOptions.KeyFile);
-			args.Remove(AppDefs.CommandLineOptions.PreSelect);
 			args.Remove(AppDefs.CommandLineOptions.UserAccount);
+
+			if(bClearPreSelect)
+				args.Remove(AppDefs.CommandLineOptions.PreSelect);
 		}
 
 		private static bool g_bReadPwStdIn = false;

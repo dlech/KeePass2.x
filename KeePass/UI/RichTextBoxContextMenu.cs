@@ -53,11 +53,12 @@ namespace KeePass.UI
 		{
 		}
 
+#if DEBUG
 		~RichTextBoxContextMenu()
 		{
-			try { Detach(); }
-			catch(Exception) { Debug.Assert(false); }
+			Debug.Assert((m_rtb == null) && (m_form == null));
 		}
+#endif
 
 		[Obsolete]
 		public void Attach(RichTextBox rtb)

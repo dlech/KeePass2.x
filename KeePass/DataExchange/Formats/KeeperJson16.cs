@@ -92,7 +92,10 @@ namespace KeePass.DataExchange.Formats
 						if(strValue == null) { Debug.Assert(false); continue; }
 
 						if(kvp.Key == "TFC:Keeper")
-							EntryUtil.ImportOtpAuth(pe, strValue, pd);
+						{
+							try { EntryUtil.ImportOtpAuth(pe, strValue, pd); }
+							catch(Exception) { Debug.Assert(false); }
+						}
 						else ImportUtil.AppendToField(pe, kvp.Key, strValue, pd);
 					}
 				}

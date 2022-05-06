@@ -27,6 +27,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.Plugins;
 using KeePass.Resources;
 using KeePass.UI;
@@ -68,18 +69,6 @@ namespace KeePass.Forms
 				KPRes.PluginsDesc);
 			this.Icon = AppIcons.Default;
 
-			Debug.Assert(!m_lblCacheSize.AutoSize); // For RTL support
-			m_lblCacheSize.Text += " " + StrUtil.FormatDataSize(
-				PlgxCache.GetUsedCacheSize()) + ".";
-
-			m_cbCacheDeleteOld.Checked = Program.Config.Application.Start.PluginCacheDeleteOld;
-
-			if(string.IsNullOrEmpty(PluginManager.UserDirectory))
-			{
-				Debug.Assert(false);
-				m_btnOpenFolder.Enabled = false;
-			}
-
 			m_lvPlugins.Columns.Add(KPRes.Plugin);
 			m_lvPlugins.Columns.Add(KPRes.Version);
 			m_lvPlugins.Columns.Add(KPRes.Author);
@@ -98,6 +87,25 @@ namespace KeePass.Forms
 				m_lvPlugins.Items[0].Selected = true;
 
 			UpdatePluginDescription();
+
+			Debug.Assert(!m_lblCacheSize.AutoSize); // For RTL support
+			m_lblCacheSize.Text += " " + StrUtil.FormatDataSize(
+				PlgxCache.GetUsedCacheSize()) + ".";
+
+			AceStartUp aceStart = Program.Config.Application.Start;
+
+			m_cbCacheDeleteOld.Checked = aceStart.PluginCacheDeleteOld;
+			if(AppConfigEx.IsOptionEnforced(aceStart, "PluginCacheDeleteOld"))
+				m_cbCacheDeleteOld.Enabled = false;
+
+			if(AppConfigEx.IsOptionEnforced(aceStart, "PluginCacheClearOnce"))
+				m_btnClearCache.Enabled = false;
+
+			if(string.IsNullOrEmpty(PluginManager.UserDirectory))
+			{
+				Debug.Assert(false);
+				m_btnOpenFolder.Enabled = false;
+			}
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

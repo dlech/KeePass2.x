@@ -10,9 +10,13 @@ body, kbd kbd {
 body {
 	color: #000000;
 	background-color: #FFFFFF;
-	background-image: url("images/back.gif");
-	background-repeat: repeat;
-	background-attachment: fixed;
+}
+@media not all and (forced-colors: active) {
+	body {
+		background-image: url("images/back.gif");
+		background-repeat: repeat;
+		background-attachment: fixed;
+	}
 }
 
 p {
@@ -452,26 +456,30 @@ div.tipdiv {
 	width: 100%;
 	height: 100%;
 	z-index: 254;
+	overflow: auto;
 	background-color: rgba(0, 0, 0, 0.85);
 	transition: background 1.5s; /* Cf. JavaScript timeout */
 }
 
 #consent_dlg {
+	border: 1px solid #808080;
 	position: relative;
 	width: 33%;
 	margin: 96px auto 0px auto;
 	padding: 16px 16px 16px 16px;
 	background-color: #EEEEEE;
 }
-@media (max-height: 430px) {
+@media (max-height: 540px) {
 	#consent_dlg {
 		margin-top: 4px;
 	}
 }
 
-.consent_btn {
-	margin: 4px 4px 4px 4px;
-	padding: 8px 8px 8px 8px;
+#consent_dlg button {
+	display: block;
+	width: 50%;
+	margin: 8px auto 8px auto;
+	padding: 8px 2px 8px 2px;
 	cursor: pointer;
 	color: #000000;
 	background-color: #E0E0E0;
@@ -483,7 +491,14 @@ div.tipdiv {
 	border-radius: 5px;
 }
 
-.consent_btn:hover {
+#consent_dlg button:first-of-type {
+	margin-top: 1em;
+}
+#consent_dlg button:last-of-type {
+	margin-bottom: 1em;
+}
+
+#consent_dlg button:hover {
 	background-color: #E0F0FF;
 	background-image: -webkit-linear-gradient(top, #E8F8FF, #D8E8F8);
 	background-image: -moz-linear-gradient(top, #E8F8FF, #D8E8F8);
@@ -492,7 +507,7 @@ div.tipdiv {
 	border-color: #0080FF;
 }
 
-.consent_btn:active {
+#consent_dlg button:active {
 	background-color: #C8E0F0;
 	background-image: -webkit-linear-gradient(top, #D0E8F8, #C0D8E8);
 	background-image: -moz-linear-gradient(top, #D0E8F8, #C0D8E8);
@@ -501,14 +516,9 @@ div.tipdiv {
 	border-color: #004080;
 }
 
-.consent_btn:focus {
+#consent_dlg button:focus {
 	outline: none;
 }
-.consent_btn[data-focusvisible="true"]:focus { /* Focus with keyboard, see JS */
+#consent_dlg button[data-focusvisible="true"]:focus { /* Focus with keyboard, see JS */
 	outline: 2px dotted #000080;
-}
-
-#consent_btn_accept {
-	padding-left: 12px;
-	padding-right: 12px;
 }

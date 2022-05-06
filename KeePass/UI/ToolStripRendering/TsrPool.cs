@@ -52,10 +52,7 @@ namespace KeePass.UI.ToolStripRendering
 			TsrFactory f81 = new Win81TsrFactory();
 			TsrFactory f10 = new Win10TsrFactory();
 			TsrFactory fP = new ProExtTsrFactory();
-
-			TsrFactory fS;
-			try { fS = new SystemTsrFactory(); }
-			catch(Exception) { Debug.Assert(false); fS = fP; }
+			TsrFactory fS = new SystemTsrFactory();
 
 			// https://sourceforge.net/p/keepass/discussion/329220/thread/fab85f1d/
 			// https://keepass.info/help/kb/tsrstyles_survey.html

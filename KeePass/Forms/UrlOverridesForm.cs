@@ -84,7 +84,7 @@ namespace KeePass.Forms
 			m_cbOverrideAll.Checked = (m_strUrlOverrideAll.Length > 0);
 			m_tbOverrideAll.Text = m_strUrlOverrideAll;
 
-			UIUtil.AccSetName(m_tbOverrideAll, m_cbOverrideAll);
+			AccessibilityEx.SetContext(m_tbOverrideAll, m_cbOverrideAll);
 
 			EnableControlsEx();
 		}

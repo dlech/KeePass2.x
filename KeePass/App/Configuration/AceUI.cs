@@ -22,9 +22,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Text;
 
+using KeePass.Resources;
 using KeePass.UI;
+
+using KeePassLib.Utility;
 
 namespace KeePass.App.Configuration
 {
@@ -439,11 +443,12 @@ namespace KeePass.App.Configuration
 			set { m_gu = value; m_bCacheValid = false; }
 		}
 
-		private FontStyle m_fStyle = FontStyle.Regular;
+		private FontStyle m_fs = FontStyle.Regular;
+		[DefaultValue(FontStyle.Regular)]
 		public FontStyle Style
 		{
-			get { return m_fStyle; }
-			set { m_fStyle = value; m_bCacheValid = false; }
+			get { return m_fs; }
+			set { m_fs = value; m_bCacheValid = false; }
 		}
 
 		private bool m_bOverrideUIDefault = false;
@@ -457,14 +462,20 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		public AceFont(Font f)
+		public AceFont(Font f) : this(f, false)
+		{
+		}
+
+		internal AceFont(Font f, bool bOverrideUIDefault)
 		{
 			if(f == null) throw new ArgumentNullException("f");
 
 			this.Family = f.FontFamily.Name;
 			m_fSize = f.Size;
-			m_fStyle = f.Style;
 			m_gu = f.Unit;
+			m_fs = f.Style;
+
+			m_bOverrideUIDefault = bOverrideUIDefault;
 		}
 
 		public AceFont(bool bMonospace)
@@ -472,13 +483,102 @@ namespace KeePass.App.Configuration
 			if(bMonospace) m_strFamily = "Courier New";
 		}
 
+		internal AceFont CloneDeep()
+		{
+			return (AceFont)MemberwiseClone();
+		}
+
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			if(string.IsNullOrEmpty(m_strFamily))
+			{
+				sb.Append('(');
+				sb.Append(KPRes.None);
+				sb.Append(')');
+			}
+			else sb.Append(m_strFamily);
+
+			sb.Append(", ");
+			sb.Append(Math.Round(m_fSize)); // 8.25, 9, 9.75, 11.25, 12, ...
+			sb.Append(' ');
+			sb.Append(GfxUtil.GraphicsUnitToString(m_gu));
+
+			string strStyle = FontUtil.FontStyleToString(m_fs);
+			if(!string.IsNullOrEmpty(strStyle))
+			{
+				sb.Append(", ");
+				sb.Append(strStyle);
+			}
+
+			return sb.ToString();
+		}
+
 		public Font ToFont()
 		{
 			if(m_bCacheValid) return m_fCached;
 
-			m_fCached = FontUtil.CreateFont(m_strFamily, m_fSize, m_fStyle, m_gu);
+			m_fCached = FontUtil.CreateFont(m_strFamily, m_fSize, m_fs, m_gu);
 			m_bCacheValid = true;
 			return m_fCached;
+		}
+
+		private static void AppendCss(StringBuilder sb, string strIndent,
+			string strProperty, params string[] vValueParts)
+		{
+			sb.Append(strIndent);
+			sb.Append(strProperty);
+			sb.Append(": ");
+
+			for(int i = 0; i < vValueParts.Length; ++i)
+				sb.Append(vValueParts[i]); // Without separator space
+
+			sb.AppendLine(";");
+		}
+
+		internal string ToCss(string strIndent, string strFamilyFallback,
+			bool bWithDefaults)
+		{
+			if(strIndent == null) { Debug.Assert(false); strIndent = string.Empty; }
+
+			StringBuilder sb = new StringBuilder();
+			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
+
+			string strFamily = string.Empty;
+			if(!string.IsNullOrEmpty(m_strFamily))
+				strFamily = "\"" + StrUtil.CssEscapeString(m_strFamily) + "\"";
+			else { Debug.Assert(false); }
+			if(!string.IsNullOrEmpty(strFamilyFallback))
+				strFamily += ((strFamily.Length != 0) ? ", " : string.Empty) +
+					strFamilyFallback;
+			if(strFamily.Length != 0)
+				AppendCss(sb, strIndent, "font-family", strFamily);
+
+			AppendCss(sb, strIndent, "font-size", m_fSize.ToString(nfi),
+				GfxUtil.GraphicsUnitToString(m_gu));
+
+			if((m_fs & FontStyle.Bold) != FontStyle.Regular)
+				AppendCss(sb, strIndent, "font-weight", "bold");
+			else if(bWithDefaults)
+				AppendCss(sb, strIndent, "font-weight", "normal");
+
+			if((m_fs & FontStyle.Italic) != FontStyle.Regular)
+				AppendCss(sb, strIndent, "font-style", "italic");
+			else if(bWithDefaults)
+				AppendCss(sb, strIndent, "font-style", "normal");
+
+			const FontStyle fsUS = FontStyle.Underline | FontStyle.Strikeout;
+			if((m_fs & fsUS) == fsUS)
+				AppendCss(sb, strIndent, "text-decoration", "underline line-through");
+			else if((m_fs & FontStyle.Underline) != FontStyle.Regular)
+				AppendCss(sb, strIndent, "text-decoration", "underline");
+			else if((m_fs & FontStyle.Strikeout) != FontStyle.Regular)
+				AppendCss(sb, strIndent, "text-decoration", "line-through");
+			else if(bWithDefaults)
+				AppendCss(sb, strIndent, "text-decoration", "none");
+
+			return sb.ToString();
 		}
 	}
 }

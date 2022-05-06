@@ -54,7 +54,7 @@ namespace KeePass.Forms
 		private GroupFormTab m_gftInit = GroupFormTab.None;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[DefaultValue((object)GroupFormTab.None)]
+		[DefaultValue(GroupFormTab.None)]
 		internal GroupFormTab InitialTab
 		{
 			// get { return m_gftInit; } // Internal, uncalled
@@ -100,8 +100,7 @@ namespace KeePass.Forms
 			UIUtil.SetToolTip(m_ttRect, m_btnIcon, KPRes.SelectIcon, true);
 			UIUtil.SetToolTip(m_ttRect, m_btnAutoTypeEdit, KPRes.ConfigureKeystrokeSeq, true);
 
-			UIUtil.AccSetName(m_dtExpires, m_cbExpires);
-			UIUtil.AccSetName(m_tbDefaultAutoTypeSeq, m_rbAutoTypeOverride);
+			AccessibilityEx.SetContext(m_tbDefaultAutoTypeSeq, m_rbAutoTypeOverride);
 
 			m_tbName.Text = m_pwGroup.Name;
 

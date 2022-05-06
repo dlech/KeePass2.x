@@ -405,21 +405,14 @@ namespace KeePass.Forms
 			UpdateUIState(false, false);
 		}
 
-		private static bool ShowColorDialog(Color clrCurrent, out Color clrSelected)
-		{
-			Color? clrNew = UIUtil.ShowColorDialog(clrCurrent);
-			clrSelected = clrNew.GetValueOrDefault(clrCurrent);
-			return clrNew.HasValue;
-		}
-
 		private void OnColorForegroundClicked(object sender, EventArgs e)
 		{
 			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
-			Color clr;
-			if(ShowColorDialog(m_rtbText.SelectionColor, out clr))
+			Color? oclr = UIUtil.ShowColorDialog(m_rtbText.SelectionColor);
+			if(oclr.HasValue)
 			{
-				m_rtbText.SelectionColor = clr;
+				m_rtbText.SelectionColor = oclr.Value;
 				UpdateUIState(true, true);
 			}
 		}
@@ -428,10 +421,10 @@ namespace KeePass.Forms
 		{
 			if((m_uBlockEvents > 0) || (m_bdc != BinaryDataClass.RichText)) return;
 
-			Color clr;
-			if(ShowColorDialog(m_rtbText.SelectionBackColor, out clr))
+			Color? oclr = UIUtil.ShowColorDialog(m_rtbText.SelectionBackColor);
+			if(oclr.HasValue)
 			{
-				m_rtbText.SelectionBackColor = clr;
+				m_rtbText.SelectionBackColor = oclr.Value;
 				UpdateUIState(true, true);
 			}
 		}
@@ -585,8 +578,7 @@ namespace KeePass.Forms
 
 			if(dlg.ShowDialog() == DialogResult.OK)
 			{
-				Program.Config.UI.DataEditorFont = new AceFont(dlg.Font);
-				Program.Config.UI.DataEditorFont.OverrideUIDefault = true;
+				Program.Config.UI.DataEditorFont = new AceFont(dlg.Font, true);
 
 				if(m_bdc == BinaryDataClass.Text)
 				{

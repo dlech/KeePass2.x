@@ -24,6 +24,10 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using KeePass.Resources;
+
+using KeePassLib.Utility;
+
 namespace KeePass.UI
 {
 	public static class FontUtil
@@ -132,25 +136,53 @@ namespace KeePass.UI
 			get { return m_fontMono; }
 		}
 
-		public static void AssignDefaultMono(Control c, bool bIsPasswordBox)
+		internal static Font GetDefaultMonoFont(Control cFor)
 		{
-			if(c == null) { Debug.Assert(false); return; }
+			Font f = m_fontMono;
+			if(f != null) return f;
 
-			if(m_fontMono == null)
+			try
 			{
-				try
-				{
-					m_fontMono = new Font(FontFamily.GenericMonospace,
-						c.Font.SizeInPoints);
+				float fSize;
+				if(m_fontDefault != null) fSize = m_fontDefault.SizeInPoints;
+				else if(cFor != null) fSize = cFor.Font.SizeInPoints;
+				else { Debug.Assert(false); fSize = 8.25f; }
 
-					Debug.Assert(c.Font.Height == m_fontMono.Height);
-				}
-				catch(Exception) { Debug.Assert(false); m_fontMono = c.Font; }
+				f = new Font(FontFamily.GenericMonospace, fSize);
+			}
+			catch(Exception)
+			{
+				Debug.Assert(false);
+				if(m_fontDefault != null) f = m_fontDefault;
+				else if(cFor != null) f = cFor.Font;
 			}
 
+			m_fontMono = f;
+			return f;
+		}
+
+		public static void AssignDefaultMono(Control c, bool bIsPasswordBox)
+		{
 			if(bIsPasswordBox && Program.Config.UI.PasswordFont.OverrideUIDefault)
 				Assign(c, Program.Config.UI.PasswordFont.ToFont());
-			else Assign(c, m_fontMono);
+			else Assign(c, GetDefaultMonoFont(c));
+		}
+
+		internal static bool IsInstalled(string strFamily)
+		{
+			if(string.IsNullOrEmpty(strFamily)) { Debug.Assert(false); return false; }
+
+			try
+			{
+				using(Font f = new Font(strFamily, 9.0f))
+				{
+					if(!strFamily.Equals(f.Name, StrUtil.CaseIgnoreCmp))
+						return false;
+				}
+			}
+			catch(Exception) { Debug.Assert(false); return false; }
+
+			return true;
 		}
 
 		/* private const string FontPartsSeparator = @"/:/";
@@ -195,5 +227,37 @@ namespace KeePass.UI
 
 			return sb.ToString();
 		} */
+
+		private static void AppendFontStyleFlag(StringBuilder sb, ref FontStyle fs,
+			FontStyle fsFlag, string strFlag)
+		{
+			if((fs & fsFlag) == FontStyle.Regular) return;
+
+			if(sb.Length != 0) sb.Append(", "); // Compatible with Enum.ToString
+			sb.Append(strFlag);
+
+			fs ^= fsFlag;
+		}
+
+		internal static string FontStyleToString(FontStyle fs)
+		{
+			if(fs == FontStyle.Regular) return string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+
+			AppendFontStyleFlag(sb, ref fs, FontStyle.Bold, KPRes.Bold);
+			AppendFontStyleFlag(sb, ref fs, FontStyle.Italic, KPRes.Italic);
+			AppendFontStyleFlag(sb, ref fs, FontStyle.Underline, KPRes.Underline);
+			AppendFontStyleFlag(sb, ref fs, FontStyle.Strikeout, KPRes.Strikeout);
+
+			if(fs != FontStyle.Regular)
+			{
+				Debug.Assert(false);
+				if(sb.Length != 0) sb.Append(", "); // Compatible with Enum.ToString
+				sb.Append(fs.ToString());
+			}
+
+			return sb.ToString();
+		}
 	}
 }

@@ -52,20 +52,28 @@
 			this.m_lblPolicyMore = new System.Windows.Forms.Label();
 			this.m_lblPolicyRestart = new System.Windows.Forms.Label();
 			this.m_lblPolicyIntro = new System.Windows.Forms.Label();
-			this.m_tabGui = new System.Windows.Forms.TabPage();
-			this.m_cmbEscAction = new System.Windows.Forms.ComboBox();
-			this.m_lblEscAction = new System.Windows.Forms.Label();
-			this.m_btnCustomAltColor = new System.Windows.Forms.Button();
-			this.m_cbCustomAltColor = new System.Windows.Forms.CheckBox();
-			this.m_cmbMenuStyle = new System.Windows.Forms.ComboBox();
-			this.m_lblMenuStyle = new System.Windows.Forms.Label();
-			this.m_btnSelPwFont = new System.Windows.Forms.Button();
-			this.m_numMruCount = new System.Windows.Forms.NumericUpDown();
-			this.m_lblMruCount = new System.Windows.Forms.Label();
-			this.m_btnSelFont = new System.Windows.Forms.Button();
+			this.m_tabGui1 = new System.Windows.Forms.TabPage();
 			this.m_lvGuiOptions = new KeePass.UI.CustomListViewEx();
-			this.m_lblBannerStyle = new System.Windows.Forms.Label();
+			this.m_tabGui2 = new System.Windows.Forms.TabPage();
+			this.m_grpIntAdv = new System.Windows.Forms.GroupBox();
+			this.m_lblEscAction = new System.Windows.Forms.Label();
+			this.m_lblMruCount = new System.Windows.Forms.Label();
+			this.m_numMruCount = new System.Windows.Forms.NumericUpDown();
+			this.m_cmbEscAction = new System.Windows.Forms.ComboBox();
+			this.m_grpFonts = new System.Windows.Forms.GroupBox();
+			this.m_linkMainFont = new System.Windows.Forms.LinkLabel();
+			this.m_cbListFont = new System.Windows.Forms.CheckBox();
+			this.m_btnListFont = new System.Windows.Forms.Button();
+			this.m_btnPasswordFont = new System.Windows.Forms.Button();
+			this.m_cbPasswordFont = new System.Windows.Forms.CheckBox();
+			this.m_grpStyles = new System.Windows.Forms.GroupBox();
+			this.m_linkTheme = new System.Windows.Forms.LinkLabel();
+			this.m_cmbMenuStyle = new System.Windows.Forms.ComboBox();
+			this.m_btnAltColor = new KeePass.UI.ColorButtonEx();
 			this.m_cmbBannerStyle = new System.Windows.Forms.ComboBox();
+			this.m_cbAltColor = new System.Windows.Forms.CheckBox();
+			this.m_lblBannerStyle = new System.Windows.Forms.Label();
+			this.m_lblMenuStyle = new System.Windows.Forms.Label();
 			this.m_tabIntegration = new System.Windows.Forms.TabPage();
 			this.m_btnHelpSource = new System.Windows.Forms.Button();
 			this.m_btnSchemeOverrides = new System.Windows.Forms.Button();
@@ -96,8 +104,12 @@
 			((System.ComponentModel.ISupportInitialize)(this.m_numDefaultExpireDays)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_numLockAfterTime)).BeginInit();
 			this.m_tabPolicy.SuspendLayout();
-			this.m_tabGui.SuspendLayout();
+			this.m_tabGui1.SuspendLayout();
+			this.m_tabGui2.SuspendLayout();
+			this.m_grpIntAdv.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numMruCount)).BeginInit();
+			this.m_grpFonts.SuspendLayout();
+			this.m_grpStyles.SuspendLayout();
 			this.m_tabIntegration.SuspendLayout();
 			this.m_grpFileExt.SuspendLayout();
 			this.m_grpHotKeys.SuspendLayout();
@@ -139,7 +151,8 @@
 			// 
 			this.m_tabMain.Controls.Add(this.m_tabSecurity);
 			this.m_tabMain.Controls.Add(this.m_tabPolicy);
-			this.m_tabMain.Controls.Add(this.m_tabGui);
+			this.m_tabMain.Controls.Add(this.m_tabGui1);
+			this.m_tabMain.Controls.Add(this.m_tabGui2);
 			this.m_tabMain.Controls.Add(this.m_tabIntegration);
 			this.m_tabMain.Controls.Add(this.m_tabAdvanced);
 			this.m_tabMain.Location = new System.Drawing.Point(12, 66);
@@ -371,125 +384,15 @@
 			this.m_lblPolicyIntro.Text = "The application policy defines which security-critical operations are allowed and" +
 				" which are not.";
 			// 
-			// m_tabGui
+			// m_tabGui1
 			// 
-			this.m_tabGui.Controls.Add(this.m_cmbEscAction);
-			this.m_tabGui.Controls.Add(this.m_lblEscAction);
-			this.m_tabGui.Controls.Add(this.m_btnCustomAltColor);
-			this.m_tabGui.Controls.Add(this.m_cbCustomAltColor);
-			this.m_tabGui.Controls.Add(this.m_cmbMenuStyle);
-			this.m_tabGui.Controls.Add(this.m_lblMenuStyle);
-			this.m_tabGui.Controls.Add(this.m_btnSelPwFont);
-			this.m_tabGui.Controls.Add(this.m_numMruCount);
-			this.m_tabGui.Controls.Add(this.m_lblMruCount);
-			this.m_tabGui.Controls.Add(this.m_btnSelFont);
-			this.m_tabGui.Controls.Add(this.m_lvGuiOptions);
-			this.m_tabGui.Controls.Add(this.m_lblBannerStyle);
-			this.m_tabGui.Controls.Add(this.m_cmbBannerStyle);
-			this.m_tabGui.Location = new System.Drawing.Point(4, 22);
-			this.m_tabGui.Name = "m_tabGui";
-			this.m_tabGui.Size = new System.Drawing.Size(554, 338);
-			this.m_tabGui.TabIndex = 2;
-			this.m_tabGui.Text = "Interface";
-			this.m_tabGui.UseVisualStyleBackColor = true;
-			// 
-			// m_cmbEscAction
-			// 
-			this.m_cmbEscAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_cmbEscAction.FormattingEnabled = true;
-			this.m_cmbEscAction.Location = new System.Drawing.Point(157, 281);
-			this.m_cmbEscAction.Name = "m_cmbEscAction";
-			this.m_cmbEscAction.Size = new System.Drawing.Size(162, 21);
-			this.m_cmbEscAction.TabIndex = 8;
-			// 
-			// m_lblEscAction
-			// 
-			this.m_lblEscAction.AutoSize = true;
-			this.m_lblEscAction.Location = new System.Drawing.Point(3, 284);
-			this.m_lblEscAction.Name = "m_lblEscAction";
-			this.m_lblEscAction.Size = new System.Drawing.Size(148, 13);
-			this.m_lblEscAction.TabIndex = 7;
-			this.m_lblEscAction.Text = "&Esc keypress in main window:";
-			// 
-			// m_btnCustomAltColor
-			// 
-			this.m_btnCustomAltColor.Location = new System.Drawing.Point(499, 307);
-			this.m_btnCustomAltColor.Name = "m_btnCustomAltColor";
-			this.m_btnCustomAltColor.Size = new System.Drawing.Size(48, 23);
-			this.m_btnCustomAltColor.TabIndex = 12;
-			this.m_btnCustomAltColor.UseVisualStyleBackColor = true;
-			this.m_btnCustomAltColor.Click += new System.EventHandler(this.OnBtnCustomAltColor);
-			// 
-			// m_cbCustomAltColor
-			// 
-			this.m_cbCustomAltColor.AutoSize = true;
-			this.m_cbCustomAltColor.Location = new System.Drawing.Point(366, 311);
-			this.m_cbCustomAltColor.Name = "m_cbCustomAltColor";
-			this.m_cbCustomAltColor.Size = new System.Drawing.Size(129, 17);
-			this.m_cbCustomAltColor.TabIndex = 11;
-			this.m_cbCustomAltColor.Text = "&Custom alt. item color:";
-			this.m_cbCustomAltColor.UseVisualStyleBackColor = true;
-			this.m_cbCustomAltColor.CheckedChanged += new System.EventHandler(this.OnCustomAltColorCheckedChanged);
-			// 
-			// m_cmbMenuStyle
-			// 
-			this.m_cmbMenuStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_cmbMenuStyle.FormattingEnabled = true;
-			this.m_cmbMenuStyle.Location = new System.Drawing.Point(157, 227);
-			this.m_cmbMenuStyle.Name = "m_cmbMenuStyle";
-			this.m_cmbMenuStyle.Size = new System.Drawing.Size(162, 21);
-			this.m_cmbMenuStyle.TabIndex = 2;
-			// 
-			// m_lblMenuStyle
-			// 
-			this.m_lblMenuStyle.AutoSize = true;
-			this.m_lblMenuStyle.Location = new System.Drawing.Point(3, 230);
-			this.m_lblMenuStyle.Name = "m_lblMenuStyle";
-			this.m_lblMenuStyle.Size = new System.Drawing.Size(117, 13);
-			this.m_lblMenuStyle.TabIndex = 1;
-			this.m_lblMenuStyle.Text = "&Menu and toolbar style:";
-			// 
-			// m_btnSelPwFont
-			// 
-			this.m_btnSelPwFont.Location = new System.Drawing.Point(414, 253);
-			this.m_btnSelPwFont.Name = "m_btnSelPwFont";
-			this.m_btnSelPwFont.Size = new System.Drawing.Size(133, 23);
-			this.m_btnSelPwFont.TabIndex = 6;
-			this.m_btnSelPwFont.Text = "Select &Password Font";
-			this.m_btnSelPwFont.UseVisualStyleBackColor = true;
-			this.m_btnSelPwFont.Click += new System.EventHandler(this.OnBtnSelPwFont);
-			// 
-			// m_numMruCount
-			// 
-			this.m_numMruCount.Location = new System.Drawing.Point(157, 308);
-			this.m_numMruCount.Maximum = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
-			this.m_numMruCount.Name = "m_numMruCount";
-			this.m_numMruCount.Size = new System.Drawing.Size(53, 20);
-			this.m_numMruCount.TabIndex = 10;
-			this.m_numMruCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			// 
-			// m_lblMruCount
-			// 
-			this.m_lblMruCount.AutoSize = true;
-			this.m_lblMruCount.Location = new System.Drawing.Point(3, 310);
-			this.m_lblMruCount.Name = "m_lblMruCount";
-			this.m_lblMruCount.Size = new System.Drawing.Size(148, 13);
-			this.m_lblMruCount.TabIndex = 9;
-			this.m_lblMruCount.Text = "&Remember recently used files:";
-			// 
-			// m_btnSelFont
-			// 
-			this.m_btnSelFont.Location = new System.Drawing.Point(414, 226);
-			this.m_btnSelFont.Name = "m_btnSelFont";
-			this.m_btnSelFont.Size = new System.Drawing.Size(133, 23);
-			this.m_btnSelFont.TabIndex = 3;
-			this.m_btnSelFont.Text = "Select &List Font";
-			this.m_btnSelFont.UseVisualStyleBackColor = true;
-			this.m_btnSelFont.Click += new System.EventHandler(this.OnBtnSelListFont);
+			this.m_tabGui1.Controls.Add(this.m_lvGuiOptions);
+			this.m_tabGui1.Location = new System.Drawing.Point(4, 22);
+			this.m_tabGui1.Name = "m_tabGui1";
+			this.m_tabGui1.Size = new System.Drawing.Size(554, 338);
+			this.m_tabGui1.TabIndex = 2;
+			this.m_tabGui1.Text = "Interface (1)";
+			this.m_tabGui1.UseVisualStyleBackColor = true;
 			// 
 			// m_lvGuiOptions
 			// 
@@ -499,29 +402,221 @@
 			this.m_lvGuiOptions.Location = new System.Drawing.Point(6, 12);
 			this.m_lvGuiOptions.Name = "m_lvGuiOptions";
 			this.m_lvGuiOptions.ShowItemToolTips = true;
-			this.m_lvGuiOptions.Size = new System.Drawing.Size(540, 209);
+			this.m_lvGuiOptions.Size = new System.Drawing.Size(540, 317);
 			this.m_lvGuiOptions.TabIndex = 0;
 			this.m_lvGuiOptions.UseCompatibleStateImageBehavior = false;
 			this.m_lvGuiOptions.View = System.Windows.Forms.View.Details;
 			// 
-			// m_lblBannerStyle
+			// m_tabGui2
 			// 
-			this.m_lblBannerStyle.AutoSize = true;
-			this.m_lblBannerStyle.Location = new System.Drawing.Point(3, 257);
-			this.m_lblBannerStyle.Name = "m_lblBannerStyle";
-			this.m_lblBannerStyle.Size = new System.Drawing.Size(100, 13);
-			this.m_lblBannerStyle.TabIndex = 4;
-			this.m_lblBannerStyle.Text = "&Dialog banner style:";
+			this.m_tabGui2.Controls.Add(this.m_grpIntAdv);
+			this.m_tabGui2.Controls.Add(this.m_grpFonts);
+			this.m_tabGui2.Controls.Add(this.m_grpStyles);
+			this.m_tabGui2.Location = new System.Drawing.Point(4, 22);
+			this.m_tabGui2.Name = "m_tabGui2";
+			this.m_tabGui2.Size = new System.Drawing.Size(554, 338);
+			this.m_tabGui2.TabIndex = 5;
+			this.m_tabGui2.Text = "Interface (2)";
+			this.m_tabGui2.UseVisualStyleBackColor = true;
+			// 
+			// m_grpIntAdv
+			// 
+			this.m_grpIntAdv.Controls.Add(this.m_lblEscAction);
+			this.m_grpIntAdv.Controls.Add(this.m_lblMruCount);
+			this.m_grpIntAdv.Controls.Add(this.m_numMruCount);
+			this.m_grpIntAdv.Controls.Add(this.m_cmbEscAction);
+			this.m_grpIntAdv.Location = new System.Drawing.Point(6, 160);
+			this.m_grpIntAdv.Name = "m_grpIntAdv";
+			this.m_grpIntAdv.Size = new System.Drawing.Size(330, 78);
+			this.m_grpIntAdv.TabIndex = 2;
+			this.m_grpIntAdv.TabStop = false;
+			this.m_grpIntAdv.Text = "Advanced";
+			// 
+			// m_lblEscAction
+			// 
+			this.m_lblEscAction.AutoSize = true;
+			this.m_lblEscAction.Location = new System.Drawing.Point(6, 21);
+			this.m_lblEscAction.Name = "m_lblEscAction";
+			this.m_lblEscAction.Size = new System.Drawing.Size(148, 13);
+			this.m_lblEscAction.TabIndex = 0;
+			this.m_lblEscAction.Text = "&Esc keypress in main window:";
+			// 
+			// m_lblMruCount
+			// 
+			this.m_lblMruCount.AutoSize = true;
+			this.m_lblMruCount.Location = new System.Drawing.Point(6, 47);
+			this.m_lblMruCount.Name = "m_lblMruCount";
+			this.m_lblMruCount.Size = new System.Drawing.Size(148, 13);
+			this.m_lblMruCount.TabIndex = 2;
+			this.m_lblMruCount.Text = "&Remember recently used files:";
+			// 
+			// m_numMruCount
+			// 
+			this.m_numMruCount.Location = new System.Drawing.Point(160, 45);
+			this.m_numMruCount.Maximum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+			this.m_numMruCount.Name = "m_numMruCount";
+			this.m_numMruCount.Size = new System.Drawing.Size(53, 20);
+			this.m_numMruCount.TabIndex = 3;
+			this.m_numMruCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// m_cmbEscAction
+			// 
+			this.m_cmbEscAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbEscAction.FormattingEnabled = true;
+			this.m_cmbEscAction.Location = new System.Drawing.Point(160, 18);
+			this.m_cmbEscAction.Name = "m_cmbEscAction";
+			this.m_cmbEscAction.Size = new System.Drawing.Size(160, 21);
+			this.m_cmbEscAction.TabIndex = 1;
+			// 
+			// m_grpFonts
+			// 
+			this.m_grpFonts.Controls.Add(this.m_linkMainFont);
+			this.m_grpFonts.Controls.Add(this.m_cbListFont);
+			this.m_grpFonts.Controls.Add(this.m_btnListFont);
+			this.m_grpFonts.Controls.Add(this.m_btnPasswordFont);
+			this.m_grpFonts.Controls.Add(this.m_cbPasswordFont);
+			this.m_grpFonts.Location = new System.Drawing.Point(342, 12);
+			this.m_grpFonts.Name = "m_grpFonts";
+			this.m_grpFonts.Size = new System.Drawing.Size(204, 142);
+			this.m_grpFonts.TabIndex = 1;
+			this.m_grpFonts.TabStop = false;
+			this.m_grpFonts.Text = "Fonts";
+			// 
+			// m_linkMainFont
+			// 
+			this.m_linkMainFont.AutoSize = true;
+			this.m_linkMainFont.Location = new System.Drawing.Point(6, 117);
+			this.m_linkMainFont.Name = "m_linkMainFont";
+			this.m_linkMainFont.Size = new System.Drawing.Size(78, 13);
+			this.m_linkMainFont.TabIndex = 4;
+			this.m_linkMainFont.TabStop = true;
+			this.m_linkMainFont.Text = "Main font (size)";
+			this.m_linkMainFont.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnGuiFontLinkClicked);
+			// 
+			// m_cbListFont
+			// 
+			this.m_cbListFont.AutoSize = true;
+			this.m_cbListFont.Location = new System.Drawing.Point(9, 20);
+			this.m_cbListFont.Name = "m_cbListFont";
+			this.m_cbListFont.Size = new System.Drawing.Size(100, 17);
+			this.m_cbListFont.TabIndex = 0;
+			this.m_cbListFont.Text = "Custom &list font:";
+			this.m_cbListFont.UseVisualStyleBackColor = true;
+			// 
+			// m_btnListFont
+			// 
+			this.m_btnListFont.Location = new System.Drawing.Point(28, 39);
+			this.m_btnListFont.Name = "m_btnListFont";
+			this.m_btnListFont.Size = new System.Drawing.Size(167, 23);
+			this.m_btnListFont.TabIndex = 1;
+			this.m_btnListFont.Text = "<>";
+			this.m_btnListFont.UseVisualStyleBackColor = true;
+			// 
+			// m_btnPasswordFont
+			// 
+			this.m_btnPasswordFont.Location = new System.Drawing.Point(28, 87);
+			this.m_btnPasswordFont.Name = "m_btnPasswordFont";
+			this.m_btnPasswordFont.Size = new System.Drawing.Size(167, 23);
+			this.m_btnPasswordFont.TabIndex = 3;
+			this.m_btnPasswordFont.Text = "<>";
+			this.m_btnPasswordFont.UseVisualStyleBackColor = true;
+			// 
+			// m_cbPasswordFont
+			// 
+			this.m_cbPasswordFont.AutoSize = true;
+			this.m_cbPasswordFont.Location = new System.Drawing.Point(9, 68);
+			this.m_cbPasswordFont.Name = "m_cbPasswordFont";
+			this.m_cbPasswordFont.Size = new System.Drawing.Size(133, 17);
+			this.m_cbPasswordFont.TabIndex = 2;
+			this.m_cbPasswordFont.Text = "Custom &password font:";
+			this.m_cbPasswordFont.UseVisualStyleBackColor = true;
+			// 
+			// m_grpStyles
+			// 
+			this.m_grpStyles.Controls.Add(this.m_linkTheme);
+			this.m_grpStyles.Controls.Add(this.m_cmbMenuStyle);
+			this.m_grpStyles.Controls.Add(this.m_btnAltColor);
+			this.m_grpStyles.Controls.Add(this.m_cmbBannerStyle);
+			this.m_grpStyles.Controls.Add(this.m_cbAltColor);
+			this.m_grpStyles.Controls.Add(this.m_lblBannerStyle);
+			this.m_grpStyles.Controls.Add(this.m_lblMenuStyle);
+			this.m_grpStyles.Location = new System.Drawing.Point(6, 12);
+			this.m_grpStyles.Name = "m_grpStyles";
+			this.m_grpStyles.Size = new System.Drawing.Size(330, 142);
+			this.m_grpStyles.TabIndex = 0;
+			this.m_grpStyles.TabStop = false;
+			this.m_grpStyles.Text = "Styles && colors";
+			// 
+			// m_linkTheme
+			// 
+			this.m_linkTheme.AutoSize = true;
+			this.m_linkTheme.Location = new System.Drawing.Point(6, 102);
+			this.m_linkTheme.Name = "m_linkTheme";
+			this.m_linkTheme.Size = new System.Drawing.Size(62, 13);
+			this.m_linkTheme.TabIndex = 6;
+			this.m_linkTheme.TabStop = true;
+			this.m_linkTheme.Text = "Dark theme";
+			this.m_linkTheme.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnGuiDarkLinkClicked);
+			// 
+			// m_cmbMenuStyle
+			// 
+			this.m_cmbMenuStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbMenuStyle.FormattingEnabled = true;
+			this.m_cmbMenuStyle.Location = new System.Drawing.Point(160, 18);
+			this.m_cmbMenuStyle.Name = "m_cmbMenuStyle";
+			this.m_cmbMenuStyle.Size = new System.Drawing.Size(160, 21);
+			this.m_cmbMenuStyle.TabIndex = 1;
+			// 
+			// m_btnAltColor
+			// 
+			this.m_btnAltColor.Location = new System.Drawing.Point(159, 71);
+			this.m_btnAltColor.Name = "m_btnAltColor";
+			this.m_btnAltColor.Size = new System.Drawing.Size(48, 23);
+			this.m_btnAltColor.TabIndex = 5;
+			this.m_btnAltColor.UseVisualStyleBackColor = true;
 			// 
 			// m_cmbBannerStyle
 			// 
 			this.m_cmbBannerStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cmbBannerStyle.FormattingEnabled = true;
-			this.m_cmbBannerStyle.Location = new System.Drawing.Point(157, 254);
+			this.m_cmbBannerStyle.Location = new System.Drawing.Point(160, 45);
 			this.m_cmbBannerStyle.Name = "m_cmbBannerStyle";
-			this.m_cmbBannerStyle.Size = new System.Drawing.Size(162, 21);
-			this.m_cmbBannerStyle.TabIndex = 5;
-			this.m_cmbBannerStyle.SelectedValueChanged += new System.EventHandler(this.OnBannerStyleSelectedChanged);
+			this.m_cmbBannerStyle.Size = new System.Drawing.Size(160, 21);
+			this.m_cmbBannerStyle.TabIndex = 3;
+			this.m_cmbBannerStyle.SelectedIndexChanged += new System.EventHandler(this.OnBannerStyleSelectedChanged);
+			// 
+			// m_cbAltColor
+			// 
+			this.m_cbAltColor.AutoSize = true;
+			this.m_cbAltColor.Location = new System.Drawing.Point(9, 74);
+			this.m_cbAltColor.Name = "m_cbAltColor";
+			this.m_cbAltColor.Size = new System.Drawing.Size(129, 17);
+			this.m_cbAltColor.TabIndex = 4;
+			this.m_cbAltColor.Text = "Custom &alt. item color:";
+			this.m_cbAltColor.UseVisualStyleBackColor = true;
+			this.m_cbAltColor.CheckedChanged += new System.EventHandler(this.OnAltColorCheckedChanged);
+			// 
+			// m_lblBannerStyle
+			// 
+			this.m_lblBannerStyle.AutoSize = true;
+			this.m_lblBannerStyle.Location = new System.Drawing.Point(6, 48);
+			this.m_lblBannerStyle.Name = "m_lblBannerStyle";
+			this.m_lblBannerStyle.Size = new System.Drawing.Size(100, 13);
+			this.m_lblBannerStyle.TabIndex = 2;
+			this.m_lblBannerStyle.Text = "&Dialog banner style:";
+			// 
+			// m_lblMenuStyle
+			// 
+			this.m_lblMenuStyle.AutoSize = true;
+			this.m_lblMenuStyle.Location = new System.Drawing.Point(6, 21);
+			this.m_lblMenuStyle.Name = "m_lblMenuStyle";
+			this.m_lblMenuStyle.Size = new System.Drawing.Size(117, 13);
+			this.m_lblMenuStyle.TabIndex = 0;
+			this.m_lblMenuStyle.Text = "&Menu and toolbar style:";
 			// 
 			// m_tabIntegration
 			// 
@@ -642,18 +737,18 @@
 			// 
 			this.m_hkAutoTypePassword.Location = new System.Drawing.Point(175, 44);
 			this.m_hkAutoTypePassword.Name = "m_hkAutoTypePassword";
-			this.m_hkAutoTypePassword.Size = new System.Drawing.Size(166, 20);
+			this.m_hkAutoTypePassword.Size = new System.Drawing.Size(180, 20);
 			this.m_hkAutoTypePassword.TabIndex = 4;
 			// 
 			// m_linkHotKeyHelp
 			// 
 			this.m_linkHotKeyHelp.AutoSize = true;
-			this.m_linkHotKeyHelp.Location = new System.Drawing.Point(354, 21);
+			this.m_linkHotKeyHelp.Location = new System.Drawing.Point(382, 21);
 			this.m_linkHotKeyHelp.Name = "m_linkHotKeyHelp";
-			this.m_linkHotKeyHelp.Size = new System.Drawing.Size(177, 13);
+			this.m_linkHotKeyHelp.Size = new System.Drawing.Size(149, 13);
 			this.m_linkHotKeyHelp.TabIndex = 2;
 			this.m_linkHotKeyHelp.TabStop = true;
-			this.m_linkHotKeyHelp.Text = "Help: Creating system-wide hot keys";
+			this.m_linkHotKeyHelp.Text = "Creating system-wide hot keys";
 			this.m_linkHotKeyHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnHotKeyHelpLinkClicked);
 			// 
 			// m_lblAutoTypeSelected
@@ -669,14 +764,14 @@
 			// 
 			this.m_hkAutoTypeSelected.Location = new System.Drawing.Point(175, 70);
 			this.m_hkAutoTypeSelected.Name = "m_hkAutoTypeSelected";
-			this.m_hkAutoTypeSelected.Size = new System.Drawing.Size(166, 20);
+			this.m_hkAutoTypeSelected.Size = new System.Drawing.Size(180, 20);
 			this.m_hkAutoTypeSelected.TabIndex = 6;
 			// 
 			// m_hkShowWindow
 			// 
 			this.m_hkShowWindow.Location = new System.Drawing.Point(175, 96);
 			this.m_hkShowWindow.Name = "m_hkShowWindow";
-			this.m_hkShowWindow.Size = new System.Drawing.Size(166, 20);
+			this.m_hkShowWindow.Size = new System.Drawing.Size(180, 20);
 			this.m_hkShowWindow.TabIndex = 8;
 			// 
 			// m_lblAutoType
@@ -701,7 +796,7 @@
 			// 
 			this.m_hkAutoType.Location = new System.Drawing.Point(175, 18);
 			this.m_hkAutoType.Name = "m_hkAutoType";
-			this.m_hkAutoType.Size = new System.Drawing.Size(166, 20);
+			this.m_hkAutoType.Size = new System.Drawing.Size(180, 20);
 			this.m_hkAutoType.TabIndex = 1;
 			// 
 			// m_tabAdvanced
@@ -769,9 +864,15 @@
 			((System.ComponentModel.ISupportInitialize)(this.m_numLockAfterTime)).EndInit();
 			this.m_tabPolicy.ResumeLayout(false);
 			this.m_tabPolicy.PerformLayout();
-			this.m_tabGui.ResumeLayout(false);
-			this.m_tabGui.PerformLayout();
+			this.m_tabGui1.ResumeLayout(false);
+			this.m_tabGui2.ResumeLayout(false);
+			this.m_grpIntAdv.ResumeLayout(false);
+			this.m_grpIntAdv.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numMruCount)).EndInit();
+			this.m_grpFonts.ResumeLayout(false);
+			this.m_grpFonts.PerformLayout();
+			this.m_grpStyles.ResumeLayout(false);
+			this.m_grpStyles.PerformLayout();
 			this.m_tabIntegration.ResumeLayout(false);
 			this.m_tabIntegration.PerformLayout();
 			this.m_grpFileExt.ResumeLayout(false);
@@ -790,9 +891,7 @@
 		private System.Windows.Forms.TabControl m_tabMain;
 		private System.Windows.Forms.TabPage m_tabSecurity;
 		private System.Windows.Forms.TabPage m_tabAdvanced;
-		private System.Windows.Forms.TabPage m_tabGui;
-		private System.Windows.Forms.ComboBox m_cmbBannerStyle;
-		private System.Windows.Forms.Label m_lblBannerStyle;
+		private System.Windows.Forms.TabPage m_tabGui1;
 		private System.Windows.Forms.CheckBox m_cbLockAfterTime;
 		private System.Windows.Forms.NumericUpDown m_numLockAfterTime;
 		private System.Windows.Forms.TabPage m_tabPolicy;
@@ -802,7 +901,6 @@
 		private System.Windows.Forms.Label m_lblPolicyIntro;
 		private KeePass.UI.CustomListViewEx m_lvPolicy;
 		private KeePass.UI.CustomListViewEx m_lvGuiOptions;
-		private System.Windows.Forms.Button m_btnSelFont;
 		private System.Windows.Forms.TabPage m_tabIntegration;
 		private KeePass.UI.HotKeyControlEx m_hkAutoType;
 		private System.Windows.Forms.Label m_lblAutoType;
@@ -820,22 +918,13 @@
 		private System.Windows.Forms.CheckBox m_cbAutoRun;
 		private KeePass.UI.CustomListViewEx m_lvAdvanced;
 		private KeePass.UI.CustomListViewEx m_lvSecurityOptions;
-		private System.Windows.Forms.NumericUpDown m_numMruCount;
-		private System.Windows.Forms.Label m_lblMruCount;
 		private System.Windows.Forms.Button m_btnSchemeOverrides;
 		private System.Windows.Forms.Label m_lblAutoTypeSelected;
 		private KeePass.UI.HotKeyControlEx m_hkAutoTypeSelected;
-		private System.Windows.Forms.Button m_btnSelPwFont;
 		private System.Windows.Forms.LinkLabel m_linkHotKeyHelp;
 		private System.Windows.Forms.CheckBox m_cbLockAfterGlobalTime;
 		private System.Windows.Forms.NumericUpDown m_numLockAfterGlobalTime;
 		private System.Windows.Forms.Button m_btnProxy;
-		private System.Windows.Forms.ComboBox m_cmbMenuStyle;
-		private System.Windows.Forms.Label m_lblMenuStyle;
-		private System.Windows.Forms.Button m_btnCustomAltColor;
-		private System.Windows.Forms.CheckBox m_cbCustomAltColor;
-		private System.Windows.Forms.ComboBox m_cmbEscAction;
-		private System.Windows.Forms.Label m_lblEscAction;
 		private System.Windows.Forms.ToolTip m_ttRect;
 		private System.Windows.Forms.Label m_lblAutoTypePassword;
 		private KeePass.UI.HotKeyControlEx m_hkAutoTypePassword;
@@ -843,5 +932,25 @@
 		private System.Windows.Forms.Label m_lblSecOpt;
 		private System.Windows.Forms.LinkLabel m_linkSecOptAdm;
 		private System.Windows.Forms.LinkLabel m_linkSecOptEx;
+		private System.Windows.Forms.TabPage m_tabGui2;
+		private System.Windows.Forms.ComboBox m_cmbMenuStyle;
+		private System.Windows.Forms.Label m_lblMenuStyle;
+		private System.Windows.Forms.Label m_lblBannerStyle;
+		private System.Windows.Forms.ComboBox m_cmbBannerStyle;
+		private System.Windows.Forms.ComboBox m_cmbEscAction;
+		private System.Windows.Forms.Label m_lblEscAction;
+		private System.Windows.Forms.NumericUpDown m_numMruCount;
+		private System.Windows.Forms.Label m_lblMruCount;
+		private System.Windows.Forms.CheckBox m_cbListFont;
+		private System.Windows.Forms.Button m_btnPasswordFont;
+		private System.Windows.Forms.CheckBox m_cbPasswordFont;
+		private System.Windows.Forms.Button m_btnListFont;
+		private KeePass.UI.ColorButtonEx m_btnAltColor;
+		private System.Windows.Forms.CheckBox m_cbAltColor;
+		private System.Windows.Forms.GroupBox m_grpFonts;
+		private System.Windows.Forms.GroupBox m_grpStyles;
+		private System.Windows.Forms.GroupBox m_grpIntAdv;
+		private System.Windows.Forms.LinkLabel m_linkTheme;
+		private System.Windows.Forms.LinkLabel m_linkMainFont;
 	}
 }

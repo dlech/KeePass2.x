@@ -350,12 +350,7 @@ namespace KeePassLib.Utility
 		/// <returns>String, HTML-encoded.</returns>
 		public static string StringToHtml(string str)
 		{
-			return StringToHtml(str, false);
-		}
-
-		internal static string StringToHtml(string str, bool bNbsp)
-		{
-			Debug.Assert(str != null); if(str == null) throw new ArgumentNullException("str");
+			if(str == null) { Debug.Assert(false); return string.Empty; }
 
 			str = str.Replace(@"&", @"&amp;"); // Must be first
 			str = str.Replace(@"<", @"&lt;");
@@ -363,7 +358,7 @@ namespace KeePassLib.Utility
 			str = str.Replace("\"", @"&quot;");
 			str = str.Replace("\'", @"&#39;");
 
-			if(bNbsp) str = str.Replace(" ", @"&nbsp;"); // Before <br />
+			// if(bNbsp) str = str.Replace(" ", @"&nbsp;"); // Before <br />
 
 			str = NormalizeNewLines(str, false);
 			str = str.Replace("\n", @"<br />" + MessageService.NewLine);
@@ -373,13 +368,13 @@ namespace KeePassLib.Utility
 
 		public static string XmlToString(string str)
 		{
-			Debug.Assert(str != null); if(str == null) throw new ArgumentNullException("str");
+			if(str == null) { Debug.Assert(false); return string.Empty; }
 
-			str = str.Replace(@"&amp;", @"&");
 			str = str.Replace(@"&lt;", @"<");
 			str = str.Replace(@"&gt;", @">");
 			str = str.Replace(@"&quot;", "\"");
 			str = str.Replace(@"&#39;", "\'");
+			str = str.Replace(@"&amp;", @"&"); // Must be last
 
 			return str;
 		}
@@ -387,9 +382,9 @@ namespace KeePassLib.Utility
 		public static string ReplaceCaseInsensitive(string strString, string strFind,
 			string strNew)
 		{
-			Debug.Assert(strString != null); if(strString == null) return strString;
-			Debug.Assert(strFind != null); if(strFind == null) return strString;
-			Debug.Assert(strNew != null); if(strNew == null) return strString;
+			if(strString == null) { Debug.Assert(false); return string.Empty; }
+			if(strFind == null) { Debug.Assert(false); return strString; }
+			if(strNew == null) { Debug.Assert(false); return strString; }
 
 			string str = strString;
 
@@ -2000,6 +1995,72 @@ namespace KeePassLib.Utility
 			}
 
 			return sb.ToString();
+		}
+
+		// Escape a string value (not an identifier) for CSS.
+		// https://www.w3.org/TR/CSS22/syndata.html#characters
+		// https://www.w3.org/TR/CSS22/syndata.html#strings
+		internal static string CssEscapeString(string str)
+		{
+			if(str == null) { Debug.Assert(false); return string.Empty; }
+
+			int cc = str.Length;
+			if(cc == 0) return string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+
+			for(int i = 0; i < cc; ++i)
+			{
+				char ch = str[i];
+				switch(ch)
+				{
+					case '\"': sb.Append("\\\""); break;
+					case '\'': sb.Append("\\\'"); break;
+					case '\\': sb.Append("\\\\"); break;
+					case '\n': sb.Append("\\A "); break; // Space terminates hex value
+					case '\r': sb.Append("\\D "); break;
+					default: sb.Append(ch); break;
+				}
+			}
+
+			return sb.ToString();
+		}
+
+		internal static List<KeyValuePair<int, UnicodeCategory>> GetCategoryGroups(
+			string str)
+		{
+			List<KeyValuePair<int, UnicodeCategory>> l =
+				new List<KeyValuePair<int, UnicodeCategory>>();
+			if(str == null) { Debug.Assert(false); return l; }
+			if(str.Length == 0) return l;
+
+			int iStart = 0;
+			UnicodeCategory ucStart = UnicodeCategory.UppercaseLetter;
+
+			for(int i = 0; i < str.Length; ++i)
+			{
+				UnicodeCategory uc = char.GetUnicodeCategory(str[i]);
+
+				if((uc != ucStart) && (i != 0))
+				{
+					l.Add(new KeyValuePair<int, UnicodeCategory>(iStart, ucStart));
+					iStart = i;
+				}
+
+				ucStart = uc;
+			}
+
+			l.Add(new KeyValuePair<int, UnicodeCategory>(iStart, ucStart));
+
+			return l;
+		}
+
+		internal static string CommandToText(string strCommand)
+		{
+			if(strCommand == null) { Debug.Assert(false); return string.Empty; }
+			if(strCommand.Length == 0) return string.Empty;
+
+			return TrimDots(RemoveAccelerator(strCommand), true);
 		}
 	}
 }

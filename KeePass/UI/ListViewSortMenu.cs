@@ -119,8 +119,7 @@ namespace KeePass.UI
 
 			DeleteMenuItems();
 
-			IComparer icSorter = m_lv.ListViewItemSorter;
-			ListSorter ls = ((icSorter != null) ? (icSorter as ListSorter) : null);
+			ListSorter ls = (m_lv.ListViewItemSorter as ListSorter);
 			if(ls != null)
 			{
 				m_iCurSortColumn = ls.Column;

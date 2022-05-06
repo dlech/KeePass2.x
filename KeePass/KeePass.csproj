@@ -490,6 +490,12 @@
     <Compile Include="Forms\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\OtpGeneratorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OtpGeneratorForm.Designer.cs">
+      <DependentUpon>OtpGeneratorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\_Accessories.cs" />
     <Compile Include="Forms\AutoTypeCtxForm.cs">
       <SubType>Form</SubType>
@@ -810,9 +816,13 @@
     <Compile Include="Plugins\PlgxPlugin.cs" />
     <Compile Include="Resources\KPRes.cs" />
     <Compile Include="Resources\KPRes.Generated.cs" />
+    <Compile Include="UI\AccessibilityEx.cs" />
     <Compile Include="UI\AsyncPwListUpdate.cs" />
     <Compile Include="UI\BackgroundForm.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ColorButtonEx.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ColorMenuItem.cs">
       <SubType>Component</SubType>
@@ -848,6 +858,7 @@
     <Compile Include="UI\ExpiryControlGroup.cs" />
     <Compile Include="UI\FileDialogsEx.cs" />
     <Compile Include="UI\FileIcons.cs" />
+    <Compile Include="UI\FontControlGroup.cs" />
     <Compile Include="UI\FontUtil.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IconColorizer.cs" />
@@ -879,6 +890,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\StatusUtil.cs" />
+    <Compile Include="UI\SuspendLayoutScope.cs" />
     <Compile Include="UI\TabControlEx.cs">
     </Compile>
     <Compile Include="UI\TaskbarList.cs" />
@@ -1040,6 +1052,9 @@
     <EmbeddedResource Include="Forms\OptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>OptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OtpGeneratorForm.resx">
+      <DependentUpon>OtpGeneratorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PluginsForm.resx">
       <SubType>Designer</SubType>

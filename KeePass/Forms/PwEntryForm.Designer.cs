@@ -98,6 +98,8 @@
 			this.m_ctxStrMoveToPassword = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxStrMoveToUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxStrMoveToNotes = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxStrSep3 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxStrOtpGen = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabProperties = new System.Windows.Forms.TabPage();
 			this.m_btnTags = new System.Windows.Forms.Button();
 			this.m_linkTagsInh = new System.Windows.Forms.LinkLabel();
@@ -106,13 +108,13 @@
 			this.m_lvCustomData = new KeePass.UI.CustomListViewEx();
 			this.m_tbTags = new System.Windows.Forms.TextBox();
 			this.m_lblTags = new System.Windows.Forms.Label();
-			this.m_btnPickFgColor = new System.Windows.Forms.Button();
+			this.m_btnPickFgColor = new KeePass.UI.ColorButtonEx();
 			this.m_cbCustomForegroundColor = new System.Windows.Forms.CheckBox();
 			this.m_tbUuid = new System.Windows.Forms.TextBox();
 			this.m_lblUuid = new System.Windows.Forms.Label();
 			this.m_lblOverrideUrl = new System.Windows.Forms.Label();
 			this.m_cbCustomBackgroundColor = new System.Windows.Forms.CheckBox();
-			this.m_btnPickBgColor = new System.Windows.Forms.Button();
+			this.m_btnPickBgColor = new KeePass.UI.ColorButtonEx();
 			this.m_cmbOverrideUrl = new KeePass.UI.ImageComboBoxEx();
 			this.m_tabAutoType = new System.Windows.Forms.TabPage();
 			this.m_btnAutoTypeMore = new System.Windows.Forms.Button();
@@ -164,6 +166,8 @@
 			this.m_ctxToolsFieldRefsInPassword = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsFieldRefsInUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxToolsFieldRefsInNotes = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsSep2 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_ctxToolsOtpGen = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxBinAttach = new KeePass.UI.CustomContextMenuStripEx(this.components);
 			this.m_ctxBinImportFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxBinSep0 = new System.Windows.Forms.ToolStripSeparator();
@@ -713,16 +717,18 @@
             this.m_ctxStrSep1,
             this.m_ctxStrSelectAll,
             this.m_ctxStrSep2,
-            this.m_ctxStrMoveTo});
+            this.m_ctxStrMoveTo,
+            this.m_ctxStrSep3,
+            this.m_ctxStrOtpGen});
 			this.m_ctxStr.Name = "m_ctxStr";
-			this.m_ctxStr.Size = new System.Drawing.Size(151, 154);
+			this.m_ctxStr.Size = new System.Drawing.Size(205, 204);
 			this.m_ctxStr.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxStrOpening);
 			// 
 			// m_ctxStrCopyName
 			// 
 			this.m_ctxStrCopyName.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxStrCopyName.Name = "m_ctxStrCopyName";
-			this.m_ctxStrCopyName.Size = new System.Drawing.Size(150, 22);
+			this.m_ctxStrCopyName.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxStrCopyName.Text = "Copy &Name(s)";
 			this.m_ctxStrCopyName.Click += new System.EventHandler(this.OnCtxStrCopyName);
 			// 
@@ -730,20 +736,20 @@
 			// 
 			this.m_ctxStrCopyValue.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxStrCopyValue.Name = "m_ctxStrCopyValue";
-			this.m_ctxStrCopyValue.Size = new System.Drawing.Size(150, 22);
+			this.m_ctxStrCopyValue.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxStrCopyValue.Text = "Copy &Value(s)";
 			this.m_ctxStrCopyValue.Click += new System.EventHandler(this.OnCtxStrCopyValue);
 			// 
 			// m_ctxStrSep0
 			// 
 			this.m_ctxStrSep0.Name = "m_ctxStrSep0";
-			this.m_ctxStrSep0.Size = new System.Drawing.Size(147, 6);
+			this.m_ctxStrSep0.Size = new System.Drawing.Size(201, 6);
 			// 
 			// m_ctxStrCopyItem
 			// 
 			this.m_ctxStrCopyItem.Image = global::KeePass.Properties.Resources.B16x16_EditCopy;
 			this.m_ctxStrCopyItem.Name = "m_ctxStrCopyItem";
-			this.m_ctxStrCopyItem.Size = new System.Drawing.Size(150, 22);
+			this.m_ctxStrCopyItem.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxStrCopyItem.Text = "&Copy Item(s)";
 			this.m_ctxStrCopyItem.Click += new System.EventHandler(this.OnCtxStrCopyItem);
 			// 
@@ -751,26 +757,26 @@
 			// 
 			this.m_ctxStrPasteItem.Image = global::KeePass.Properties.Resources.B16x16_EditPaste;
 			this.m_ctxStrPasteItem.Name = "m_ctxStrPasteItem";
-			this.m_ctxStrPasteItem.Size = new System.Drawing.Size(150, 22);
+			this.m_ctxStrPasteItem.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxStrPasteItem.Text = "&Paste Item(s)";
 			this.m_ctxStrPasteItem.Click += new System.EventHandler(this.OnCtxStrPasteItem);
 			// 
 			// m_ctxStrSep1
 			// 
 			this.m_ctxStrSep1.Name = "m_ctxStrSep1";
-			this.m_ctxStrSep1.Size = new System.Drawing.Size(147, 6);
+			this.m_ctxStrSep1.Size = new System.Drawing.Size(201, 6);
 			// 
 			// m_ctxStrSelectAll
 			// 
 			this.m_ctxStrSelectAll.Name = "m_ctxStrSelectAll";
-			this.m_ctxStrSelectAll.Size = new System.Drawing.Size(150, 22);
+			this.m_ctxStrSelectAll.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxStrSelectAll.Text = "&Select All";
 			this.m_ctxStrSelectAll.Click += new System.EventHandler(this.OnCtxStrSelectAll);
 			// 
 			// m_ctxStrSep2
 			// 
 			this.m_ctxStrSep2.Name = "m_ctxStrSep2";
-			this.m_ctxStrSep2.Size = new System.Drawing.Size(147, 6);
+			this.m_ctxStrSep2.Size = new System.Drawing.Size(201, 6);
 			// 
 			// m_ctxStrMoveTo
 			// 
@@ -781,7 +787,7 @@
             this.m_ctxStrMoveToUrl,
             this.m_ctxStrMoveToNotes});
 			this.m_ctxStrMoveTo.Name = "m_ctxStrMoveTo";
-			this.m_ctxStrMoveTo.Size = new System.Drawing.Size(150, 22);
+			this.m_ctxStrMoveTo.Size = new System.Drawing.Size(204, 22);
 			this.m_ctxStrMoveTo.Text = "&Move To";
 			// 
 			// m_ctxStrMoveToTitle
@@ -818,6 +824,19 @@
 			this.m_ctxStrMoveToNotes.Size = new System.Drawing.Size(132, 22);
 			this.m_ctxStrMoveToNotes.Text = "&Notes";
 			this.m_ctxStrMoveToNotes.Click += new System.EventHandler(this.OnCtxStrMoveToNotes);
+			// 
+			// m_ctxStrSep3
+			// 
+			this.m_ctxStrSep3.Name = "m_ctxStrSep3";
+			this.m_ctxStrSep3.Size = new System.Drawing.Size(201, 6);
+			// 
+			// m_ctxStrOtpGen
+			// 
+			this.m_ctxStrOtpGen.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Gen;
+			this.m_ctxStrOtpGen.Name = "m_ctxStrOtpGen";
+			this.m_ctxStrOtpGen.Size = new System.Drawing.Size(204, 22);
+			this.m_ctxStrOtpGen.Text = "&OTP Generator Settings...";
+			this.m_ctxStrOtpGen.Click += new System.EventHandler(this.OnCtxStrOtpGen);
 			// 
 			// m_tabProperties
 			// 
@@ -917,7 +936,6 @@
 			this.m_btnPickFgColor.Size = new System.Drawing.Size(48, 23);
 			this.m_btnPickFgColor.TabIndex = 1;
 			this.m_btnPickFgColor.UseVisualStyleBackColor = true;
-			this.m_btnPickFgColor.Click += new System.EventHandler(this.OnPickForegroundColor);
 			// 
 			// m_cbCustomForegroundColor
 			// 
@@ -974,7 +992,6 @@
 			this.m_btnPickBgColor.Size = new System.Drawing.Size(48, 23);
 			this.m_btnPickBgColor.TabIndex = 3;
 			this.m_btnPickBgColor.UseVisualStyleBackColor = true;
-			this.m_btnPickBgColor.Click += new System.EventHandler(this.OnPickBackgroundColor);
 			// 
 			// m_cmbOverrideUrl
 			// 
@@ -1378,9 +1395,11 @@
             this.m_ctxToolsUrlSelApp,
             this.m_ctxToolsUrlSelDoc,
             this.m_ctxToolsSep1,
-            this.m_ctxToolsFieldRefs});
+            this.m_ctxToolsFieldRefs,
+            this.m_ctxToolsSep2,
+            this.m_ctxToolsOtpGen});
 			this.m_ctxTools.Name = "m_ctxTools";
-			this.m_ctxTools.Size = new System.Drawing.Size(234, 126);
+			this.m_ctxTools.Size = new System.Drawing.Size(234, 154);
 			// 
 			// m_ctxToolsHelp
 			// 
@@ -1447,7 +1466,7 @@
 			// 
 			this.m_ctxToolsFieldRefsInUserName.Name = "m_ctxToolsFieldRefsInUserName";
 			this.m_ctxToolsFieldRefsInUserName.Size = new System.Drawing.Size(173, 22);
-			this.m_ctxToolsFieldRefsInUserName.Text = "In User &Name Field";
+			this.m_ctxToolsFieldRefsInUserName.Text = "In &User Name Field";
 			this.m_ctxToolsFieldRefsInUserName.Click += new System.EventHandler(this.OnFieldRefInUserName);
 			// 
 			// m_ctxToolsFieldRefsInPassword
@@ -1461,15 +1480,28 @@
 			// 
 			this.m_ctxToolsFieldRefsInUrl.Name = "m_ctxToolsFieldRefsInUrl";
 			this.m_ctxToolsFieldRefsInUrl.Size = new System.Drawing.Size(173, 22);
-			this.m_ctxToolsFieldRefsInUrl.Text = "In &URL Field";
+			this.m_ctxToolsFieldRefsInUrl.Text = "In UR&L Field";
 			this.m_ctxToolsFieldRefsInUrl.Click += new System.EventHandler(this.OnFieldRefInUrl);
 			// 
 			// m_ctxToolsFieldRefsInNotes
 			// 
 			this.m_ctxToolsFieldRefsInNotes.Name = "m_ctxToolsFieldRefsInNotes";
 			this.m_ctxToolsFieldRefsInNotes.Size = new System.Drawing.Size(173, 22);
-			this.m_ctxToolsFieldRefsInNotes.Text = "In N&otes Field";
+			this.m_ctxToolsFieldRefsInNotes.Text = "In &Notes Field";
 			this.m_ctxToolsFieldRefsInNotes.Click += new System.EventHandler(this.OnFieldRefInNotes);
+			// 
+			// m_ctxToolsSep2
+			// 
+			this.m_ctxToolsSep2.Name = "m_ctxToolsSep2";
+			this.m_ctxToolsSep2.Size = new System.Drawing.Size(230, 6);
+			// 
+			// m_ctxToolsOtpGen
+			// 
+			this.m_ctxToolsOtpGen.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Gen;
+			this.m_ctxToolsOtpGen.Name = "m_ctxToolsOtpGen";
+			this.m_ctxToolsOtpGen.Size = new System.Drawing.Size(233, 22);
+			this.m_ctxToolsOtpGen.Text = "&OTP Generator Settings...";
+			this.m_ctxToolsOtpGen.Click += new System.EventHandler(this.OnCtxToolsOtpGen);
 			// 
 			// m_ctxBinAttach
 			// 
@@ -1621,7 +1653,7 @@
 		private System.Windows.Forms.Button m_btnAutoTypeEditDefault;
 		private System.Windows.Forms.Button m_btnStrMore;
 		private System.Windows.Forms.TabPage m_tabProperties;
-		private System.Windows.Forms.Button m_btnPickBgColor;
+		private KeePass.UI.ColorButtonEx m_btnPickBgColor;
 		private System.Windows.Forms.CheckBox m_cbCustomBackgroundColor;
 		private System.Windows.Forms.Label m_lblOverrideUrl;
 		private System.Windows.Forms.LinkLabel m_linkAutoTypeObfuscation;
@@ -1642,7 +1674,7 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInPassword;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInUrl;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsFieldRefsInNotes;
-		private System.Windows.Forms.Button m_btnPickFgColor;
+		private KeePass.UI.ColorButtonEx m_btnPickFgColor;
 		private System.Windows.Forms.CheckBox m_cbCustomForegroundColor;
 		private System.Windows.Forms.TextBox m_tbTags;
 		private System.Windows.Forms.Label m_lblTags;
@@ -1687,5 +1719,9 @@
 		private System.Windows.Forms.ToolStripSeparator m_ctxStrSep2;
 		private System.Windows.Forms.ToolStripSeparator m_ctxAutoTypeSep1;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxAutoTypeSelectAll;
+		private System.Windows.Forms.ToolStripSeparator m_ctxStrSep3;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxStrOtpGen;
+		private System.Windows.Forms.ToolStripSeparator m_ctxToolsSep2;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsOtpGen;
 	}
 }

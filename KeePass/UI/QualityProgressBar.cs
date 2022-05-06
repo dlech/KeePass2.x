@@ -85,7 +85,7 @@ namespace KeePass.UI
 			set
 			{
 				m_strText = value;
-				UIUtil.AccSetName(this, value ?? string.Empty);
+				AccessibilityEx.SetName(this, value ?? string.Empty);
 				Invalidate();
 			}
 		}
