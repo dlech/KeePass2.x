@@ -6024,10 +6024,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strHelpPlh =
-			@"&Help: {PARAM} placeholder";
+			@"Help: {PARAM} placeholder";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// '&amp;Help: {PARAM} placeholder'.
+		/// 'Help: {PARAM} placeholder'.
 		/// </summary>
 		public static string HelpPlh
 		{

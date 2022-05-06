@@ -72,7 +72,6 @@ namespace KeePass.Forms
 		private Font m_fontExpired = null;
 		private Font m_fontBoldTree = null;
 		private Font m_fontItalicTree = null;
-		private Color m_clrAlternateItemBgColor = Color.Empty;
 		private Point m_ptLastEntriesMouseClick = new Point(0, 0);
 		private RichTextBoxContextMenu m_ctxEntryPreviewContextMenu = new RichTextBoxContextMenu();
 		private DynamicMenu m_dynStringsMenu;
@@ -1267,9 +1266,6 @@ namespace KeePass.Forms
 
 			if(!UIUtil.ColorsEqual(pe.BackgroundColor, Color.Empty))
 				lvi.BackColor = pe.BackgroundColor;
-			// else if(Program.Config.MainWindow.EntryListAlternatingBgColors &&
-			//	((m_lvEntries.Items.Count & 1) == 1))
-			//	lvi.BackColor = m_clrAlternateItemBgColor;
 			else if(lviTarget != null) lvi.BackColor = m_lvEntries.BackColor;
 			else { Debug.Assert(UIUtil.ColorsEqual(lvi.BackColor, m_lvEntries.BackColor)); }
 
@@ -1337,14 +1333,16 @@ namespace KeePass.Forms
 			return lvi;
 		}
 
-		private void AddEntriesToList(PwObjectList<PwEntry> vEntries)
+		private void AddEntriesToList(PwObjectList<PwEntry> lEntries)
 		{
-			if(vEntries == null) { Debug.Assert(false); return; }
+			if(lEntries == null) { Debug.Assert(false); return; }
 
 			m_bEntryGrouping = m_lvEntries.ShowGroups;
 
 			ListViewStateEx lvseCachedState = new ListViewStateEx(m_lvEntries);
-			foreach(PwEntry pe in vEntries)
+			m_lvEntries.BeginUpdateEx();
+
+			foreach(PwEntry pe in lEntries)
 			{
 				if(pe == null) { Debug.Assert(false); continue; }
 
@@ -1367,10 +1365,8 @@ namespace KeePass.Forms
 				SetListEntry(pe, null);
 			}
 
+			m_lvEntries.EndUpdateEx();
 			Debug.Assert(lvseCachedState.CompareTo(m_lvEntries));
-
-			UIUtil.SetAlternatingBgColors(m_lvEntries, m_clrAlternateItemBgColor,
-				Program.Config.MainWindow.EntryListAlternatingBgColors);
 		}
 
 		private void UpdateGroupList(PwGroup pgToSelect)
@@ -1507,10 +1503,9 @@ namespace KeePass.Forms
 
 			m_asyncListUpdate.CancelPendingUpdatesAsync();
 
-			// https://sourceforge.net/p/keepass/bugs/1698/
-			++m_uBlockEntrySelectionEvent;
-
+			++m_uBlockEntrySelectionEvent; // KPB 1698
 			m_lvEntries.BeginUpdateEx();
+
 			lock(m_asyncListUpdate.ListEditSyncObject)
 			{
 				m_lvEntries.Items.Clear();
@@ -1539,10 +1534,9 @@ namespace KeePass.Forms
 				m_bEntryGrouping = false;
 			m_lvEntries.ShowGroups = m_bEntryGrouping;
 
-			int nTopIndex = -1;
-			ListViewItem lviFocused = null;
-
 			m_dtCachedNow = DateTime.UtcNow;
+
+			ListViewItem lviTop = null, lviFocused = null;
 			ListViewStateEx lvseCachedState = new ListViewStateEx(m_lvEntries);
 
 			if(pg != null)
@@ -1557,35 +1551,26 @@ namespace KeePass.Forms
 							lvi.Selected = true;
 					}
 
-					if(pe == peTop) nTopIndex = m_lvEntries.Items.Count - 1;
+					if(pe == peTop) lviTop = lvi;
 					if(pe == peFocused) lviFocused = lvi;
 				}
 			}
 
 			Debug.Assert(lvseCachedState.CompareTo(m_lvEntries));
 
-			UIUtil.SetAlternatingBgColors(m_lvEntries, m_clrAlternateItemBgColor,
-				Program.Config.MainWindow.EntryListAlternatingBgColors);
+			if(lviFocused != null)
+				UIUtil.SetFocusedItem(m_lvEntries, lviFocused, false);
 
 			Debug.Assert(m_bEntryGrouping == m_lvEntries.ShowGroups);
 			if(UIUtil.GetGroupsEnabled(m_lvEntries))
 			{
-				// Test nTopIndex to ensure we're not scrolling an unrelated list
-				if((nTopIndex >= 0) && (iScrollY > 0))
+				// Test lviTop to ensure we're not scrolling an unrelated list
+				if((lviTop != null) && (iScrollY > 0))
 					NativeMethods.Scroll(m_lvEntries, 0, iScrollY);
-			}
-			else
-			{
-				Debug.Assert((nTopIndex != 0) || (UIUtil.GetTopVisibleItem(
-					m_lvEntries) == 0)); // No scrolling required for item 0
-				if(nTopIndex > 0)
-					UIUtil.SetTopVisibleItem(m_lvEntries, nTopIndex, false);
+				lviTop = null; // Prevent normal scrolling below
 			}
 
-			if(lviFocused != null)
-				UIUtil.SetFocusedItem(m_lvEntries, lviFocused, false);
-
-			m_lvEntries.EndUpdateEx();
+			m_lvEntries.EndUpdateEx(lviTop);
 			--m_uBlockEntrySelectionEvent;
 
 			// Switch the view *after* EndUpdate, otherwise drawing bug;
@@ -1619,8 +1604,6 @@ namespace KeePass.Forms
 				SetListEntry(((PwListItem)lvi.Tag).Entry, lvi);
 			}
 
-			UIUtil.SetAlternatingBgColors(m_lvEntries, m_clrAlternateItemBgColor,
-				Program.Config.MainWindow.EntryListAlternatingBgColors);
 			m_lvEntries.EndUpdateEx();
 		}
 
@@ -1642,6 +1625,7 @@ namespace KeePass.Forms
 			SortOrder? soForce, bool bUpdateEntryList)
 		{
 			AceColumnType colType = GetAceColumn(nColumn).Type;
+			bool bReset = false;
 
 			if(bEnableSorting)
 			{
@@ -1669,30 +1653,20 @@ namespace KeePass.Forms
 					m_pListSorter = new ListSorter(nColumn, sortOrder,
 						bSortNaturally, bSortTimes);
 					m_lvEntries.ListViewItemSorter = m_pListSorter;
-
-					// Workaround for XP bug
-					if(bUpdateEntryList && !NativeLib.IsUnix() && WinUtil.IsWindowsXP)
-						UpdateEntryList(null, true); // Only required on XP
 				}
-				else
-				{
-					m_pListSorter = new ListSorter();
-					m_lvEntries.ListViewItemSorter = null;
-
-					if(bUpdateEntryList) UpdateEntryList(null, true);
-				}
+				else bReset = true;
 			}
-			else // Disable sorting
+			else bReset = true;
+
+			if(bReset)
 			{
 				m_pListSorter = new ListSorter();
 				m_lvEntries.ListViewItemSorter = null;
-
-				if(bUpdateEntryList) UpdateEntryList(null, true);
 			}
 
+			if(bUpdateEntryList) UpdateEntryList(null, true);
+
 			UpdateColumnSortingIcons();
-			UIUtil.SetAlternatingBgColors(m_lvEntries, m_clrAlternateItemBgColor,
-				Program.Config.MainWindow.EntryListAlternatingBgColors);
 			UpdateUI(false, null, false, null, false, null, false); // KPB 1134
 		}
 
@@ -4503,24 +4477,16 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void RemoveEntriesFromList(List<PwEntry> lEntries, bool bLockUIUpdate)
+		private void RemoveEntriesFromList(PwEntry[] vEntries)
 		{
-			Debug.Assert(lEntries != null); if(lEntries == null) return;
-			if(lEntries.Count == 0) return;
-
-			RemoveEntriesFromList(lEntries.ToArray(), bLockUIUpdate);
-		}
-
-		private void RemoveEntriesFromList(PwEntry[] vEntries, bool bLockUIUpdate)
-		{
-			Debug.Assert(vEntries != null); if(vEntries == null) return;
+			if(vEntries == null) { Debug.Assert(false); return; }
 			if(vEntries.Length == 0) return;
 
 			if(MonoWorkarounds.IsRequired(1690) && (m_lvEntries.Items.Count != 0))
 				UIUtil.SetFocusedItem(m_lvEntries, m_lvEntries.Items[0], false);
 
 			++m_uBlockEntrySelectionEvent;
-			if(bLockUIUpdate) m_lvEntries.BeginUpdateEx();
+			m_lvEntries.BeginUpdateEx();
 
 			lock(m_asyncListUpdate.ListEditSyncObject)
 			{
@@ -4534,11 +4500,7 @@ namespace KeePass.Forms
 				}
 			}
 
-			// Refresh alternating item background colors
-			UIUtil.SetAlternatingBgColors(m_lvEntries, m_clrAlternateItemBgColor,
-				Program.Config.MainWindow.EntryListAlternatingBgColors);
-
-			if(bLockUIUpdate) m_lvEntries.EndUpdateEx();
+			m_lvEntries.EndUpdateEx();
 			--m_uBlockEntrySelectionEvent;
 		}
 
@@ -4930,7 +4892,7 @@ namespace KeePass.Forms
 				}
 			}
 
-			RemoveEntriesFromList(vSelected, true);
+			RemoveEntriesFromList(vSelected);
 			UpdateUI(false, null, bUpdateGroupList, null, false, null, true);
 		}
 
@@ -6161,7 +6123,7 @@ namespace KeePass.Forms
 
 			PwGroup pgSafeView = (m_pgActiveAtDragStart ?? new PwGroup());
 			bool bFullUpdateView = false;
-			List<PwEntry> vNowInvisible = new List<PwEntry>();
+			List<PwEntry> lNowInvisible = new List<PwEntry>();
 
 			if(e == DragDropEffects.Move)
 			{
@@ -6180,7 +6142,7 @@ namespace KeePass.Forms
 					// pe.Touch(true, false);
 
 					if(pe.IsContainedIn(pgSafeView)) bFullUpdateView = true;
-					else vNowInvisible.Add(pe);
+					else lNowInvisible.Add(pe);
 				}
 			}
 			else if(e == DragDropEffects.Copy)
@@ -6198,7 +6160,7 @@ namespace KeePass.Forms
 
 			if(!bFullUpdateView)
 			{
-				RemoveEntriesFromList(vNowInvisible, true);
+				RemoveEntriesFromList(lNowInvisible.ToArray());
 				UpdateUI(false, null, true, m_pgActiveAtDragStart, false, null, true);
 			}
 			else UpdateUI(false, null, true, m_pgActiveAtDragStart, true, null, true);
@@ -6337,11 +6299,6 @@ namespace KeePass.Forms
 			if(string.IsNullOrEmpty(strSeq)) { Debug.Assert(false); return; }
 
 			PerformAutoType(strSeq);
-		}
-
-		private void UpdateAlternatingBgColor()
-		{
-			m_clrAlternateItemBgColor = UIUtil.GetAlternateColorEx(m_lvEntries.BackColor);
 		}
 
 		private int CreateAndShowEntryList(EntryReportDelegate f, string strStatus,

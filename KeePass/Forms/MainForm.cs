@@ -326,6 +326,8 @@ namespace KeePass.Forms
 			ctxHeader.Items.Add(tsmiCfgCol);
 			m_lvEntries.HeaderContextMenuStrip = ctxHeader;
 
+			m_lvEntries.UseAlternatingItemStyles = true;
+
 			m_pListSorter = Program.Config.MainWindow.ListSorting;
 			if((m_pListSorter.Column >= 0) && (m_pListSorter.Order != SortOrder.None))
 				m_lvEntries.ListViewItemSorter = m_pListSorter;
@@ -372,8 +374,6 @@ namespace KeePass.Forms
 			}
 
 			// m_tvGroups.QueryToolTip = UIUtil.GetPwGroupToolTipTN;
-
-			UpdateAlternatingBgColor();
 
 			try
 			{
@@ -1238,10 +1238,6 @@ namespace KeePass.Forms
 				m_tvGroups.ApplyOptions();
 				// m_lvEntries.GridLines = Program.Config.MainWindow.ShowGridLines;
 
-				UpdateAlternatingBgColor();
-				UIUtil.SetAlternatingBgColors(m_lvEntries, m_clrAlternateItemBgColor,
-					Program.Config.MainWindow.EntryListAlternatingBgColors);
-
 				m_mruList.MaxItemCount = Program.Config.Application.MostRecentlyUsed.MaxItemCount;
 				SetListFont(Program.Config.UI.StandardFont);
 
@@ -1264,7 +1260,7 @@ namespace KeePass.Forms
 			}
 			UIUtil.DestroyForm(ofDlg);
 
-			UpdateUI(false, null, true, null, true, null, false); // Fonts changed
+			UpdateUI(false, null, true, null, true, null, false); // Styles changed
 		}
 
 		private void OnPwListItemDrag(object sender, ItemDragEventArgs e)
