@@ -79,6 +79,7 @@ namespace TrlUtil
 			AddForm(l, new ListViewForm());
 			AddForm(l, new KeePass.Forms.MainForm());
 			AddForm(l, new OptionsForm());
+			AddForm(l, new OtpGeneratorForm());
 			AddForm(l, new PluginsForm());
 			AddForm(l, new PrintForm());
 			AddForm(l, new ProxyForm());
@@ -121,46 +122,29 @@ namespace TrlUtil
 			if((kpfc == null) || (c == null)) { Debug.Assert(false); return; }
 
 			bool bAdd = true;
-			Type t = c.GetType();
 
-			if(string.IsNullOrEmpty(c.Name)) bAdd = false;
-			else if(string.IsNullOrEmpty(c.Text)) bAdd = false;
-			else if(c.Text.StartsWith("<") && c.Text.EndsWith(">")) bAdd = false;
-			else if(t == typeof(MenuStrip)) bAdd = false;
-			else if(t == typeof(Panel)) bAdd = false;
-			else if(t == typeof(PictureBox)) bAdd = false;
-			else if(t == typeof(StatusStrip)) bAdd = false;
-			else if(t == typeof(ToolStrip)) bAdd = false;
-			else if(t == typeof(TreeView)) bAdd = false;
-			else if(t == typeof(WebBrowser)) bAdd = false;
+			if(string.IsNullOrEmpty(c.Text) ||
+				(c.Text.StartsWith("<") && c.Text.EndsWith(">")) ||
+				((c is Panel) && !(c is TabPage)) || (c is PictureBox) ||
+				(c is ToolStrip) || (c is TreeView) || (c is WebBrowser))
+				bAdd = false;
 
 			// For layout adjustments
-			if(t == typeof(Button)) bAdd = true;
-			else if(t == typeof(CheckedListBox)) bAdd = true;
-			else if(t == typeof(ComboBox)) bAdd = true;
-			else if(t == typeof(CustomListViewEx)) bAdd = true;
-			else if(t == typeof(CustomRichTextBoxEx)) bAdd = true;
-			else if(t == typeof(DateTimePicker)) bAdd = true;
-			else if(t == typeof(HotKeyControlEx)) bAdd = true;
-			else if(t == typeof(ImageComboBoxEx)) bAdd = true;
-			else if(t == typeof(Label)) bAdd = true;
-			else if(t == typeof(ListView)) bAdd = true;
-			else if(t == typeof(ProgressBar)) bAdd = true;
-			else if(t == typeof(PromptedTextBox)) bAdd = true;
-			else if(t == typeof(QualityProgressBar)) bAdd = true;
-			else if(t == typeof(RichTextBox)) bAdd = true;
-			else if(t == typeof(SecureTextBoxEx)) bAdd = true;
-			else if(t == typeof(TabControl)) bAdd = true;
-			else if(t == typeof(TextBox)) bAdd = true;
+			if((c is ButtonBase) || (c is DateTimePicker) || (c is Label) ||
+				(c is ListControl) || (c is ListView) || (c is ProgressBar) ||
+				(c is QualityProgressBar) || (c is TabControl) || (c is TextBoxBase))
+				bAdd |= (c.Dock != DockStyle.Fill);
 
-			if(bAdd && !string.IsNullOrEmpty(c.Name))
+			if(string.IsNullOrEmpty(c.Name)) bAdd = false;
+
+			if(bAdd)
 			{
 				KPControlCustomization kpcc = new KPControlCustomization();
 				kpcc.Name = c.Name;
 				kpcc.BaseHash = KPControlCustomization.HashControl(c);
 
-				if((t == typeof(HotKeyControlEx)) || (t == typeof(NumericUpDown)) ||
-					(t == typeof(TabControl)))
+				Debug.Assert(!(c is TabControl) || string.IsNullOrEmpty(c.Text));
+				if((c is HotKeyControlEx) || (c is NumericUpDown))
 					kpcc.TextEnglish = string.Empty;
 				else kpcc.TextEnglish = (c.Text ?? string.Empty);
 

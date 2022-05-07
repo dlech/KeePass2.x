@@ -37,6 +37,13 @@ namespace KeePassLib.Cryptography
 	/// </summary>
 	public static class HmacOtp
 	{
+		internal const string AlgHmacSha1 = "HMAC-SHA-1";
+		internal const string AlgHmacSha256 = "HMAC-SHA-256";
+		internal const string AlgHmacSha512 = "HMAC-SHA-512";
+
+		internal const uint TotpTimeStepDefault = 30;
+		internal const string TotpAlgDefault = AlgHmacSha1;
+
 		private static readonly uint[] g_vDigitsPower = new uint[] { 1,
 			10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000 };
 
@@ -53,34 +60,34 @@ namespace KeePassLib.Cryptography
 		{
 			if(pbSecret == null) { Debug.Assert(false); pbSecret = MemUtil.EmptyByteArray; }
 			if(uCodeDigits == 0) { Debug.Assert(false); return string.Empty; }
-			if(uCodeDigits > 8) { Debug.Assert(false); uCodeDigits = 8; }
+			if(uCodeDigits > 8) { Debug.Assert(false); return string.Empty; }
 
 			byte[] pbText = MemUtil.UInt64ToBytes(uFactor);
 			Array.Reverse(pbText); // To big-endian
 
 			byte[] pbHash;
-			if(strAlg == "HMAC-SHA-256")
+			if(string.IsNullOrEmpty(strAlg) || (strAlg == AlgHmacSha1))
+			{
+				using(HMACSHA1 h = new HMACSHA1(pbSecret))
+				{
+					pbHash = h.ComputeHash(pbText);
+				}
+			}
+			else if(strAlg == AlgHmacSha256)
 			{
 				using(HMACSHA256 h = new HMACSHA256(pbSecret))
 				{
 					pbHash = h.ComputeHash(pbText);
 				}
 			}
-			else if(strAlg == "HMAC-SHA-512")
+			else if(strAlg == AlgHmacSha512)
 			{
 				using(HMACSHA512 h = new HMACSHA512(pbSecret))
 				{
 					pbHash = h.ComputeHash(pbText);
 				}
 			}
-			else
-			{
-				Debug.Assert(string.IsNullOrEmpty(strAlg) || (strAlg == "HMAC-SHA-1"));
-				using(HMACSHA1 h = new HMACSHA1(pbSecret))
-				{
-					pbHash = h.ComputeHash(pbText);
-				}
-			}
+			else { Debug.Assert(false); return string.Empty; }
 
 			uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
 			if((iTruncationOffset >= 0) && (iTruncationOffset < (pbHash.Length - 4)))
@@ -131,7 +138,7 @@ namespace KeePassLib.Cryptography
 		{
 			DateTime dt = (odt.HasValue ? TimeUtil.ToUtc(odt.Value, true) :
 				DateTime.UtcNow);
-			ulong uStep = ((uTimeStep != 0) ? uTimeStep : 30U);
+			ulong uStep = ((uTimeStep != 0) ? uTimeStep : HmacOtp.TotpTimeStepDefault);
 			ulong uTime = (ulong)TimeUtil.SerializeUnix(dt) / uStep;
 
 			return Generate(pbSecret, uTime, uCodeDigits, false, -1, strAlg);

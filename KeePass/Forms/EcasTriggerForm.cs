@@ -89,12 +89,12 @@ namespace KeePass.Forms
 			m_cbInitiallyOn.Checked = m_trigger.InitiallyOn;
 			m_cbTurnOffAfterAction.Checked = m_trigger.TurnOffAfterAction;
 
-			UIUtil.AccSetName(m_btnEventMoveUp, KPRes.MoveUp);
-			UIUtil.AccSetName(m_btnEventMoveDown, KPRes.MoveDown);
-			UIUtil.AccSetName(m_btnConditionMoveUp, KPRes.MoveUp);
-			UIUtil.AccSetName(m_btnConditionMoveDown, KPRes.MoveDown);
-			UIUtil.AccSetName(m_btnActionMoveUp, KPRes.MoveUp);
-			UIUtil.AccSetName(m_btnActionMoveDown, KPRes.MoveDown);
+			AccessibilityEx.SetName(m_btnEventMoveUp, KPRes.MoveUp);
+			AccessibilityEx.SetName(m_btnEventMoveDown, KPRes.MoveDown);
+			AccessibilityEx.SetName(m_btnConditionMoveUp, KPRes.MoveUp);
+			AccessibilityEx.SetName(m_btnConditionMoveDown, KPRes.MoveDown);
+			AccessibilityEx.SetName(m_btnActionMoveUp, KPRes.MoveUp);
+			AccessibilityEx.SetName(m_btnActionMoveDown, KPRes.MoveDown);
 
 			UpdateListsEx(false);
 			EnableControlsEx();

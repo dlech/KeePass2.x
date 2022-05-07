@@ -35,7 +35,7 @@
 
 
 <table class="sectionheader"><tr>
-<td><img src="../images/b64x64_konsole.png" alt="Command Line" /></td>
+<td><img src="../images/b64x64_konsole.png" alt="" /></td>
 <td><h1>Command Line Options</h1>
 <p>Command line options to automate KeePass tasks.</p></td>
 </tr></table>
@@ -78,12 +78,11 @@ exists. The same rules as above apply, just that you specify the key file locati
 <code>-keyfile:D:\pwsafe.key</code>. You also need to quote the value, if it contains
 a space, tab or other whitespace characters.</p>
 
-<p><b>Pre-selection.</b>
-In order to just pre-select a key file, use the <code>-preselect:</code> option.
+<p><b>Preselection.</b>
+In order to just preselect a key file, use the <code>-preselect:</code> option.
 For example, if you lock your database with a password <i>and</i> a key file, but
-just want to type
-in the password (so, without selecting the key file manually), your command line would
-look like this:</p>
+just want to type in the password (so, without selecting the key file manually),
+your command line would look like this:</p>
 
 <pre>KeePass.exe &quot;C:\My Documents\MyDatabase.kdbx&quot; -preselect:C:\pwsafe.key</pre>
 
@@ -92,7 +91,7 @@ the key file list, the <code>C:\pwsafe.key</code> file is selected already. When
 <code>-preselect:</code> switch, KeePass by default activates the key file switch and
 sets the focus to the password edit window.</p>
 
-<p>Note the difference! The <code>-preselect:</code> switch just pre-selects the key file
+<p>Note the difference! The <code>-preselect:</code> switch just preselects the key file
 for you and displays the login prompt. In contrast, the <code>-keyfile:</code> switch
 doesn't prompt you for the (maybe missing) password.</p>
 
@@ -143,7 +142,7 @@ using the <code>-cfg-local:</code> command line parameter.
 
 <br />
 
-<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="Terminal" />
+<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="" />
 Usage Examples</h2>
 
 <p>Open the database file <i>'C:\My Documents\MyDatabase.kdbx'</i> (KeePass will prompt you
@@ -166,14 +165,14 @@ the two switches and open your database as follows:</p>
 <pre>KeePass.exe &quot;C:\My Documents\MyDatabaseWithTwo.kdbx&quot; -pw:abc -keyfile:F:\pwsafe.key</pre>
 
 <p>You have locked your database using a password <i>and</i> a key file, but only
-want to have the key file pre-selected (i.e. you want to get prompted for the
+want to have the key file preselected (i.e. you want to get prompted for the
 password), your command line would look like this:</p>
 
 <pre>KeePass.exe &quot;C:\My Documents\MyDatabaseWithTwo.kdbx&quot; -preselect:F:\pwsafe.key</pre>
 
 <br />
 
-<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="Terminal" />
+<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="" />
 Starting KeePass using a Batch File</h2>
 
 <p>Batch files can be used to start KeePass. Mostly you want to
@@ -204,7 +203,7 @@ If you want to learn more about the <code>START</code> command syntax, type
 
 <br />
 
-<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="Terminal" />
+<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="" />
 Closing/Locking KeePass using a Batch File</h2>
 
 <p>To close all currently running KeePass instances, call

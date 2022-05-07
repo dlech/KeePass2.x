@@ -900,11 +900,11 @@ namespace KeePassLib.Cryptography
 				"37383930313233343536373839303132");
 			if(HmacOtp.GenerateTimeOtp(pbSecret,
 				new DateTime(1970, 1, 1, 0, 0, 59, DateTimeKind.Utc), 0, 8,
-				"HMAC-SHA-256") != "46119246")
+				HmacOtp.AlgHmacSha256) != "46119246")
 				throw new SecurityException("TimeOtp-SHA256-1");
 			if(HmacOtp.GenerateTimeOtp(pbSecret,
 				new DateTime(2603, 10, 11, 11, 33, 20, DateTimeKind.Utc), 0, 8,
-				"HMAC-SHA-256") != "77737706")
+				HmacOtp.AlgHmacSha256) != "77737706")
 				throw new SecurityException("TimeOtp-SHA256-2");
 
 			pbSecret = MemUtil.HexStringToByteArray("31323334353637383930313233343536" +
@@ -912,11 +912,11 @@ namespace KeePassLib.Cryptography
 				"39303132333435363738393031323334");
 			if(HmacOtp.GenerateTimeOtp(pbSecret,
 				new DateTime(1970, 1, 1, 0, 0, 59, DateTimeKind.Utc), 0, 8,
-				"HMAC-SHA-512") != "90693936")
+				HmacOtp.AlgHmacSha512) != "90693936")
 				throw new SecurityException("TimeOtp-SHA512-1");
 			if(HmacOtp.GenerateTimeOtp(pbSecret,
 				new DateTime(2603, 10, 11, 11, 33, 20, DateTimeKind.Utc), 0, 8,
-				"HMAC-SHA-512") != "47863826")
+				HmacOtp.AlgHmacSha512) != "47863826")
 				throw new SecurityException("TimeOtp-SHA512-2");
 #endif
 		}

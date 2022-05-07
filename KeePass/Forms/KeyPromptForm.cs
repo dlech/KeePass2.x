@@ -174,8 +174,8 @@ namespace KeePass.Forms
 			UIUtil.ConfigureToolTip(m_ttRect);
 			UIUtil.SetToolTip(m_ttRect, m_btnOpenKeyFile, KPRes.KeyFileSelect, true);
 
-			UIUtil.AccSetName(m_tbPassword, m_cbPassword);
-			UIUtil.AccSetName(m_cmbKeyFile, m_cbKeyFile);
+			AccessibilityEx.SetContext(m_tbPassword, m_cbPassword);
+			AccessibilityEx.SetContext(m_cmbKeyFile, m_cbKeyFile);
 
 			PwInputControlGroup.ConfigureHideButton(m_cbHidePassword, m_ttRect);
 
@@ -193,7 +193,8 @@ namespace KeePass.Forms
 
 			// Do not directly compare with Program.CommandLineArgs.FileName,
 			// because this may be a relative path instead of an absolute one
-			string strCmdLineFile = Program.CommandLineArgs.FileName;
+			CommandLineArgs args = Program.CommandLineArgs;
+			string strCmdLineFile = args.FileName;
 			if(!string.IsNullOrEmpty(strCmdLineFile) && (Program.MainForm != null))
 				strCmdLineFile = Program.MainForm.IocFromCommandLine().Path;
 			if(!string.IsNullOrEmpty(strCmdLineFile) && strCmdLineFile.Equals(
@@ -201,21 +202,21 @@ namespace KeePass.Forms
 			{
 				string str;
 
-				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.Password];
+				str = args[AppDefs.CommandLineOptions.Password];
 				if(str != null)
 				{
 					m_cbPassword.Checked = true;
 					m_tbPassword.Text = str;
 				}
 
-				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.PasswordEncrypted];
+				str = args[AppDefs.CommandLineOptions.PasswordEncrypted];
 				if(str != null)
 				{
 					m_cbPassword.Checked = true;
 					m_tbPassword.Text = StrUtil.DecryptString(str);
 				}
 
-				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.PasswordStdIn];
+				str = args[AppDefs.CommandLineOptions.PasswordStdIn];
 				if(str != null)
 				{
 					ProtectedString ps = KeyUtil.ReadPasswordStdIn(true);
@@ -226,14 +227,16 @@ namespace KeePass.Forms
 					}
 				}
 
-				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.KeyFile];
+				str = args[AppDefs.CommandLineOptions.KeyFile];
 				if(!string.IsNullOrEmpty(str)) AddKeyFileItem(str, true);
 
-				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.PreSelect];
+				str = args[AppDefs.CommandLineOptions.PreSelect];
 				if(!string.IsNullOrEmpty(str)) AddKeyFileItem(str, true);
 
-				str = Program.CommandLineArgs[AppDefs.CommandLineOptions.UserAccount];
+				str = args[AppDefs.CommandLineOptions.UserAccount];
 				if(str != null) m_cbUserAccount.Checked = true;
+
+				KeyUtil.ClearKeyOptions(args, false, true);
 			}
 
 			AceKeyAssoc a = Program.Config.Defaults.GetKeySources(m_ioInfo);

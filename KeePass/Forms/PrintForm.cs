@@ -52,11 +52,13 @@ namespace KeePass.Forms
 		private bool m_bPrintMode = true;
 		private int m_nDefaultSortColumn = -1;
 
+		private ImageList m_ilTabIcons = null;
+		private FontControlGroup m_fcgMain = null;
+		private FontControlGroup m_fcgPassword = null;
+
 		private uint m_uBlockUpdateUIState = 0;
 		private uint m_uBlockPreviewRefresh = 0;
 		private Control m_cPreBlock = null;
-
-		private ImageList m_ilTabIcons = null;
 
 		private string m_strGeneratedHtml = string.Empty;
 		public string GeneratedHtml
@@ -67,17 +69,29 @@ namespace KeePass.Forms
 		private static string g_strCodeItS = null;
 		private static string g_strCodeItE = null;
 
+		private static readonly string[] g_vMainFonts = new string[] {
+			"Tahoma", "Arial", "Microsoft Sans Serif", "Noto Sans",
+			"Verdana", "DejaVu Sans" // "Liberation Sans"
+		};
+		private static readonly string[] g_vMonoFonts = new string[] {
+			"Courier New", "Noto Mono", "DejaVu Sans Mono",
+			"Lucida Console" // "Liberation Mono"
+		};
+
 		private sealed class PfOptions
 		{
-			public bool MonoPasswords = true;
-			public bool SmallMono = false;
+			public Color ColorPU = Color.Empty;
+			public Color ColorPL = Color.Empty;
+			public Color ColorPD = Color.Empty;
+			public Color ColorPO = Color.Empty;
+
 			public int SprMode = 0;
 
 			public string CellInit = string.Empty;
 			public string CellExit = string.Empty;
 
-			public string FontInit = string.Empty;
-			public string FontExit = string.Empty;
+			public string ValueInit = string.Empty;
+			public string ValueExit = string.Empty;
 
 			public bool Rtl = false;
 
@@ -156,23 +170,29 @@ namespace KeePass.Forms
 			m_tabPreview.ImageIndex = 0;
 			m_tabDataLayout.ImageIndex = 1;
 
-			UIUtil.SetButtonImage(m_btnConfigPrinter,
-				Properties.Resources.B16x16_EditCopy, true);
-			UIUtil.SetButtonImage(m_btnPrintPreview,
-				Properties.Resources.B16x16_FileQuickPrint, true);
+			FontUtil.AssignDefaultBold(m_rbLayTable);
+			FontUtil.AssignDefaultBold(m_rbLayBlocks);
 
-			FontUtil.AssignDefaultBold(m_rbTabular);
-			FontUtil.AssignDefaultBold(m_rbDetails);
+			m_rbLayTable.Checked = true;
 
-			Debug.Assert(!m_cmbSpr.Sorted);
-			m_cmbSpr.Items.Add(KPRes.ReplaceNo);
-			m_cmbSpr.Items.Add(KPRes.Replace + " (" + KPRes.Slow + ")");
-			m_cmbSpr.Items.Add(KPRes.BothForms + " (" + KPRes.Slow + ")");
-			m_cmbSpr.SelectedIndex = 0;
+			m_cbColorP.Checked = true;
+			using(RtlAwareResizeScope r = new RtlAwareResizeScope(
+				m_lblColorPU, m_lblColorPL, m_lblColorPD, m_lblColorPO))
+			{
+				m_lblColorPU.Text = "\u27A5 ABC...:";
+				m_lblColorPL.Text = "\u27A5 abc...:";
+				m_lblColorPD.Text = "\u27A5 012...:";
+				m_lblColorPO.Text = "\u27A5 !$%...:";
+			}
+			m_btnColorPU.SelectedColor = Color.FromArgb(0, 0, 255);
+			m_btnColorPL.SelectedColor = Color.FromArgb(0, 0, 0);
+			m_btnColorPD.SelectedColor = Color.FromArgb(0, 128, 0);
+			m_btnColorPO.SelectedColor = Color.FromArgb(192, 0, 0);
 
-			if(!m_bPrintMode) m_btnOK.Text = KPRes.Export;
-
-			m_rbTabular.Checked = true;
+			m_fcgMain = new FontControlGroup(m_cbMainFont, m_btnMainFont,
+				null, GetDefaultFont(false));
+			m_fcgPassword = new FontControlGroup(m_cbPasswordFont, m_btnPasswordFont,
+				null, GetDefaultFont(true));
 
 			m_cmbSortEntries.Items.Add("(" + KPRes.None + ")");
 			m_cmbSortEntries.Items.Add(KPRes.Title);
@@ -194,10 +214,23 @@ namespace KeePass.Forms
 			else if(colType == AceColumnType.Notes) nSortSel = 5;
 			m_cmbSortEntries.SelectedIndex = nSortSel;
 
+			Debug.Assert(!m_cmbSpr.Sorted);
+			m_cmbSpr.Items.Add(KPRes.ReplaceNo);
+			m_cmbSpr.Items.Add(KPRes.Replace + " (" + KPRes.Slow + ")");
+			m_cmbSpr.Items.Add(KPRes.BothForms + " (" + KPRes.Slow + ")");
+			m_cmbSpr.SelectedIndex = 0;
+
+			UIUtil.SetButtonImage(m_btnConfigPrinter,
+				Properties.Resources.B16x16_EditCopy, true);
+			UIUtil.SetButtonImage(m_btnPrintPreview,
+				Properties.Resources.B16x16_FileQuickPrint, true);
+
 			if(!m_bPrintMode) // Export to HTML
 			{
-				m_btnConfigPrinter.Visible = m_btnPrintPreview.Visible = false;
 				m_lblPreviewHint.Visible = false;
+				m_btnConfigPrinter.Visible = false;
+				m_btnPrintPreview.Visible = false;
+				m_btnOK.Text = KPRes.Export;
 			}
 
 			Program.TempFilesPool.AddWebBrowserPrintContent();
@@ -233,7 +266,7 @@ namespace KeePass.Forms
 			if(m_uBlockUpdateUIState != 0) return;
 			++m_uBlockUpdateUIState;
 
-			bool bDetails = m_rbDetails.Checked;
+			bool bLayBlocks = m_rbLayBlocks.Checked;
 
 			bool bIcon = m_cbIcon.Checked;
 			// Here (not in OnFormLoad), due to 'Select All' impl.
@@ -247,9 +280,9 @@ namespace KeePass.Forms
 			UIUtil.SetEnabled(m_cbTitle, !bIcon);
 			if(bIcon) UIUtil.SetChecked(m_cbTitle, true);
 
-			UIUtil.SetEnabled(m_cbAutoType, bDetails);
-			UIUtil.SetEnabled(m_cbCustomStrings, bDetails);
-			if(!bDetails)
+			UIUtil.SetEnabled(m_cbAutoType, bLayBlocks);
+			UIUtil.SetEnabled(m_cbCustomStrings, bLayBlocks);
+			if(!bLayBlocks)
 			{
 				UIUtil.SetChecked(m_cbAutoType, false);
 				UIUtil.SetChecked(m_cbCustomStrings, false);
@@ -260,6 +293,10 @@ namespace KeePass.Forms
 				UIUtil.SetEnabled(m_cbGroups, false);
 				UIUtil.SetChecked(m_cbGroups, false);
 			}
+
+			UIUtil.SetEnabledFast(m_cbColorP.Checked,
+				m_lblColorPU, m_btnColorPU, m_lblColorPL, m_btnColorPL,
+				m_lblColorPD, m_btnColorPD, m_lblColorPO, m_btnColorPO);
 
 			--m_uBlockUpdateUIState;
 		}
@@ -335,6 +372,9 @@ namespace KeePass.Forms
 			if(strSortFieldName != null)
 				SortGroupEntriesRecursive(pgDataSource, strSortFieldName);
 
+			bool bTabular = m_rbLayTable.Checked;
+			bool bBlocks = m_rbLayBlocks.Checked;
+
 			bool bGroup = m_cbGroups.Checked;
 			bool bTitle = m_cbTitle.Checked, bUserName = m_cbUser.Checked;
 			bool bPassword = m_cbPassword.Checked, bUrl = m_cbUrl.Checked;
@@ -348,39 +388,24 @@ namespace KeePass.Forms
 			bool bUuid = m_cbUuid.Checked;
 
 			PfOptions p = new PfOptions();
-			p.MonoPasswords = m_cbMonospaceForPasswords.Checked;
-			if(m_rbMonospace.Checked) p.MonoPasswords = false; // Monospace anyway
-			p.SmallMono = m_cbSmallMono.Checked;
+
+			if(m_cbColorP.Checked)
+			{
+				p.ColorPU = m_btnColorPU.SelectedColor;
+				p.ColorPL = m_btnColorPL.SelectedColor;
+				p.ColorPD = m_btnColorPD.SelectedColor;
+				p.ColorPO = m_btnColorPO.SelectedColor;
+			}
+
 			p.SprMode = m_cmbSpr.SelectedIndex;
 			p.Rtl = (this.RightToLeft == RightToLeft.Yes);
 			p.Database = m_pdContext;
 			if(m_cbIcon.Checked) p.ClientIcons = m_ilClientIcons;
 
-			if(m_rbSerif.Checked)
-			{
-				p.FontInit = "<span class=\"fserif\">";
-				p.FontExit = "</span>";
-			}
-			else if(m_rbSansSerif.Checked)
-			{
-				p.FontInit = string.Empty;
-				p.FontExit = string.Empty;
-			}
-			else if(m_rbMonospace.Checked)
-			{
-				p.FontInit = (p.SmallMono ? "<code><small>" : "<code>");
-				p.FontExit = (p.SmallMono ? "</small></code>" : "</code>");
-			}
-			else { Debug.Assert(false); }
-
 			GFunc<string, string> h = new GFunc<string, string>(StrUtil.StringToHtml);
 			GFunc<string, string> c = delegate(string strRaw)
 			{
-				return CompileText(strRaw, p, true, false);
-			};
-			GFunc<string, string> cs = delegate(string strRaw)
-			{
-				return CompileText(strRaw, p, true, true);
+				return CompileToHtml(strRaw, p, false);
 			};
 
 			StringBuilder sb = new StringBuilder();
@@ -411,17 +436,10 @@ namespace KeePass.Forms
 			sb.AppendLine("body {");
 			sb.AppendLine("\tcolor: #000000;");
 			sb.AppendLine("\tbackground-color: #FFFFFF;");
-			sb.AppendLine("\tfont-family: \"Tahoma\", \"MS Sans Serif\", \"Sans Serif\", \"Verdana\", sans-serif;");
-			sb.AppendLine("\tfont-size: 10pt;");
+			sb.Append(GetFontCss(false, "\t"));
 			sb.AppendLine("}");
 
-			sb.AppendLine("h2 {");
-			sb.AppendLine("\tcolor: #000000;");
-			sb.AppendLine("\tbackground-color: #D0D0D0;");
-			sb.AppendLine("\tpadding-left: 2pt;");
-			sb.AppendLine("\tpadding-right: 2pt;"); // RTL support
-			sb.AppendLine("}");
-			sb.AppendLine("h3 {");
+			sb.AppendLine("h2, h3 {");
 			sb.AppendLine("\tcolor: #000000;");
 			sb.AppendLine("\tbackground-color: #D0D0D0;");
 			sb.AppendLine("\tpadding-left: 2pt;");
@@ -448,6 +466,41 @@ namespace KeePass.Forms
 			sb.AppendLine("\tfont-weight: bold;");
 			sb.AppendLine("}");
 
+			sb.AppendLine("table.t_entries_t tr th, table.t_entries_b tr td:first-of-type {");
+			sb.AppendLine("\t-webkit-hyphens: auto;");
+			sb.AppendLine("\t-moz-hyphens: auto;");
+			sb.AppendLine("\t-ms-hyphens: auto;");
+			sb.AppendLine("\thyphens: auto;");
+			sb.AppendLine("}");
+
+			sb.AppendLine("table.t_entries_t tr td, table.t_entries_b tr td:last-of-type {");
+			// sb.AppendLine("\tword-break: break-all;");
+			sb.AppendLine("\toverflow-wrap: break-word;");
+			sb.AppendLine("\tword-wrap: break-word;");
+			sb.AppendLine("}");
+
+			sb.AppendLine("table.t_entries_t tr td {");
+			sb.AppendLine("\tborder-style: solid none;");
+			sb.AppendLine("\tborder-width: 1px 0px;");
+			sb.AppendLine("\tborder-top-color: #808080;");
+			sb.AppendLine("\tborder-bottom-color: #808080;");
+			sb.AppendLine("}");
+
+			sb.AppendLine("table.t_entries_b tr td:first-of-type {");
+			sb.AppendLine("\twidth: 20%;");
+			sb.AppendLine("}");
+			sb.AppendLine("table.t_entries_b tr td:last-of-type {");
+			sb.AppendLine("\twidth: 80%;");
+			sb.AppendLine("}");
+
+			sb.AppendLine("hr {");
+			sb.AppendLine("\theight: 0px;");
+			sb.AppendLine("\tpadding: 0px;");
+			sb.AppendLine("\tborder-style: none none solid none;");
+			sb.AppendLine("\tborder-width: 0px 0px 1px 0px;");
+			sb.AppendLine("\tborder-bottom-color: #808080;");
+			sb.AppendLine("}");
+
 			sb.AppendLine("a {");
 			sb.AppendLine("\tcolor: #0000DD;");
 			sb.AppendLine("\ttext-decoration: none;");
@@ -457,30 +510,44 @@ namespace KeePass.Forms
 			sb.AppendLine("\ttext-decoration: underline;");
 			sb.AppendLine("}");
 
-			sb.AppendLine(".field_name {");
-			sb.AppendLine("\t-webkit-hyphens: auto;");
-			sb.AppendLine("\t-moz-hyphens: auto;");
-			sb.AppendLine("\t-ms-hyphens: auto;");
-			sb.AppendLine("\thyphens: auto;");
-			sb.AppendLine("}");
-			sb.AppendLine(".field_data {");
-			// sb.AppendLine("\tword-break: break-all;");
-			sb.AppendLine("\toverflow-wrap: break-word;");
-			sb.AppendLine("\tword-wrap: break-word;");
-			sb.AppendLine("}");
-
-			sb.AppendLine(".fserif {");
-			sb.AppendLine("\tfont-family: \"Times New Roman\", serif;");
-			sb.AppendLine("}");
-
 			sb.AppendLine(".icon_cli {");
 			sb.AppendLine("\tdisplay: inline-block;");
-			sb.AppendLine("\tmargin: 0px 0px 0px 0px;");
-			sb.AppendLine("\tpadding: 0px 0px 0px 0px;");
+			sb.AppendLine("\tmargin: 0px;");
+			sb.AppendLine("\tpadding: 0px;");
 			sb.AppendLine("\tborder: 0px none;");
 			sb.AppendLine("\twidth: 1.1em;");
 			sb.AppendLine("\theight: 1.1em;");
 			sb.AppendLine("\tvertical-align: top;");
+			sb.AppendLine("}");
+
+			sb.AppendLine(".f_password {");
+			sb.Append(GetFontCss(true, "\t"));
+			sb.AppendLine("\twhite-space: pre-wrap;");
+			sb.AppendLine("\ttab-size: 4;");
+			sb.AppendLine("}");
+
+			sb.AppendLine(".f_password_u {");
+			sb.Append("\tcolor: ");
+			sb.Append(StrUtil.ColorToUnnamedHtml(p.ColorPU, false));
+			sb.AppendLine(";");
+			sb.AppendLine("}");
+
+			sb.AppendLine(".f_password_l {");
+			sb.Append("\tcolor: ");
+			sb.Append(StrUtil.ColorToUnnamedHtml(p.ColorPL, false));
+			sb.AppendLine(";");
+			sb.AppendLine("}");
+
+			sb.AppendLine(".f_password_d {");
+			sb.Append("\tcolor: ");
+			sb.Append(StrUtil.ColorToUnnamedHtml(p.ColorPD, false));
+			sb.AppendLine(";");
+			sb.AppendLine("}");
+
+			sb.AppendLine(".f_password_o {");
+			sb.Append("\tcolor: ");
+			sb.Append(StrUtil.ColorToUnnamedHtml(p.ColorPO, false));
+			sb.AppendLine(";");
 			sb.AppendLine("}");
 
 			if(bTemporary)
@@ -512,10 +579,10 @@ namespace KeePass.Forms
 			};
 
 			EntryHandler eh = null;
-			string strTableInit = "<table>";
+			string strTableInit = "<table>"; // Customized below
 			PwGroup pgLast = null;
 
-			if(m_rbTabular.Checked)
+			if(bTabular)
 			{
 				int nEquiCols = 0;
 				if(bGroup) ++nEquiCols;
@@ -532,41 +599,40 @@ namespace KeePass.Forms
 				if(bUuid) ++nEquiCols;
 				if(nEquiCols == 0) nEquiCols = 1;
 
-				string strColWidth = (100.0f / (float)nEquiCols).ToString(
-					"F2", NumberFormatInfo.InvariantInfo);
-				string strColWidth2 = (200.0f / (float)nEquiCols).ToString(
-					"F2", NumberFormatInfo.InvariantInfo);
+				NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
+				string strColWidth = (100.0f / (float)nEquiCols).ToString("F2", nfi);
+				string strColWidth2 = (200.0f / (float)nEquiCols).ToString("F2", nfi);
 
-				string strHTdInit = "<th class=\"field_name\" style=\"width: " +
-					strColWidth + "%;\">";
-				string strHTdInit2 = "<th class=\"field_name\" style=\"width: " +
-					strColWidth2 + "%;\">";
-				string strHTdExit = "</th>";
-				string strDataTdInit = "<td class=\"field_data\">";
-				string strDataTdExit = "</td>";
+				StringBuilder sbTI = new StringBuilder();
+				sbTI.AppendLine("<table class=\"t_entries_t\">");
+				sbTI.AppendLine("<tr>");
+				GAction<string, bool> fAppendTH = delegate(string strColumn, bool bLarge)
+				{
+					sbTI.Append("<th style=\"width: ");
+					sbTI.Append(bLarge ? strColWidth2 : strColWidth);
+					sbTI.Append("%;\">");
+					sbTI.Append(h(strColumn));
+					sbTI.AppendLine("</th>");
+				};
+				if(bGroup) fAppendTH(KPRes.Group, false);
+				if(bTitle) fAppendTH(KPRes.Title, false);
+				if(bUserName) fAppendTH(KPRes.UserName, false);
+				if(bPassword) fAppendTH(KPRes.Password, false);
+				if(bUrl) fAppendTH(KPRes.Url, false);
+				if(bNotes) fAppendTH(KPRes.Notes, true);
+				if(bCreation) fAppendTH(KPRes.CreationTime, false);
+				// if(bLastAcc) fAppendTH(KPRes.LastAccessTime, false);
+				if(bLastMod) fAppendTH(KPRes.LastModificationTime, false);
+				if(bExpire) fAppendTH(KPRes.ExpiryTime, false);
+				if(bTags) fAppendTH(KPRes.Tags, false);
+				if(bUuid) fAppendTH(KPRes.Uuid, false);
+				sbTI.Append("</tr>"); // No terminating new-line
+				strTableInit = sbTI.ToString();
 
-				p.CellInit = strDataTdInit + p.FontInit;
-				p.CellExit = p.FontExit + strDataTdExit;
-
-				StringBuilder sbH = new StringBuilder();
-				sbH.AppendLine();
-				sbH.Append("<tr>");
-				if(bGroup) sbH.AppendLine(strHTdInit + h(KPRes.Group) + strHTdExit);
-				if(bTitle) sbH.AppendLine(strHTdInit + h(KPRes.Title) + strHTdExit);
-				if(bUserName) sbH.AppendLine(strHTdInit + h(KPRes.UserName) + strHTdExit);
-				if(bPassword) sbH.AppendLine(strHTdInit + h(KPRes.Password) + strHTdExit);
-				if(bUrl) sbH.AppendLine(strHTdInit + h(KPRes.Url) + strHTdExit);
-				if(bNotes) sbH.AppendLine(strHTdInit2 + h(KPRes.Notes) + strHTdExit);
-				if(bCreation) sbH.AppendLine(strHTdInit + h(KPRes.CreationTime) + strHTdExit);
-				// if(bLastAcc) sbH.AppendLine(strHTdInit + h(KPRes.LastAccessTime) + strHTdExit);
-				if(bLastMod) sbH.AppendLine(strHTdInit + h(KPRes.LastModificationTime) + strHTdExit);
-				if(bExpire) sbH.AppendLine(strHTdInit + h(KPRes.ExpiryTime) + strHTdExit);
-				if(bTags) sbH.AppendLine(strHTdInit + h(KPRes.Tags) + strHTdExit);
-				if(bUuid) sbH.AppendLine(strHTdInit + h(KPRes.Uuid) + strHTdExit);
-				sbH.Append("</tr>"); // No terminating \r\n
-
-				strTableInit += sbH.ToString();
 				sb.AppendLine(strTableInit);
+
+				p.CellInit = "<td>";
+				p.CellExit = "</td>";
 
 				eh = delegate(PwEntry pe)
 				{
@@ -577,23 +643,7 @@ namespace KeePass.Forms
 					WriteTabularIf(bGroup, sb, c(pe.ParentGroup.Name), p);
 					WriteTabularIf(bTitle, sb, pe, PwDefs.TitleField, p);
 					WriteTabularIf(bUserName, sb, pe, PwDefs.UserNameField, p);
-
-					if(bPassword)
-					{
-						if(p.MonoPasswords)
-							sb.Append(strDataTdInit + (p.SmallMono ?
-								"<code><small>" : "<code>"));
-						else sb.Append(p.CellInit);
-
-						string strInner = cs(pe.Strings.ReadSafe(PwDefs.PasswordField));
-						if(strInner.Length == 0) strInner = "&nbsp;";
-						sb.Append(strInner);
-
-						if(p.MonoPasswords)
-							sb.AppendLine((p.SmallMono ? "</small></code>" :
-								"</code>") + strDataTdExit);
-						else sb.AppendLine(p.CellExit);
-					}
+					WriteTabularIf(bPassword, sb, pe, PwDefs.PasswordField, p);
 
 					// WriteTabularIf(bUrl, sb, pe, PwDefs.UrlField, p);
 					WriteTabularIf(bUrl, sb, MakeUrlLink(pe.Strings.ReadSafe(
@@ -618,12 +668,19 @@ namespace KeePass.Forms
 					return true;
 				};
 			}
-			else if(m_rbDetails.Checked)
+			else if(bBlocks)
 			{
+				strTableInit = "<table class=\"t_entries_b\">";
+
 				sb.AppendLine(strTableInit);
 
 				if(pgDataSource.Entries.UCount == 0)
-					sb.AppendLine(@"<tr><td>&nbsp;</td></tr>");
+				{
+					// Validator: "Table column 2 established by element 'td'
+					// has no cells beginning in it."
+					// sb.AppendLine("<tr><td colspan=\"2\">&nbsp;</td></tr>");
+					sb.AppendLine("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+				}
 
 				eh = delegate(PwEntry pe)
 				{
@@ -632,62 +689,63 @@ namespace KeePass.Forms
 					if((pgLast != null) && (pgLast == pe.ParentGroup))
 						sb.AppendLine("<tr><td colspan=\"2\"><hr /></td></tr>");
 
-					if(bGroup) WriteDetailsLine(sb, KPRes.Group, pe.ParentGroup.Name, p);
+					if(bGroup) WriteBlockLine(sb, KPRes.Group, pe.ParentGroup.Name, p);
 					if(bTitle)
 					{
 						PfOptions pSub = p.CloneShallow();
-						pSub.FontInit = MakeIconImg(pe.IconId, pe.CustomIconUuid, pe,
-							p) + pSub.FontInit + "<b>";
-						pSub.FontExit = "</b>" + pSub.FontExit;
+						pSub.ValueInit = pSub.ValueInit + MakeIconImg(pe.IconId,
+							pe.CustomIconUuid, pe, p) + "<b>";
+						pSub.ValueExit = "</b>" + pSub.ValueExit;
 
-						WriteDetailsLine(sb, KPRes.Title, pe.Strings.ReadSafe(
+						WriteBlockLine(sb, KPRes.Title, pe.Strings.ReadSafe(
 							PwDefs.TitleField), pSub);
 					}
-					if(bUserName) WriteDetailsLine(sb, KPRes.UserName, pe.Strings.ReadSafe(
+					if(bUserName) WriteBlockLine(sb, KPRes.UserName, pe.Strings.ReadSafe(
 						PwDefs.UserNameField), p);
-					if(bPassword) WriteDetailsLine(sb, KPRes.Password, pe.Strings.ReadSafe(
+					if(bPassword) WriteBlockLine(sb, KPRes.Password, pe.Strings.ReadSafe(
 						PwDefs.PasswordField), p);
-					if(bUrl) WriteDetailsLine(sb, KPRes.Url, pe.Strings.ReadSafe(
+					if(bUrl) WriteBlockLine(sb, KPRes.Url, pe.Strings.ReadSafe(
 						PwDefs.UrlField), p);
-					if(bNotes) WriteDetailsLine(sb, KPRes.Notes, pe.Strings.ReadSafe(
+					if(bNotes) WriteBlockLine(sb, KPRes.Notes, pe.Strings.ReadSafe(
 						PwDefs.NotesField), p);
-					if(bCreation) WriteDetailsLine(sb, KPRes.CreationTime, TimeUtil.ToDisplayString(
+					if(bCreation) WriteBlockLine(sb, KPRes.CreationTime, TimeUtil.ToDisplayString(
 						pe.CreationTime), p);
-					// if(bLastAcc) WriteDetailsLine(sb, KPRes.LastAccessTime, TimeUtil.ToDisplayString(
+					// if(bLastAcc) WriteBlockLine(sb, KPRes.LastAccessTime, TimeUtil.ToDisplayString(
 					//	pe.LastAccessTime), p);
-					if(bLastMod) WriteDetailsLine(sb, KPRes.LastModificationTime, TimeUtil.ToDisplayString(
+					if(bLastMod) WriteBlockLine(sb, KPRes.LastModificationTime, TimeUtil.ToDisplayString(
 						pe.LastModificationTime), p);
-					if(bExpire) WriteDetailsLine(sb, KPRes.ExpiryTime, (pe.Expires ? TimeUtil.ToDisplayString(
+					if(bExpire) WriteBlockLine(sb, KPRes.ExpiryTime, (pe.Expires ? TimeUtil.ToDisplayString(
 						pe.ExpiryTime) : KPRes.NeverExpires), p);
 
 					if(bAutoType)
 					{
 						foreach(AutoTypeAssociation a in pe.AutoType.Associations)
-							WriteDetailsLine(sb, KPRes.AutoType, a.WindowName +
+							WriteBlockLine(sb, KPRes.AutoType, a.WindowName +
 								": " + a.Sequence, p);
 					}
 
-					if(bTags) WriteDetailsLine(sb, KPRes.Tags, StrUtil.TagsToString(
+					if(bTags) WriteBlockLine(sb, KPRes.Tags, StrUtil.TagsToString(
 						pe.Tags, true), p);
-					if(bUuid) WriteDetailsLine(sb, KPRes.Uuid, pe.Uuid.ToHexString(), p);
+					if(bUuid) WriteBlockLine(sb, KPRes.Uuid, pe.Uuid.ToHexString(), p);
 
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
 						if(bCustomStrings && !PwDefs.IsStandardField(kvp.Key))
-							WriteDetailsLine(sb, kvp, p);
+							WriteBlockLine(sb, kvp, p);
 					}
 
 					pgLast = pe.ParentGroup;
 					return true;
 				};
 			}
-			else { Debug.Assert(false); }
+			else { Debug.Assert(false); } // Unknown layout
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				if(pg.Entries.UCount == 0) return true;
 
-				sb.Append("</table><br /><h3>"); // "</table><br /><hr /><h3>"
+				sb.AppendLine("</table><br />");
+				sb.Append("<h3>");
 				// sb.Append(MakeIconImg(pg.IconId, pg.CustomIconUuid, pg, p));
 				sb.Append(h(pg.GetFullPath(" - ", false)));
 				sb.AppendLine("</h3>");
@@ -699,10 +757,8 @@ namespace KeePass.Forms
 
 			pgDataSource.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-			if(m_rbTabular.Checked)
-				sb.AppendLine("</table>");
-			else if(m_rbDetails.Checked)
-				sb.AppendLine("</table><br />");
+			if(bTabular || bBlocks) sb.AppendLine("</table>");
+			else { Debug.Assert(false); }
 
 			sb.AppendLine("</body></html>");
 
@@ -713,8 +769,64 @@ namespace KeePass.Forms
 			return strDoc;
 		}
 
-		private static string CompileText(string strText, PfOptions p, bool bToHtml,
-			bool bNbsp)
+		private AceFont GetDefaultFont(bool bPassword)
+		{
+			const float fSize = 10.0f;
+
+			string[] v = (bPassword ? g_vMonoFonts : g_vMainFonts);
+			foreach(string strFamily in v)
+			{
+				if(FontUtil.IsInstalled(strFamily))
+				{
+					AceFont af = new AceFont();
+					af.Family = strFamily;
+					af.Size = fSize;
+					af.GraphicsUnit = GraphicsUnit.Point;
+					return af;
+				}
+			}
+
+			Debug.Assert(false);
+			AceFont afUI = new AceFont(m_lblEntrySortHint.Font, false);
+			afUI.Size = fSize;
+			afUI.GraphicsUnit = GraphicsUnit.Point;
+			return afUI;
+		}
+
+		private string GetFontCss(bool bPassword, string strIndent)
+		{
+			string strFallback = (bPassword ? "monospace" : "sans-serif");
+
+			AceFont af = (bPassword ? m_fcgPassword.SelectedFont : m_fcgMain.SelectedFont);
+			if(af.OverrideUIDefault) return af.ToCss(strIndent, strFallback, true);
+
+			af = GetDefaultFont(bPassword);
+
+			StringBuilder sb = new StringBuilder();
+
+			string[] v = (bPassword ? g_vMonoFonts : g_vMainFonts);
+			Debug.Assert((v != null) && (v.Length != 0));
+			sb.Append(strIndent);
+			sb.Append("font-family: \"");
+			sb.Append(string.Join("\", \"", v));
+			sb.Append("\", ");
+			sb.Append(strFallback);
+			sb.AppendLine(";");
+
+			if(!bPassword)
+			{
+				sb.Append(strIndent);
+				sb.Append("font-size: ");
+				sb.Append(af.Size.ToString(NumberFormatInfo.InvariantInfo));
+				sb.Append(GfxUtil.GraphicsUnitToString(af.GraphicsUnit));
+				sb.AppendLine(";");
+			}
+			// else inherit size from main font
+
+			return sb.ToString();
+		}
+
+		private static string CompileToHtml(string strText, PfOptions p, bool bPassword)
 		{
 			string str = strText;
 
@@ -730,13 +842,11 @@ namespace KeePass.Forms
 				str = SprEngine.Compile(str, p.SprContext);
 
 				if((p.SprMode == 2) && (str != strPre))
-				{
-					if(bToHtml) str += " - " + g_strCodeItS + strPre + g_strCodeItE;
-					else str += " - " + strPre;
-				}
+					str += " \u2013 " + g_strCodeItS + strPre + g_strCodeItE;
 			}
 
-			if(bToHtml) str = StrUtil.StringToHtml(str, bNbsp);
+			if(bPassword) str = PasswordToHtml(str, p);
+			else str = StrUtil.StringToHtml(str.Trim());
 
 			str = str.Replace(g_strCodeItS, "<i>");
 			str = str.Replace(g_strCodeItE, "</i>");
@@ -748,67 +858,75 @@ namespace KeePass.Forms
 		{
 			if(!bCondition) return;
 
-			string str = CompileText(pe.Strings.ReadSafe(strField), p, true, false);
+			bool bPassword = (strField == PwDefs.PasswordField);
+
+			string str = CompileToHtml(pe.Strings.ReadSafe(strField), p, bPassword);
 
 			if(strField == PwDefs.TitleField)
 				str = MakeIconImg(pe.IconId, pe.CustomIconUuid, pe, p) + str;
+
+			if(bPassword)
+			{
+				if(p.CellInit == "<td>")
+				{
+					p = p.CloneShallow();
+					p.CellInit = "<td class=\"f_password\">";
+				}
+				else { Debug.Assert(false); }
+			}
 
 			WriteTabularIf(bCondition, sb, str, p);
 		}
 
 		private static void WriteTabularIf(bool bCondition, StringBuilder sb,
-			string strValue, PfOptions p)
+			string strValueHtml, PfOptions p)
 		{
 			if(!bCondition) return;
 
 			sb.Append(p.CellInit);
+			sb.Append(p.ValueInit);
 
-			if(strValue.Length > 0) sb.Append(strValue); // Don't HTML-encode
+			if(strValueHtml.Length != 0) sb.Append(strValueHtml);
 			else sb.Append(@"&nbsp;");
 
+			sb.Append(p.ValueExit);
 			sb.AppendLine(p.CellExit);
 		}
 
-		private static void WriteDetailsLine(StringBuilder sb,
+		private static void WriteBlockLine(StringBuilder sb,
 			KeyValuePair<string, ProtectedString> kvp, PfOptions p)
 		{
-			sb.Append("<tr><td class=\"field_name\" style=\"width: 20%;\"><i>");
-			sb.Append(StrUtil.StringToHtml(kvp.Key));
-			sb.AppendLine(":</i></td>");
-
-			sb.Append("<td class=\"field_data\" style=\"width: 80%;\">");
-
 			bool bUrl = (kvp.Key == KPRes.Url);
 			bool bPassword = (kvp.Key == KPRes.Password);
-			bool bCode = (p.MonoPasswords && bPassword);
 
-			if(bCode) sb.Append(p.SmallMono ? "<code><small>" : "<code>");
-			else sb.Append(p.FontInit);
+			sb.Append("<tr><td>");
+			sb.Append(StrUtil.StringToHtml(kvp.Key));
+			sb.AppendLine(":</td>");
+
+			sb.Append(bPassword ? "<td class=\"f_password\">" : "<td>");
+			sb.Append(p.ValueInit);
 
 			if(bUrl && !kvp.Value.IsEmpty)
 				sb.Append(MakeUrlLink(kvp.Value.ReadString(), p));
 			else
 			{
-				string strInner = CompileText(kvp.Value.ReadString(), p,
-					true, bPassword);
+				string strInner = CompileToHtml(kvp.Value.ReadString(), p, bPassword);
 				if(strInner.Length == 0) strInner = "&nbsp;";
 				sb.Append(strInner);
 			}
 
-			if(bCode) sb.Append(p.SmallMono ? "</small></code>" : "</code>");
-			else sb.Append(p.FontExit);
-
+			sb.Append(p.ValueExit);
 			sb.AppendLine("</td></tr>");
 		}
 
-		private static void WriteDetailsLine(StringBuilder sb, string strIndex,
+		private static void WriteBlockLine(StringBuilder sb, string strIndex,
 			string strValue, PfOptions p)
 		{
 			if(string.IsNullOrEmpty(strValue)) return;
 
 			KeyValuePair<string, ProtectedString> kvp = new KeyValuePair<string, ProtectedString>(
 				strIndex, new ProtectedString(false, strValue));
-			WriteDetailsLine(sb, kvp, p);
+			WriteBlockLine(sb, kvp, p);
 		}
 
 		private static string MakeIconImg(PwIcon i, PwUuid ci, ITimeLogger tl, PfOptions p)
@@ -857,20 +975,19 @@ namespace KeePass.Forms
 		{
 			if(string.IsNullOrEmpty(strRawUrl)) return string.Empty;
 
-			string strCmp = CompileText(strRawUrl, p, true, false);
+			string strCmp = CompileToHtml(strRawUrl, p, false);
 
 			string strHRef = strCmp;
 			if(p.SprMode == 2) // Use only Spr-compiled URL for HRef, not both
 			{
 				PfOptions pSub = p.CloneShallow();
 				pSub.SprMode = 1;
-				strHRef = CompileText(strRawUrl, pSub, true, false);
+				strHRef = CompileToHtml(strRawUrl, pSub, false);
 			}
 			// Do not Spr-compile URL for HRef when p.SprMode == 0, because
 			// this could unexpectedly disclose external data
 
-			return ("<a href=\"" + strHRef + "\">" + p.FontInit + strCmp +
-				p.FontExit + "</a>");
+			return ("<a href=\"" + strHRef + "\">" + strCmp + "</a>");
 		}
 
 		private static void WriteGroupNotes(StringBuilder sb, PwGroup pg)
@@ -879,8 +996,62 @@ namespace KeePass.Forms
 			if(str.Length == 0) return;
 
 			// No <p>...</p> due to padding/margin
-			sb.AppendLine("<table><tr><td>" + StrUtil.StringToHtml(str) +
-				"</td></tr></table><br />");
+			sb.Append("<table><tr><td>");
+			sb.Append(StrUtil.StringToHtml(str));
+			sb.AppendLine("</td></tr></table><br />");
+		}
+
+		private static string PasswordToHtml(string str, PfOptions p)
+		{
+			if(string.IsNullOrEmpty(str)) return string.Empty;
+
+			if(UIUtil.ColorsEqual(p.ColorPU, Color.Empty))
+				return StrUtil.StringToHtml(str); // White-space pre. via CSS
+
+			List<KeyValuePair<int, UnicodeCategory>> lAll = StrUtil.GetCategoryGroups(str);
+
+			List<KeyValuePair<int, UnicodeCategory>> l = new List<KeyValuePair<int, UnicodeCategory>>();
+			UnicodeCategory ucLast = UnicodeCategory.UppercaseLetter;
+			for(int i = 0; i < lAll.Count; ++i)
+			{
+				KeyValuePair<int, UnicodeCategory> kvp = lAll[i];
+
+				UnicodeCategory uc = kvp.Value;
+				if((uc != UnicodeCategory.UppercaseLetter) &&
+					(uc != UnicodeCategory.LowercaseLetter) &&
+					(uc != UnicodeCategory.DecimalDigitNumber))
+					uc = UnicodeCategory.OtherNotAssigned;
+
+				if((uc != ucLast) || (i == 0))
+				{
+					l.Add(new KeyValuePair<int, UnicodeCategory>(kvp.Key, uc));
+					ucLast = uc;
+				}
+			}
+
+			StringBuilder sb = new StringBuilder();
+
+			for(int iGroup = 0; iGroup < l.Count; ++iGroup)
+			{
+				KeyValuePair<int, UnicodeCategory> kvp = l[iGroup];
+				int iNext = (((iGroup + 1) < l.Count) ? l[iGroup + 1].Key : str.Length);
+				string strGroup = str.Substring(kvp.Key, iNext - kvp.Key);
+
+				sb.AppendLine("<span");
+				sb.Append("class=\"f_password_");
+				switch(kvp.Value)
+				{
+					case UnicodeCategory.UppercaseLetter: sb.Append('u'); break;
+					case UnicodeCategory.LowercaseLetter: sb.Append('l'); break;
+					case UnicodeCategory.DecimalDigitNumber: sb.Append('d'); break;
+					default: sb.Append('o'); break;
+				}
+				sb.Append("\">");
+				sb.Append(StrUtil.StringToHtml(strGroup)); // White-space pre. via CSS
+				sb.Append("</span>");
+			}
+
+			return sb.ToString();
 		}
 
 		private static void SortGroupEntriesRecursive(PwGroup pg, string strFieldName)
@@ -963,6 +1134,9 @@ namespace KeePass.Forms
 			}
 			else { Debug.Assert(false); }
 
+			m_fcgMain.Dispose();
+			m_fcgPassword.Dispose();
+
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
@@ -972,6 +1146,11 @@ namespace KeePass.Forms
 		}
 
 		private void OnIconCheckedChanged(object sender, EventArgs e)
+		{
+			UpdateUIState();
+		}
+
+		private void OnColorPCheckedChanged(object sender, EventArgs e)
 		{
 			UpdateUIState();
 		}

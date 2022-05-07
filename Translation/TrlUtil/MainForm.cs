@@ -229,24 +229,25 @@ namespace TrlUtil
 		{
 			foreach(ToolStripItem tsi in tsic)
 			{
-				if(tsi.Text.Length == 0) continue;
-				if(tsi.Text.StartsWith("<") && tsi.Text.EndsWith(">")) continue;
+				if((tsi.Text.Length != 0) && (!tsi.Text.StartsWith("<") ||
+					!tsi.Text.EndsWith(">")))
+				{
+					KPStringTableItem kpstItem = new KPStringTableItem();
+					kpstItem.Name = tsi.Name;
+					kpstItem.ValueEnglish = tsi.Text;
+					kpst.Strings.Add(kpstItem);
 
-				KPStringTableItem kpstItem = new KPStringTableItem();
-				kpstItem.Name = tsi.Name;
-				kpstItem.ValueEnglish = tsi.Text;
-				kpst.Strings.Add(kpstItem);
+					ListViewItem lvi = new ListViewItem();
+					lvi.Group = grp;
+					lvi.Text = tsi.Name;
+					lvi.SubItems.Add(tsi.Text);
+					lvi.SubItems.Add(string.Empty);
+					lvi.Tag = kpstItem;
+					lvi.ImageIndex = 0;
 
-				ListViewItem lvi = new ListViewItem();
-				lvi.Group = grp;
-				lvi.Text = tsi.Name;
-				lvi.SubItems.Add(tsi.Text);
-				lvi.SubItems.Add(string.Empty);
-				lvi.Tag = kpstItem;
-				lvi.ImageIndex = 0;
-
-				m_lvStrings.Items.Add(lvi);
-				m_dStrings[kpst.Name + "." + kpstItem.Name] = lvi;
+					m_lvStrings.Items.Add(lvi);
+					m_dStrings[kpst.Name + "." + kpstItem.Name] = lvi;
+				}
 
 				ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
 				if(tsmi != null) TrlAddMenuItems(kpst, grp, tsmi.DropDownItems);

@@ -1047,5 +1047,34 @@ namespace KeePass
 			return null;
 		}
 #endif
+
+#if DEBUG
+		private static Stack<TraceListener[]> g_sTraceListeners = null;
+#endif
+		[Conditional("DEBUG")]
+		internal static void EnableAssertions(bool bEnable)
+		{
+#if DEBUG
+			Stack<TraceListener[]> s = g_sTraceListeners;
+			if(s == null)
+			{
+				s = new Stack<TraceListener[]>();
+				g_sTraceListeners = s;
+			}
+
+			if(bEnable)
+			{
+				Debug.Listeners.Clear();
+				Debug.Listeners.AddRange(s.Pop());
+			}
+			else
+			{
+				TraceListener[] v = new TraceListener[Debug.Listeners.Count];
+				Debug.Listeners.CopyTo(v, 0);
+				s.Push(v);
+				Debug.Listeners.Clear();
+			}
+#endif
+		}
 	}
 }

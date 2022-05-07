@@ -40,7 +40,6 @@ using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Collections;
-using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
@@ -121,24 +120,19 @@ namespace KeePass.Forms
 			{
 				if(MonoWorkarounds.IsRequired(891029)) m_tabMain.Height += 5;
 
-				m_menuMain.SuspendLayout();
-				m_ctxGroupList.SuspendLayout();
-				m_ctxPwList.SuspendLayout();
-				m_ctxTray.SuspendLayout();
+				SuspendLayoutScope sls = new SuspendLayoutScope(false,
+					m_menuMain, m_ctxGroupList, m_ctxPwList, m_ctxTray);
 
 				GlobalWindowManager.InitializeForm(this);
 				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_menuMain", m_menuMain.Items);
-				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxPwList", m_ctxPwList.Items);
 				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxGroupList", m_ctxGroupList.Items);
+				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxPwList", m_ctxPwList.Items);
 				Program.Translation.ApplyTo("KeePass.Forms.MainForm.m_ctxTray", m_ctxTray.Items);
 
 				AssignMenuShortcuts();
 				// Do not construct context menus here, otherwise TrlUtil sees them
 
-				m_ctxTray.ResumeLayout(true);
-				m_ctxPwList.ResumeLayout(true);
-				m_ctxGroupList.ResumeLayout(true);
-				m_menuMain.ResumeLayout(true);
+				sls.Dispose();
 			}
 		}
 
@@ -147,8 +141,18 @@ namespace KeePass.Forms
 		{
 			if(m_bFormLoadCalled && MonoWorkarounds.IsRequired(3574233558U)) return;
 			m_bFormLoadCalled = true;
-
 			m_bFormLoaded = false;
+
+			// Make a copy of the Maximized setting (because it might
+			// get changed when the window's position/size is restored)
+			bool bMaximize = Program.Config.MainWindow.Maximized;
+
+			SuspendLayoutScope sls = new SuspendLayoutScope(true,
+				this, m_menuMain, m_ctxGroupList, m_ctxPwList, m_ctxTray,
+				m_toolMain, m_statusMain,
+				m_splitHorizontal, m_splitHorizontal.Panel1, m_splitHorizontal.Panel2,
+				m_splitVertical, m_splitVertical.Panel1, m_splitVertical.Panel2);
+
 			GlobalWindowManager.CustomizeControl(this);
 			GlobalWindowManager.CustomizeFormHandleCreated(this, true, true);
 
@@ -182,15 +186,15 @@ namespace KeePass.Forms
 
 			m_ctxEntryPreviewContextMenu.Attach(m_richEntryView, this);
 
-			m_dynStringsMenu = new DynamicMenu(m_menuEntryCopyString.DropDownItems);
-			m_dynStringsMenu.MenuClick += this.OnCopyCustomString;
-			m_dynStringsCtx = new DynamicMenu(m_ctxEntryCopyString.DropDownItems);
-			m_dynStringsCtx.MenuClick += this.OnCopyCustomString;
+			m_dynStringsMenu = new DynamicMenu(m_menuEntryOtherData.DropDownItems);
+			m_dynStringsMenu.MenuClick += this.OnEntryStringClick;
+			m_dynStringsCtx = new DynamicMenu(m_ctxEntryOtherData.DropDownItems);
+			m_dynStringsCtx.MenuClick += this.OnEntryStringClick;
 
 			m_dynBinariesMenu = new DynamicMenu(m_menuEntryAttachments.DropDownItems);
-			m_dynBinariesMenu.MenuClick += this.OnEntryBinaryOpen;
+			m_dynBinariesMenu.MenuClick += this.OnEntryBinaryClick;
 			m_dynBinariesCtx = new DynamicMenu(m_ctxEntryAttachments.DropDownItems);
-			m_dynBinariesCtx.MenuClick += this.OnEntryBinaryOpen;
+			m_dynBinariesCtx.MenuClick += this.OnEntryBinaryClick;
 
 			m_dynFindTagsMenu = new DynamicMenu(m_menuFindTag.DropDownItems);
 			m_dynFindTagsMenu.MenuClick += this.OnShowEntriesByTag;
@@ -238,10 +242,10 @@ namespace KeePass.Forms
 
 			EntryTemplates.Init(m_tbAddEntry);
 
-			UIUtil.ConfigureTbButton(m_tbNewDatabase, KPRes.ToolBarNew, null, m_menuFileNew);
-			UIUtil.ConfigureTbButton(m_tbOpenDatabase, KPRes.ToolBarOpen, null, m_menuFileOpenLocal);
-			UIUtil.ConfigureTbButton(m_tbSaveDatabase, KPRes.Save, null, m_menuFileSave);
-			UIUtil.ConfigureTbButton(m_tbSaveAll, KPRes.ToolBarSaveAll, null, null);
+			UIUtil.ConfigureTbButton(m_tbNewDatabase, KPRes.NewDatabase, null, m_menuFileNew);
+			UIUtil.ConfigureTbButton(m_tbOpenDatabase, KPRes.OpenDatabase, null, m_menuFileOpenLocal);
+			UIUtil.ConfigureTbButton(m_tbSaveDatabase, KPRes.SaveDatabase, null, m_menuFileSave);
+			UIUtil.ConfigureTbButton(m_tbSaveAll, KPRes.SaveAllDatabases, null, null);
 			UIUtil.ConfigureTbButton(m_tbAddEntry, KPRes.AddEntry, null, m_menuEntryAdd);
 			UIUtil.ConfigureTbButton(m_tbCopyUserName, KPRes.CopyUserName, null, m_menuEntryCopyUserName);
 			UIUtil.ConfigureTbButton(m_tbCopyPassword, KPRes.CopyPasswordMenu, null, m_menuEntryCopyPassword);
@@ -253,7 +257,7 @@ namespace KeePass.Forms
 			UIUtil.ConfigureTbButton(m_tbLockWorkspace, KPRes.LockMenuLock, null, m_menuFileLock);
 			UIUtil.ConfigureTbButton(m_tbQuickFind, null, KPRes.SearchQuickPrompt +
 				" (" + KPRes.KeyboardKeyCtrl + "+E)", null);
-			UIUtil.ConfigureTbButton(m_tbCloseTab, KPRes.Close, null, m_menuFileClose);
+			UIUtil.ConfigureTbButton(m_tbCloseTab, KPRes.CloseDatabase, null, m_menuFileClose);
 
 			CopyMenuItemText(m_tbAddEntryDefault, m_menuEntryAdd, null);
 			CopyMenuItemText(m_tbOpenUrlDefault, m_menuEntryOpenUrl, KPRes.OpenUrl);
@@ -265,10 +269,6 @@ namespace KeePass.Forms
 			bool bVisible = Program.Config.MainWindow.ToolBar.Show;
 			m_toolMain.Visible = bVisible;
 			UIUtil.SetChecked(m_menuViewShowToolBar, bVisible);
-
-			// Make a copy of the maximized setting (the configuration item might
-			// get changed when the window's position/size is restored)
-			bool bMaximizedSetting = Program.Config.MainWindow.Maximized;
 
 			int wndX = Program.Config.MainWindow.X;
 			int wndY = Program.Config.MainWindow.Y;
@@ -375,21 +375,6 @@ namespace KeePass.Forms
 
 			UpdateAlternatingBgColor();
 
-			m_statusPartProgress.Visible = false;
-
-			if(bMaximizedSetting)
-			{
-				if((this.WindowState == FormWindowState.Normal) && !IsTrayed())
-				{
-					// bool bVis = this.Visible;
-					// if(bVis) this.Visible = false;
-
-					UIUtil.SetWindowState(this, FormWindowState.Maximized);
-
-					// if(bVis) this.Visible = true;
-				}
-			}
-
 			try
 			{
 				double dSplitPos = mw.SplitterHorizontalFrac;
@@ -419,58 +404,7 @@ namespace KeePass.Forms
 			m_sessionLockNotifier.Install(this.OnSessionLock);
 			IpcBroadcast.StartServer();
 
-			int nInitColProvCount = Program.ColumnProviderPool.Count;
-
-			m_pluginDefaultHost.Initialize(this, Program.CommandLineArgs,
-				CipherPool.GlobalPool);
-			m_pluginManager.Initialize(m_pluginDefaultHost);
-
-			m_pluginManager.UnloadAllPlugins();
-			if(AppPolicy.Current.Plugins)
-			{
-				ToolStripItemCollection tsicM = m_menuTools.DropDownItems;
-				int ciM = tsicM.Count;
-				ToolStripItem tsiPrevM = ((ciM >= 1) ? tsicM[ciM - 1] : null);
-
-				ToolStripItemCollection tsicGM = m_menuGroup.DropDownItems;
-				int ciGM = tsicGM.Count;
-				ToolStripItem tsiPrevGM = ((ciGM >= 1) ? tsicGM[ciGM - 1] : null);
-
-				ToolStripItemCollection tsicEM = m_menuEntry.DropDownItems;
-				int ciEM = tsicEM.Count;
-				ToolStripItem tsiPrevEM = ((ciEM >= 1) ? tsicEM[ciEM - 1] : null);
-
-				ToolStripItemCollection tsicGC = m_ctxGroupList.Items;
-				int ciGC = tsicGC.Count;
-				ToolStripItem tsiPrevGC = ((ciGC >= 1) ? tsicGC[ciGC - 1] : null);
-
-				ToolStripItemCollection tsicEC = m_ctxPwList.Items;
-				int ciEC = tsicEC.Count;
-				ToolStripItem tsiPrevEC = ((ciEC >= 1) ? tsicEC[ciEC - 1] : null);
-
-				ToolStripItemCollection tsicT = m_ctxTray.Items;
-				ToolStripItem tsiPrevT = m_ctxTrayOptions;
-
-				m_pluginManager.LoadAllPlugins();
-
-				m_pluginManager.AddMenuItems(PluginMenuType.Main, tsicM, tsiPrevM);
-				m_pluginManager.AddMenuItems(PluginMenuType.Group, tsicGM, tsiPrevGM);
-				m_pluginManager.AddMenuItems(PluginMenuType.Entry, tsicEM, tsiPrevEM);
-				m_pluginManager.AddMenuItems(PluginMenuType.Group, tsicGC, tsiPrevGC);
-				m_pluginManager.AddMenuItems(PluginMenuType.Entry, tsicEC, tsiPrevEC);
-				m_pluginManager.AddMenuItems(PluginMenuType.Tray, tsicT, tsiPrevT);
-			}
-
-			// Delete old files *after* loading plugins (when timestamps
-			// of loaded plugins have been updated already)
-			if(Program.Config.Application.Start.PluginCacheDeleteOld)
-				PlgxCache.DeleteOldFilesAsync();
-
-			if(Program.ColumnProviderPool.Count != nInitColProvCount)
-				UpdateColumnsEx(false);
-
 			HotKeyManager.Initialize(this);
-
 			HotKeyManager.RegisterHotKey(AppDefs.GlobalHotKeyId.AutoType,
 				(Keys)Program.Config.Integration.HotKeyGlobalAutoType);
 			HotKeyManager.RegisterHotKey(AppDefs.GlobalHotKeyId.AutoTypePassword,
@@ -482,6 +416,9 @@ namespace KeePass.Forms
 			HotKeyManager.RegisterHotKey(AppDefs.GlobalHotKeyId.EntryMenu,
 				(Keys)Program.Config.Integration.HotKeyEntryMenu);
 
+			m_statusMain.ShowItemToolTips = true;
+			m_statusPartInfo.AutoToolTip = true;
+			m_statusPartProgress.Visible = false;
 			m_statusClipboard.Visible = false;
 			UpdateClipboardStatus();
 
@@ -496,7 +433,6 @@ namespace KeePass.Forms
 				MonoWorkarounds.IsRequired(100001));
 			m_toolMain.LockHeight(true);
 
-			UpdateTrayIcon(false);
 			UpdateFindProfilesMenu(m_menuFindProfiles, true);
 			UpdateFindProfilesMenu(m_ctxGroupFindProfiles, true);
 			UpdateTagsMenu(m_dynFindTagsMenu, false, false, TagsMenuMode.EnsurePopupOnly);
@@ -504,9 +440,20 @@ namespace KeePass.Forms
 			UpdateTagsMenu(m_dynTagRemoveCtx, false, false, TagsMenuMode.EnsurePopupOnly);
 			UpdateEntryMoveMenu(m_dynMoveToGroupMenu, true);
 			UpdateEntryMoveMenu(m_dynMoveToGroupCtx, true);
-			UpdateUIState(false);
+
 			ApplyUICustomizations();
 			MonoWorkarounds.ApplyTo(this);
+			UpdateTrayIcon(false);
+			UpdateUIState(false);
+
+			LoadPlugins();
+
+			bool bCanMaximize = ((this.WindowState == FormWindowState.Normal) && !IsTrayed());
+			Debug.Assert(bCanMaximize);
+			if(bMaximize && bCanMaximize)
+				UIUtil.SetWindowState(this, FormWindowState.Maximized);
+
+			sls.Dispose();
 
 			ThreadPool.QueueUserWorkItem(new WaitCallback(OnFormLoadParallelAsync));
 
@@ -540,6 +487,12 @@ namespace KeePass.Forms
 			if(this.FormLoadPost != null)
 				this.FormLoadPost(this, EventArgs.Empty);
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppLoadPost);
+
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/3b696041f8/
+			Debug.Assert(NativeLib.IsUnix() || ((NativeMethods.GetWindowStyle(
+				this.Handle) & NativeMethods.WS_VISIBLE) == 0));
+			Debug.Assert(m_bFormLoaded); // Otherwise Show() might be blocked
+			if(m_bHasBlockedShowWindow && this.Visible) Show();
 		}
 
 		private void OnFormShown(object sender, EventArgs e)
@@ -610,17 +563,15 @@ namespace KeePass.Forms
 
 			DatabaseSettingsForm dsf = new DatabaseSettingsForm();
 			dsf.InitEx(true, pd);
-			dr = dsf.ShowDialog();
+			dr = UIUtil.ShowDialogAndDestroy(dsf);
 			if((dr == DialogResult.Cancel) || (dr == DialogResult.Abort))
 			{
 				m_docMgr.CloseDatabase(pd);
 				try { m_docMgr.ActiveDocument = dsPrevActive; }
 				catch(Exception) { } // Fails if no database is open now
 				UpdateUI(false, null, true, null, true, null, false);
-				UIUtil.DestroyForm(dsf);
 				return;
 			}
-			UIUtil.DestroyForm(dsf);
 
 			AutoEnableVisualHiding(true);
 
@@ -1274,10 +1225,10 @@ namespace KeePass.Forms
 
 		private void OnToolsOptions(object sender, EventArgs e)
 		{
+			Program.Config.Application.MostRecentlyUsed.MaxItemCount = m_mruList.MaxItemCount;
+
 			OptionsForm ofDlg = new OptionsForm();
 			ofDlg.InitEx(m_ilCurrentIcons, IsTrayed());
-
-			Program.Config.Application.MostRecentlyUsed.MaxItemCount = m_mruList.MaxItemCount;
 
 			if(ofDlg.ShowDialog() == DialogResult.OK)
 			{
@@ -2055,8 +2006,8 @@ namespace KeePass.Forms
 			PwEntry pe = GetSelectedEntry(false);
 			Color clrCur = ((pe != null) ? pe.BackgroundColor : Color.Empty);
 
-			Color? clr = UIUtil.ShowColorDialog(clrCur);
-			if(clr.HasValue) SetSelectedEntryColor(clr.Value);
+			Color? oclr = UIUtil.ShowColorDialog(clrCur);
+			if(oclr.HasValue) SetSelectedEntryColor(oclr.Value);
 		}
 
 		private void OnPwListMouseDown(object sender, MouseEventArgs e)
@@ -2769,12 +2720,23 @@ namespace KeePass.Forms
 			Debug.Assert(sender == m_menuEntryDX);
 
 			bool bPaste = m_docMgr.ActiveDatabase.IsOpen;
+			bool bMulti = (m_lvEntries.SelectedIndices.Count >= 2); // Text consistency
+
 			try // Might fail/throw due to clipboard access timeout
 			{
-				bPaste &= ClipboardUtil.ContainsData(EntryUtil.ClipFormatEntries);
+				bool b1 = ClipboardUtil.ContainsData(EntryUtil.ClipFormatEntry);
+				bool bM = ClipboardUtil.ContainsData(EntryUtil.ClipFormatEntries);
+				bool bAny = (b1 || bM);
+
+				bPaste &= bAny;
+				if(bAny) bMulti = bM;
 			}
 			catch(Exception) { bPaste = false; }
+
 			UIUtil.SetEnabledFast(bPaste, m_menuEntryClipPaste);
+
+			m_menuEntryClipPaste.Text = (bMulti ? KPRes.PasteEntriesCmd :
+				KPRes.PasteEntryCmd);
 		}
 
 		private void OnFilePrintEmSheet(object sender, EventArgs e)
@@ -2872,6 +2834,32 @@ namespace KeePass.Forms
 		private void OnEntryMoveToPreviousParent(object sender, EventArgs e)
 		{
 			MoveToPreviousParentGroup(true);
+		}
+
+		private void OnEntryOtpGenSettings(object sender, EventArgs e)
+		{
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
+
+			PwEntry pe = GetSelectedEntry(true);
+			if(pe == null) { Debug.Assert(false); return; }
+
+			ProtectedStringDictionary d = pe.Strings.CloneDeep();
+
+			OtpGeneratorForm dlg = new OtpGeneratorForm();
+			dlg.InitEx(d, pd);
+
+			if((UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK) &&
+				!d.EqualsDictionary(pe.Strings, PwCompareOptions.NullEmptyEquivStd,
+				MemProtCmpMode.CustomOnly))
+			{
+				pe.CreateBackup(pd);
+				pe.Strings = d;
+				pe.Touch(true, false);
+
+				RefreshEntriesList();
+				UpdateUIState(true);
+			}
 		}
 	}
 }

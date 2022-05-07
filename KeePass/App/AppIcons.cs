@@ -41,8 +41,8 @@ namespace KeePass.App
 		private static Dictionary<string, Icon> g_dCache = new Dictionary<string, Icon>();
 		private static readonly object g_oCacheSync = new object();
 
-		// The average hue of the main icon is about 225 degrees
-		private static readonly Color g_clrMain = UIUtil.ColorFromHsv(225, 1, 1);
+		private const int g_hMain = 225; // Average hue of the main icon in degrees
+		private static readonly Color g_clrMain = UIUtil.ColorFromHsv(g_hMain, 1, 1);
 
 		private static Color[] g_vColors = null;
 		internal static Color[] Colors
@@ -54,7 +54,7 @@ namespace KeePass.App
 					List<Color> l = new List<Color>();
 
 					for(int h = 0; h < 360; h += 15)
-						l.Add(UIUtil.ColorFromHsv((h + 225) % 360, 1, 1));
+						l.Add(UIUtil.ColorFromHsv((h + g_hMain) % 360, 1, 1));
 
 					g_vColors = l.ToArray();
 

@@ -223,9 +223,16 @@ namespace KeePass.UI
 				m_tbRepeat.Text = string.Empty;
 
 			byte[] pbRepeat = m_tbRepeat.TextEx.ReadUtf8();
-			if(!MemUtil.ArraysEqual(pbUtf8, pbRepeat) && !bAutoRepeat)
+			string strTip = KPRes.PasswordRepeatHint;
+			if(MemUtil.ArraysEqual(pbUtf8, pbRepeat) || bAutoRepeat)
+				m_tbRepeat.ResetBackColor();
+			else
+			{
 				m_tbRepeat.BackColor = AppDefs.ColorEditError;
-			else m_tbRepeat.ResetBackColor();
+				strTip += MessageService.NewLine + KPRes.ValidationFailed +
+					"! " + KPRes.PasswordRepeatFailed;
+			}
+			UIUtil.SetToolTip(m_ttHint, m_tbRepeat, strTip, true);
 
 			bool bRepeatEnable = (m_bEnabled && !bAutoRepeat);
 			m_lblRepeat.Enabled = bRepeatEnable;
@@ -558,7 +565,7 @@ namespace KeePass.UI
 
 			if(tt != null)
 				UIUtil.SetToolTip(tt, cb, KPRes.TogglePasswordAsterisks, false);
-			UIUtil.AccSetName(cb, KPRes.TogglePasswordAsterisks); // Even if tt is null
+			AccessibilityEx.SetName(cb, KPRes.TogglePasswordAsterisks); // Even if tt is null
 		}
 	}
 }

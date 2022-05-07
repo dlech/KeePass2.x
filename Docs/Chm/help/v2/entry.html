@@ -35,7 +35,7 @@
 
 
 <table class="sectionheader"><tr>
-<td><img src="../images/b64x64_vcard.png" alt="VCard" /></td>
+<td><img src="../images/b64x64_vcard.png" alt="" /></td>
 <td><h1>Entry Dialog</h1>
 <p>Edit new/existing entries.</p></td>
 </tr></table>
@@ -46,12 +46,13 @@
 <li><a href="#prp">Properties</a></li>
 <li><a href="#at">Auto-Type</a></li>
 <li><a href="#hst">History</a></li>
+<li><a href="#multi">Editing Multiple Entries At Once</a></li>
 </ul>
 
 <br />
 
 <a name="gen"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_vcard.png" alt="VCard" />
+<h2 class="sectiontitle"><img src="../images/b16x16_vcard.png" alt="" />
 General</h2>
 
 <p>On the tab page 'General', you can specify the main information
@@ -108,6 +109,7 @@ excludes the entry from password quality reports (menu 'Find' &rarr;
 <p><b>URL.</b><br />
 See the help page '<a href="../base/autourl.html">URL Field</a>'.</p>
 
+<a name="exp"></a>
 <p><b>Expires.</b><br />
 In the entry list of the main window, an expired entry is displayed
 with a red <span style="color: #FF0000;"><b>X</b></span> icon and a
@@ -123,9 +125,10 @@ option 'Show expired entries (if any)').</p>
 <br />
 
 <a name="adv"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="Multiple" />
+<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="" />
 Advanced</h2>
 
+<a name="str"></a>
 <p><b>Custom string fields.</b><br />
 Each entry may have an arbitrary number of custom string fields.
 Such a field consists of a name and a value.
@@ -133,7 +136,7 @@ The name must be unique (within the entry).</p>
 
 <p>In the main window, the value of a custom string field can be
 copied into the clipboard by right-clicking on the entry, pointing
-on 'Copy Field' and clicking on the name of the custom string field
+on 'Other Data' and clicking on the name of the custom string field
 (this is also possible via the menu 'Entry').</p>
 
 <p>The value of a custom string field can also be used in an
@@ -154,6 +157,7 @@ be hidden using asterisks for the protection to be effective) and increases
 the time required by various operations. Therefore, it should be activated
 only for really sensitive data (e.g. a second password).</p>
 
+<a name="bin"></a>
 <p><b>File attachments.</b><br />
 You can attach arbitrary files to an entry.</p>
 
@@ -172,9 +176,10 @@ to store the password for the encrypted file container).</p>
 <br />
 
 <a name="prp"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kcmsystem.png" alt="Settings" />
+<h2 class="sectiontitle"><img src="../images/b16x16_kcmsystem.png" alt="" />
 Properties</h2>
 
+<a name="tags"></a>
 <p><b>Tags.</b><br />
 You can assign arbitrary tags to an entry.
 Multiple tags have to be separated by commas (or semicolons).
@@ -188,7 +193,9 @@ one or more entries &rarr; 'Edit Entry (Quick)' &rarr; 'Add Tag' or
 <p>A common use case is to mark frequently used entries (tag 'Favorite').</p>
 
 <p>In order to show all entries that have a specific tag, click the
-three-keys button in the toolbar of the main window (to the right of
+three-keys button
+[<img src="../images/b16x16_kgpg_key3.png" class="textimg" alt="3 Keys" />]
+in the toolbar of the main window (to the right of
 the 'Find' toolbar button) and choose the tag.
 Alternatively, this command is also accessible via the main menu:
 'Find' &rarr; 'Tag' &rarr; choose the tag.</p>
@@ -204,10 +211,24 @@ add an event 'Opened database file', and add an action
 <p><b>Override URL.</b><br />
 See '<a href="../base/autourl.html#override">Changing the URL Handler</a>'.</p>
 
+<a name="uuid"></a>
+<p><b>UUID.</b><br />
+A UUID is a 128-bit number that uniquely identifies an object
+(an entry in this case).</p>
+
+<p>In some places (e.g. in <a href="../base/fieldrefs.html">field references</a>),
+a UUID needs to be specified in <a href="https://en.wikipedia.org/wiki/Hexadecimal"
+target="_blank">hexadecimal</a> form.
+In some other places (e.g. in KDBX XML files), a UUID is stored in
+<a href="https://en.wikipedia.org/wiki/Base64" target="_blank">Base64</a> form.</p>
+
+<p>The entry dialog shows both forms (hexadecimal and Base64), such that
+you can directly copy the form that you currently need.</p>
+
 <br />
 
 <a name="at"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keypress" />
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="" />
 Auto-Type</h2>
 
 <p>On this tab page, you can configure the auto-type behavior for
@@ -217,7 +238,7 @@ See the <a href="../base/autotype.html">auto-type</a> help page.</p>
 <br />
 
 <a name="hst"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_history.png" alt="Clock" />
+<h2 class="sectiontitle"><img src="../images/b16x16_history.png" alt="" />
 History</h2>
 
 <p>Each entry has an own history. When modifying an entry, KeePass
@@ -238,6 +259,35 @@ specific history entries.</li>
 you can delete all history entries that are older than a specific
 number of days.</li>
 </ul>
+
+<br />
+
+<a name="multi"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="" />
+Editing Multiple Entries At Once</h2>
+
+<p>The entry dialog supports editing multiple entries at once.
+For this, select multiple entries in the entry list of the main window
+and invoke the 'Edit Entries' command.</p>
+
+<ul>
+<li>If the entries contain different values for a field (e.g. if the
+entries have different user names), the text box in the entry dialog
+shows &quot;<span style="color: #808080;">(Multiple values)</span>&quot;.
+If you do not change this, the values for this field will not be modified.
+If you change it, the new value will be assigned to all entries.</li>
+
+<li>In case of a boolean option, the check box may support three states:
+<ul>
+<li>Unchecked. The option is/will be turned off for all entries.</li>
+<li>Checked. The option is/will be turned on for all entries.</li>
+<li>Indeterminate. For some entries, the option is turned off, whereas
+for the other entries, it is turned on. The states will not be modified.</li>
+</ul></li>
+</ul>
+
+<p>Controls for data that cannot be modified in multiple entries at once
+(e.g. file attachments) are disabled. Such data will not be modified.</p>
 
 </body></html>
 

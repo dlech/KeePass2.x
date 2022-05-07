@@ -31,6 +31,7 @@ namespace KeePass.Native
 		internal const int WM_SETFOCUS = 0x0007;
 		internal const int WM_KILLFOCUS = 0x0008;
 		internal const int WM_SETTINGCHANGE = 0x001A;
+		internal const int WM_WINDOWPOSCHANGING = 0x0046;
 		internal const int WM_CONTEXTMENU = 0x007B;
 		internal const int WM_KEYDOWN = 0x0100;
 		internal const int WM_KEYUP = 0x0101;
@@ -119,6 +120,8 @@ namespace KeePass.Native
 		internal const int WS_EX_TOPMOST = 0x00000008;
 
 		internal const int SW_SHOW = 5;
+
+		internal const uint SWP_SHOWWINDOW = 0x0040;
 
 		internal const int GCLP_HICON = -14;
 		internal const int GCLP_HICONSM = -34;

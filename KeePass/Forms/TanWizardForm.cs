@@ -75,7 +75,7 @@ namespace KeePass.Forms
 
 			m_tbTanChars.Text = Program.Config.Defaults.TanCharacters;
 
-			UIUtil.AccSetName(m_numTANsIndex, m_cbNumberTans);
+			AccessibilityEx.SetContext(m_numTANsIndex, m_cbNumberTans);
 
 			EnableControlsEx();
 		}

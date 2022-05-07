@@ -35,7 +35,8 @@ namespace KeePass.App
 	{
 		public static readonly Color ColorControlNormal = SystemColors.Window;
 		public static readonly Color ColorControlDisabled = SystemColors.Control;
-		public static readonly Color ColorEditError = Color.FromArgb(255, 192, 192);
+		public static readonly Color ColorEditError = (UIUtil.IsDarkTheme ?
+			Color.FromArgb(128, 0, 0) : Color.FromArgb(255, 192, 192));
 
 		public static readonly Color ColorQualityLow = Color.FromArgb(255, 128, 0);
 		public static readonly Color ColorQualityHigh = Color.FromArgb(0, 255, 0);
@@ -112,6 +113,9 @@ namespace KeePass.App
 			public static readonly string CommandLine = "base/cmdline";
 			public static readonly string FieldRefs = "base/fieldrefs";
 
+			internal const string Placeholders = "base/placeholders";
+			internal const string PlaceholdersOtp = "otp";
+
 			public static readonly string ImportExport = "base/importexport";
 			public static readonly string ImportExportGenericCsv = "genericcsv";
 			public static readonly string ImportExportSteganos = "imp_steganos";
@@ -134,8 +138,9 @@ namespace KeePass.App
 			public static readonly string Setup = "v2/setup";
 			public static readonly string SetupMono = "mono";
 
-			// public static readonly string FaqTech = "base/faq_tech";
-			// public static readonly string FaqTechMemProt = "memprot";
+			internal const string FaqTech = "base/faq_tech";
+			internal const string FaqTechGuiDark = "guidark";
+			internal const string FaqTechGuiFont = "guifont";
 
 			public static readonly string XmlReplace = "v2/xml_replace";
 

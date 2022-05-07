@@ -60,8 +60,6 @@ namespace KeePass.Forms
 		private ProtectedBinaryDictionary m_vBinaries = null;
 		private AutoTypeConfig m_atConfig = null;
 		private PwObjectList<PwEntry> m_vHistory = null;
-		private Color m_clrForeground = Color.Empty;
-		private Color m_clrBackground = Color.Empty;
 		private StringDictionaryEx m_sdCustomData = null;
 
 		private PwIcon m_pwEntryIcon = PwIcon.Key;
@@ -81,8 +79,6 @@ namespace KeePass.Forms
 		private ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
 		private Image m_imgTools = null;
 		private Image m_imgStdExpire = null;
-		private Image m_imgColorFg = null;
-		private Image m_imgColorBg = null;
 		private List<Image> m_lOverrideUrlIcons = new List<Image>();
 
 		private CustomContextMenuStripEx m_ctxBinOpen = null;
@@ -163,7 +159,7 @@ namespace KeePass.Forms
 		private PwEntryFormTab m_eftInit = PwEntryFormTab.None;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[DefaultValue((object)PwEntryFormTab.None)]
+		[DefaultValue(PwEntryFormTab.None)]
 		internal PwEntryFormTab InitialTab
 		{
 			// get { return m_eftInit; } // Internal, uncalled
@@ -451,20 +447,13 @@ namespace KeePass.Forms
 
 		private void InitPropertiesTab()
 		{
-			m_clrForeground = m_pwEntry.ForegroundColor;
-			m_clrBackground = m_pwEntry.BackgroundColor;
-
-			if(!UIUtil.ColorsEqual(m_clrForeground, Color.Empty))
-				UIUtil.OverwriteButtonImage(m_btnPickFgColor, ref m_imgColorFg,
-					UIUtil.CreateColorBitmap24(m_btnPickFgColor, m_clrForeground));
-			if(!UIUtil.ColorsEqual(m_clrBackground, Color.Empty))
-				UIUtil.OverwriteButtonImage(m_btnPickBgColor, ref m_imgColorBg,
-					UIUtil.CreateColorBitmap24(m_btnPickBgColor, m_clrBackground));
+			m_btnPickFgColor.SelectedColor = m_pwEntry.ForegroundColor;
+			m_btnPickBgColor.SelectedColor = m_pwEntry.BackgroundColor;
 
 			UIUtil.SetChecked(m_cbCustomForegroundColor, !UIUtil.ColorsEqual(
-				m_clrForeground, Color.Empty));
+				m_pwEntry.ForegroundColor, Color.Empty));
 			UIUtil.SetChecked(m_cbCustomBackgroundColor, !UIUtil.ColorsEqual(
-				m_clrBackground, Color.Empty));
+				m_pwEntry.BackgroundColor, Color.Empty));
 
 			TagUtil.MakeInheritedTagsLink(m_linkTagsInh, m_pwEntry.ParentGroup, this);
 			m_tbTags.Text = StrUtil.TagsToString(m_pwEntry.Tags, true);
@@ -725,12 +714,9 @@ namespace KeePass.Forms
 			UIUtil.SetToolTip(m_ttRect, m_btnAutoTypeDown, KPRes.MoveDown, true);
 
 			UIUtil.ConfigureToolTip(m_ttBalloon);
-			UIUtil.SetToolTip(m_ttBalloon, m_tbRepeatPassword, KPRes.PasswordRepeatHint, false);
 
-			UIUtil.AccSetName(m_dtExpireDateTime, m_cbExpires);
-			UIUtil.AccSetName(m_btnPickFgColor, KPRes.SelectColor);
-			UIUtil.AccSetName(m_btnPickBgColor, KPRes.SelectColor);
-			UIUtil.AccSetName(m_tbDefaultAutoTypeSeq, m_rbAutoTypeOverride);
+			AccessibilityEx.SetContext(m_tbDefaultAutoTypeSeq, m_rbAutoTypeOverride);
+			AccessibilityEx.SetContext(m_linkAutoTypeObfuscation, m_cbAutoTypeObfuscation);
 
 			m_ctxNotes.Attach(m_rtNotes, this);
 
@@ -928,6 +914,8 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast((bEdit && !bMulti && (nStringsSel >= 1)),
 				m_ctxStrMoveTo, m_ctxStrMoveToTitle, m_ctxStrMoveToUserName,
 				m_ctxStrMoveToPassword, m_ctxStrMoveToUrl, m_ctxStrMoveToNotes);
+			UIUtil.SetEnabledFast((bEdit && !bMulti), m_ctxStrOtpGen,
+				m_ctxToolsOtpGen);
 
 			m_btnBinDelete.Enabled = (bEdit && (nBinSel >= 1));
 			m_btnBinOpen.Enabled = (nBinSel == 1);
@@ -1012,9 +1000,9 @@ namespace KeePass.Forms
 			peTarget.Binaries = m_vBinaries;
 
 			peTarget.ForegroundColor = (m_cbCustomForegroundColor.Checked ?
-				m_clrForeground : Color.Empty);
+				m_btnPickFgColor.SelectedColor : Color.Empty);
 			peTarget.BackgroundColor = (m_cbCustomBackgroundColor.Checked ?
-				m_clrBackground : Color.Empty);
+				m_btnPickBgColor.SelectedColor : Color.Empty);
 
 			peTarget.Tags = StrUtil.StringToTags(m_tbTags.Text);
 			peTarget.OverrideUrl = m_cmbOverrideUrl.Text;
@@ -1133,10 +1121,7 @@ namespace KeePass.Forms
 
 			if(m_imgTools != null) // Only dispose scaled image
 				UIUtil.DisposeButtonImage(m_btnTools, ref m_imgTools);
-
 			UIUtil.DisposeButtonImage(m_btnStandardExpires, ref m_imgStdExpire);
-			UIUtil.DisposeButtonImage(m_btnPickFgColor, ref m_imgColorFg);
-			UIUtil.DisposeButtonImage(m_btnPickBgColor, ref m_imgColorBg);
 
 			GlobalWindowManager.RemoveWindow(this);
 		}
@@ -1379,7 +1364,8 @@ namespace KeePass.Forms
 			EnableControlsEx();
 		}
 
-		private void SetExpireIn(int nYears, int nMonths, int nDays)
+		// Public for plugins
+		public void SetExpireIn(int nYears, int nMonths, int nDays)
 		{
 			DateTime dt = DateTime.Now; // Not UTC
 			if((nYears != 0) || (nMonths != 0) || (nDays != 0))
@@ -1770,28 +1756,6 @@ namespace KeePass.Forms
 		private void OnStringsItemActivate(object sender, EventArgs e)
 		{
 			OnBtnStrEdit(sender, e);
-		}
-
-		private void OnPickForegroundColor(object sender, EventArgs e)
-		{
-			Color? clr = UIUtil.ShowColorDialog(m_clrForeground);
-			if(clr.HasValue)
-			{
-				m_clrForeground = clr.Value;
-				UIUtil.OverwriteButtonImage(m_btnPickFgColor, ref m_imgColorFg,
-					UIUtil.CreateColorBitmap24(m_btnPickFgColor, m_clrForeground));
-			}
-		}
-
-		private void OnPickBackgroundColor(object sender, EventArgs e)
-		{
-			Color? clr = UIUtil.ShowColorDialog(m_clrBackground);
-			if(clr.HasValue)
-			{
-				m_clrBackground = clr.Value;
-				UIUtil.OverwriteButtonImage(m_btnPickBgColor, ref m_imgColorBg,
-					UIUtil.CreateColorBitmap24(m_btnPickBgColor, m_clrBackground));
-			}
 		}
 
 		private void OnCustomForegroundColorCheckedChanged(object sender, EventArgs e)
@@ -2487,6 +2451,22 @@ namespace KeePass.Forms
 			foreach(ListViewItem lvi in m_lvAutoType.Items)
 				lvi.Selected = true;
 			m_lvAutoType.EndUpdate();
+		}
+
+		private void OnCtxStrOtpGen(object sender, EventArgs e)
+		{
+			UpdateEntryStrings(true, false, false);
+
+			OtpGeneratorForm dlg = new OtpGeneratorForm();
+			dlg.InitEx(m_vStrings, m_pwDatabase);
+
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+				UpdateEntryStrings(false, true, true);
+		}
+
+		private void OnCtxToolsOtpGen(object sender, EventArgs e)
+		{
+			OnCtxStrOtpGen(sender, e);
 		}
 	}
 }

@@ -54,7 +54,7 @@ namespace KeePass.UI
 			m_dItems[AceListGrouping.On] = tsmi;
 			m_tsmiMenu.DropDownItems.Add(tsmi);
 
-			tsmi = new ToolStripMenuItem(KPRes.Auto + " (" + KPRes.RecommendedCmd + ")");
+			tsmi = new ToolStripMenuItem(KPRes.Automatic + " (" + KPRes.RecommendedCmd + ")");
 			tsmi.Click += this.OnGroupAuto;
 			m_dItems[AceListGrouping.Auto] = tsmi;
 			m_tsmiMenu.DropDownItems.Add(tsmi);

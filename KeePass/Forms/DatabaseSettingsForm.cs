@@ -48,12 +48,6 @@ namespace KeePass.Forms
 		private bool m_bCreatingNew = false;
 		private PwDatabase m_pwDatabase = null;
 
-		private Color m_clr = Color.Empty;
-
-		private CustomContextMenuEx m_ctxColor = null;
-		private List<ColorMenuItem> m_vColorItems = new List<ColorMenuItem>();
-		private Image m_imgColor = null;
-
 		private string m_strAutoCreateNew = "(" + KPRes.AutoCreateNew + ")";
 		private Dictionary<int, PwUuid> m_dictRecycleBinGroups = new Dictionary<int, PwUuid>();
 
@@ -99,21 +93,16 @@ namespace KeePass.Forms
 				Properties.Resources.B48x48_Ark, KPRes.DatabaseSettings, strDesc);
 			this.Icon = AppIcons.Default;
 
-			FontUtil.AssignDefaultItalic(m_lblHeaderCpAlgo);
-			FontUtil.AssignDefaultItalic(m_lblHeaderCp);
-			FontUtil.AssignDefaultItalic(m_lblHeaderPerf);
-
-			FontUtil.AssignDefaultBold(m_rbNone);
-			FontUtil.AssignDefaultBold(m_rbGZip);
+			FontUtil.AssignDefaultBold(m_rbCmpNone);
+			FontUtil.AssignDefaultBold(m_rbCmpGZip);
 
 			UIUtil.ConfigureToolTip(m_ttRect);
 			UIUtil.SetToolTip(m_ttRect, m_btnKdf1Sec, KPRes.KdfParams1Sec, false);
 
-			UIUtil.AccSetName(m_btnColor, KPRes.SelectColor);
-			UIUtil.AccSetName(m_numHistoryMaxItems, m_cbHistoryMaxItems);
-			UIUtil.AccSetName(m_numHistoryMaxSize, m_cbHistoryMaxSize);
-			UIUtil.AccSetName(m_numKeyRecDays, m_cbKeyRec);
-			UIUtil.AccSetName(m_numKeyForceDays, m_cbKeyForce);
+			AccessibilityEx.SetContext(m_numHistoryMaxItems, m_cbHistoryMaxItems);
+			AccessibilityEx.SetContext(m_numHistoryMaxSize, m_cbHistoryMaxSize);
+			AccessibilityEx.SetContext(m_numKeyRecDays, m_cbKeyRec);
+			AccessibilityEx.SetContext(m_numKeyForceDays, m_cbKeyForce);
 
 			m_tbDbName.PromptText = KPRes.DatabaseNamePrompt;
 			m_tbDbDesc.PromptText = KPRes.DatabaseDescPrompt;
@@ -125,14 +114,11 @@ namespace KeePass.Forms
 			UIUtil.SetMultilineText(m_tbDbDesc, m_pwDatabase.Description);
 			m_tbDefaultUser.Text = m_pwDatabase.DefaultUserName;
 
-			m_clr = m_pwDatabase.Color;
-			bool bClr = !UIUtil.ColorsEqual(m_clr, Color.Empty);
-			if(bClr)
-			{
-				m_clr = AppIcons.RoundColor(m_clr);
-				UIUtil.OverwriteButtonImage(m_btnColor, ref m_imgColor,
-					UIUtil.CreateColorBitmap24(m_btnColor, m_clr));
-			}
+			m_btnColor.Colors = AppIcons.Colors;
+
+			Color clr = m_pwDatabase.Color;
+			bool bClr = !UIUtil.ColorsEqual(clr, Color.Empty);
+			if(bClr) m_btnColor.SelectedColor = AppIcons.RoundColor(clr);
 			m_cbColor.Checked = bClr;
 
 			for(int inx = 0; inx < CipherPool.GlobalPool.EngineCount; ++inx)
@@ -178,9 +164,9 @@ namespace KeePass.Forms
 			// m_cbAutoEnableHiding.Checked = false;
 
 			if(m_pwDatabase.Compression == PwCompressionAlgorithm.None)
-				m_rbNone.Checked = true;
+				m_rbCmpNone.Checked = true;
 			else if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
-				m_rbGZip.Checked = true;
+				m_rbCmpGZip.Checked = true;
 			else { Debug.Assert(false); }
 
 			InitRecycleBinTab();
@@ -324,8 +310,8 @@ namespace KeePass.Forms
 				m_pwDatabase.DefaultUserNameChanged = DateTime.UtcNow;
 			}
 
-			if(!m_cbColor.Checked) m_pwDatabase.Color = Color.Empty;
-			else m_pwDatabase.Color = m_clr;
+			m_pwDatabase.Color = (m_cbColor.Checked ? m_btnColor.SelectedColor :
+				Color.Empty);
 
 			int nCipher = CipherPool.GlobalPool.GetCipherIndex(m_cmbEncAlgo.Text);
 			Debug.Assert(nCipher >= 0);
@@ -339,8 +325,8 @@ namespace KeePass.Forms
 			if(pKdf != null) m_pwDatabase.KdfParameters = pKdf;
 			// No assert, plugins may assign KDF parameters
 
-			if(m_rbNone.Checked) m_pwDatabase.Compression = PwCompressionAlgorithm.None;
-			else if(m_rbGZip.Checked) m_pwDatabase.Compression = PwCompressionAlgorithm.GZip;
+			if(m_rbCmpNone.Checked) m_pwDatabase.Compression = PwCompressionAlgorithm.None;
+			else if(m_rbCmpGZip.Checked) m_pwDatabase.Compression = PwCompressionAlgorithm.GZip;
 			else { Debug.Assert(false); }
 
 			// m_pwDatabase.MemoryProtection.ProtectTitle = UpdateMemoryProtection(0,
@@ -469,12 +455,6 @@ namespace KeePass.Forms
 		{
 			if(AbortKdfThread()) { Debug.Assert(false); }
 
-			foreach(ColorMenuItem mi in m_vColorItems)
-				mi.Click -= this.HandleColorButtonClicked;
-			m_vColorItems.Clear();
-
-			UIUtil.DisposeButtonImage(m_btnColor, ref m_imgColor);
-
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
@@ -501,92 +481,6 @@ namespace KeePass.Forms
 		private void OnHistoryMaxSizeCheckedChanged(object sender, EventArgs e)
 		{
 			EnableControlsEx();
-		}
-
-		private void HandleColorButtonClicked(object sender, EventArgs e)
-		{
-			if(sender == null) { Debug.Assert(false); return; }
-			ColorMenuItem mi = (sender as ColorMenuItem);
-			if(mi == null) { Debug.Assert(false); return; }
-
-			m_clr = mi.Color;
-			UIUtil.OverwriteButtonImage(m_btnColor, ref m_imgColor,
-				UIUtil.CreateColorBitmap24(m_btnColor, m_clr));
-		}
-
-		private void OnBtnColor(object sender, EventArgs e)
-		{
-			// Color? clr = UIUtil.ShowColorDialog(m_clr);
-			// if(clr.HasValue)
-			// {
-			//	float h, s, v;
-			//	UIUtil.ColorToHsv(clr.Value, out h, out s, out v);
-			//	m_clr = UIUtil.ColorFromHsv(h, 1.0f, 1.0f);
-			//	UIUtil.OverwriteButtonImage(m_btnColor, ref m_imgColor,
-			//		UIUtil.CreateColorBitmap24(m_btnColor, m_clr));
-			// }
-
-			if(m_ctxColor == null)
-			{
-				m_ctxColor = new CustomContextMenuEx();
-
-				int qSize = (int)((20.0f * m_btnColor.Height) / 23.0f + 0.01f);
-
-				// const int nMaxColors = 64;
-				int nMaxColors = AppIcons.Colors.Length;
-				int nBreakAt = (int)Math.Sqrt(0.1 + nMaxColors);
-
-				// m_ctxColor.LayoutStyle = ToolStripLayoutStyle.Flow;
-				// FlowLayoutSettings fls = (m_ctxColor.LayoutSettings as FlowLayoutSettings);
-				// if(fls == null) { Debug.Assert(false); return; }
-				// fls.FlowDirection = FlowDirection.LeftToRight;
-
-				// m_ctxColor.LayoutStyle = ToolStripLayoutStyle.Table;
-				// TableLayoutSettings tls = (m_ctxColor.LayoutSettings as TableLayoutSettings);
-				// if(tls == null) { Debug.Assert(false); return; }
-				// tls.ColumnCount = nBreakAt;
-				// tls.RowCount = nBreakAt;
-
-				// m_ctxColor.SuspendLayout();
-
-				for(int i = 0; i < nMaxColors; ++i)
-				{
-					// float fHue = ((float)i * 360.0f) / (float)nMaxColors;
-					// Color clr = UIUtil.ColorFromHsv(fHue, 1.0f, 1.0f);
-					Color clr = AppIcons.Colors[i];
-
-					// Image img = UIUtil.CreateColorBitmap24(16, 16, clr);
-					// ToolStripButton btn = new ToolStripButton(string.Empty, img);
-					// btn.DisplayStyle = ToolStripItemDisplayStyle.Image;
-					// btn.ImageAlign = ContentAlignment.MiddleCenter;
-					// btn.AutoSize = true;
-
-					ColorMenuItem mi = new ColorMenuItem(clr, qSize);
-
-					if((i > 0) && ((i % nBreakAt) == 0))
-						mi.Break = true;
-					//	fls.SetFlowBreak(btn, true);
-
-					mi.Click += this.HandleColorButtonClicked;
-
-					// m_ctxColor.Items.Add(btn);
-					m_vColorItems.Add(mi);
-				}
-
-				m_ctxColor.MenuItems.AddRange(m_vColorItems.ToArray());
-
-				// m_ctxColor.ResumeLayout(true);
-				// this.Controls.Add(m_ctxColor);
-				// m_ctxColor.BringToFront();
-			}
-
-			// m_ctxColor.Show(m_btnColor, new Point(0, m_btnColor.Height));
-			// m_ctxColor.Location = new Point(m_btnColor.Location.X,
-			//	m_btnColor.Location.Y - m_btnColor.Height - m_ctxColor.Height);
-			// m_ctxColor.Visible = true;
-			// m_ctxColor.Show();
-
-			m_ctxColor.ShowEx(m_btnColor);
 		}
 
 		private void OnColorCheckedChanged(object sender, EventArgs e)

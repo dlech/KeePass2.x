@@ -71,7 +71,7 @@
 			this.m_lblIntro.Name = "m_lblIntro";
 			this.m_lblIntro.Size = new System.Drawing.Size(498, 13);
 			this.m_lblIntro.TabIndex = 2;
-			this.m_lblIntro.Text = "Specify the master key that will be used to encrypt the database.";
+			this.m_lblIntro.Text = "Specify a new master key, which will be used to encrypt the database.";
 			// 
 			// m_lblMultiInfo
 			// 

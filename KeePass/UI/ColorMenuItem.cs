@@ -28,8 +28,8 @@ namespace KeePass.UI
 {
 	public sealed class ColorMenuItem : MenuItem
 	{
-		private Color m_clr;
-		private int m_qSize;
+		private readonly Color m_clr;
+		private readonly int m_qSize;
 
 		public Color Color
 		{
@@ -44,6 +44,9 @@ namespace KeePass.UI
 			Debug.Assert(this.CanRaiseEvents);
 			this.ShowShortcut = false;
 			this.OwnerDraw = true;
+
+			if(AccessibilityEx.Enabled)
+				this.Text = UIUtil.ColorToString(clr);
 		}
 
 		protected override void OnDrawItem(DrawItemEventArgs e)

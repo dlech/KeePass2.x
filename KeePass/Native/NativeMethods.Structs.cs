@@ -112,6 +112,18 @@ namespace KeePass.Native
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
+		internal struct WINDOWPOS
+		{
+			public IntPtr hwnd;
+			public IntPtr hwndInsertAfter;
+			public Int32 x;
+			public Int32 y;
+			public Int32 cx;
+			public Int32 cy;
+			public UInt32 flags;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
 		internal struct RECT
 		{
 			public Int32 Left;

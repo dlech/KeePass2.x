@@ -35,7 +35,7 @@
 
 
 <table class="sectionheader"><tr>
-<td><img src="../images/b64x64_help.png" alt="Help" /></td>
+<td><img src="../images/b64x64_help.png" alt="" /></td>
 <td><h1>Technical FAQ</h1>
 <p>Frequently Asked Questions about the usage of KeePass.</p></td>
 </tr></table>
@@ -68,6 +68,8 @@ startup?</a></li>
 
 
 <li><a href="#internet">Why does KeePass try to connect to the Internet?</a></li>
+<li><a href="#guidark">Does the GUI support dark themes?</a></li>
+<li><a href="#guifont">How to change the GUI font (size)?</a></li>
 </ul>
 
 Security:
@@ -90,7 +92,7 @@ Usage:
 <br />
 
 <a name="nooptsave"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 I've saved my options, but when I reopen KeePass I get the old options. What's wrong?</h2>
 
 <p>KeePass supports two different locations for storing configuration information:
@@ -99,7 +101,7 @@ one in the user's private configuration folder. Most likely you do not have writ
 access to your global configuration file.</p>
 
 <p>For more details, see
-<img src="../images/b16x16_kmultiple.png" alt="Multiple" />
+<img src="../images/b16x16_kmultiple.png" alt="" />
 <a href="configuration.html">Configuration</a>.</p>
 
 <br />
@@ -107,7 +109,7 @@ access to your global configuration file.</p>
 
 
 <a name="sysreq2x"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why doesn't KeePass 2.x run on my computer?</h2>
 
 <p><b>Symptoms:</b> When trying to run KeePass 2.x on Windows &le; XP,
@@ -129,7 +131,7 @@ Windows Update (the framework is an optional component).</p>
 <br /> 
 
 <a name="netshare2x"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why does KeePass 2.x crash when starting it from a network drive/share?</h2>
 
 <p><b>Symptoms:</b> When trying to run KeePass 2.x from a network drive/share,
@@ -166,13 +168,13 @@ target="_blank" rel="nofollow">here</a>).</p>
 <br />
 
 <a name="fips2x"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why does KeePass 2.x show a FIPS compliance error at startup?</h2>
 
 <p><b>Symptoms:</b> When trying to run KeePass 2.x,
 you get an error message like the following:<br />
 <i>&quot;This implementation is not part of the Windows Platform FIPS validated
-cryptographic algorithms.&quot;</i>.</p>
+cryptographic algorithms&quot;</i>.</p>
 
 <p><b>Cause:</b> KeePass uses the AES/Rijndael encryption and SHA-256
 hashing algorithms, for which the Microsoft .NET Framework provides
@@ -207,7 +209,7 @@ the algorithms that KeePass requires.</p>
 
 
 <a name="remotechm"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why doesn't the CHM help file work?</h2>
 
 <p><b>Symptoms:</b> When trying to open the KeePass CHM help file from
@@ -223,7 +225,7 @@ target="_blank">Microsoft Security Bulletin MS05-026</a>.</p>
 <br />
 
 <a name="moreappicons"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Where can I find more <i>application icons</i> for Windows shortcuts?</h2>
 
 <br />
@@ -255,7 +257,7 @@ the application file too large.<br /><br />
 <br />
 
 <a name="moreclienticons"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 How can I add more <i>client icons</i> for password entries?</h2>
 
 <br />
@@ -275,13 +277,13 @@ Supported formats are BMP, EMF, GIF, ICO, JPEG, PNG, TIFF and WMF.
 <br />
 </td>
 <td style="width: 154px; text-align: right;">
-<img src="../images/clienticons.gif" alt="Application Icons" />
+<img src="../images/clienticons.gif" alt="Client Icons" />
 </td></tr></table>
 
 <br />
 
 <a name="minimode"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Does KeePass support a <i>mini mode</i>?</h2>
 
 <br />
@@ -291,13 +293,15 @@ Does KeePass support a <i>mini mode</i>?</h2>
 
 
 
-A mini mode is not supported yet.
+<!-- A mini mode is not supported yet. -->
+Functions can be blocked/enforced using an <a href="https://keepass.info/help/kb/config_enf.html"
+target="_blank">enforced configuration file</a>.
 
 
 <br /><br />
 
 <a name="nolockafterat"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why doesn't KeePass lock after Auto-Type?</h2>
 
 <br />
@@ -313,7 +317,7 @@ This does not apply to KeePass 2.x.
 <br /><br />
 
 <a name="athotkey"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why doesn't Auto-Type work correctly on Polish systems?</h2>
 
 <p>On Polish systems, the default auto-type hot key
@@ -329,7 +333,7 @@ in the KeePass options (see
 
 
 <a name="print1x"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why doesn't printing work in KeePass 1.x?</h2>
 
 <p><b>Symptoms:</b> When trying to print a password list in KeePass 1.x,
@@ -350,7 +354,7 @@ manually print the document in the application that just opened the file.</p>
 
 
 <a name="internet"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why does KeePass try to connect to the Internet?</h2>
 
 <p>KeePass has an option to automatically check for updates on each program start.
@@ -367,8 +371,102 @@ downloaded or installed automatically.</p>
 
 <br />
 
+<a name="guidark"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
+Does the GUI support dark themes?</h2>
+
+<p>Yes. KeePass supports all system themes, including dark ones.</p>
+
+<ul class="withspc">
+<li>On Windows 11, a (dark) theme can be selected in the
+Windows Settings &rarr; 'Accessibility' &rarr; 'Contrast themes'.</li>
+<li>On Windows 10, a (dark) theme can be selected in the
+Windows Settings &rarr; 'Ease of Access' &rarr; 'High contrast'.</li>
+<li>On Windows 7, 8 and 8.1, a (dark) theme can be selected in the
+Windows Control Panel &rarr; 'Appearance and Personalization' &rarr; 'Personalization'.</li>
+</ul>
+
+<!-- <p>Example (Windows 10, 'High Contrast Black' theme):</p> -->
+<p>Example (Windows 11, 'Dusk' theme):</p>
+
+<div style="text-align: center;">
+<img src="../images/getkey_dark.png" alt="Dark Master Key Prompt Dialog" />
+</div>
+
+<p><b>Option 'Choose your (default app) mode' &rarr; 'Dark'.</b><br />
+Windows 11 has an option 'Choose your mode' (on Windows 10, it is called
+'Choose your default app mode'), which can be set to 'Dark'.
+Note that this option applies to UWP apps only, not to regular Windows applications.
+Windows allows the UWP option to contradict the system theme
+(e.g. a light system theme may be active even when the UWP option is set to 'Dark').
+KeePass is a regular Windows application, not a UWP app,
+thus it follows the system theme, not the UWP option.
+This is the expected behavior; KeePass does not have anything to do
+with UWP options.</p>
+
+<p><b>Custom appearance.</b><br />
+If you want to change KeePass' appearance independent of the active
+system theme, you might be interested in the
+<a href="https://keepass.info/plugins.html#keetheme" target="_blank">KeeTheme</a> plugin.</p>
+
+<br />
+
+<a name="guifont"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
+How to change the GUI font (size)?</h2>
+
+<p>KeePass uses the default graphical user interface (GUI) font that has
+been specified in the operating system settings.
+So, if you want to change the font (especially the size of the font)
+that KeePass uses, change it globally.</p>
+
+<ul class="withspc">
+<li>On Windows 11, the font size can be changed in the Windows Settings &rarr;
+'System' &rarr; 'Display' &rarr; 'Scale &amp; layout' &rarr;
+option 'Scale'.
+Restart Windows after changing this option.<br />
+<img src="../images/b16x16_warning.png" class="textimg" alt="Warning" />
+Do <em>not</em> use the option 'Text size' (in the
+Windows Settings &rarr; 'Accessibility' &rarr; 'Vision'),
+because this option does not scale all texts properly.</li>
+
+<li>On Windows 10, the font size can be changed in the Windows Settings &rarr;
+'System' &rarr; 'Display' &rarr; 'Scale &amp; layout' &rarr;
+option 'Change the size of text, apps, and other items'.
+Restart Windows after changing this option.<br />
+<img src="../images/b16x16_warning.png" class="textimg" alt="Warning" />
+Do <em>not</em> use the option 'Make text bigger' (in the
+Windows Settings &rarr; 'Ease of Access' &rarr; 'Display'),
+because this option does not scale all texts properly.</li>
+
+<li>On Windows 7, 8 and 8.1, the font size can be changed in the
+Windows Control Panel &rarr; 'Appearance and Personalization' &rarr; 'Display'.</li>
+
+<li>On Linux systems with KDE 5 or higher, the font can be
+changed in the system settings &rarr; 'Fonts'.</li>
+
+<li>On Linux systems with GNOME 3 or higher, the font can be
+changed using GNOME Tweaks &rarr; 'Fonts'.</li>
+</ul>
+
+<p>In addition to supporting these system settings, KeePass allows
+to customize the fonts that are used in lists and for passwords
+(in the options dialog; these settings affect KeePass only,
+no other applications).</p>
+
+<!-- <p>For Windows 7 and higher:</p>
+<ul>
+<li>If you only want to make the text larger/smaller, open the Control Panel
+&rarr; 'Display'; here you can change the font size.<br /><br /></li>
+<li>If you want to change other properties of the font (style, ...), open the Control Panel
+&rarr; 'Personalization' &rarr; 'Window color' &rarr; 'Advanced display settings'
+(this option is absent in Windows 8); here you can change the font.</li>
+</ul> -->
+
+<br />
+
 <a name="autotypelog"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="" />
 Is <i>Auto-Type</i> keylogger-safe?</h2>
 
 <p><i>Is the Auto-Type feature resistant to keyloggers?</i></p>
@@ -391,7 +489,7 @@ See the TCATO documentation for details.<br />
 <br /><br />
 
 <a name="autotypetarget"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="Keyboard" />
+<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="" />
 Can <i>Auto-Type</i> locate child controls?</h2>
 
 <p>No. Auto-Type only checks whether the title of the currently active top level
@@ -411,7 +509,7 @@ is placed in the correct control before starting auto-type.</p>
 <br />
 
 <a name="encryptionalgo"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Could you add the ... encryption algorithm to KeePass?</h2>
 
 <br />
@@ -433,7 +531,7 @@ If you'd like to implement an algorithm, have a look at the <em>ArcFourCipher</e
 <br /><br />
 
 <a name="noautolock"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why doesn't KeePass lock while a sub-dialog is open?</h2>
 
 <p>KeePass has various options to lock its workspace automatically
@@ -512,7 +610,7 @@ operating systems.</p>
 <br />
 
 <a name="printtempfile"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Printing creates a temporary file. Will it be erased securely?</h2>
 
 <p>KeePass creates a temporary HTML file when printing password lists and showing
@@ -531,7 +629,7 @@ target="_blank">KeePass 2.x Plugin Development</a>.</p>
 <br />
 
 <!-- <a name="memprot"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why KeePass 2.x resets process memory protection options?</h2>
 
 <p><i>Important: the following describes a behavior related to process memory protection,
@@ -550,7 +648,7 @@ matter whether the process memory protection is on or off.</p>
 <br /> -->
 
 <a name="qualest"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Why the estimated quality of a password suddenly drops?</h2>
 
 <p>For estimating the quality/strength of a password, KeePass not only uses
@@ -566,7 +664,7 @@ target="_blank">Password Quality Estimation</a> help page.</p>
 <br />
 
 <a name="rtftext"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 How to store and work with large amounts of (formatted) text?</h2>
 
 <br />
@@ -600,14 +698,14 @@ strikeout, text and background colors, align left/center/right, etc.
 </td>
 <td style="width: 154px; text-align: right;">
 <a href="../images/rtfeditor.png"><img src="../images/rtfeditor_small.png"
-alt="Editor screenshot" /></a>
+alt="Editor Screenshot" /></a>
 </td></tr></table>
 
 
 <br /><br />
 
 <a name="email"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="Info" />
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
 Can an e-mail address field be added?</h2>
 
 <p>A few times it has been requested that a standard entry field for e-mail addresses

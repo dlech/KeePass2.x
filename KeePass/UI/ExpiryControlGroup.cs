@@ -88,6 +88,8 @@ namespace KeePass.UI
 			m_cb = cb;
 			m_dtp = dtp;
 
+			AccessibilityEx.SetContext(dtp, cb);
+
 			// m_dtp.ShowUpDown = true;
 			m_dtp.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
 				" " + DateTimeFormatInfo.CurrentInfo.LongTimePattern;

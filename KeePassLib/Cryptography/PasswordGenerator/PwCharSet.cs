@@ -35,7 +35,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		public static readonly string UpperVowels = "AEIOU";
 		public static readonly string LowerVowels = "aeiou";
 
-		public static readonly string Punctuation = @",.;:";
+		public static readonly string Punctuation = ",.;:";
 		public static readonly string Brackets = @"[]{}()<>";
 
 		public static readonly string Special = "!\"#$%&'*+,./:;=?@\\^`|~";
@@ -44,7 +44,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		public static readonly string UpperHex = "0123456789ABCDEF";
 		public static readonly string LowerHex = "0123456789abcdef";
 
-		public static readonly string LookAlike = @"O0l1I|";
+		public static readonly string LookAlike = "O0Il1|";
 
 		/// <summary>
 		/// Latin-1 Supplement except U+00A0 (NBSP) and U+00AD (SHY).
