@@ -17,6 +17,7 @@
     <dependencies>
       <group targetFramework=".NETFramework4.6.2" />
     </dependencies>
+    <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
     <file src="..\keepass_256x256.png" target="content\" />
