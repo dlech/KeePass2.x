@@ -1,3 +1,11 @@
+2022-05-09: 2.51.1
+- The option 'Use alternating item background colors' is now
+  compatible with automatic sorting again
+- Improved entry list update performance when duplicating
+  entries
+- Fixed an entry list scrolling bug
+- Minor other improvements
+
 2022-05-06: 2.51
 - Most dialogs with fixed size now detect whether they fit onto
   the current screen, and when a dialog does not fit (e.g. due

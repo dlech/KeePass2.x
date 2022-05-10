@@ -1133,7 +1133,7 @@
 			<Value>1 group skipped</Value>
 		</Data>
 		<Data Name="HelpPlh">
-			<Value>&amp;Help: {PARAM} placeholder</Value>
+			<Value>Help: {PARAM} placeholder</Value>
 		</Data>
 		<Data Name="HelpSourceNoLocalOption">
 			<Value>This option is disabled, because local help is not installed.</Value>

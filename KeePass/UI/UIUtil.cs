@@ -1899,7 +1899,7 @@ namespace KeePass.UI
 			if(ColorsEqual(clrBase, Color.White)) return Color.FromArgb(238, 238, 255);
 
 			float b = clrBase.GetBrightness();
-			if(b >= 0.5) return UIUtil.DarkenColor(clrBase, 0.1);
+			if(b >= 0.5f) return UIUtil.DarkenColor(clrBase, 0.1);
 			return UIUtil.LightenColor(clrBase, 0.25);
 		}
 

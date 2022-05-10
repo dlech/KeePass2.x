@@ -22,13 +22,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 
 using KeePass.Native;
 
-using KeePassLib.Delegates;
 using KeePassLib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
@@ -49,6 +48,16 @@ namespace KeePass.UI
 		{
 			get { return m_ctxHeader; }
 			set { m_ctxHeader = value; }
+		}
+
+		private bool m_bAltItemStyles = false;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue(false)]
+		internal bool UseAlternatingItemStyles
+		{
+			get { return m_bAltItemStyles; }
+			set { m_bAltItemStyles = value; }
 		}
 
 		public CustomListViewEx() : base()
@@ -323,6 +332,11 @@ namespace KeePass.UI
 
 		internal void EndUpdateEx()
 		{
+			EndUpdateEx(null);
+		}
+
+		internal void EndUpdateEx(ListViewItem lviTop)
+		{
 			Debug.Assert(m_cUpdating > 0);
 
 			if(m_cUpdating == 1)
@@ -337,11 +351,32 @@ namespace KeePass.UI
 
 				m_cmpUpdatingPre = null;
 				// m_soUpdatingPre = SortOrder.None;
+
+				ApplyAlternatingItemStyles();
+
+				if(lviTop != null)
+				{
+					Debug.Assert(lviTop.ListView == this);
+					int i = lviTop.Index;
+					Debug.Assert((i >= 0) && (i < this.Items.Count));
+					UIUtil.SetTopVisibleItem(this, i, false);
+				}
 			}
+			else { Debug.Assert(lviTop == null); } // Outermost sorts, changing the view
 
 			--m_cUpdating; // Decrement after setting properties
 
 			EndUpdate();
+		}
+
+		private void ApplyAlternatingItemStyles()
+		{
+			if(!m_bAltItemStyles) return;
+
+			Color clrAlt = UIUtil.GetAlternateColorEx(this.BackColor);
+
+			UIUtil.SetAlternatingBgColors(this, clrAlt,
+				Program.Config.MainWindow.EntryListAlternatingBgColors);
 		}
 	}
 }

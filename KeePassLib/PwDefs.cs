@@ -56,18 +56,18 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public static readonly uint Version32 = 0x02330000;
+		public static readonly uint Version32 = 0x02330100;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public static readonly ulong FileVersion64 = 0x0002003300000000UL;
+		public static readonly ulong FileVersion64 = 0x0002003300010000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public static readonly string VersionString = "2.51";
+		public static readonly string VersionString = "2.51.1";
 
 		public static readonly string Copyright = @"Copyright © 2003-2022 Dominik Reichl";
 
@@ -241,6 +241,7 @@ namespace KeePassLib
 			if(strFileVersion == "2.39") return "2.39.1 / 2.39";
 			if(strFileVersion == "2.42") return "2.42.1 / 2.42";
 			if(strFileVersion == "2.48") return "2.48.1 / 2.48";
+			if(strFileVersion == "2.51") return "2.51.1 / 2.51";
 
 			return strFileVersion;
 		}
