@@ -335,7 +335,7 @@ namespace KeePass.Util
 			else
 			{
 				DriveInfo[] vDrives = DriveInfo.GetDrives();
-				if(vDrives == null) { Debug.Assert(false); vDrives = new DriveInfo[0]; }
+				if(vDrives == null) { Debug.Assert(false); vDrives = MemUtil.EmptyArray<DriveInfo>(); }
 				foreach(DriveInfo di in vDrives)
 				{
 					if(di == null) { Debug.Assert(false); continue; }
@@ -420,7 +420,7 @@ namespace KeePass.Util
 			{
 				string[] vFiles = Directory.GetFiles(strPath, "*",
 					SearchOption.TopDirectoryOnly);
-				if(vFiles == null) { Debug.Assert(false); vFiles = new string[0]; }
+				if(vFiles == null) { Debug.Assert(false); vFiles = MemUtil.EmptyArray<string>(); }
 
 				foreach(string strFile in vFiles)
 				{
@@ -433,7 +433,7 @@ namespace KeePass.Util
 
 				string[] vDirs = Directory.GetDirectories(strPath, "*",
 					SearchOption.TopDirectoryOnly);
-				if(vDirs == null) { Debug.Assert(false); vDirs = new string[0]; }
+				if(vDirs == null) { Debug.Assert(false); vDirs = MemUtil.EmptyArray<string>(); }
 
 				foreach(string strDir in vDirs)
 				{

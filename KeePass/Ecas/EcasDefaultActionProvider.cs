@@ -405,13 +405,12 @@ namespace KeePass.Ecas
 			IOConnectionInfo ioc = IOFromParameters(strPath, strIOUserName, strIOPassword);
 			if(ioc == null) return;
 
-			PwDatabase pd = Program.MainForm.ActiveDatabase;
+			MainForm mf = Program.MainForm;
+			PwDatabase pd = mf.ActiveDatabase;
 			if((pd == null) || !pd.IsOpen) return;
 
-			bool? b = ImportUtil.Synchronize(pd, Program.MainForm, ioc, false,
-				Program.MainForm);
-			Program.MainForm.UpdateUI(false, null, true, null, true, null, false);
-			if(b.HasValue) Program.MainForm.SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+			bool? ob = ImportUtil.Synchronize(pd, mf, ioc, false, mf);
+			mf.UpdateUISyncPost(ob);
 		}
 
 		private static IOConnectionInfo IOFromParameters(string strPath,
@@ -470,12 +469,12 @@ namespace KeePass.Ecas
 				ck = r.CompositeKey;
 			}
 
-			bool? b = true;
-			try { b = ImportUtil.Import(pd, ff, ioc, mm, ck); }
+			bool? ob = false; // Exception => UI update
+			try { ob = ImportUtil.Import(pd, ff, ioc, mm, ck); }
 			finally
 			{
-				if(b.GetValueOrDefault(false))
-					Program.MainForm.UpdateUI(false, null, true, null, true, null, true);
+				if(ob.HasValue)
+					Program.MainForm.UpdateUI(false, null, true, null, true, null, false);
 			}
 		}
 

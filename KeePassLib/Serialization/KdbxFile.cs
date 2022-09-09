@@ -292,6 +292,13 @@ namespace KeePassLib.Serialization
 			set { m_uForceVersion = value; }
 		}
 
+		private bool m_bHeaderOnly = false;
+		internal bool HeaderOnly
+		{
+			get { return m_bHeaderOnly; }
+			set { m_bHeaderOnly = value; }
+		}
+
 		private string m_strDetachBins = null;
 		/// <summary>
 		/// Detach binaries when opening a file. If this isn't <c>null</c>,
@@ -532,20 +539,18 @@ namespace KeePassLib.Serialization
 
 			strName = UrlUtil.GetSafeFileName(strName);
 
+			string strDesc = UrlUtil.StripExtension(strName);
+			string strExt = UrlUtil.GetExtension(strName);
+
 			string strPath;
 			int iTry = 1;
+			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
 			do
 			{
 				strPath = UrlUtil.EnsureTerminatingSeparator(strSaveDir, false);
 
-				string strDesc = UrlUtil.StripExtension(strName);
-				string strExt = UrlUtil.GetExtension(strName);
-
 				strPath += strDesc;
-				if(iTry > 1)
-					strPath += " (" + iTry.ToString(NumberFormatInfo.InvariantInfo) +
-						")";
-
+				if(iTry > 1) strPath += " (" + iTry.ToString(nfi) + ")";
 				if(!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
 
 				++iTry;

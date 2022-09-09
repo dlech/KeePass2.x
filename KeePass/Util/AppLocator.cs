@@ -206,63 +206,57 @@ namespace KeePass.Util
 		{
 			if(NativeLib.IsUnix()) return FindAppUnix("firefox");
 
-			try
+			for(int i = 0; i < 2; ++i)
 			{
-				string strPath = FindFirefoxWin(false);
-				if(!string.IsNullOrEmpty(strPath)) return strPath;
+				try
+				{
+					string str = FindFirefoxWin(i != 0);
+					if(!string.IsNullOrEmpty(str)) return str;
+				}
+				catch(Exception) { Debug.Assert(false); }
 			}
-			catch(Exception) { }
 
-			return FindFirefoxWin(true);
+			return FindAppByClass(".html", "firefox.exe");
 		}
 
 		private static string FindFirefoxWin(bool bWowNode)
 		{
-			RegistryKey kFirefox = Registry.LocalMachine.OpenSubKey(bWowNode ?
+			string strPath;
+
+			using(RegistryKey kFirefox = Registry.LocalMachine.OpenSubKey((bWowNode ?
 				"SOFTWARE\\Wow6432Node\\Mozilla\\Mozilla Firefox" :
-				"SOFTWARE\\Mozilla\\Mozilla Firefox", false);
-			if(kFirefox == null) return null;
-
-			string strCurVer = (kFirefox.GetValue("CurrentVersion") as string);
-			if(string.IsNullOrEmpty(strCurVer))
+				"SOFTWARE\\Mozilla\\Mozilla Firefox"), false))
 			{
-				// The ESR version stores the 'CurrentVersion' value under
-				// 'Mozilla Firefox ESR', but the version-specific info
-				// under 'Mozilla Firefox\\<Version>' (without 'ESR')
-				RegistryKey kESR = Registry.LocalMachine.OpenSubKey(bWowNode ?
-					"SOFTWARE\\Wow6432Node\\Mozilla\\Mozilla Firefox ESR" :
-					"SOFTWARE\\Mozilla\\Mozilla Firefox ESR", false);
-				if(kESR != null)
-				{
-					strCurVer = (kESR.GetValue("CurrentVersion") as string);
-					kESR.Close();
-				}
+				if(kFirefox == null) return null;
 
+				string strCurVer = (kFirefox.GetValue("CurrentVersion") as string);
 				if(string.IsNullOrEmpty(strCurVer))
 				{
-					kFirefox.Close();
-					return null;
+					// The ESR version stores the 'CurrentVersion' value under
+					// 'Mozilla Firefox ESR', but the version-specific info
+					// under 'Mozilla Firefox\\<Version>' (without 'ESR')
+					using(RegistryKey kEsr = Registry.LocalMachine.OpenSubKey((bWowNode ?
+						"SOFTWARE\\Wow6432Node\\Mozilla\\Mozilla Firefox ESR" :
+						"SOFTWARE\\Mozilla\\Mozilla Firefox ESR"), false))
+					{
+						if(kEsr != null)
+							strCurVer = (kEsr.GetValue("CurrentVersion") as string);
+					}
+
+					if(string.IsNullOrEmpty(strCurVer)) return null;
+				}
+
+				using(RegistryKey kMain = kFirefox.OpenSubKey(strCurVer + "\\Main", false))
+				{
+					if(kMain == null) { Debug.Assert(false); return null; }
+
+					strPath = (kMain.GetValue("PathToExe") as string);
+					if(!string.IsNullOrEmpty(strPath))
+						strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();
+					else { Debug.Assert(false); }
 				}
 			}
 
-			RegistryKey kMain = kFirefox.OpenSubKey(strCurVer + "\\Main", false);
-			if(kMain == null)
-			{
-				Debug.Assert(false);
-				kFirefox.Close();
-				return null;
-			}
-
-			string strPath = (kMain.GetValue("PathToExe") as string);
-			if(!string.IsNullOrEmpty(strPath))
-			{
-				strPath = strPath.Trim();
-				strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();
-			}
-			else { Debug.Assert(false); }
-
-			kMain.Close();
-			kFirefox.Close();
 			return strPath;
 		}
 
@@ -421,6 +415,47 @@ namespace KeePass.Util
 					strEdgeDir, false) + "MicrosoftEdge.exe";
 				if(File.Exists(strExe)) return strExe;
 			}
+
+			return null;
+		}
+
+		private static string FindAppByClass(string strClass, string strExeName)
+		{
+			if(string.IsNullOrEmpty(strClass)) { Debug.Assert(false); return null; }
+			if(string.IsNullOrEmpty(strExeName)) { Debug.Assert(false); return null; }
+
+			Debug.Assert(strClass.StartsWith(".")); // File extension class
+			Debug.Assert(strExeName.EndsWith(".exe", StrUtil.CaseIgnoreCmp));
+
+			try
+			{
+				using(RegistryKey kOpenWith = Registry.ClassesRoot.OpenSubKey(
+					strClass + "\\OpenWithProgids", false))
+				{
+					if(kOpenWith == null) { Debug.Assert(false); return null; }
+
+					foreach(string strOpenWithClass in kOpenWith.GetValueNames())
+					{
+						if(string.IsNullOrEmpty(strOpenWithClass)) { Debug.Assert(false); continue; }
+
+						using(RegistryKey kCommand = Registry.ClassesRoot.OpenSubKey(
+							strOpenWithClass + "\\Shell\\open\\command", false))
+						{
+							if(kCommand == null) { Debug.Assert(false); continue; }
+
+							string str = (kCommand.GetValue(string.Empty) as string);
+							if(string.IsNullOrEmpty(str)) { Debug.Assert(false); continue; }
+
+							str = UrlUtil.GetQuotedAppPath(str);
+
+							if(string.Equals(UrlUtil.GetFileName(str), strExeName,
+								StrUtil.CaseIgnoreCmp))
+								return str;
+						}
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
 
 			return null;
 		}

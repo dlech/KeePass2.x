@@ -120,7 +120,6 @@
 			this.m_menuEntryCopyUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEntryOtherData = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEntryAttachments = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuEntrySaveAttachedFiles = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEntrySep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuEntryPerformAutoType = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEntryAutoTypeAdv = new System.Windows.Forms.ToolStripMenuItem();
@@ -985,7 +984,6 @@
             this.m_menuEntryUrl,
             this.m_menuEntryOtherData,
             this.m_menuEntryAttachments,
-            this.m_menuEntrySaveAttachedFiles,
             this.m_menuEntrySep0,
             this.m_menuEntryPerformAutoType,
             this.m_menuEntryAutoTypeAdv,
@@ -1057,14 +1055,6 @@
 			this.m_menuEntryAttachments.Name = "m_menuEntryAttachments";
 			this.m_menuEntryAttachments.Size = new System.Drawing.Size(207, 22);
 			this.m_menuEntryAttachments.Text = "Attach&ments";
-			// 
-			// m_menuEntrySaveAttachedFiles
-			// 
-			this.m_menuEntrySaveAttachedFiles.Image = global::KeePass.Properties.Resources.B16x16_Attach;
-			this.m_menuEntrySaveAttachedFiles.Name = "m_menuEntrySaveAttachedFiles";
-			this.m_menuEntrySaveAttachedFiles.Size = new System.Drawing.Size(207, 22);
-			this.m_menuEntrySaveAttachedFiles.Text = "Save Attached &File(s) To...";
-			this.m_menuEntrySaveAttachedFiles.Click += new System.EventHandler(this.OnEntrySaveAttachments);
 			// 
 			// m_menuEntrySep0
 			// 
@@ -1216,7 +1206,7 @@
 			// 
 			this.m_menuEntryTagNew.Image = global::KeePass.Properties.Resources.B16x16_KNotes;
 			this.m_menuEntryTagNew.Name = "m_menuEntryTagNew";
-			this.m_menuEntryTagNew.Size = new System.Drawing.Size(152, 22);
+			this.m_menuEntryTagNew.Size = new System.Drawing.Size(128, 22);
 			this.m_menuEntryTagNew.Text = "&New Tag...";
 			this.m_menuEntryTagNew.Click += new System.EventHandler(this.OnEntrySelectedNewTag);
 			// 
@@ -2723,7 +2713,6 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryCopyUrl;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryOtherData;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryAttachments;
-		private System.Windows.Forms.ToolStripMenuItem m_menuEntrySaveAttachedFiles;
 		private System.Windows.Forms.ToolStripSeparator m_menuEntrySep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryPerformAutoType;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryAutoTypeAdv;

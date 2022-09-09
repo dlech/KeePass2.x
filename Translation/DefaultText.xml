@@ -58,9 +58,6 @@
 		<Data Name="AllSupportedFiles">
 			<Value>All Supported Files</Value>
 		</Data>
-		<Data Name="AlternatingBgColors">
-			<Value>Use alternating item background colors</Value>
-		</Data>
 		<Data Name="Application">
 			<Value>Application</Value>
 		</Data>
@@ -457,6 +454,9 @@
 		<Data Name="CopyEntryUCmd">
 			<Value>C&amp;opy Entry (Unencrypted)</Value>
 		</Data>
+		<Data Name="CopyInitialPasswordDesc">
+			<Value>Copy the password that was current when the dialog was opened</Value>
+		</Data>
 		<Data Name="CopyLink">
 			<Value>Copy Link</Value>
 		</Data>
@@ -534,6 +534,9 @@
 		</Data>
 		<Data Name="Custom">
 			<Value>Custom</Value>
+		</Data>
+		<Data Name="CustomColor">
+			<Value>custom color</Value>
 		</Data>
 		<Data Name="CustomFields">
 			<Value>Custom Fields</Value>
@@ -621,6 +624,9 @@
 		</Data>
 		<Data Name="Default">
 			<Value>Default</Value>
+		</Data>
+		<Data Name="DefaultColor">
+			<Value>default color</Value>
 		</Data>
 		<Data Name="Delete">
 			<Value>Delete</Value>
@@ -1045,6 +1051,9 @@
 		<Data Name="FindEntries">
 			<Value>Find Entries</Value>
 		</Data>
+		<Data Name="FixByReinstall">
+			<Value>In order to fix this problem, it is recommended to reinstall KeePass.</Value>
+		</Data>
 		<Data Name="FocusQuickFindOnRestore">
 			<Value>Focus quick search box when restoring from taskbar</Value>
 		</Data>
@@ -1161,6 +1170,9 @@
 		</Data>
 		<Data Name="History">
 			<Value>History</Value>
+		</Data>
+		<Data Name="HistoryBased">
+			<Value>based on history</Value>
 		</Data>
 		<Data Name="HmacOtp">
 			<Value>HMAC-Based OTP</Value>
@@ -1774,6 +1786,9 @@
 		<Data Name="OptionsDesc">
 			<Value>Here you can configure the global KeePass program options.</Value>
 		</Data>
+		<Data Name="OrEarlier">
+			<Value>or earlier</Value>
+		</Data>
 		<Data Name="OtherPlaceholders">
 			<Value>Other Placeholders</Value>
 		</Data>
@@ -2166,6 +2181,9 @@
 		</Data>
 		<Data Name="SavedDatabaseFile">
 			<Value>Saved database file</Value>
+		</Data>
+		<Data Name="SaveFilesTo">
+			<Value>Save File(s) To</Value>
 		</Data>
 		<Data Name="SaveForceSync">
 			<Value>Do not ask whether to synchronize or overwrite; force synchronization</Value>

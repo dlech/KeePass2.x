@@ -24,6 +24,7 @@ using System.IO;
 using System.Text;
 
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -32,7 +33,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 1.12-1.49.1+
+	// 1.12-2022.5.1+
 	internal sealed class BitwardenJson112 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -129,18 +130,14 @@ namespace KeePass.DataExchange.Formats
 			if(pg == null) { Debug.Assert(false); pg = dGroups[string.Empty]; }
 			pg.AddEntry(pe, true);
 
-			string[] vCollections = jo.GetValueArray<string>("collectionIds");
-			if(vCollections != null)
+			foreach(string strID in jo.GetValueArray<string>("collectionIds", true))
 			{
-				foreach(string strID in vCollections)
-				{
-					if(string.IsNullOrEmpty(strID)) { Debug.Assert(false); continue; }
+				if(string.IsNullOrEmpty(strID)) { Debug.Assert(false); continue; }
 
-					string strName;
-					if(dCollections.TryGetValue(strID, out strName))
-						pe.AddTag(strName);
-					else { Debug.Assert(false); }
-				}
+				string strName;
+				if(dCollections.TryGetValue(strID, out strName))
+					pe.AddTag(strName);
+				else { Debug.Assert(false); }
 			}
 
 			ImportString(jo, "name", pe, PwDefs.TitleField, pd);
@@ -167,27 +164,27 @@ namespace KeePass.DataExchange.Formats
 			ImportString(jo, "username", pe, PwDefs.UserNameField, pd);
 			ImportString(jo, "password", pe, PwDefs.PasswordField, pd);
 
-			ImportString(jo, "totp", pe, "TOTP", pd);
-			ProtectedString ps = pe.Strings.Get("TOTP");
-			if(ps != null) pe.Strings.Set("TOTP", ps.WithProtection(true));
-
-			JsonObject[] vUris = jo.GetValueArray<JsonObject>("uris");
-			if(vUris != null)
+			// https://bitwarden.com/help/authenticator-keys/
+			string strOtp = jo.GetValue<string>("totp");
+			if((strOtp != null) && strOtp.StartsWith(EntryUtil.OtpAuthScheme + ":",
+				StrUtil.CaseIgnoreCmp))
 			{
-				int iUri = 1;
-				foreach(JsonObject joUri in vUris)
-				{
-					if(joUri == null) { Debug.Assert(false); continue; }
+				try { EntryUtil.ImportOtpAuth(pe, strOtp, pd); }
+				catch(Exception) { Debug.Assert(false); }
+			}
+			else // Null, Steam URI, ...
+			{
+				ImportString(jo, "totp", pe, "TOTP", pd);
+				pe.Strings.EnableProtection("TOTP", true);
+			}
 
-					string str = joUri.GetValue<string>("uri");
-					if(!string.IsNullOrEmpty(str))
-					{
-						ImportUtil.AppendToField(pe, ((iUri == 1) ?
-							PwDefs.UrlField : ("URL " + iUri.ToString())),
-							str, pd);
-						++iUri;
-					}
-				}
+			foreach(JsonObject joUri in jo.GetValueArray<JsonObject>("uris", true))
+			{
+				if(joUri == null) { Debug.Assert(false); continue; }
+
+				string str = joUri.GetValue<string>("uri");
+				ImportUtil.CreateFieldWithIndex(pe.Strings, PwDefs.UrlField,
+					str, pd, false);
 			}
 		}
 
@@ -220,7 +217,7 @@ namespace KeePass.DataExchange.Formats
 				if(jo == null) { Debug.Assert(false); continue; }
 
 				string strName = jo.GetValue<string>("name");
-				string strValue = jo.GetValue<string>("value");
+				string strValue = (jo.GetValue<string>("value") ?? string.Empty);
 				long lType = jo.GetValue<long>("type", 0);
 
 				if(!string.IsNullOrEmpty(strName))
@@ -228,11 +225,7 @@ namespace KeePass.DataExchange.Formats
 					ImportUtil.AppendToField(pe, strName, strValue, pd);
 
 					if((lType == 1) && !PwDefs.IsStandardField(strName))
-					{
-						ProtectedString ps = pe.Strings.Get(strName);
-						if(ps == null) { Debug.Assert(false); }
-						else pe.Strings.Set(strName, ps.WithProtection(true));
-					}
+						pe.Strings.EnableProtection(strName, true);
 				}
 				else { Debug.Assert(false); }
 			}

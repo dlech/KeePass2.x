@@ -95,7 +95,7 @@ namespace KeePass.DataExchange
 			if((chFirst == '\r') || (chFirst == '\n'))
 			{
 				m_sChars.ReadChar(); // Advance
-				return new string[0];
+				return MemUtil.EmptyArray<string>();
 			}
 
 			List<string> v = new List<string>();

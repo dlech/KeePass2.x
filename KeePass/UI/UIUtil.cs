@@ -27,7 +27,6 @@ using System.IO;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -799,7 +798,6 @@ namespace KeePass.UI
 
 			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
 			DateTime dtNow = DateTime.UtcNow;
-			Regex rxSeqCmt = null;
 			bool bFirstEntry = true;
 
 			foreach(AutoTypeCtx ctx in lCtxs)
@@ -856,35 +854,22 @@ namespace KeePass.UI
 						pe.Strings.ReadSafe(PwDefs.NotesField), sprCtx)));
 				if((f & AceAutoTypeCtxFlags.ColSequenceComments) != AceAutoTypeCtxFlags.None)
 				{
-					if(rxSeqCmt == null)
-						rxSeqCmt = new Regex("\\{[Cc]:[^\\}]*\\}");
+					List<string> lCmt = new List<string>();
+					SprEngine.RemoveComments(ctx.Sequence, lCmt, sprCtx);
 
-					string strSeqCmt = string.Empty, strImpSeqCmt = string.Empty;
-					foreach(Match m in rxSeqCmt.Matches(ctx.Sequence))
+					string str = string.Empty;
+					if(lCmt.Count != 0)
 					{
-						string strPart = m.Value;
-						if(strPart == null) { Debug.Assert(false); continue; }
-						if(strPart.Length < 4) { Debug.Assert(false); continue; }
+						List<string> lCmtImp = lCmt.FindAll(strCmt =>
+							strCmt.StartsWith("!")); // Important comment
+						for(int i = 0; i < lCmtImp.Count; ++i)
+							lCmtImp[i] = lCmtImp[i].Substring(1);
 
-						strPart = strPart.Substring(3, strPart.Length - 4).Trim();
-						bool bImp = strPart.StartsWith("!"); // Important comment
-						if(bImp) strPart = strPart.Substring(1);
-						if(strPart.Length == 0) continue;
-
-						if(bImp)
-						{
-							if(strImpSeqCmt.Length > 0) strImpSeqCmt += " - ";
-							strImpSeqCmt += strPart;
-						}
-						else
-						{
-							if(strSeqCmt.Length > 0) strSeqCmt += " - ";
-							strSeqCmt += strPart;
-						}
+						str = string.Join(" - ", ((lCmtImp.Count != 0) ?
+							lCmtImp : lCmt).ToArray());
 					}
 
-					lvi.SubItems.Add((strImpSeqCmt.Length > 0) ? strImpSeqCmt :
-						strSeqCmt);
+					lvi.SubItems.Add(str);
 				}
 				if((f & AceAutoTypeCtxFlags.ColSequence) != AceAutoTypeCtxFlags.None)
 					lvi.SubItems.Add(ctx.Sequence);
@@ -1284,7 +1269,7 @@ namespace KeePass.UI
 			if(lv == null) throw new ArgumentNullException("lv");
 
 			ListView.SelectedListViewItemCollection lvsc = lv.SelectedItems;
-			if(lvsc == null) { Debug.Assert(false); return new object[0]; }
+			if(lvsc == null) { Debug.Assert(false); return MemUtil.EmptyArray<object>(); }
 			int n = lvsc.Count; // Getting Count sends a message
 
 			object[] p = new object[n];
@@ -2495,7 +2480,7 @@ namespace KeePass.UI
 				if(ws == FwsMaximized)
 				{
 					if(bSizable && f.MaximizeBox)
-						f.WindowState = FormWindowState.Maximized;
+						SetWindowState(f, FormWindowState.Maximized);
 					else { Debug.Assert(false); }
 
 					return; // Ignore the saved size; restore to default
@@ -3857,6 +3842,37 @@ namespace KeePass.UI
 			}
 
 			return sb.ToString();
+		}
+
+		internal static void AdjustDropDownWidth(ComboBox cmb)
+		{
+			if(cmb == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				Font f = cmb.Font;
+				int w = 0;
+
+				foreach(object o in cmb.Items)
+				{
+					if(o == null) { Debug.Assert(false); continue; }
+
+					string str = o.ToString();
+					if(string.IsNullOrEmpty(str)) continue;
+
+					w = Math.Max(w, TextRenderer.MeasureText(str, f).Width);
+				}
+				w += UIUtil.GetVScrollBarWidth();
+
+				w = Math.Max(w, cmb.Width);
+
+				Screen s = (Screen.FromControl(cmb) ?? Screen.PrimaryScreen);
+				if(s != null) w = Math.Min(w, s.WorkingArea.Width);
+				else { Debug.Assert(false); }
+
+				if(cmb.DropDownWidth != w) cmb.DropDownWidth = w;
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

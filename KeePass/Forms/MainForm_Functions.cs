@@ -787,6 +787,8 @@ namespace KeePass.Forms
 			bool bEntrySel1 = (s.EntriesSelected == 1);
 			bool bEntrySelM = (s.EntriesSelected >= 2);
 
+			PwEntry[] vSel = (bMenuVisible ? GetSelectedEntries() : null);
+
 			SuspendLayoutScope sls = new SuspendLayoutScope(true, m_menuMain,
 				m_ctxPwList);
 
@@ -803,29 +805,37 @@ namespace KeePass.Forms
 
 			if(bMenuVisible)
 			{
+				GFunc<string, List<char>, string> fMenuText = delegate(
+					string strText, List<char> lAvailKeys)
+				{
+					string str = StrUtil.EncodeMenuText(strText);
+					return StrUtil.AddAccelerator(str, lAvailKeys);
+				};
+
+				List<char> lAvailKeysS = new List<char>(PwCharSet.MenuAccels);
+				GFunc<string, string> fMenuTextS = delegate(string strText)
+				{
+					return fMenuText(strText, lAvailKeysS);
+				};
+
+				List<char> lAvailKeysB = new List<char>(PwCharSet.MenuAccels);
+				string strSaveBins = fMenuText(KPRes.SaveFilesTo + "...", lAvailKeysB); // Fixed key
+
+				bool bStr = true, bBin1 = false;
 				dynStrings.Clear();
 				dynBinaries.Clear();
 
-				bool bStr = true;
-				uint uBinItems = 0;
 				if(bEntrySel1 && (pe != null))
 				{
-					List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
-					GFunc<string, string> fMenuText = delegate(string strText)
-					{
-						string str = StrUtil.EncodeMenuText(strText);
-						return StrUtil.AddAccelerator(str, lAvailKeys);
-					};
-
 					Image imgCopy = Properties.Resources.B16x16_EditCopy;
 					Image imgCopyP = Properties.Resources.B16x16_KGPG_Info;
 					Image imgCopyOtp = Properties.Resources.B16x16_KGPG_Gen;
 					Image imgShowOtp = Properties.Resources.B16x16_File_Locked;
 
-					dynStrings.AddItem(fMenuText(KPRes.CopyObject.Replace(
+					dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(
 						@"{PARAM}", KPRes.Title)), imgCopy, new EntryDataCommand(
 							EntryDataCommandType.CopyField, PwDefs.TitleField, null));
-					dynStrings.AddItem(fMenuText(KPRes.CopyObject.Replace(
+					dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(
 						@"{PARAM}", KPRes.Notes)), imgCopy, new EntryDataCommand(
 							EntryDataCommandType.CopyField, PwDefs.NotesField, null));
 
@@ -847,7 +857,7 @@ namespace KeePass.Forms
 							}
 
 							Image img = (kvp.Value.IsProtected ? imgCopyP : imgCopy);
-							dynStrings.AddItem(fMenuText(KPRes.CopyObject.Replace(
+							dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(
 								@"{PARAM}", kvp.Key)), img, new EntryDataCommand(
 									EntryDataCommandType.CopyField, kvp.Key, null));
 						}
@@ -855,25 +865,23 @@ namespace KeePass.Forms
 
 					dynStrings.AddSeparator();
 					string strError = (new FormatException()).Message;
-					dynStrings.AddItem(fMenuText(KPRes.CopyObject.Replace(@"{PARAM}",
+					dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(@"{PARAM}",
 						KPRes.HmacOtp)), imgCopyOtp, new EntryDataCommand(
 							EntryDataCommandType.CopyValue, EntryUtil.HotpPlh,
 							strError)).Enabled = bHotp;
-					dynStrings.AddItem(fMenuText(KPRes.ShowObject.Replace(@"{PARAM}",
+					dynStrings.AddItem(fMenuTextS(KPRes.ShowObject.Replace(@"{PARAM}",
 						KPRes.HmacOtp)), imgShowOtp, new EntryDataCommand(
 							EntryDataCommandType.ShowValue, EntryUtil.HotpPlh,
 							strError)).Enabled = bHotp;
-					dynStrings.AddItem(fMenuText(KPRes.CopyObject.Replace(@"{PARAM}",
+					dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(@"{PARAM}",
 						KPRes.TimeOtp)), imgCopyOtp, new EntryDataCommand(
 							EntryDataCommandType.CopyValue, EntryUtil.TotpPlh,
 							strError)).Enabled = bTotp;
-					dynStrings.AddItem(fMenuText(KPRes.ShowObject.Replace(@"{PARAM}",
+					dynStrings.AddItem(fMenuTextS(KPRes.ShowObject.Replace(@"{PARAM}",
 						KPRes.TimeOtp)), imgShowOtp, new EntryDataCommand(
 							EntryDataCommandType.ShowValue, EntryUtil.TotpPlh,
 							strError)).Enabled = bTotp;
 
-					lAvailKeys.Clear(); // Delegate captured reference
-					lAvailKeys.AddRange(PwCharSet.MenuAccels);
 					foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
 					{
 						Image imgIcon = FileIcons.GetImageForName(kvp.Key, null);
@@ -882,24 +890,40 @@ namespace KeePass.Forms
 						ctxBin.Entry = pe;
 						ctxBin.Name = kvp.Key;
 
-						dynBinaries.AddItem(fMenuText(kvp.Key), imgIcon, ctxBin);
-						++uBinItems;
+						dynBinaries.AddItem(fMenuText(kvp.Key, lAvailKeysB), imgIcon, ctxBin);
+						bBin1 = true;
 					}
 				}
-				else bStr = false;
+				else
+				{
+					bStr = false;
+					dynStrings.AddItem(m_strNoneP, null).Enabled = false;
+				}
 
-				if(!bStr) dynStrings.AddItem(m_strNoneP, null).Enabled = false;
-				if(uBinItems == 0) dynBinaries.AddItem(m_strNoneP, null).Enabled = false;
+				bool bBinM = bBin1;
+				if(!bBinM) // No attachment in primary entry => search others
+				{
+					ulong cBins = 0;
+					foreach(PwEntry peSel in (vSel ?? MemUtil.EmptyArray<PwEntry>()))
+					{
+						if(peSel == null) { Debug.Assert(false); continue; }
+						cBins += peSel.Binaries.UCount;
+					}
+					bBinM = (cBins != 0);
+
+					dynBinaries.AddItem("(" + KPRes.Count + ": " +
+						cBins.ToString() + ")", null).Enabled = false;
+				}
+
+				dynBinaries.AddSeparator();
+				dynBinaries.AddItem(strSaveBins, Properties.Resources.B16x16_Attach,
+					EntryBinaryDataContext.SaveAll).Enabled = bBinM;
 
 				m_menuEntryOtherData.Enabled = bStr;
 				// m_milMain.SetCopyAvailable(m_menuEntryOtherData, bStr);
-				m_menuEntryAttachments.Enabled = (uBinItems != 0);
-				m_milMain.SetCopyAvailable(m_menuEntryAttachments, (uBinItems != 0));
+				m_menuEntryAttachments.Enabled = bBinM;
+				m_milMain.SetCopyAvailable(m_menuEntryAttachments, bBinM);
 			}
-
-			bool bAttach = (bEntrySelM || ((pe != null) && (pe.Binaries.UCount != 0)));
-			m_menuEntrySaveAttachedFiles.Enabled = bAttach;
-			m_milMain.SetCopyAvailable(m_menuEntrySaveAttachedFiles, bAttach);
 
 			m_menuEntryPerformAutoType.Enabled = s.CanPerformAutoType;
 
@@ -956,8 +980,7 @@ namespace KeePass.Forms
 				m_menuEntryMoveToBottom.Text = (bEntrySelM ? KPRes.MoveEntriesBottomCmd :
 					KPRes.MoveEntryBottomCmd);
 
-				PwEntry[] v = GetSelectedEntries();
-				UpdateMoveToPreviousParentGroupUI(null, v, m_menuEntryMoveToPreviousParent);
+				UpdateMoveToPreviousParentGroupUI(null, vSel, m_menuEntryMoveToPreviousParent);
 			}
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEntryDX);
@@ -2080,8 +2103,7 @@ namespace KeePass.Forms
 			ctx.Entry = pe;
 			ctx.Name = strBinName;
 
-			DynamicMenuEventArgs args = new DynamicMenuEventArgs(strBinName, ctx);
-			OnEntryBinaryClick(null, args);
+			OnEntryBinaryClick(null, new DynamicMenuEventArgs(strBinName, ctx));
 		}
 
 		private string UrlsToString(PwEntry[] vEntries, bool bActive, bool bTouch)
@@ -2463,10 +2485,7 @@ namespace KeePass.Forms
 				UpdateUIState(false); // Already marked as modified
 
 			if(this.FileOpened != null)
-			{
-				FileOpenedEventArgs ea = new FileOpenedEventArgs(pwOpenedDb);
-				this.FileOpened(this, ea);
-			}
+				this.FileOpened(this, new FileOpenedEventArgs(pwOpenedDb));
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.OpenedDatabaseFile,
 				EcasProperty.Database, pwOpenedDb);
 
@@ -2717,14 +2736,13 @@ namespace KeePass.Forms
 			else if(tsmiParent == m_menuFileSyncRecent)
 			{
 				PwDatabase pd = m_docMgr.ActiveDatabase;
-				if(!pd.IsOpen) return;
+				if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
 				ioc = CompleteConnectionInfo(ioc, false, true, true, false);
-				if(ioc == null) return;
+				if(ioc == null) { Debug.Assert(false); return; }
 
-				bool? b = ImportUtil.Synchronize(pd, this, ioc, false, this);
-				UpdateUI(false, null, true, null, true, null, false);
-				if(b.HasValue) SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+				bool? ob = ImportUtil.Synchronize(pd, this, ioc, false, this);
+				UpdateUISyncPost(ob);
 			}
 			else { Debug.Assert(false); }
 		}
@@ -2824,8 +2842,7 @@ namespace KeePass.Forms
 				return;
 
 			PwEntry[] vEntries = GetSelectedEntries();
-			Debug.Assert(vEntries != null); if(vEntries == null) return;
-			Debug.Assert(vEntries.Length > 0); if(vEntries.Length == 0) return;
+			if((vEntries == null) || (vEntries.Length == 0)) { Debug.Assert(false); return; }
 
 			PwGroup pg = vEntries[0].ParentGroup;
 			if(pg == null) { Debug.Assert(false); return; }
@@ -3147,7 +3164,7 @@ namespace KeePass.Forms
 			if(bUntray && IsTrayed()) MinimizeToTray(false);
 
 			if(bRestoreWindow && (this.WindowState == FormWindowState.Minimized))
-				UIUtil.SetWindowState(this, FormWindowState.Normal);
+				RestoreWindowEx();
 
 			UIUtil.EnsureInsideScreen(this);
 
@@ -3402,7 +3419,7 @@ namespace KeePass.Forms
 
 			m_milMain.CreateLink(m_ctxEntryOtherData, m_menuEntryOtherData, false);
 			m_milMain.CreateLink(m_ctxEntryAttachments, m_menuEntryAttachments, false);
-			m_milMain.CreateCopy(tsicEC, m_ctxEntryAttachments, true, m_menuEntrySaveAttachedFiles);
+			// m_milMain.CreateCopy(tsicEC, m_ctxEntryAttachments, true, m_menuEntrySaveAttachedFiles);
 
 			m_milMain.CreateCopy(tsicEC, m_ctxEntryAutoTypeAdv, false, m_menuEntryPerformAutoType);
 			m_milMain.CreateLink(m_ctxEntryAutoTypeAdv, m_menuEntryAutoTypeAdv, false);
@@ -3553,10 +3570,7 @@ namespace KeePass.Forms
 				UIBlockInteraction(false);
 
 				if(this.FileSaved != null)
-				{
-					FileSavedEventArgs args = new FileSavedEventArgs(bSuccess, pd, eventGuid);
-					this.FileSaved(sender, args);
-				}
+					this.FileSaved(sender, new FileSavedEventArgs(bSuccess, pd, eventGuid));
 				if(bSuccess)
 					Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavedDatabaseFile,
 						dProps);
@@ -3799,6 +3813,21 @@ namespace KeePass.Forms
 			UpdateUI(false, null, true, null, true, null, true);
 		}
 
+		private void SaveAllAttachments()
+		{
+			PwEntry[] v = GetSelectedEntries();
+			if((v == null) || (v.Length == 0)) return;
+
+			using(FolderBrowserDialog fbd = UIUtil.CreateFolderBrowserDialog(
+				KPRes.AttachmentsSave))
+			{
+				GlobalWindowManager.AddDialog(fbd);
+				if(fbd.ShowDialog() == DialogResult.OK)
+					EntryUtil.SaveEntryAttachments(v, fbd.SelectedPath);
+				GlobalWindowManager.RemoveDialog(fbd);
+			}
+		}
+
 		private void OnEntryBinaryClick(object sender, DynamicMenuEventArgs e)
 		{
 			if(e == null) { Debug.Assert(false); return; }
@@ -3806,9 +3835,15 @@ namespace KeePass.Forms
 			EntryBinaryDataContext ctx = (e.Tag as EntryBinaryDataContext);
 			if(ctx == null) { Debug.Assert(false); return; }
 
+			if(ctx == EntryBinaryDataContext.SaveAll)
+			{
+				SaveAllAttachments();
+				return;
+			}
+
 			PwEntry pe = ctx.Entry;
 			if(pe == null) { Debug.Assert(false); return; }
-			Debug.Assert(object.ReferenceEquals(pe, GetSelectedEntry(false)));
+			Debug.Assert(object.ReferenceEquals(pe, GetSelectedEntry(true)));
 
 			if(string.IsNullOrEmpty(ctx.Name)) { Debug.Assert(false); return; }
 			ProtectedBinary pb = pe.Binaries.Get(ctx.Name);
@@ -3967,10 +4002,7 @@ namespace KeePass.Forms
 			Program.TempFilesPool.Clear(TempClearFlags.ContentTaggedFiles);
 
 			if(this.FileClosed != null)
-			{
-				FileClosedEventArgs fcea = new FileClosedEventArgs(ioClosing, f);
-				this.FileClosed(null, fcea);
-			}
+				this.FileClosed(null, new FileClosedEventArgs(ioClosing, f));
 		}
 
 		// Public for plugins
@@ -4306,8 +4338,7 @@ namespace KeePass.Forms
 				// EnsureVisibleForegroundWindow(false, false); // Don't!
 
 				if(this.WindowState == FormWindowState.Minimized)
-					UIUtil.SetWindowState(this, (Program.Config.MainWindow.Maximized ?
-						FormWindowState.Maximized : FormWindowState.Normal));
+					RestoreWindowEx();
 				else if(IsFileLocked(null) && !UIIsAutoUnlockBlocked())
 					OnFileLock(null, EventArgs.Empty); // Unlock
 
@@ -4504,6 +4535,14 @@ namespace KeePass.Forms
 			--m_uBlockEntrySelectionEvent;
 		}
 
+		internal void UpdateUISyncPost(bool? obResult)
+		{
+			if(!obResult.HasValue) return;
+
+			UpdateUI(false, null, true, null, true, null, false);
+			SetStatusEx(obResult.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+		}
+
 		private bool PreSaveValidate(PwDatabase pd)
 		{
 			if(m_uForceSave > 0) return true;
@@ -4519,10 +4558,9 @@ namespace KeePass.Forms
 
 				if(dr == DialogResult.Yes) // Synchronize
 				{
-					bool? b = ImportUtil.Synchronize(pd, this, pd.IOConnectionInfo,
+					bool? ob = ImportUtil.Synchronize(pd, this, pd.IOConnectionInfo,
 						true, this);
-					UpdateUI(false, null, true, null, true, null, false);
-					if(b.HasValue) SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+					UpdateUISyncPost(ob);
 					return false;
 				}
 				else if(dr == DialogResult.Cancel) return false;
@@ -4599,7 +4637,7 @@ namespace KeePass.Forms
 						if(a == AceEscAction.Lock)
 							LockAllDocuments();
 						else if(a == AceEscAction.Minimize)
-							this.WindowState = FormWindowState.Minimized;
+							UIUtil.SetWindowState(this, FormWindowState.Minimized);
 						else if(a == AceEscAction.MinimizeToTray)
 						{
 							if(!IsTrayed()) MinimizeToTray(true);
@@ -5219,6 +5257,9 @@ namespace KeePass.Forms
 			pd.MasterKeyChanged = DateTime.UtcNow;
 			// pd.MasterKeyChangeForceOnce = false;
 			pd.Modified = true;
+
+			if(this.MasterKeyChanged != null)
+				this.MasterKeyChanged(null, new MasterKeyChangedEventArgs(pd));
 
 			UpdateUIState(false); // Show modified state in the UI
 
@@ -6008,25 +6049,32 @@ namespace KeePass.Forms
 			{
 				PopularPasswords.Add(Properties.Resources.MostPopularPasswords, true);
 
-				string strShInstUtil = UrlUtil.GetFileDirectory(
-					WinUtil.GetExecutable(), true, false) + AppDefs.FileNames.ShInstUtil;
-
 				// Unblock the application such that the user isn't
 				// prompted next time anymore
+				string strShInstUtil = UrlUtil.GetFileDirectory(
+					WinUtil.GetExecutable(), true, false) + AppDefs.FileNames.ShInstUtil;
 				WinUtil.RemoveZoneIdentifier(WinUtil.GetExecutable());
 				WinUtil.RemoveZoneIdentifier(AppHelp.LocalHelpFile);
 				WinUtil.RemoveZoneIdentifier(strShInstUtil);
 
 				// https://stackoverflow.com/questions/26256917/how-can-i-prevent-my-application-from-causing-a-0xc0000142-error-in-csc-exe
-				XmlSerializer xs = new XmlSerializer(typeof(IpcParamEx));
-				IpcParamEx ipc = new IpcParamEx();
 				using(MemoryStream ms = new MemoryStream())
 				{
-					xs.Serialize(ms, ipc);
+					XmlUtilEx.Serialize<IpcParamEx>(ms, new IpcParamEx());
 				}
+				// using(MemoryStream ms = new MemoryStream())
+				// {
+				//	XmlUtilEx.Serialize<AppConfigEx>(ms, Program.Config);
+				// }
 
 				FileTransactionEx.ClearOld();
 			}
+			catch(Exception) { Debug.Assert(false); }
+
+			// If the app configuration file is corrupted, an exception may
+			// be thrown in the try block above (XML serializer, ...),
+			// thus check it in a separate try block
+			try { Program.CheckExeConfig(); }
 			catch(Exception) { Debug.Assert(false); }
 		}
 
@@ -6105,7 +6153,7 @@ namespace KeePass.Forms
 				{
 					// Mono destroys window when trying to hide minimized
 					// window; so, restore it before hiding
-					this.WindowState = FormWindowState.Normal;
+					RestoreWindowEx();
 					Application.DoEvents();
 					Thread.Sleep(250);
 				}
@@ -6498,12 +6546,28 @@ namespace KeePass.Forms
 #if DEBUG
 		private void ConstructDebugMenu()
 		{
-			ToolStripMenuItem tsmiDebug = new ToolStripMenuItem("Debug");
+			ToolStripMenuItem tsmiDebug = new ToolStripMenuItem("De&bug");
 			m_menuTools.DropDownItems.Insert(m_menuTools.DropDownItems.IndexOf(
 				m_menuToolsAdv) + 1, tsmiDebug);
 
-			ToolStripMenuItem tsmi = new ToolStripMenuItem("Set Database Custom Data Items (KDBX 4.1)");
+			ToolStripMenuItem tsmi = new ToolStripMenuItem("&GC Collect",
+				Properties.Resources.B16x16_Reload_Page);
+			tsmi.Click += delegate(object sender, EventArgs e)
+			{
+				long cbBefore = GC.GetTotalMemory(false);
+				GC.Collect();
+				long cbAfter = GC.GetTotalMemory(true);
+				MessageService.ShowInfo("Before:" + MessageService.NewLine +
+					StrUtil.FormatDataSizeKB((ulong)cbBefore),
+					"After:" + MessageService.NewLine +
+					StrUtil.FormatDataSizeKB((ulong)cbAfter));
+			};
 			tsmiDebug.DropDownItems.Add(tsmi);
+
+			tsmiDebug.DropDownItems.Add(new ToolStripSeparator());
+
+			tsmi = new ToolStripMenuItem("Set Database &Custom Data Items (KDBX 4.1)",
+				Properties.Resources.B16x16_BlockDevice);
 			tsmi.Click += delegate(object sender, EventArgs e)
 			{
 				PwDatabase pd = m_docMgr.ActiveDatabase;
@@ -6522,6 +6586,7 @@ namespace KeePass.Forms
 
 				UpdateUIState(true);
 			};
+			tsmiDebug.DropDownItems.Add(tsmi);
 		}
 #endif
 
@@ -6693,6 +6758,12 @@ namespace KeePass.Forms
 			}
 
 			UpdateUI(false, null, !bEntry, null, true, null, true);
+		}
+
+		private void RestoreWindowEx()
+		{
+			UIUtil.SetWindowState(this, (Program.Config.MainWindow.Maximized ?
+				FormWindowState.Maximized : FormWindowState.Normal));
 		}
 	}
 }

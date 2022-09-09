@@ -681,10 +681,7 @@ namespace KeePass.Forms
 			UpdateUI(true, null, true, null, true, null, true);
 
 			if(this.FileCreated != null)
-			{
-				FileCreatedEventArgs ea = new FileCreatedEventArgs(pd);
-				this.FileCreated(this, ea);
-			}
+				this.FileCreated(this, new FileCreatedEventArgs(pd));
 		}
 
 		private void OnFileOpen(object sender, EventArgs e)
@@ -761,10 +758,7 @@ namespace KeePass.Forms
 			UIBlockInteraction(false);
 
 			if(this.FileSaved != null)
-			{
-				FileSavedEventArgs args = new FileSavedEventArgs(bSuccess, pd, eventGuid);
-				this.FileSaved(sender, args);
-			}
+				this.FileSaved(sender, new FileSavedEventArgs(bSuccess, pd, eventGuid));
 			if(bSuccess)
 				Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavedDatabaseFile,
 					EcasProperty.Database, pd);
@@ -906,20 +900,6 @@ namespace KeePass.Forms
 		private void OnEntryOpenUrl(object sender, EventArgs e)
 		{
 			PerformDefaultUrlAction(null, true);
-		}
-
-		private void OnEntrySaveAttachments(object sender, EventArgs e)
-		{
-			PwEntry[] vSelected = GetSelectedEntries();
-			if((vSelected == null) || (vSelected.Length == 0)) return;
-
-			FolderBrowserDialog fbd = UIUtil.CreateFolderBrowserDialog(KPRes.AttachmentsSave);
-
-			GlobalWindowManager.AddDialog(fbd);
-			if(fbd.ShowDialog() == DialogResult.OK)
-				EntryUtil.SaveEntryAttachments(vSelected, fbd.SelectedPath);
-			GlobalWindowManager.RemoveDialog(fbd);
-			fbd.Dispose();
 		}
 
 		private void OnEntryPerformAutoType(object sender, EventArgs e)
@@ -1457,9 +1437,14 @@ namespace KeePass.Forms
 
 		private void OnFileSynchronize(object sender, EventArgs e)
 		{
-			bool? b = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, false, this);
-			UpdateUI(false, null, true, null, true, null, false);
-			if(b.HasValue) SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+			bool? ob = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, false, this);
+			UpdateUISyncPost(ob);
+		}
+
+		private void OnFileSynchronizeUrl(object sender, EventArgs e)
+		{
+			bool? ob = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, true, this);
+			UpdateUISyncPost(ob);
 		}
 
 		private void OnViewAlwaysOnTop(object sender, EventArgs e)
@@ -1572,9 +1557,7 @@ namespace KeePass.Forms
 
 			if((this.WindowState == FormWindowState.Minimized) && !IsTrayed())
 			{
-				if(Program.Config.MainWindow.Maximized)
-					UIUtil.SetWindowState(this, FormWindowState.Maximized);
-				else UIUtil.SetWindowState(this, FormWindowState.Normal);
+				RestoreWindowEx();
 				return;
 			}
 
@@ -2110,20 +2093,20 @@ namespace KeePass.Forms
 
 		private void OnFileImport(object sender, EventArgs e)
 		{
-			PwDatabase pwDb = m_docMgr.ActiveDatabase;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
 
 			bool bAppendedToRootOnly;
-			bool? ob = ImportUtil.Import(pwDb, out bAppendedToRootOnly, this);
-			bool bModified = ob.GetValueOrDefault(false);
+			bool? ob = ImportUtil.Import(pd, out bAppendedToRootOnly, this);
+			if(!ob.HasValue) return;
 
-			if(bAppendedToRootOnly && pwDb.IsOpen)
+			if(bAppendedToRootOnly)
 			{
-				UpdateUI(false, null, true, pwDb.RootGroup, true, null, bModified);
+				UpdateUI(false, null, true, pd.RootGroup, true, null, false);
 
 				if(m_lvEntries.Items.Count > 0)
 					m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
 			}
-			else UpdateUI(false, null, true, null, true, null, bModified);
+			else UpdateUI(false, null, true, null, true, null, false);
 		}
 
 		private void OnGroupMoveToTop(object sender, EventArgs e)
@@ -2234,13 +2217,6 @@ namespace KeePass.Forms
 			UIUtil.SetChecked(m_menuViewShowEntriesOfSubGroups, b);
 
 			UpdateUI(false, null, false, null, true, null, false);
-		}
-
-		private void OnFileSynchronizeUrl(object sender, EventArgs e)
-		{
-			bool? b = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, true, this);
-			UpdateUI(false, null, true, null, true, null, false);
-			if(b.HasValue) SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
 		}
 
 		private void OnCtxTrayOpening(object sender, CancelEventArgs e)

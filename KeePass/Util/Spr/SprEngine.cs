@@ -122,7 +122,7 @@ namespace KeePass.Util.Spr
 			}
 
 			if((ctx.Flags & SprCompileFlags.Comments) != SprCompileFlags.None)
-				str = RemoveComments(str);
+				str = RemoveComments(str, null, null);
 
 			// The following realizes {T-CONV:/Text/Raw/}, which should be
 			// one of the first transformations (except comments)
@@ -502,20 +502,46 @@ namespace KeePass.Util.Spr
 			return str;
 		}
 
-		private const string StrRemStart = @"{C:";
-		private const string StrRemEnd = @"}";
-		private static string RemoveComments(string strSeq)
+		internal static string RemoveComments(string strSeq, List<string> lComments,
+			SprContext ctxComments)
 		{
+			if(strSeq == null) { Debug.Assert(false); return string.Empty; }
+
+			const string strStartP = @"{C:";
 			string str = strSeq;
+			int iOffsetP = 0;
 
-			while(true)
+			while(iOffsetP < str.Length)
 			{
-				int iStart = str.IndexOf(StrRemStart, SprEngine.ScMethod);
-				if(iStart < 0) break;
-				int iEnd = str.IndexOf(StrRemEnd, iStart + 1, SprEngine.ScMethod);
-				if(iEnd <= iStart) break;
+				int iStartP = str.IndexOf(strStartP, iOffsetP, SprEngine.ScMethod);
+				if(iStartP < 0) break;
 
-				str = (str.Substring(0, iStart) + str.Substring(iEnd + StrRemEnd.Length));
+				int iStartC = iStartP + strStartP.Length, cBraces = 1;
+
+				for(int iEndP = iStartC; iEndP < str.Length; ++iEndP)
+				{
+					char ch = str[iEndP];
+					if(ch == '{') ++cBraces;
+					else if(ch == '}')
+					{
+						if(--cBraces == 0)
+						{
+							if(lComments != null)
+							{
+								string strC = str.Substring(iStartC, iEndP - iStartC);
+								if(ctxComments != null)
+									strC = Compile(strC, ctxComments);
+								lComments.Add(strC);
+							}
+
+							str = str.Remove(iStartP, iEndP - iStartP + 1);
+							break;
+						}
+					}
+				}
+
+				if(cBraces != 0) break; // Malformed input; avoid infinite loop
+				iOffsetP = iStartP;
 			}
 
 			return str;

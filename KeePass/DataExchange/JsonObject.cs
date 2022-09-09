@@ -360,8 +360,14 @@ namespace KeePass.DataExchange
 		public T[] GetValueArray<T>(string strKey)
 			where T : class
 		{
+			return GetValueArray<T>(strKey, false);
+		}
+
+		internal T[] GetValueArray<T>(string strKey, bool bEmptyIfNotExists)
+			where T : class
+		{
 			List<object> lO = GetValue<List<object>>(strKey);
-			if(lO == null) return null;
+			if(lO == null) return (bEmptyIfNotExists ? MemUtil.EmptyArray<T>() : null);
 
 			T[] vT = new T[lO.Count];
 			for(int i = 0; i < lO.Count; ++i) vT[i] = (lO[i] as T);
@@ -372,8 +378,14 @@ namespace KeePass.DataExchange
 		public T[] GetValueArray<T>(string strKey, T tDefault)
 			where T : struct
 		{
+			return GetValueArray<T>(strKey, tDefault, false);
+		}
+
+		internal T[] GetValueArray<T>(string strKey, T tDefault, bool bEmptyIfNotExists)
+			where T : struct
+		{
 			List<object> lO = GetValue<List<object>>(strKey);
-			if(lO == null) return null;
+			if(lO == null) return (bEmptyIfNotExists ? MemUtil.EmptyArray<T>() : null);
 
 			T[] vT = new T[lO.Count];
 			for(int i = 0; i < lO.Count; ++i)

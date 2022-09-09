@@ -2161,6 +2161,14 @@
             is shown before closing. Unsaved changes will be lost.
             </summary>
         </member>
+        <member name="M:KeePassLib.PwDatabase.LoadHeader(KeePassLib.Serialization.IOConnectionInfo)">
+            <summary>
+            Load only the unencrypted header of a database file.
+            In the returned database object, any data that is not stored
+            in the unencrypted header is set to its default value.
+            Intended primarily for plugins.
+            </summary>
+        </member>
         <member name="M:KeePassLib.PwDatabase.GetCustomIconIndex(KeePassLib.PwUuid)">
             <summary>
             Get the index of a custom icon.

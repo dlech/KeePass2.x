@@ -29,6 +29,8 @@ namespace KeePass.Util.SendInputExt
 		void Init();
 		void Release();
 
+		void UpdateExpectedFocus();
+
 		void SendKey(int iVKey, bool? obExtKey, bool? obDown);
 		void SetKeyModifier(Keys kMod, bool bDown);
 

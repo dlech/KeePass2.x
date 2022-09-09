@@ -98,6 +98,9 @@ namespace KeePass.Util
 			get { return m_oo; }
 			set { m_oo = value; }
 		}
+
+		internal static readonly EntryBinaryDataContext SaveAll =
+			new EntryBinaryDataContext();
 	}
 
 	public static class BinaryDataUtil

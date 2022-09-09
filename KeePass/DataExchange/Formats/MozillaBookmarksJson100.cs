@@ -122,21 +122,17 @@ namespace KeePass.DataExchange.Formats
 				jo, "uri");
 			// SetString(pe, "CharSet", false, jo, "charset");
 
-			v = jo.GetValueArray<JsonObject>("annos");
-			if(v != null)
+			foreach(JsonObject joAnno in jo.GetValueArray<JsonObject>("annos", true))
 			{
-				foreach(JsonObject joAnno in v)
-				{
-					if(joAnno == null) { Debug.Assert(false); continue; }
+				if(joAnno == null) { Debug.Assert(false); continue; }
 
-					string strName = joAnno.GetValue<string>("name");
-					string strValue = joAnno.GetValue<string>("value");
+				string strName = joAnno.GetValue<string>("name");
+				string strValue = joAnno.GetValue<string>("value");
 
-					if((strName == "bookmarkProperties/description") &&
-						!string.IsNullOrEmpty(strValue))
-						pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-							pwContext.MemoryProtection.ProtectNotes, strValue));
-				}
+				if((strName == "bookmarkProperties/description") &&
+					!string.IsNullOrEmpty(strValue))
+					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+						pwContext.MemoryProtection.ProtectNotes, strValue));
 			}
 
 			// Tags support (new versions)

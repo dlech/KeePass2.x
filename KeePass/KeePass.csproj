@@ -430,6 +430,7 @@
     <Compile Include="DataExchange\Formats\KeePassXml2x.cs" />
     <Compile Include="DataExchange\Formats\KeePassXXml041.cs" />
     <Compile Include="DataExchange\Formats\KeeperJson16.cs" />
+    <Compile Include="DataExchange\Formats\KeyFolderXml1.cs" />
     <Compile Include="DataExchange\Formats\LastPassCsv2.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksHtml100.cs" />
     <Compile Include="DataExchange\Formats\MozillaBookmarksJson100.cs" />
@@ -437,6 +438,7 @@
     <Compile Include="DataExchange\Formats\NetworkPwMgrCsv4.cs" />
     <Compile Include="DataExchange\Formats\NortonIdSafeCsv2013.cs" />
     <Compile Include="DataExchange\Formats\NPasswordNpw102.cs" />
+    <Compile Include="DataExchange\Formats\OnePw1Pux8.cs" />
     <Compile Include="DataExchange\Formats\OnePwProCsv599.cs" />
     <Compile Include="DataExchange\Formats\PassKeeper12.cs" />
     <Compile Include="DataExchange\Formats\PinsTxt450.cs" />
@@ -907,6 +909,7 @@
     </Compile>
     <Compile Include="Util\Archive\ImageArchive.cs" />
     <Compile Include="Util\Archive\XspArchive.cs" />
+    <Compile Include="Util\Archive\ZipArchiveEx.cs" />
     <Compile Include="Util\AutoTypeCtx.cs" />
     <Compile Include="Util\BinaryDataClassifier.cs" />
     <Compile Include="Util\BinaryDataUtil.cs" />

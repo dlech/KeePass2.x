@@ -1136,7 +1136,7 @@ namespace KeePassLib
 		public PwGroup FindCreateSubTree(string strTree, char[] vSeparators,
 			bool bAllowCreate)
 		{
-			if(vSeparators == null) { Debug.Assert(false); vSeparators = new char[0]; }
+			if(vSeparators == null) { Debug.Assert(false); vSeparators = MemUtil.EmptyArray<char>(); }
 
 			string[] v = new string[vSeparators.Length];
 			for(int i = 0; i < vSeparators.Length; ++i)
@@ -1506,7 +1506,7 @@ namespace KeePassLib
 
 		internal string[] CollectEntryStrings(GFunc<PwEntry, string> f, bool bSort)
 		{
-			if(f == null) { Debug.Assert(false); return new string[0]; }
+			if(f == null) { Debug.Assert(false); return MemUtil.EmptyArray<string>(); }
 
 			Dictionary<string, bool> d = new Dictionary<string, bool>();
 
@@ -1579,7 +1579,7 @@ namespace KeePassLib
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			return new string[0];
+			return MemUtil.EmptyArray<string>();
 		}
 	}
 

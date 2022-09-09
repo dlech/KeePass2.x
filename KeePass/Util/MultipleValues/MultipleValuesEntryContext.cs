@@ -192,8 +192,8 @@ namespace KeePass.Util.MultipleValues
 							{
 								this.MultiStringProt[kvp.Key] = true;
 								if(bProtM)
-									m_peM.Strings.Set(kvp.Key, m_peM.Strings.Get(
-										kvp.Key).WithProtection(false)); // May be set to cue above
+									m_peM.Strings.EnableProtection(kvp.Key,
+										false); // May be set to cue above
 							}
 						}
 					}

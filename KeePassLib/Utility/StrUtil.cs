@@ -1422,7 +1422,7 @@ namespace KeePassLib.Utility
 		public static int[] DeserializeIntArray(string strSerialized)
 		{
 			if(strSerialized == null) throw new ArgumentNullException("strSerialized");
-			if(strSerialized.Length == 0) return new int[0];
+			if(strSerialized.Length == 0) return MemUtil.EmptyArray<int>();
 
 			string[] vParts = strSerialized.Split(' ');
 			int[] v = new int[vParts.Length];

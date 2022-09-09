@@ -472,7 +472,7 @@ namespace KeePassLib.Serialization
 					"Software\\Microsoft\\OneDrive\\Accounts", false))
 				{
 					string[] vAccs = (((kAccs != null) ? kAccs.GetSubKeyNames() :
-						null) ?? new string[0]);
+						null) ?? MemUtil.EmptyArray<string>());
 
 					foreach(string strAcc in vAccs)
 					{
@@ -482,7 +482,7 @@ namespace KeePassLib.Serialization
 							strAcc + "\\Tenants", false))
 						{
 							string[] vTenants = (((kTenants != null) ?
-								kTenants.GetSubKeyNames() : null) ?? new string[0]);
+								kTenants.GetSubKeyNames() : null) ?? MemUtil.EmptyArray<string>());
 
 							foreach(string strT in vTenants)
 							{
@@ -491,7 +491,7 @@ namespace KeePassLib.Serialization
 								using(RegistryKey kT = kTenants.OpenSubKey(strT, false))
 								{
 									string[] vPaths = (((kT != null) ?
-										kT.GetValueNames() : null) ?? new string[0]);
+										kT.GetValueNames() : null) ?? MemUtil.EmptyArray<string>());
 
 									foreach(string strPath in vPaths)
 									{

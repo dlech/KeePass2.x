@@ -465,6 +465,7 @@ namespace KeePass.Util
 		}
 
 		// https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+		internal const string OtpAuthScheme = "otpauth";
 		internal static void ImportOtpAuth(PwEntry pe, string strOtpAuthUri,
 			PwDatabase pd)
 		{
@@ -473,10 +474,10 @@ namespace KeePass.Util
 
 			Uri uri = new Uri(strOtpAuthUri);
 			string strScheme = (uri.Scheme ?? string.Empty);
-			if(!strScheme.Equals("otpauth", StrUtil.CaseIgnoreCmp))
+			if(!strScheme.Equals(OtpAuthScheme, StrUtil.CaseIgnoreCmp))
 				throw new FormatException();
 
-			string[] vSeg = (uri.Segments ?? new string[0]);
+			string[] vSeg = (uri.Segments ?? MemUtil.EmptyArray<string>());
 
 			string strLabel = string.Empty;
 			if(vSeg.Length >= 2)
@@ -788,6 +789,13 @@ namespace KeePass.Util
 
 		public static DateTime GetLastPasswordModTime(PwEntry pe)
 		{
+			bool bOrEarlier;
+			return GetLastPasswordModTime(pe, out bOrEarlier);
+		}
+
+		private static DateTime GetLastPasswordModTime(PwEntry pe, out bool bOrEarlier)
+		{
+			bOrEarlier = true;
 			if(pe == null) { Debug.Assert(false); return TimeUtil.ToUtc(DateTime.Today, false); }
 
 			List<PwEntry> l = new List<PwEntry>(pe.History);
@@ -805,12 +813,36 @@ namespace KeePass.Util
 				bool bSame = MemUtil.ArraysEqual(pbH, pbC);
 				MemUtil.ZeroByteArray(pbH);
 
-				if(!bSame) break;
+				if(!bSame) { bOrEarlier = false; break; }
 				dt = peH.LastModificationTime;
 			}
 
 			MemUtil.ZeroByteArray(pbC);
 			return dt;
+		}
+
+		internal static string GetLastPasswordModTime(PwEntry pe, bool bAppendOrEarlier,
+			bool bAppendHistoryBased)
+		{
+			StringBuilder sb = new StringBuilder();
+			bool bOrEarlier;
+
+			sb.Append(TimeUtil.ToDisplayString(GetLastPasswordModTime(pe, out bOrEarlier)));
+
+			if(bAppendOrEarlier && bOrEarlier)
+			{
+				sb.Append(' ');
+				sb.Append(KPRes.OrEarlier);
+			}
+
+			if(bAppendHistoryBased)
+			{
+				sb.Append(" (");
+				sb.Append(KPRes.HistoryBased);
+				sb.Append(')');
+			}
+
+			return sb.ToString();
 		}
 
 		private static int CompareListSizeDesc(List<PwEntry> x, List<PwEntry> y)

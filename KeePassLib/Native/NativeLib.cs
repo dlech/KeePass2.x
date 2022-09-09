@@ -63,7 +63,7 @@ namespace KeePassLib.Native
 				ulong uVersion = 0;
 				try
 				{
-					Type t = Type.GetType("Mono.Runtime");
+					Type t = Type.GetType("Mono.Runtime", false);
 					if(t != null)
 					{
 						MethodInfo mi = t.GetMethod("GetDisplayName",
@@ -82,6 +82,7 @@ namespace KeePassLib.Native
 						}
 						else { Debug.Assert(false); }
 					}
+					else { Debug.Assert(!IsUnix()); }
 				}
 				catch(Exception) { Debug.Assert(false); }
 

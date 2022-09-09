@@ -33,6 +33,12 @@ namespace KeePass.Resources
 		// Obsoletes: for backward compatibility with plugins
 
 		[Obsolete]
+		public static string AlternatingBgColors
+		{
+			get { return string.Empty; }
+		}
+
+		[Obsolete]
 		public static string ChangeMasterKeyIntroShort
 		{
 			get { return string.Empty; }
