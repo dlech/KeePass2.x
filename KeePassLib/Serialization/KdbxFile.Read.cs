@@ -112,6 +112,8 @@ namespace KeePassLib.Serialization
 					byte[] pbHeader = LoadHeader(br);
 					m_pbHashOfHeader = CryptoUtil.HashSha256(pbHeader);
 
+					if(m_bHeaderOnly) return;
+
 					int cbEncKey, cbEncIV;
 					ICipherEngine iCipher = GetCipher(out cbEncKey, out cbEncIV);
 
@@ -177,7 +179,11 @@ namespace KeePassLib.Serialization
 						LoadInnerHeader(sXml); // Binary header before XML
 				}
 				else if(fmt == KdbxFormat.PlainXml)
+				{
+					if(m_bHeaderOnly) { Debug.Assert(false); throw new InvalidOperationException(); }
+
 					sXml = sHashing;
+				}
 				else { Debug.Assert(false); throw new ArgumentOutOfRangeException("fmt"); }
 
 				if(fmt == KdbxFormat.Default)

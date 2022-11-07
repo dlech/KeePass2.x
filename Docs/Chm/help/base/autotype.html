@@ -391,7 +391,11 @@ edit control that currently has the focus (only single-line edit controls).</td>
 <a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
 target="_blank">virtual key</a> of value <i>X</i>.</td></tr>
 <tr><td><code>{APPACTIVATE <i>WindowTitle</i>}</code></td><td>Activates
-the window &quot;<i>WindowTitle</i>&quot;.</td></tr>
+the window &quot;<i>WindowTitle</i>&quot;.<!-- <br />
+2.x only:
+If the specified window does not exist or cannot be focused, auto-type is aborted.
+This command ignores the options 'Cancel auto-type when the target window changes'
+and 'Cancel auto-type when the target window title changes'. --></td></tr>
 <tr><td><code>{BEEP <i>X</i> <i>Y</i>}</code></td><td>Beeps with
 a frequency of <i>X</i> hertz and a duration of <i>Y</i> milliseconds.</td></tr>
 </table>

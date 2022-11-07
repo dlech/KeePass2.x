@@ -560,7 +560,8 @@ namespace KeePass.Forms
 
 			sb.AppendLine("/* ]]> */");
 			sb.AppendLine("</style>");
-			sb.AppendLine("</head><body>");
+			sb.AppendLine("</head>");
+			sb.AppendLine("<body>");
 
 			sb.AppendLine("<h2>" + h(pgDataSource.Name) + "</h2>");
 			WriteGroupNotes(sb, pgDataSource);
@@ -760,7 +761,8 @@ namespace KeePass.Forms
 			if(bTabular || bBlocks) sb.AppendLine("</table>");
 			else { Debug.Assert(false); }
 
-			sb.AppendLine("</body></html>");
+			sb.AppendLine("</body>");
+			sb.AppendLine("</html>");
 
 			string strDoc = sb.ToString();
 #if DEBUG

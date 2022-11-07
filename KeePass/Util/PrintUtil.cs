@@ -142,7 +142,7 @@ namespace KeePass.Util
 
 			// Try to use the 'Print' verb; if it's not available, the
 			// default verb is used (to just display the file)
-			string[] v = (psi.Verbs ?? new string[0]);
+			string[] v = (psi.Verbs ?? MemUtil.EmptyArray<string>());
 			foreach(string strVerb in v)
 			{
 				if(strVerb == null) { Debug.Assert(false); continue; }

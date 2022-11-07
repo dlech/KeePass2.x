@@ -647,24 +647,40 @@ namespace KeePass.Util
 
 		public static ulong GetMaxNetFrameworkVersion()
 		{
-			if(m_uFrameworkVersion != 0) return m_uFrameworkVersion;
+			ulong u = m_uFrameworkVersion;
+			if(u != 0) return u;
 
-			try { m_uFrameworkVersion = GetMaxNetVersionPriv(); }
-			catch(Exception) { Debug.Assert(false); }
+			// https://www.mono-project.com/docs/about-mono/releases/
+			ulong m = NativeLib.MonoVersion;
+			if(m >= 0x0006000600000000UL) u = 0x0004000800000000UL;
+			else if(m >= 0x0005001200000000UL) u = 0x0004000700020000UL;
+			else if(m >= 0x0005000A00000000UL) u = 0x0004000700010000UL;
+			else if(m >= 0x0005000400000000UL) u = 0x0004000700000000UL;
+			else if(m >= 0x0004000600000000UL) u = 0x0004000600020000UL;
+			else if(m >= 0x0004000400000000UL) u = 0x0004000600010000UL;
+			else if(m >= 0x0003000800000000UL) u = 0x0004000500010000UL;
+			else if(m >= 0x0003000000000000UL) u = 0x0004000500000000UL;
 
-			if(m_uFrameworkVersion == 0)
+			if(u == 0)
 			{
-				Version v = Environment.Version;
-				if(v.Major > 0) m_uFrameworkVersion |= (uint)v.Major;
-				m_uFrameworkVersion <<= 16;
-				if(v.Minor > 0) m_uFrameworkVersion |= (uint)v.Minor;
-				m_uFrameworkVersion <<= 16;
-				if(v.Build > 0) m_uFrameworkVersion |= (uint)v.Build;
-				m_uFrameworkVersion <<= 16;
-				if(v.Revision > 0) m_uFrameworkVersion |= (uint)v.Revision;
+				try { u = GetMaxNetVersionPriv(); }
+				catch(Exception) { Debug.Assert(false); }
 			}
 
-			return m_uFrameworkVersion;
+			if(u == 0)
+			{
+				Version v = Environment.Version;
+				if(v.Major > 0) u |= (uint)v.Major;
+				u <<= 16;
+				if(v.Minor > 0) u |= (uint)v.Minor;
+				u <<= 16;
+				if(v.Build > 0) u |= (uint)v.Build;
+				u <<= 16;
+				if(v.Revision > 0) u |= (uint)v.Revision;
+			}
+
+			m_uFrameworkVersion = u;
+			return u;
 		}
 
 		private static ulong GetMaxNetVersionPriv()

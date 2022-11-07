@@ -316,13 +316,19 @@ namespace KeePass.Forms
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
+		private bool HasKeyFile()
+		{
+			if(!m_cbKeyFile.Checked) return false;
+
+			string str = m_cmbKeyFile.Text;
+			if(string.IsNullOrEmpty(str) || (str == KPRes.NoKeyFileSpecifiedMeta))
+				return false;
+			return true;
+		}
+
 		private bool AnyComponentOn()
 		{
-			string strKeyFile = m_cmbKeyFile.Text;
-			bool bKeyFile = (m_cbKeyFile.Checked && !string.IsNullOrEmpty(strKeyFile) &&
-				(strKeyFile != KPRes.NoKeyFileSpecifiedMeta));
-
-			return (m_cbPassword.Checked || bKeyFile || m_cbUserAccount.Checked);
+			return (m_cbPassword.Checked || HasKeyFile() || m_cbUserAccount.Checked);
 		}
 
 		private void UpdateUIState()
@@ -330,9 +336,14 @@ namespace KeePass.Forms
 			if(m_uUIAutoBlocked != 0) return;
 			++m_uUIAutoBlocked;
 
+			bool bKeyFile = m_cbKeyFile.Checked;
+			bool bKeyFileOK = HasKeyFile();
+
 			UIUtil.SetToolTipByText(m_ttRect, m_cmbKeyFile);
 
-			UIUtil.SetEnabled(m_btnOK, AnyComponentOn());
+			bool bOK = AnyComponentOn();
+			bOK &= (!bKeyFile || bKeyFileOK); // Disallow checked without selection
+			UIUtil.SetEnabled(m_btnOK, bOK);
 
 			--m_uUIAutoBlocked;
 		}

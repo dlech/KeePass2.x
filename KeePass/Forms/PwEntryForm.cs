@@ -30,6 +30,7 @@ using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.App.Configuration;
+using KeePass.DataExchange;
 using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
@@ -613,8 +614,13 @@ namespace KeePass.Forms
 
 		private void InitHistoryTab()
 		{
-			m_lblCreatedData.Text = TimeUtil.ToDisplayString(m_pwEntry.CreationTime);
-			m_lblModifiedData.Text = TimeUtil.ToDisplayString(m_pwEntry.LastModificationTime);
+			bool bStd = ((m_pwEditMode != PwEditMode.ViewReadOnlyEntry) && (m_mvec == null));
+
+			UIUtil.SetText(m_lblCreatedData, TimeUtil.ToDisplayString(
+				m_pwEntry.CreationTime));
+			UIUtil.SetText(m_lblModifiedData, TimeUtil.ToDisplayString(
+				m_pwEntry.LastModificationTime));
+			UpdatePasswordModifiedTime(bStd ? m_pwEntry : null);
 
 			m_lvHistory.SmallImageList = m_ilIcons;
 
@@ -625,11 +631,15 @@ namespace KeePass.Forms
 
 			UpdateHistoryList(false);
 
-			if((m_pwEditMode == PwEditMode.ViewReadOnlyEntry) || (m_mvec != null))
-			{
-				m_lblPrev.Enabled = false;
-				m_lvHistory.Enabled = false;
-			}
+			if(!bStd) UIUtil.SetEnabledFast(false, m_lblPrev, m_lvHistory);
+		}
+
+		private void UpdatePasswordModifiedTime(PwEntry pe)
+		{
+			bool b = (pe != null);
+			UIUtil.SetText(m_lblPasswordModifiedData, (b ?
+				EntryUtil.GetLastPasswordModTime(pe, true, true) : "?"));
+			UIUtil.SetEnabledFast(b, m_lblPasswordModified, m_lblPasswordModifiedData);
 		}
 
 		private void UpdateHistoryList(bool bUpdateState)
@@ -829,11 +839,17 @@ namespace KeePass.Forms
 				if(m_mvec.MultiAutoTypeObf)
 					MultipleValuesEx.ConfigureState(m_cbAutoTypeObfuscation, true);
 
-				m_lblCreatedData.Text = MultipleValuesEx.CueString;
+				UIUtil.SetText(m_lblCreatedData, MultipleValuesEx.CueString);
 				UIUtil.SetEnabledFast(false, m_lblCreated, m_lblCreatedData);
-				m_lblModifiedData.Text = MultipleValuesEx.CueString;
+				UIUtil.SetText(m_lblModifiedData, MultipleValuesEx.CueString);
 				UIUtil.SetEnabledFast(false, m_lblModified, m_lblModifiedData);
+				UIUtil.SetText(m_lblPasswordModifiedData, MultipleValuesEx.CueString);
+				UIUtil.SetEnabledFast(false, m_lblPasswordModified, m_lblPasswordModifiedData);
 			}
+
+			m_ctxToolsCopyInitialPassword.ToolTipText = KPRes.CopyInitialPasswordDesc;
+			m_ctxToolsCopyInitialPassword.Enabled = !m_pwInitialEntry.Strings.GetSafe(
+				PwDefs.PasswordField).IsEmpty;
 
 			m_bInitializing = false;
 
@@ -1334,6 +1350,8 @@ namespace KeePass.Forms
 
 			UpdateHistoryList(true);
 			ResizeColumnHeaders();
+
+			UpdatePasswordModifiedTime(null);
 		}
 
 		private void OnBtnHistoryRestore(object sender, EventArgs e)
@@ -1493,20 +1511,11 @@ namespace KeePass.Forms
 							int cbName = MemUtil.BytesToInt32(MemUtil.Read(ms, 4));
 							string strName = StrUtil.Utf8.GetString(MemUtil.Read(ms, cbName));
 							int cbValue = MemUtil.BytesToInt32(MemUtil.Read(ms, 4));
-							byte[] pbValue = MemUtil.Read(ms, cbValue);
-							bool bProt = ((ms.ReadByte() & 1) != 0);
+							string strValue = StrUtil.Utf8.GetString(MemUtil.Read(ms, cbValue));
+							bool bProtect = ((ms.ReadByte() & 1) != 0);
 
-							for(int i = 1; i < int.MaxValue; ++i)
-							{
-								string strNameFull = ((i == 1) ? strName :
-									(strName + " (" + i.ToString() + ")"));
-								if(!m_vStrings.Exists(strNameFull))
-								{
-									m_vStrings.Set(strNameFull, new ProtectedString(
-										bProt, pbValue));
-									break;
-								}
-							}
+							ImportUtil.CreateFieldWithIndex(m_vStrings, strName,
+								strValue, bProtect, true);
 						}
 						else throw new FormatException();
 					}
@@ -1861,7 +1870,9 @@ namespace KeePass.Forms
 		private void OnCtxToolsHelp(object sender, EventArgs e)
 		{
 			if(m_tabMain.SelectedTab == m_tabAdvanced)
-				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryStrings);
+				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryAdvanced);
+			else if(m_tabMain.SelectedTab == m_tabProperties)
+				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryProperties);
 			else if(m_tabMain.SelectedTab == m_tabAutoType)
 				AppHelp.ShowHelp(AppDefs.HelpTopics.Entry, AppDefs.HelpTopics.EntryAutoType);
 			else if(m_tabMain.SelectedTab == m_tabHistory)
@@ -2123,11 +2134,12 @@ namespace KeePass.Forms
 
 		private void OnCtxBinNew(object sender, EventArgs e)
 		{
-			string strName;
-			for(int i = 0; ; ++i)
+			string strName = null;
+			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
+			for(int i = 1; i < int.MaxValue; ++i)
 			{
 				strName = KPRes.New;
-				if(i >= 1) strName += " (" + i.ToString() + ")";
+				if(i >= 2) strName += " (" + i.ToString(nfi) + ")";
 				strName += ".rtf";
 
 				if(m_vBinaries.Get(strName) == null) break;
@@ -2467,6 +2479,12 @@ namespace KeePass.Forms
 		private void OnCtxToolsOtpGen(object sender, EventArgs e)
 		{
 			OnCtxStrOtpGen(sender, e);
+		}
+
+		private void OnCtxToolsCopyInitialPassword(object sender, EventArgs e)
+		{
+			string str = m_pwInitialEntry.Strings.ReadSafe(PwDefs.PasswordField);
+			ClipboardUtil.Copy(str, false, false, null, null, this.Handle);
 		}
 	}
 }

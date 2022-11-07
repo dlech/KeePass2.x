@@ -31,7 +31,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 20.0.7+
+	// 20.0.7-22.3.1+
 	internal sealed class SteganosCsv20 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
@@ -50,7 +50,7 @@ namespace KeePass.DataExchange.Formats
 
 			CsvOptions opt = new CsvOptions();
 			opt.BackslashIsEscape = false;
-			opt.TextQualifier = char.MinValue;
+			// opt.TextQualifier = char.MinValue; // For 20.0.7, not 22.3.1
 			opt.TrimFields = true;
 
 			CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, opt);

@@ -238,7 +238,7 @@ namespace KeePass.Forms
 					};
 				else if(t == CsvFieldType.Group)
 					vItems = new string[] { string.Empty, ".", "/", "\\" };
-				else vItems = new string[0];
+				else vItems = MemUtil.EmptyArray<string>();
 
 				foreach(string strPre in vItems)
 					m_cmbFieldFormat.Items.Add(strPre);

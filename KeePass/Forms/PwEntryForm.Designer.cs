@@ -142,6 +142,8 @@
 			this.m_ctxAutoTypeSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxAutoTypeSelectAll = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabHistory = new System.Windows.Forms.TabPage();
+			this.m_lblPasswordModifiedData = new System.Windows.Forms.Label();
+			this.m_lblPasswordModified = new System.Windows.Forms.Label();
 			this.m_lblPrev = new System.Windows.Forms.Label();
 			this.m_lblModifiedData = new System.Windows.Forms.Label();
 			this.m_lblModified = new System.Windows.Forms.Label();
@@ -172,6 +174,8 @@
 			this.m_ctxBinImportFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxBinSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxBinNew = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsCopyInitialPassword = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxToolsSep3 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabEntry.SuspendLayout();
 			this.m_ctxDefaultTimes.SuspendLayout();
@@ -721,7 +725,7 @@
             this.m_ctxStrSep3,
             this.m_ctxStrOtpGen});
 			this.m_ctxStr.Name = "m_ctxStr";
-			this.m_ctxStr.Size = new System.Drawing.Size(205, 204);
+			this.m_ctxStr.Size = new System.Drawing.Size(205, 182);
 			this.m_ctxStr.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxStrOpening);
 			// 
 			// m_ctxStrCopyName
@@ -1259,6 +1263,8 @@
 			// 
 			// m_tabHistory
 			// 
+			this.m_tabHistory.Controls.Add(this.m_lblPasswordModifiedData);
+			this.m_tabHistory.Controls.Add(this.m_lblPasswordModified);
 			this.m_tabHistory.Controls.Add(this.m_lblPrev);
 			this.m_tabHistory.Controls.Add(this.m_lblModifiedData);
 			this.m_tabHistory.Controls.Add(this.m_lblModified);
@@ -1275,19 +1281,37 @@
 			this.m_tabHistory.Text = "History";
 			this.m_tabHistory.UseVisualStyleBackColor = true;
 			// 
+			// m_lblPasswordModifiedData
+			// 
+			this.m_lblPasswordModifiedData.AutoSize = true;
+			this.m_lblPasswordModifiedData.Location = new System.Drawing.Point(110, 57);
+			this.m_lblPasswordModifiedData.Name = "m_lblPasswordModifiedData";
+			this.m_lblPasswordModifiedData.Size = new System.Drawing.Size(19, 13);
+			this.m_lblPasswordModifiedData.TabIndex = 5;
+			this.m_lblPasswordModifiedData.Text = "<>";
+			// 
+			// m_lblPasswordModified
+			// 
+			this.m_lblPasswordModified.AutoSize = true;
+			this.m_lblPasswordModified.Location = new System.Drawing.Point(6, 57);
+			this.m_lblPasswordModified.Name = "m_lblPasswordModified";
+			this.m_lblPasswordModified.Size = new System.Drawing.Size(98, 13);
+			this.m_lblPasswordModified.TabIndex = 4;
+			this.m_lblPasswordModified.Text = "Password modified:";
+			// 
 			// m_lblPrev
 			// 
 			this.m_lblPrev.AutoSize = true;
-			this.m_lblPrev.Location = new System.Drawing.Point(6, 57);
+			this.m_lblPrev.Location = new System.Drawing.Point(6, 79);
 			this.m_lblPrev.Name = "m_lblPrev";
 			this.m_lblPrev.Size = new System.Drawing.Size(93, 13);
-			this.m_lblPrev.TabIndex = 4;
+			this.m_lblPrev.TabIndex = 6;
 			this.m_lblPrev.Text = "&Previous versions:";
 			// 
 			// m_lblModifiedData
 			// 
 			this.m_lblModifiedData.AutoSize = true;
-			this.m_lblModifiedData.Location = new System.Drawing.Point(62, 35);
+			this.m_lblModifiedData.Location = new System.Drawing.Point(110, 35);
 			this.m_lblModifiedData.Name = "m_lblModifiedData";
 			this.m_lblModifiedData.Size = new System.Drawing.Size(19, 13);
 			this.m_lblModifiedData.TabIndex = 3;
@@ -1305,7 +1329,7 @@
 			// m_lblCreatedData
 			// 
 			this.m_lblCreatedData.AutoSize = true;
-			this.m_lblCreatedData.Location = new System.Drawing.Point(62, 13);
+			this.m_lblCreatedData.Location = new System.Drawing.Point(110, 13);
 			this.m_lblCreatedData.Name = "m_lblCreatedData";
 			this.m_lblCreatedData.Size = new System.Drawing.Size(19, 13);
 			this.m_lblCreatedData.TabIndex = 1;
@@ -1325,7 +1349,7 @@
 			this.m_btnHistoryDelete.Location = new System.Drawing.Point(89, 307);
 			this.m_btnHistoryDelete.Name = "m_btnHistoryDelete";
 			this.m_btnHistoryDelete.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHistoryDelete.TabIndex = 7;
+			this.m_btnHistoryDelete.TabIndex = 9;
 			this.m_btnHistoryDelete.Text = "&Delete";
 			this.m_btnHistoryDelete.UseVisualStyleBackColor = true;
 			this.m_btnHistoryDelete.Click += new System.EventHandler(this.OnBtnHistoryDelete);
@@ -1335,7 +1359,7 @@
 			this.m_btnHistoryView.Location = new System.Drawing.Point(8, 307);
 			this.m_btnHistoryView.Name = "m_btnHistoryView";
 			this.m_btnHistoryView.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHistoryView.TabIndex = 6;
+			this.m_btnHistoryView.TabIndex = 8;
 			this.m_btnHistoryView.Text = "&View";
 			this.m_btnHistoryView.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.m_btnHistoryView.UseVisualStyleBackColor = true;
@@ -1346,7 +1370,7 @@
 			this.m_btnHistoryRestore.Location = new System.Drawing.Point(382, 307);
 			this.m_btnHistoryRestore.Name = "m_btnHistoryRestore";
 			this.m_btnHistoryRestore.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHistoryRestore.TabIndex = 8;
+			this.m_btnHistoryRestore.TabIndex = 10;
 			this.m_btnHistoryRestore.Text = "&Restore";
 			this.m_btnHistoryRestore.UseVisualStyleBackColor = true;
 			this.m_btnHistoryRestore.Click += new System.EventHandler(this.OnBtnHistoryRestore);
@@ -1356,11 +1380,11 @@
 			this.m_lvHistory.FullRowSelect = true;
 			this.m_lvHistory.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvHistory.HideSelection = false;
-			this.m_lvHistory.Location = new System.Drawing.Point(9, 73);
+			this.m_lvHistory.Location = new System.Drawing.Point(9, 95);
 			this.m_lvHistory.Name = "m_lvHistory";
 			this.m_lvHistory.ShowItemToolTips = true;
-			this.m_lvHistory.Size = new System.Drawing.Size(447, 228);
-			this.m_lvHistory.TabIndex = 5;
+			this.m_lvHistory.Size = new System.Drawing.Size(447, 206);
+			this.m_lvHistory.TabIndex = 7;
 			this.m_lvHistory.UseCompatibleStateImageBehavior = false;
 			this.m_lvHistory.View = System.Windows.Forms.View.Details;
 			this.m_lvHistory.ItemActivate += new System.EventHandler(this.OnHistoryItemActivate);
@@ -1391,15 +1415,17 @@
 			this.m_ctxTools.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxToolsHelp,
             this.m_ctxToolsSep0,
+            this.m_ctxToolsCopyInitialPassword,
+            this.m_ctxToolsSep1,
             this.m_ctxToolsUrlHelp,
             this.m_ctxToolsUrlSelApp,
             this.m_ctxToolsUrlSelDoc,
-            this.m_ctxToolsSep1,
-            this.m_ctxToolsFieldRefs,
             this.m_ctxToolsSep2,
+            this.m_ctxToolsFieldRefs,
+            this.m_ctxToolsSep3,
             this.m_ctxToolsOtpGen});
 			this.m_ctxTools.Name = "m_ctxTools";
-			this.m_ctxTools.Size = new System.Drawing.Size(234, 154);
+			this.m_ctxTools.Size = new System.Drawing.Size(234, 204);
 			// 
 			// m_ctxToolsHelp
 			// 
@@ -1532,6 +1558,19 @@
 			this.m_ctxBinNew.Size = new System.Drawing.Size(211, 22);
 			this.m_ctxBinNew.Text = "&Create Empty Attachment";
 			this.m_ctxBinNew.Click += new System.EventHandler(this.OnCtxBinNew);
+			// 
+			// m_ctxToolsCopyInitialPassword
+			// 
+			this.m_ctxToolsCopyInitialPassword.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
+			this.m_ctxToolsCopyInitialPassword.Name = "m_ctxToolsCopyInitialPassword";
+			this.m_ctxToolsCopyInitialPassword.Size = new System.Drawing.Size(233, 22);
+			this.m_ctxToolsCopyInitialPassword.Text = "Copy Initial &Password";
+			this.m_ctxToolsCopyInitialPassword.Click += new System.EventHandler(this.OnCtxToolsCopyInitialPassword);
+			// 
+			// m_ctxToolsSep3
+			// 
+			this.m_ctxToolsSep3.Name = "m_ctxToolsSep3";
+			this.m_ctxToolsSep3.Size = new System.Drawing.Size(230, 6);
 			// 
 			// PwEntryForm
 			// 
@@ -1723,5 +1762,9 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxStrOtpGen;
 		private System.Windows.Forms.ToolStripSeparator m_ctxToolsSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsOtpGen;
+		private System.Windows.Forms.Label m_lblPasswordModified;
+		private System.Windows.Forms.Label m_lblPasswordModifiedData;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsCopyInitialPassword;
+		private System.Windows.Forms.ToolStripSeparator m_ctxToolsSep3;
 	}
 }

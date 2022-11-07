@@ -46,9 +46,24 @@ namespace KeePass.Forms
 		private ImageList m_ilFormats = null;
 
 		private FileFormatProvider m_fmtCur = null; // Current selection
-
 		private FileFormatProvider m_fmtFinal = null; // Returned as result
+		public FileFormatProvider ResultFormat
+		{
+			get { return m_fmtFinal; }
+		}
+
 		private string[] m_vFiles = null;
+		public string[] ResultFiles
+		{
+			get { return m_vFiles; }
+		}
+
+		private PwExportInfo m_piExport = null;
+		internal PwExportInfo ExportInfo
+		{
+			get { return m_piExport; }
+			set { m_piExport = value; }
+		}
 
 		private sealed class FormatGroupEx
 		{
@@ -62,23 +77,6 @@ namespace KeePass.Forms
 			{
 				m_lvg = new ListViewGroup(strGroupName);
 			}
-		}
-
-		public FileFormatProvider ResultFormat
-		{
-			get { return m_fmtFinal; }
-		}
-
-		public string[] ResultFiles
-		{
-			get { return m_vFiles; }
-		}
-
-		private PwExportInfo m_piExport = null;
-		internal PwExportInfo ExportInfo
-		{
-			get { return m_piExport; }
-			set { m_piExport = value; }
 		}
 
 		public void InitEx(bool bExport, PwDatabase pd, PwGroup pg)
@@ -356,7 +354,7 @@ namespace KeePass.Forms
 				// Allow only one file when exporting
 				if(m_bExport && !CheckFilePath(strFiles)) return false;
 			}
-			else vFiles = new string[0];
+			else vFiles = MemUtil.EmptyArray<string>();
 
 			if(m_piExport != null)
 			{

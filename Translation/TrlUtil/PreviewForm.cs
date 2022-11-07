@@ -83,104 +83,114 @@ namespace TrlUtil
 			ResumeLayout();
 		}
 
-		private void CopyChildControls(Control cDest, Control cSource,
-			Action<Control> fCustomizeCopy)
+		private static void CopyChildControls(Control cDest, Control cSource,
+			Action<Control> fCustomizeDest)
 		{
-			if((cDest == null) || (cSource == null)) return;
+			if(cDest == null) { Debug.Assert(false); return; }
 
-			foreach(Control c in cSource.Controls)
+			cDest.SuspendLayout();
+			try { CopyChildControlsPriv(cDest, cSource, fCustomizeDest); }
+			finally { cDest.ResumeLayout(); }
+		}
+
+		private static void CopyChildControlsPriv(Control cDest, Control cSource,
+			Action<Control> fCustomizeDest)
+		{
+			if((cDest == null) || (cSource == null)) { Debug.Assert(false); return; }
+
+			foreach(Control cS in cSource.Controls)
 			{
-				if(c == null) { Debug.Assert(false); continue; }
+				if(cS == null) { Debug.Assert(false); continue; }
 
 				bool bSetText = true;
 
-				Control cCopy;
-				if(c is Button) cCopy = new Button();
-				else if(c is CheckBox)
+				Control cD;
+				if(cS is Button) cD = new Button();
+				else if(cS is CheckBox)
 				{
-					cCopy = new CheckBox();
-					(cCopy as CheckBox).Appearance = (c as CheckBox).Appearance;
+					cD = new CheckBox();
+					(cD as CheckBox).Appearance = (cS as CheckBox).Appearance;
 				}
-				else if(c is ComboBox)
+				else if(cS is ComboBox)
 				{
-					cCopy = new ComboBox();
-					(cCopy as ComboBox).DropDownStyle = (c as ComboBox).DropDownStyle;
+					cD = new ComboBox();
+					(cD as ComboBox).DropDownStyle = (cS as ComboBox).DropDownStyle;
 				}
-				else if(c is GroupBox) cCopy = new GroupBox();
-				else if(c is HotKeyControlEx)
+				else if(cS is GroupBox) cD = new GroupBox();
+				else if(cS is HotKeyControlEx) // Before TextBox
 				{
-					cCopy = new TextBox();
+					cD = new TextBox();
 					bSetText = false;
 				}
-				else if(c is Label) cCopy = new Label();
-				else if(c is NumericUpDown)
+				else if(cS is Label) cD = new Label();
+				else if(cS is NumericUpDown)
 				{
-					cCopy = new TextBox(); // NumericUpDown leads to GDI objects leak
+					cD = new TextBox(); // NumericUpDown leads to GDI objects leak
 					bSetText = false;
 				}
-				else if(c is RadioButton) cCopy = new RadioButton();
-				else if(c is RichTextBox)
+				else if(cS is RadioButton) cD = new RadioButton();
+				else if(cS is RichTextBox)
 				{
-					cCopy = new TextBox(); // RTB leads to GDI objects leak
-					(cCopy as TextBox).Multiline = true;
+					cD = new TextBox(); // RTB leads to GDI objects leak
+					(cD as TextBox).Multiline = true;
 				}
-				else if(c is TabControl) cCopy = new TabControl();
-				else if(c is TabPage) cCopy = new TabPage();
-				// HotKeyControlEx is a TextBox, so HotKeyControlEx must be first
-				else if(c is TextBox)
+				else if(cS is TabControl) cD = new TabControl();
+				else if(cS is TabPage) // Before Panel
+					cD = new TabPage();
+				else if(cS is TextBox) // After HotKeyControlEx
 				{
-					cCopy = new TextBox();
-					(cCopy as TextBox).Multiline = (c as TextBox).Multiline;
+					cD = new TextBox();
+					(cD as TextBox).Multiline = (cS as TextBox).Multiline;
 				}
-				// TabPage is a Panel, so TabPage must be first
-				else if(c is Panel) cCopy = new Panel();
-				else cCopy = new Label();
+				else if(cS is Panel) // After TabPage
+					cD = new Panel();
+				else cD = new Label();
 
 				Color clr = Color.FromArgb(128 + g_rand.Next(0, 128),
 					128 + g_rand.Next(0, 128), 128 + g_rand.Next(0, 128));
 
-				cCopy.Name = c.Name;
-				cCopy.Font = c.Font;
-				cCopy.BackColor = clr;
-				if(bSetText) cCopy.Text = c.Text;
+				cD.Name = cS.Name;
+				cD.Font = cS.Font;
+				cD.BackColor = clr;
+				if(bSetText) cD.Text = cS.Text;
 
-				cCopy.Location = c.Location;
-				cCopy.Size = c.Size;
-				// Debug.Assert(cCopy.ClientSize == c.ClientSize);
-				cCopy.Dock = c.Dock;
-				cCopy.Padding = c.Padding;
+				cD.Location = cS.Location;
+				cD.Size = cS.Size;
+				// Debug.Assert(cD.ClientSize == cS.ClientSize);
+				cD.Dock = cS.Dock;
+				cD.Padding = cS.Padding;
 
-				// Type tCopy = cCopy.GetType();
-				// PropertyInfo piAutoSizeSrc = t.GetProperty("AutoSize", typeof(bool));
-				// PropertyInfo piAutoSizeDst = tCopy.GetProperty("AutoSize", typeof(bool));
-				// if((piAutoSizeSrc != null) && (piAutoSizeDst != null))
+				// Type tD = cD.GetType();
+				// PropertyInfo piAutoSizeS = tS.GetProperty("AutoSize", typeof(bool));
+				// PropertyInfo piAutoSizeD = tD.GetProperty("AutoSize", typeof(bool));
+				// if((piAutoSizeS != null) && (piAutoSizeD != null))
 				// {
-				//	MethodInfo miSrc = piAutoSizeSrc.GetGetMethod();
-				//	MethodInfo miDst = piAutoSizeDst.GetSetMethod();
-				//	miDst.Invoke(cCopy, new object[] { miSrc.Invoke(c, null) });
+				//	MethodInfo miS = piAutoSizeS.GetGetMethod();
+				//	MethodInfo miD = piAutoSizeD.GetSetMethod();
+				//	miD.Invoke(cD, new object[] { miS.Invoke(cS, null) });
 				// }
-				cCopy.AutoSize = c.AutoSize;
+				cD.AutoSize = cS.AutoSize;
 
-				cCopy.TabIndex = c.TabIndex;
-				cCopy.TabStop = c.TabStop;
+				cD.TabIndex = cS.TabIndex;
+				cD.TabStop = cS.TabStop;
 
-				ButtonBase bbCopy = (cCopy as ButtonBase);
-				if((bbCopy != null) && (c is ButtonBase))
-					bbCopy.TextAlign = (c as ButtonBase).TextAlign;
+				ButtonBase bbD = (cD as ButtonBase);
+				if((bbD != null) && (cS is ButtonBase))
+					bbD.TextAlign = (cS as ButtonBase).TextAlign;
 
-				Label lCopy = (cCopy as Label);
-				if((lCopy != null) && (c is Label))
-					lCopy.TextAlign = (c as Label).TextAlign;
+				Label lblD = (cD as Label);
+				if((lblD != null) && (cS is Label))
+					lblD.TextAlign = (cS as Label).TextAlign;
 
 				try
 				{
-					if(fCustomizeCopy != null) fCustomizeCopy(cCopy);
+					if(fCustomizeDest != null) fCustomizeDest(cD);
 
-					cDest.Controls.Add(cCopy);
+					cDest.Controls.Add(cD);
 
-					if((c is GroupBox) || (c is Panel) ||
-						(c is SplitContainer) || (c is TabControl))
-						CopyChildControls(cCopy, c, fCustomizeCopy);
+					if((cS is GroupBox) || (cS is Panel) ||
+						(cS is SplitContainer) || (cS is TabControl))
+						CopyChildControls(cD, cS, fCustomizeDest);
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
@@ -200,7 +210,20 @@ namespace TrlUtil
 				if(tp != null)
 				{
 					TabControl tc = (tp.Parent as TabControl);
-					if(tc != null) tc.SelectedTab = tp;
+					if(tc != null)
+					{
+						int i = tc.TabPages.IndexOf(tp);
+						Debug.Assert(i >= 0);
+
+						// Workaround for .NET bug: setting SelectedTab causes
+						// the preview form to get the focus, which breaks the
+						// ability to enter composite characters (Korean, ...)
+						// in the main form
+						if(!NativeLib.IsUnix() && tc.IsHandleCreated && (i >= 0))
+							NativeMethods.SendMessage(tc.Handle,
+								NativeMethods.TCM_SETCURSEL, (IntPtr)i, IntPtr.Zero);
+						else tc.SelectedTab = tp;
+					}
 					else { Debug.Assert(false); }
 				}
 
@@ -212,12 +235,32 @@ namespace TrlUtil
 		{
 			base.OnActivated(e);
 
-			// Timing-dependent, 100 ms is insufficient
-			ShowAcceleratorsAsync(200);
-			ShowAcceleratorsAsync(600);
+			ShowAccelerators();
 		}
 
 		public void ShowAccelerators()
+		{
+			try
+			{
+				ShowAcceleratorsPriv();
+
+				ThreadPool.QueueUserWorkItem(delegate(object state)
+				{
+					try
+					{
+						// Timing-dependent, 100 ms is insufficient
+						Thread.Sleep(200);
+						Invoke(new VoidDelegate(this.ShowAcceleratorsPriv));
+						Thread.Sleep(300);
+						Invoke(new VoidDelegate(this.ShowAcceleratorsPriv));
+					}
+					catch(Exception) { Debug.Assert(false); }
+				});
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private void ShowAcceleratorsPriv()
 		{
 			try
 			{
@@ -229,23 +272,6 @@ namespace TrlUtil
 					NativeMethods.UISF_HIDEACCEL)), IntPtr.Zero);
 			}
 			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); }
-		}
-
-		private void ShowAcceleratorsAsync(int msDelay)
-		{
-			try
-			{
-				ThreadPool.QueueUserWorkItem(delegate(object state)
-				{
-					try
-					{
-						Thread.Sleep(msDelay);
-						Invoke(new VoidDelegate(this.ShowAccelerators));
-					}
-					catch(Exception) { Debug.Assert(false); }
-				});
-			}
-			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

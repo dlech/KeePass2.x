@@ -559,25 +559,24 @@ namespace KeePassLib.Utility
 			ulong h = hI;
 
 			for(int i = iOffset; i < m4; i += 4)
-				h = (h ^ pb[i] ^ ((ulong)pb[i + 1] << 8) ^
-					((ulong)pb[i + 2] << 16) ^ ((ulong)pb[i + 3] << 24)) *
-					0x5EA4A1E35C8ACDA3UL;
+				h = (pb[i] ^ ((ulong)pb[i + 1] << 8) ^ ((ulong)pb[i + 2] << 16) ^
+					((ulong)pb[i + 3] << 24) ^ h) * 0x5EA4A1E35C8ACDA3UL;
 
 			switch(cbR)
 			{
 				case 1:
 					Debug.Assert(m4 == (m - 1));
-					h = (h ^ pb[m4]) * 0x54A1CC5970AF27BBUL;
+					h = (pb[m4] ^ h) * 0x54A1CC5970AF27BBUL;
 					break;
 				case 2:
 					Debug.Assert(m4 == (m - 2));
-					h = (h ^ pb[m4] ^ ((ulong)pb[m4 + 1] << 8)) *
+					h = (pb[m4] ^ ((ulong)pb[m4 + 1] << 8) ^ h) *
 						0x6C45CB2537A4271DUL;
 					break;
 				case 3:
 					Debug.Assert(m4 == (m - 3));
-					h = (h ^ pb[m4] ^ ((ulong)pb[m4 + 1] << 8) ^
-						((ulong)pb[m4 + 2] << 16)) * 0x59B8E8939E19695DUL;
+					h = (pb[m4] ^ ((ulong)pb[m4 + 1] << 8) ^
+						((ulong)pb[m4 + 2] << 16) ^ h) * 0x59B8E8939E19695DUL;
 					break;
 				default:
 					Debug.Assert(m4 == m);
@@ -933,6 +932,16 @@ namespace KeePassLib.Utility
 			if(IntPtr.Size >= 8)
 				return new IntPtr(unchecked(p.ToInt64() + cb));
 			return new IntPtr(unchecked(p.ToInt32() + (int)cb));
+		}
+
+		// Cf. Array.Empty<T>() of .NET 4.6
+		private static class EmptyArrayEx<T>
+		{
+			internal static readonly T[] Instance = new T[0];
+		}
+		internal static T[] EmptyArray<T>()
+		{
+			return EmptyArrayEx<T>.Instance;
 		}
 	}
 

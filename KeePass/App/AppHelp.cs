@@ -235,5 +235,23 @@ namespace KeePass.App
 		{
 			return (PwDefs.HelpUrl + GetRelativeUrl(strTopic, strSection));
 		}
+
+		// internal static void SetHelp(Form f, string strTopic, string strSection)
+		// {
+		//	if(f == null) { Debug.Assert(false); return; }
+		//	Debug.Assert(!f.HelpButton);
+		//	f.HelpButton = true;
+		//	SetHelp((Control)f, strTopic, strSection);
+		// }
+		// internal static void SetHelp(Control c, string strTopic, string strSection)
+		// {
+		//	if(c == null) { Debug.Assert(false); return; }
+		//	c.HelpRequested += delegate(object sender, HelpEventArgs e)
+		//	{
+		//		if(e == null) { Debug.Assert(false); return; }
+		//		e.Handled = true;
+		//		AppHelp.ShowHelp(strTopic, strSection);
+		//	};
+		// }
 	}
 }

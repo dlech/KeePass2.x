@@ -97,10 +97,12 @@ namespace KeePass.App
 			public static readonly string AutoTypeWindowFilters = "autowindows";
 
 			public static readonly string Entry = "v2/entry";
-			public static readonly string EntryGeneral = "general";
-			public static readonly string EntryStrings = "advanced";
-			public static readonly string EntryAutoType = "autotype";
-			public static readonly string EntryHistory = "history";
+			public static readonly string EntryGeneral = "gen";
+			public static readonly string EntryStrings = "str";
+			public static readonly string EntryAutoType = "at";
+			public static readonly string EntryHistory = "hst";
+			internal const string EntryAdvanced = "adv";
+			internal const string EntryProperties = "prp";
 
 			public static readonly string KeySources = "base/keys";
 			public static readonly string KeySourcesKeyFile = "keyfiles";

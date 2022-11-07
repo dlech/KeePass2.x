@@ -217,7 +217,7 @@ namespace KeePass.Native
 					BindingFlags.Public | BindingFlags.Static);
 				if(miInitCheck == null) { Debug.Assert(false); return false; }
 
-				string[] vArgs = new string[0];
+				string[] vArgs = MemUtil.EmptyArray<string>();
 				bool bResult = (bool)miInitCheck.Invoke(null, new object[] {
 					PwDefs.ShortProductName, vArgs });
 				if(!bResult) return false;

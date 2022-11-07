@@ -616,10 +616,14 @@ namespace KeePassLib
 		public void Open(IOConnectionInfo ioSource, CompositeKey pwKey,
 			IStatusLogger slLogger)
 		{
-			Debug.Assert(ioSource != null);
-			if(ioSource == null) throw new ArgumentNullException("ioSource");
-			Debug.Assert(pwKey != null);
-			if(pwKey == null) throw new ArgumentNullException("pwKey");
+			Open(ioSource, pwKey, slLogger, false);
+		}
+
+		private void Open(IOConnectionInfo ioSource, CompositeKey pwKey,
+			IStatusLogger slLogger, bool bHeaderOnly)
+		{
+			if(ioSource == null) { Debug.Assert(false); throw new ArgumentNullException("ioSource"); }
+			if(pwKey == null) { Debug.Assert(false); throw new ArgumentNullException("pwKey"); }
 
 			Close();
 
@@ -633,6 +637,7 @@ namespace KeePassLib
 				m_bModified = false;
 
 				KdbxFile kdbx = new KdbxFile(this);
+				kdbx.HeaderOnly = bHeaderOnly;
 				kdbx.DetachBinaries = m_strDetachBins;
 
 				using(Stream s = IOConnection.OpenRead(ioSource))
@@ -737,6 +742,19 @@ namespace KeePassLib
 		public void Close()
 		{
 			Clear();
+		}
+
+		/// <summary>
+		/// Load only the unencrypted header of a database file.
+		/// In the returned database object, any data that is not stored
+		/// in the unencrypted header is set to its default value.
+		/// Intended primarily for plugins.
+		/// </summary>
+		public static PwDatabase LoadHeader(IOConnectionInfo ioSource)
+		{
+			PwDatabase pd = new PwDatabase();
+			pd.Open(ioSource, new CompositeKey(), null, true);
+			return pd;
 		}
 
 		public void MergeIn(PwDatabase pdSource, PwMergeMethod mm)

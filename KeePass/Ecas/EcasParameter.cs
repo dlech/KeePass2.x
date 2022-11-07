@@ -21,18 +21,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using KeePassLib.Utility;
+
 namespace KeePass.Ecas
 {
 	public sealed class EcasParameter
 	{
-		private static EcasParameter[] m_epvNone = null;
 		public static EcasParameter[] EmptyArray
 		{
-			get
-			{
-				if(m_epvNone == null) m_epvNone = new EcasParameter[0];
-				return m_epvNone;
-			}
+			get { return MemUtil.EmptyArray<EcasParameter>(); }
 		}
 
 		private string m_strName;

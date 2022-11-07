@@ -149,27 +149,23 @@ namespace KeePass.Forms
 			Debug.Assert(!m_cmbMenuStyle.Sorted);
 			m_cmbMenuStyle.Items.Add(KPRes.Automatic + " (" + KPRes.Recommended + ")");
 			m_cmbMenuStyle.Items.Add(new string('-', 24));
-			int nTsrs = 2, iTsrSel = 0, nSuffixes = 0;
+			int nTsrs = 2, iTsrSel = 0;
 			foreach(TsrFactory fTsr in TsrPool.Factories)
 			{
-				string strSuffix = string.Empty;
+				string strName = (fTsr.Name ?? string.Empty);
 				if(!fTsr.IsSupported())
-				{
-					strSuffix = " (" + KPRes.IncompatibleEnv + ")";
-					++nSuffixes;
-				}
+					strName += " (" + KPRes.IncompatibleEnv + ")";
 
 				string strUuid = Convert.ToBase64String(fTsr.Uuid.UuidBytes);
 				if(Program.Config.UI.ToolStripRenderer == strUuid)
 					iTsrSel = nTsrs;
 
-				m_cmbMenuStyle.Items.Add((fTsr.Name ?? string.Empty) + strSuffix);
-				m_dTsrUuids[nTsrs] = strUuid;
-				++nTsrs;
+				m_cmbMenuStyle.Items.Add(strName);
+				m_dTsrUuids[nTsrs++] = strUuid;
 			}
 			Debug.Assert(m_cmbMenuStyle.Items.Count == nTsrs);
+			UIUtil.AdjustDropDownWidth(m_cmbMenuStyle);
 			m_cmbMenuStyle.SelectedIndex = iTsrSel;
-			if(nSuffixes > 0) m_cmbMenuStyle.DropDownWidth = m_cmbMenuStyle.Width * 2;
 			if(AppConfigEx.IsOptionEnforced(Program.Config.UI, "ToolStripRenderer"))
 				UIUtil.SetEnabledFast(false, m_lblMenuStyle, m_cmbMenuStyle);
 
@@ -486,8 +482,8 @@ namespace KeePass.Forms
 			//	m_lvGuiOptions, lvg, KPRes.ShowGridLines);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntryListAutoResizeColumns",
 				lvg, KPRes.EntryListAutoResizeColumns);
-			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntryListAlternatingBgColors",
-				lvg, KPRes.AlternatingBgColors);
+			// m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntryListAlternatingBgColors",
+			//	lvg, KPRes.AlternatingBgColors);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "CopyUrlsInsteadOfOpening",
 				lvg, KPRes.CopyUrlsInsteadOfOpening);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "EntrySelGroupSel",
@@ -567,17 +563,24 @@ namespace KeePass.Forms
 			try { m_numMruCount.Value = Program.Config.Application.MostRecentlyUsed.MaxItemCount; }
 			catch(Exception) { Debug.Assert(false); m_numMruCount.Value = AceMru.DefaultMaxItemCount; }
 			if(AppConfigEx.IsOptionEnforced(Program.Config.Application.MostRecentlyUsed, "MaxItemCount"))
-			{
-				m_lblMruCount.Enabled = false;
-				m_numMruCount.Enabled = false;
-			}
+				UIUtil.SetEnabledFast(false, m_lblMruCount, m_numMruCount);
+
+			Debug.Assert(!m_cmbAltColor.Sorted);
+			m_cmbAltColor.Items.Add(KPRes.Off);
+			m_cmbAltColor.Items.Add(KPRes.On + ", " + KPRes.DefaultColor);
+			m_cmbAltColor.Items.Add(KPRes.On + ", " + KPRes.CustomColor + ":");
+
+			UIUtil.AdjustDropDownWidth(m_cmbAltColor);
 
 			int c = Program.Config.MainWindow.EntryListAlternatingBgColor;
+			if(Program.Config.MainWindow.EntryListAlternatingBgColors)
+				m_cmbAltColor.SelectedIndex = ((c != 0) ? 2 : 1);
+			else m_cmbAltColor.SelectedIndex = 0;
 			m_btnAltColor.SelectedColor = ((c != 0) ? Color.FromArgb(c) :
 				UIUtil.GetAlternateColor(m_lvGuiOptions.BackColor));
-			m_cbAltColor.Checked = (c != 0);
-			if(AppConfigEx.IsOptionEnforced(Program.Config.MainWindow, "EntryListAlternatingBgColor"))
-				m_cbAltColor.Enabled = false;
+			if(AppConfigEx.IsOptionEnforced(Program.Config.MainWindow, "EntryListAlternatingBgColors") ||
+				AppConfigEx.IsOptionEnforced(Program.Config.MainWindow, "EntryListAlternatingBgColor"))
+				UIUtil.SetEnabledFast(false, m_lblAltColor, m_cmbAltColor, m_btnAltColor);
 
 			if(AppConfigEx.IsOptionEnforced(Program.Config.UI, "StandardFont"))
 				m_fcgList.Enabled = false;
@@ -808,9 +811,11 @@ namespace KeePass.Forms
 			Program.Config.Application.MostRecentlyUsed.MaxItemCount =
 				(uint)m_numMruCount.Value;
 
+			int i = m_cmbAltColor.SelectedIndex;
 			Debug.Assert(Color.Empty.ToArgb() == 0);
+			Program.Config.MainWindow.EntryListAlternatingBgColors = (i != 0);
 			Program.Config.MainWindow.EntryListAlternatingBgColor =
-				(m_cbAltColor.Checked ? m_btnAltColor.SelectedColor.ToArgb() : 0);
+				((i == 2) ? m_btnAltColor.SelectedColor.ToArgb() : 0);
 
 			ChangeHotKey(ref m_kPrevAT, m_hkAutoType,
 				AppDefs.GlobalHotKeyId.AutoType);
@@ -898,8 +903,8 @@ namespace KeePass.Forms
 			m_numClipClearTime.Enabled = (m_cbClipClearTime.Checked &&
 				m_cbClipClearTime.Enabled);
 
-			m_btnAltColor.Enabled = (m_cbAltColor.Checked &&
-				m_cbAltColor.Enabled);
+			m_btnAltColor.Enabled = (m_cmbAltColor.Enabled &&
+				(m_cmbAltColor.SelectedIndex == 2));
 
 			m_bBlockUIUpdate = false;
 		}
@@ -1004,11 +1009,6 @@ namespace KeePass.Forms
 			UIUtil.ShowDialogAndDestroy(dlg);
 		}
 
-		private void OnAltColorCheckedChanged(object sender, EventArgs e)
-		{
-			UpdateUIState();
-		}
-
 		private void OnBtnHelpSource(object sender, EventArgs e)
 		{
 			HelpSourceForm hsf = new HelpSourceForm();
@@ -1033,6 +1033,11 @@ namespace KeePass.Forms
 		private void OnGuiFontLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.FaqTech, AppDefs.HelpTopics.FaqTechGuiFont);
+		}
+
+		private void OnAltColorSelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateUIState();
 		}
 	}
 }

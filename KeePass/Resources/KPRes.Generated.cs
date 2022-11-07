@@ -45,7 +45,6 @@ namespace KeePass.Resources
 			m_strAll = TryGetEx(dictNew, "All", m_strAll);
 			m_strAllFiles = TryGetEx(dictNew, "AllFiles", m_strAllFiles);
 			m_strAllSupportedFiles = TryGetEx(dictNew, "AllSupportedFiles", m_strAllSupportedFiles);
-			m_strAlternatingBgColors = TryGetEx(dictNew, "AlternatingBgColors", m_strAlternatingBgColors);
 			m_strApplication = TryGetEx(dictNew, "Application", m_strApplication);
 			m_strApplicationExit = TryGetEx(dictNew, "ApplicationExit", m_strApplicationExit);
 			m_strApplicationInitialized = TryGetEx(dictNew, "ApplicationInitialized", m_strApplicationInitialized);
@@ -178,6 +177,7 @@ namespace KeePass.Resources
 			m_strCopyEntriesUCmd = TryGetEx(dictNew, "CopyEntriesUCmd", m_strCopyEntriesUCmd);
 			m_strCopyEntryECmd = TryGetEx(dictNew, "CopyEntryECmd", m_strCopyEntryECmd);
 			m_strCopyEntryUCmd = TryGetEx(dictNew, "CopyEntryUCmd", m_strCopyEntryUCmd);
+			m_strCopyInitialPasswordDesc = TryGetEx(dictNew, "CopyInitialPasswordDesc", m_strCopyInitialPasswordDesc);
 			m_strCopyLink = TryGetEx(dictNew, "CopyLink", m_strCopyLink);
 			m_strCopyObject = TryGetEx(dictNew, "CopyObject", m_strCopyObject);
 			m_strCopyOfItem = TryGetEx(dictNew, "CopyOfItem", m_strCopyOfItem);
@@ -204,6 +204,7 @@ namespace KeePass.Resources
 			m_strCtrlAltAConflictHint = TryGetEx(dictNew, "CtrlAltAConflictHint", m_strCtrlAltAConflictHint);
 			m_strCurrentStyle = TryGetEx(dictNew, "CurrentStyle", m_strCurrentStyle);
 			m_strCustom = TryGetEx(dictNew, "Custom", m_strCustom);
+			m_strCustomColor = TryGetEx(dictNew, "CustomColor", m_strCustomColor);
 			m_strCustomFields = TryGetEx(dictNew, "CustomFields", m_strCustomFields);
 			m_strCustomizableHtml = TryGetEx(dictNew, "CustomizableHtml", m_strCustomizableHtml);
 			m_strCustomTbButtonAdd = TryGetEx(dictNew, "CustomTbButtonAdd", m_strCustomTbButtonAdd);
@@ -233,6 +234,7 @@ namespace KeePass.Resources
 			m_strDbMntncResults = TryGetEx(dictNew, "DbMntncResults", m_strDbMntncResults);
 			m_strDbNoModBy = TryGetEx(dictNew, "DbNoModBy", m_strDbNoModBy);
 			m_strDefault = TryGetEx(dictNew, "Default", m_strDefault);
+			m_strDefaultColor = TryGetEx(dictNew, "DefaultColor", m_strDefaultColor);
 			m_strDelete = TryGetEx(dictNew, "Delete", m_strDelete);
 			m_strDeleteCmd = TryGetEx(dictNew, "DeleteCmd", m_strDeleteCmd);
 			m_strDeleteEntriesCmd = TryGetEx(dictNew, "DeleteEntriesCmd", m_strDeleteEntriesCmd);
@@ -374,6 +376,7 @@ namespace KeePass.Resources
 			m_strFilter = TryGetEx(dictNew, "Filter", m_strFilter);
 			m_strFind = TryGetEx(dictNew, "Find", m_strFind);
 			m_strFindEntries = TryGetEx(dictNew, "FindEntries", m_strFindEntries);
+			m_strFixByReinstall = TryGetEx(dictNew, "FixByReinstall", m_strFixByReinstall);
 			m_strFocusQuickFindOnRestore = TryGetEx(dictNew, "FocusQuickFindOnRestore", m_strFocusQuickFindOnRestore);
 			m_strFocusQuickFindOnUntray = TryGetEx(dictNew, "FocusQuickFindOnUntray", m_strFocusQuickFindOnUntray);
 			m_strFocusResultsAfterQuickSearch = TryGetEx(dictNew, "FocusResultsAfterQuickSearch", m_strFocusResultsAfterQuickSearch);
@@ -413,6 +416,7 @@ namespace KeePass.Resources
 			m_strHideCloseDatabaseTb = TryGetEx(dictNew, "HideCloseDatabaseTb", m_strHideCloseDatabaseTb);
 			m_strHideUsingAsterisks = TryGetEx(dictNew, "HideUsingAsterisks", m_strHideUsingAsterisks);
 			m_strHistory = TryGetEx(dictNew, "History", m_strHistory);
+			m_strHistoryBased = TryGetEx(dictNew, "HistoryBased", m_strHistoryBased);
 			m_strHmacOtp = TryGetEx(dictNew, "HmacOtp", m_strHmacOtp);
 			m_strHomebanking = TryGetEx(dictNew, "Homebanking", m_strHomebanking);
 			m_strHost = TryGetEx(dictNew, "Host", m_strHost);
@@ -617,6 +621,7 @@ namespace KeePass.Resources
 			m_strOptionReqOn = TryGetEx(dictNew, "OptionReqOn", m_strOptionReqOn);
 			m_strOptions = TryGetEx(dictNew, "Options", m_strOptions);
 			m_strOptionsDesc = TryGetEx(dictNew, "OptionsDesc", m_strOptionsDesc);
+			m_strOrEarlier = TryGetEx(dictNew, "OrEarlier", m_strOrEarlier);
 			m_strOtherPlaceholders = TryGetEx(dictNew, "OtherPlaceholders", m_strOtherPlaceholders);
 			m_strOtpAuthUri = TryGetEx(dictNew, "OtpAuthUri", m_strOtpAuthUri);
 			m_strOtpGenSettings = TryGetEx(dictNew, "OtpGenSettings", m_strOtpGenSettings);
@@ -748,6 +753,7 @@ namespace KeePass.Resources
 			m_strSaveDatabase = TryGetEx(dictNew, "SaveDatabase", m_strSaveDatabase);
 			m_strSaveDatabaseStc = TryGetEx(dictNew, "SaveDatabaseStc", m_strSaveDatabaseStc);
 			m_strSavedDatabaseFile = TryGetEx(dictNew, "SavedDatabaseFile", m_strSavedDatabaseFile);
+			m_strSaveFilesTo = TryGetEx(dictNew, "SaveFilesTo", m_strSaveFilesTo);
 			m_strSaveForceSync = TryGetEx(dictNew, "SaveForceSync", m_strSaveForceSync);
 			m_strSavingDatabase = TryGetEx(dictNew, "SavingDatabase", m_strSavingDatabase);
 			m_strSavingDatabaseFile = TryGetEx(dictNew, "SavingDatabaseFile", m_strSavingDatabaseFile);
@@ -968,7 +974,6 @@ namespace KeePass.Resources
 			"All",
 			"AllFiles",
 			"AllSupportedFiles",
-			"AlternatingBgColors",
 			"Application",
 			"ApplicationExit",
 			"ApplicationInitialized",
@@ -1101,6 +1106,7 @@ namespace KeePass.Resources
 			"CopyEntriesUCmd",
 			"CopyEntryECmd",
 			"CopyEntryUCmd",
+			"CopyInitialPasswordDesc",
 			"CopyLink",
 			"CopyObject",
 			"CopyOfItem",
@@ -1127,6 +1133,7 @@ namespace KeePass.Resources
 			"CtrlAltAConflictHint",
 			"CurrentStyle",
 			"Custom",
+			"CustomColor",
 			"CustomFields",
 			"CustomizableHtml",
 			"CustomTbButtonAdd",
@@ -1156,6 +1163,7 @@ namespace KeePass.Resources
 			"DbMntncResults",
 			"DbNoModBy",
 			"Default",
+			"DefaultColor",
 			"Delete",
 			"DeleteCmd",
 			"DeleteEntriesCmd",
@@ -1297,6 +1305,7 @@ namespace KeePass.Resources
 			"Filter",
 			"Find",
 			"FindEntries",
+			"FixByReinstall",
 			"FocusQuickFindOnRestore",
 			"FocusQuickFindOnUntray",
 			"FocusResultsAfterQuickSearch",
@@ -1336,6 +1345,7 @@ namespace KeePass.Resources
 			"HideCloseDatabaseTb",
 			"HideUsingAsterisks",
 			"History",
+			"HistoryBased",
 			"HmacOtp",
 			"Homebanking",
 			"Host",
@@ -1540,6 +1550,7 @@ namespace KeePass.Resources
 			"OptionReqOn",
 			"Options",
 			"OptionsDesc",
+			"OrEarlier",
 			"OtherPlaceholders",
 			"OtpAuthUri",
 			"OtpGenSettings",
@@ -1671,6 +1682,7 @@ namespace KeePass.Resources
 			"SaveDatabase",
 			"SaveDatabaseStc",
 			"SavedDatabaseFile",
+			"SaveFilesTo",
 			"SaveForceSync",
 			"SavingDatabase",
 			"SavingDatabaseFile",
@@ -2083,17 +2095,6 @@ namespace KeePass.Resources
 		public static string AllSupportedFiles
 		{
 			get { return m_strAllSupportedFiles; }
-		}
-
-		private static string m_strAlternatingBgColors =
-			@"Use alternating item background colors";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Use alternating item background colors'.
-		/// </summary>
-		public static string AlternatingBgColors
-		{
-			get { return m_strAlternatingBgColors; }
 		}
 
 		private static string m_strApplication =
@@ -3548,6 +3549,17 @@ namespace KeePass.Resources
 			get { return m_strCopyEntryUCmd; }
 		}
 
+		private static string m_strCopyInitialPasswordDesc =
+			@"Copy the password that was current when the dialog was opened";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Copy the password that was current when the dialog was opened'.
+		/// </summary>
+		public static string CopyInitialPasswordDesc
+		{
+			get { return m_strCopyInitialPasswordDesc; }
+		}
+
 		private static string m_strCopyLink =
 			@"Copy Link";
 		/// <summary>
@@ -3832,6 +3844,17 @@ namespace KeePass.Resources
 		public static string Custom
 		{
 			get { return m_strCustom; }
+		}
+
+		private static string m_strCustomColor =
+			@"custom color";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'custom color'.
+		/// </summary>
+		public static string CustomColor
+		{
+			get { return m_strCustomColor; }
 		}
 
 		private static string m_strCustomFields =
@@ -4151,6 +4174,17 @@ namespace KeePass.Resources
 		public static string Default
 		{
 			get { return m_strDefault; }
+		}
+
+		private static string m_strDefaultColor =
+			@"default color";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'default color'.
+		/// </summary>
+		public static string DefaultColor
+		{
+			get { return m_strDefaultColor; }
 		}
 
 		private static string m_strDelete =
@@ -5704,6 +5738,17 @@ namespace KeePass.Resources
 			get { return m_strFindEntries; }
 		}
 
+		private static string m_strFixByReinstall =
+			@"In order to fix this problem, it is recommended to reinstall KeePass.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'In order to fix this problem, it is recommended to reinstall KeePass.'.
+		/// </summary>
+		public static string FixByReinstall
+		{
+			get { return m_strFixByReinstall; }
+		}
+
 		private static string m_strFocusQuickFindOnRestore =
 			@"Focus quick search box when restoring from taskbar";
 		/// <summary>
@@ -6131,6 +6176,17 @@ namespace KeePass.Resources
 		public static string History
 		{
 			get { return m_strHistory; }
+		}
+
+		private static string m_strHistoryBased =
+			@"based on history";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'based on history'.
+		/// </summary>
+		public static string HistoryBased
+		{
+			get { return m_strHistoryBased; }
 		}
 
 		private static string m_strHmacOtp =
@@ -8377,6 +8433,17 @@ namespace KeePass.Resources
 			get { return m_strOptionsDesc; }
 		}
 
+		private static string m_strOrEarlier =
+			@"or earlier";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'or earlier'.
+		/// </summary>
+		public static string OrEarlier
+		{
+			get { return m_strOrEarlier; }
+		}
+
 		private static string m_strOtherPlaceholders =
 			@"Other Placeholders";
 		/// <summary>
@@ -9816,6 +9883,17 @@ namespace KeePass.Resources
 		public static string SavedDatabaseFile
 		{
 			get { return m_strSavedDatabaseFile; }
+		}
+
+		private static string m_strSaveFilesTo =
+			@"Save File(s) To";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Save File(s) To'.
+		/// </summary>
+		public static string SaveFilesTo
+		{
+			get { return m_strSaveFilesTo; }
 		}
 
 		private static string m_strSaveForceSync =

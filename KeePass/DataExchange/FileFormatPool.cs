@@ -84,6 +84,7 @@ namespace KeePass.DataExchange
 			l.Add(new WinFavorites10(false));
 			l.Add(new WinFavorites10(true));
 
+			l.Add(new OnePw1Pux8());
 			l.Add(new OnePwProCsv599());
 			l.Add(new AmpXml250());
 			l.Add(new AnyPwCsv144());
@@ -101,6 +102,7 @@ namespace KeePass.DataExchange
 			l.Add(new KasperskyPwMgrXml50());
 			l.Add(new KeePassXXml041());
 			l.Add(new KeeperJson16());
+			l.Add(new KeyFolderXml1());
 			l.Add(new LastPassCsv2());
 			l.Add(new MSecureCsv355());
 			l.Add(new NetworkPwMgrCsv4());
@@ -169,7 +171,8 @@ namespace KeePass.DataExchange
 
 					string strExtU = UIUtil.GetPrimaryFileTypeExt(strExts).ToUpper();
 					Debug.Assert(p.DisplayName.EndsWith(" " + strExtU) ||
-						p.DisplayName.Contains(" " + strExtU + " "));
+						p.DisplayName.Contains(" " + strExtU + " ") ||
+						p.DisplayName.Contains(" " + strExtU + "-"));
 				}
 			}
 #endif

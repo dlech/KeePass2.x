@@ -1,3 +1,75 @@
+2022-09-09: 2.52
+- Added 'Copy Initial Password' command in the tools menu of
+  the entry dialog; it copies (to the clipboard) the password
+  that was current when the dialog was opened
+- When multiple entries are selected (containing at least one
+  attachment), the number of attachments is now displayed in
+  the 'Attachments' submenu of the entry menu
+- Added option 'Alt. item background color' (supporting the
+  states 'Off', 'On, default color' and 'On, custom color');
+  this combines the previous two options 'Use alternating item
+  background colors' and 'Custom alt. item color'
+- Comment placeholders ({C:...}) may now contain balanced
+  braces
+- In the auto-type entry selection dialog, values in the
+  'Sequence - Comments' column are dereferenced now
+- The time when the password of an entry was last changed is
+  now displayed in the entry dialog on the 'History' tab page
+- The {FIREFOX} placeholder and the 'URL(s)' menu ('Open with
+  ...' commands) now support detecting the Microsoft Store
+  version of Firefox (in addition to the regular versions)
+- Added support for importing 1Password 8.7 1PUX files
+- Added support for importing Key Folder 1.22 XML files
+- Sticky Password XML import: added support for importing
+  groups and expiry dates
+- Steganos Password Manager CSV import: added support for the
+  new encoding of double quotes
+- Bitwarden JSON import: time-based one-time password generator
+  settings are converted automatically now
+- KeePass now checks the 'KeePass.exe.config' file and shows a
+  warning message when finding a problem
+- For development builds: added command for showing GC
+  information
+- Plugins can now load the header of a database file more
+  easily
+- Plugins can now subscribe to a master key change event
+- TrlUtil: added workaround for .NET tab control focus bug
+
+- Moved the command 'Save Attached File(s) To' into the
+  'Attachments' submenu of the entry menu and renamed it to
+  'Save File(s) To'
+- The command for saving attached files is now available only
+  if at least one of the selected entries has at least one
+  attachment
+- The {APPACTIVATE ...} auto-type command now ignores the
+  options 'Cancel auto-type when the target window changes' and
+  'Cancel auto-type when the target window title changes'
+- {APPACTIVATE ...} auto-type command: if the specified window
+  does not exist or cannot be focused, auto-type is aborted now
+- Unified creation of fields with indices
+- Improved database modification state and UI updating after
+  imports/synchronizations
+- In the master key creation/prompt dialogs, the [OK] button is
+  now disabled when checking the 'Key file/provider' check box
+  and selecting '(None)' in the combo box
+- Improved drop-down menu width adjustment for certain combo
+  boxes in the options dialog
+- Improved hashing performance of protected binaries, UUIDs,
+  ...
+- Performance improvements related to empty arrays
+- Improved Mono framework version detection
+- TrlUtil: improved preview dialog update performance
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- Fixed a bug that caused a minimized main window to be
+  restored to a normal window instead of a maximized window in
+  certain situations
+- The 'Help' menu item in the entry dialog and the 'Help'
+  button in the entry string field dialog now open the correct
+  help sections
+
 2022-05-09: 2.51.1
 - The option 'Use alternating item background colors' is now
   compatible with automatic sorting again

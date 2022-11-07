@@ -237,7 +237,7 @@ namespace KeePass.Forms
 
 			bool bRtl = (this.RightToLeft == RightToLeft.Yes);
 
-			char[] vWord = ((m_psWord != null) ? m_psWord.ReadChars() : new char[0]);
+			char[] vWord = ((m_psWord != null) ? m_psWord.ReadChars() : MemUtil.EmptyArray<char>());
 			if(vWord.Length >= 1)
 			{
 				int x = 0;

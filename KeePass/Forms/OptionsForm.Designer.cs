@@ -67,11 +67,12 @@
 			this.m_btnPasswordFont = new System.Windows.Forms.Button();
 			this.m_cbPasswordFont = new System.Windows.Forms.CheckBox();
 			this.m_grpStyles = new System.Windows.Forms.GroupBox();
+			this.m_cmbAltColor = new System.Windows.Forms.ComboBox();
+			this.m_lblAltColor = new System.Windows.Forms.Label();
 			this.m_linkTheme = new System.Windows.Forms.LinkLabel();
 			this.m_cmbMenuStyle = new System.Windows.Forms.ComboBox();
 			this.m_btnAltColor = new KeePass.UI.ColorButtonEx();
 			this.m_cmbBannerStyle = new System.Windows.Forms.ComboBox();
-			this.m_cbAltColor = new System.Windows.Forms.CheckBox();
 			this.m_lblBannerStyle = new System.Windows.Forms.Label();
 			this.m_lblMenuStyle = new System.Windows.Forms.Label();
 			this.m_tabIntegration = new System.Windows.Forms.TabPage();
@@ -537,11 +538,12 @@
 			// 
 			// m_grpStyles
 			// 
+			this.m_grpStyles.Controls.Add(this.m_cmbAltColor);
+			this.m_grpStyles.Controls.Add(this.m_lblAltColor);
 			this.m_grpStyles.Controls.Add(this.m_linkTheme);
 			this.m_grpStyles.Controls.Add(this.m_cmbMenuStyle);
 			this.m_grpStyles.Controls.Add(this.m_btnAltColor);
 			this.m_grpStyles.Controls.Add(this.m_cmbBannerStyle);
-			this.m_grpStyles.Controls.Add(this.m_cbAltColor);
 			this.m_grpStyles.Controls.Add(this.m_lblBannerStyle);
 			this.m_grpStyles.Controls.Add(this.m_lblMenuStyle);
 			this.m_grpStyles.Location = new System.Drawing.Point(6, 12);
@@ -551,13 +553,32 @@
 			this.m_grpStyles.TabStop = false;
 			this.m_grpStyles.Text = "Styles && colors";
 			// 
+			// m_cmbAltColor
+			// 
+			this.m_cmbAltColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cmbAltColor.FormattingEnabled = true;
+			this.m_cmbAltColor.Location = new System.Drawing.Point(160, 72);
+			this.m_cmbAltColor.Name = "m_cmbAltColor";
+			this.m_cmbAltColor.Size = new System.Drawing.Size(118, 21);
+			this.m_cmbAltColor.TabIndex = 5;
+			this.m_cmbAltColor.SelectedIndexChanged += new System.EventHandler(this.OnAltColorSelectedIndexChanged);
+			// 
+			// m_lblAltColor
+			// 
+			this.m_lblAltColor.AutoSize = true;
+			this.m_lblAltColor.Location = new System.Drawing.Point(6, 75);
+			this.m_lblAltColor.Name = "m_lblAltColor";
+			this.m_lblAltColor.Size = new System.Drawing.Size(133, 13);
+			this.m_lblAltColor.TabIndex = 4;
+			this.m_lblAltColor.Text = "&Alt. item background color:";
+			// 
 			// m_linkTheme
 			// 
 			this.m_linkTheme.AutoSize = true;
 			this.m_linkTheme.Location = new System.Drawing.Point(6, 102);
 			this.m_linkTheme.Name = "m_linkTheme";
 			this.m_linkTheme.Size = new System.Drawing.Size(62, 13);
-			this.m_linkTheme.TabIndex = 6;
+			this.m_linkTheme.TabIndex = 7;
 			this.m_linkTheme.TabStop = true;
 			this.m_linkTheme.Text = "Dark theme";
 			this.m_linkTheme.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnGuiDarkLinkClicked);
@@ -573,10 +594,10 @@
 			// 
 			// m_btnAltColor
 			// 
-			this.m_btnAltColor.Location = new System.Drawing.Point(159, 71);
+			this.m_btnAltColor.Location = new System.Drawing.Point(284, 71);
 			this.m_btnAltColor.Name = "m_btnAltColor";
-			this.m_btnAltColor.Size = new System.Drawing.Size(48, 23);
-			this.m_btnAltColor.TabIndex = 5;
+			this.m_btnAltColor.Size = new System.Drawing.Size(37, 23);
+			this.m_btnAltColor.TabIndex = 6;
 			this.m_btnAltColor.UseVisualStyleBackColor = true;
 			// 
 			// m_cmbBannerStyle
@@ -588,17 +609,6 @@
 			this.m_cmbBannerStyle.Size = new System.Drawing.Size(160, 21);
 			this.m_cmbBannerStyle.TabIndex = 3;
 			this.m_cmbBannerStyle.SelectedIndexChanged += new System.EventHandler(this.OnBannerStyleSelectedChanged);
-			// 
-			// m_cbAltColor
-			// 
-			this.m_cbAltColor.AutoSize = true;
-			this.m_cbAltColor.Location = new System.Drawing.Point(9, 74);
-			this.m_cbAltColor.Name = "m_cbAltColor";
-			this.m_cbAltColor.Size = new System.Drawing.Size(129, 17);
-			this.m_cbAltColor.TabIndex = 4;
-			this.m_cbAltColor.Text = "Custom &alt. item color:";
-			this.m_cbAltColor.UseVisualStyleBackColor = true;
-			this.m_cbAltColor.CheckedChanged += new System.EventHandler(this.OnAltColorCheckedChanged);
 			// 
 			// m_lblBannerStyle
 			// 
@@ -946,11 +956,12 @@
 		private System.Windows.Forms.CheckBox m_cbPasswordFont;
 		private System.Windows.Forms.Button m_btnListFont;
 		private KeePass.UI.ColorButtonEx m_btnAltColor;
-		private System.Windows.Forms.CheckBox m_cbAltColor;
 		private System.Windows.Forms.GroupBox m_grpFonts;
 		private System.Windows.Forms.GroupBox m_grpStyles;
 		private System.Windows.Forms.GroupBox m_grpIntAdv;
 		private System.Windows.Forms.LinkLabel m_linkTheme;
 		private System.Windows.Forms.LinkLabel m_linkMainFont;
+		private System.Windows.Forms.ComboBox m_cmbAltColor;
+		private System.Windows.Forms.Label m_lblAltColor;
 	}
 }

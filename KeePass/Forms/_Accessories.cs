@@ -259,6 +259,17 @@ namespace KeePass.Forms
 		}
 	}
 
+	public sealed class MasterKeyChangedEventArgs : EventArgs
+	{
+		private readonly PwDatabase m_pd;
+		public PwDatabase Database { get { return m_pd; } }
+
+		public MasterKeyChangedEventArgs(PwDatabase pd)
+		{
+			m_pd = pd;
+		}
+	}
+
 	public sealed class CancelEntryEventArgs : CancellableOperationEventArgs
 	{
 		private readonly PwEntry m_pe;

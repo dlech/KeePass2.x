@@ -756,7 +756,7 @@ namespace TrlUtil
 			string strName = ((m_kpccLast != null) ? m_kpccLast.Name : null);
 			m_prev.EnsureControlPageVisible(strName);
 
-			m_prev.ResumeLayout();
+			m_prev.ResumeLayout(true);
 
 			foreach(TabControl tc in lTabControls)
 			{

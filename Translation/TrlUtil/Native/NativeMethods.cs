@@ -28,6 +28,9 @@ namespace TrlUtil.Native
 	{
 		internal const int WM_UPDATEUISTATE = 0x0128;
 
+		private const int TCM_FIRST = 0x1300;
+		internal const int TCM_SETCURSEL = TCM_FIRST + 12;
+
 		internal const int UIS_CLEAR = 2;
 
 		internal const int UISF_HIDEACCEL = 0x2;

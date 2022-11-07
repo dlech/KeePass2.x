@@ -264,7 +264,9 @@ namespace KeePass.Forms
 			UIUtil.SetToolTipByText(m_ttRect, m_cmbKeyFile);
 			UIUtil.SetEnabledFast(bKeyFile && !bKeyProv, m_btnOpenKeyFile, m_btnSaveKeyFile);
 
-			UIUtil.SetEnabled(m_btnOK, (bPassword || bKeyFileOK || bUserAccount));
+			bool bOK = (bPassword || bKeyFileOK || bUserAccount); // At least one
+			bOK &= (!bKeyFile || bKeyFileOK); // Disallow checked without selection
+			UIUtil.SetEnabled(m_btnOK, bOK);
 
 			--m_uUIAutoBlocked;
 		}

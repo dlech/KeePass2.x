@@ -37,6 +37,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -1075,6 +1076,73 @@ namespace KeePass
 				Debug.Listeners.Clear();
 			}
 #endif
+		}
+
+		internal static void CheckExeConfig()
+		{
+			string strPath = WinUtil.GetExecutable() + ".config";
+
+			try
+			{
+				GAction<bool, bool> fAssert = delegate(bool bCondition, bool bInvalidData)
+				{
+					if(!bCondition)
+					{
+						if(bInvalidData) throw new InvalidDataException();
+						throw new Exception(KLRes.FileCorrupted);
+					}
+				};
+				GAction<object> fAssertEx = delegate(object o)
+				{
+					fAssert((o != null), false);
+				};
+
+				bool bDev = IsDevelopmentSnapshot();
+				if(bDev && !File.Exists(strPath)) return;
+
+				string strXml = File.ReadAllText(strPath, StrUtil.Utf8);
+				if(string.IsNullOrEmpty(strXml))
+					throw new Exception(KLRes.FileIncompleteExpc);
+
+				XmlDocument d = XmlUtilEx.CreateXmlDocument();
+				d.LoadXml(strXml);
+
+				XmlNamespaceManager nm = new XmlNamespaceManager(d.NameTable);
+				const string strAsm1P = "asm1";
+				const string strAsm1U = "urn:schemas-microsoft-com:asm.v1";
+				string strU = nm.LookupNamespace(strAsm1P);
+				if(strU == null) nm.AddNamespace(strAsm1P, strAsm1U);
+				else fAssert((strU == strAsm1U), true);
+
+				fAssertEx(d.SelectSingleNode(
+					"/configuration/startup/supportedRuntime[@version = \"v4.0\"]"));
+
+				if(!bDev)
+				{
+					ulong u = StrUtil.ParseVersion(typeof(
+						Program).Assembly.GetName().Version.ToString());
+					string strOld = "2.0.9.0-" + StrUtil.VersionToString(
+						u & 0xFFFFFFFFFFFF0000UL, 4);
+					string strNew = StrUtil.VersionToString(u, 4);
+
+					XmlNode n = d.SelectSingleNode("/configuration/runtime/" +
+						strAsm1P + ":assemblyBinding/" +
+						strAsm1P + ":dependentAssembly[" +
+						strAsm1P + ":assemblyIdentity/@name = \"KeePass\"]/" +
+						strAsm1P + ":bindingRedirect", nm);
+					fAssertEx(n);
+
+					XmlAttribute a = n.Attributes["oldVersion"];
+					fAssert(((a != null) && (a.Value == strOld)), true);
+
+					a = n.Attributes["newVersion"];
+					fAssert(((a != null) && (a.Value == strNew)), true);
+				}
+			}
+			catch(Exception ex)
+			{
+				MessageService.ShowWarning(strPath, ex.Message, KPRes.FixByReinstall);
+			}
 		}
 	}
 }
