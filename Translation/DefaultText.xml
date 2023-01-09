@@ -52,6 +52,9 @@
 		<Data Name="All">
 			<Value>All</Value>
 		</Data>
+		<Data Name="AllDataInclOrg">
+			<Value>All Data (Incl. Organizational Data)</Value>
+		</Data>
 		<Data Name="AllFiles">
 			<Value>All Files</Value>
 		</Data>
@@ -159,6 +162,12 @@
 		</Data>
 		<Data Name="AutoShowSoonToExpireEntries">
 			<Value>Show entries that will expire soon (if any)</Value>
+		</Data>
+		<Data Name="AutoSortDeactivateQ">
+			<Value>Do you want to deactivate automatic sorting?</Value>
+		</Data>
+		<Data Name="AutoSortNoRearrange">
+			<Value>Entries currently cannot be rearranged, because automatic sorting is activated.</Value>
 		</Data>
 		<Data Name="AutoType">
 			<Value>Auto-Type</Value>
@@ -373,6 +382,9 @@
 		<Data Name="Company">
 			<Value>Company</Value>
 		</Data>
+		<Data Name="CompareEntries">
+			<Value>Compare Entries</Value>
+		</Data>
 		<Data Name="Comparison">
 			<Value>Comparison</Value>
 		</Data>
@@ -454,11 +466,17 @@
 		<Data Name="CopyEntryUCmd">
 			<Value>C&amp;opy Entry (Unencrypted)</Value>
 		</Data>
+		<Data Name="CopyHmacOtp">
+			<Value>Copy &amp;HMAC-Based OTP</Value>
+		</Data>
 		<Data Name="CopyInitialPasswordDesc">
 			<Value>Copy the password that was current when the dialog was opened</Value>
 		</Data>
 		<Data Name="CopyLink">
 			<Value>Copy Link</Value>
+		</Data>
+		<Data Name="CopyNotes">
+			<Value>Copy &amp;Notes</Value>
 		</Data>
 		<Data Name="CopyObject">
 			<Value>Copy {PARAM}</Value>
@@ -471,6 +489,12 @@
 		</Data>
 		<Data Name="CopyTanMenu">
 			<Value>Co&amp;py TAN</Value>
+		</Data>
+		<Data Name="CopyTimeOtp">
+			<Value>Copy T&amp;ime-Based OTP</Value>
+		</Data>
+		<Data Name="CopyTitle">
+			<Value>Copy &amp;Title</Value>
 		</Data>
 		<Data Name="CopyUrls">
 			<Value>&amp;Copy URL(s)</Value>
@@ -528,6 +552,9 @@
 		</Data>
 		<Data Name="CtrlAltAConflictHint">
 			<Value>You can change the global auto-type hot key to a different key combination in 'Tools' -&gt; 'Options' -&gt; tab 'Integration'.</Value>
+		</Data>
+		<Data Name="Current">
+			<Value>Current</Value>
 		</Data>
 		<Data Name="CurrentStyle">
 			<Value>Current style</Value>
@@ -666,6 +693,9 @@
 		</Data>
 		<Data Name="Details">
 			<Value>Details</Value>
+		</Data>
+		<Data Name="Dialog">
+			<Value>Dialog</Value>
 		</Data>
 		<Data Name="DialogNoShowAgain">
 			<Value>Do not show this dialog again.</Value>
@@ -810,6 +840,9 @@
 		</Data>
 		<Data Name="Entry">
 			<Value>Entry</Value>
+		</Data>
+		<Data Name="EntryDifferences">
+			<Value>Differences between the two entries</Value>
 		</Data>
 		<Data Name="EntryList">
 			<Value>Entry List</Value>
@@ -1075,6 +1108,9 @@
 		<Data Name="ForceSystemFontUnix">
 			<Value>Force usage of system font (Unix only)</Value>
 		</Data>
+		<Data Name="ForegroundColor">
+			<Value>Foreground Color</Value>
+		</Data>
 		<Data Name="Format">
 			<Value>Format</Value>
 		</Data>
@@ -1173,9 +1209,6 @@
 		</Data>
 		<Data Name="HistoryBased">
 			<Value>based on history</Value>
-		</Data>
-		<Data Name="HmacOtp">
-			<Value>HMAC-Based OTP</Value>
 		</Data>
 		<Data Name="Homebanking">
 			<Value>Homebanking</Value>
@@ -1591,6 +1624,9 @@
 		<Data Name="MinimizeToTrayStc">
 			<Value>Minimize to tray</Value>
 		</Data>
+		<Data Name="Modified">
+			<Value>Modified</Value>
+		</Data>
 		<Data Name="More">
 			<Value>More</Value>
 		</Data>
@@ -1659,6 +1695,9 @@
 		</Data>
 		<Data Name="NewDatabase">
 			<Value>New Database</Value>
+		</Data>
+		<Data Name="Newer">
+			<Value>Newer</Value>
 		</Data>
 		<Data Name="NewerNetRequired">
 			<Value>A newer .NET Framework is required.</Value>
@@ -1737,6 +1776,9 @@
 		</Data>
 		<Data Name="Ok">
 			<Value>OK</Value>
+		</Data>
+		<Data Name="Older">
+			<Value>Older</Value>
 		</Data>
 		<Data Name="OldFormat">
 			<Value>Old Format</Value>
@@ -2035,6 +2077,9 @@
 		<Data Name="ProfileSavePrompt">
 			<Value>Enter a name for the new profile or select an existing profile to overwrite it:</Value>
 		</Data>
+		<Data Name="Properties">
+			<Value>Properties</Value>
+		</Data>
 		<Data Name="PwGenOpen">
 			<Value>Open Password Generator...</Value>
 		</Data>
@@ -2043,6 +2088,9 @@
 		</Data>
 		<Data Name="QualityCheckToggle">
 			<Value>Enable/disable quality estimation for this entry (here, in password quality reports, ...)</Value>
+		</Data>
+		<Data Name="QualityEstimation">
+			<Value>Quality Estimation</Value>
 		</Data>
 		<Data Name="Quick">
 			<Value>Quick</Value>
@@ -2188,6 +2236,9 @@
 		<Data Name="SaveForceSync">
 			<Value>Do not ask whether to synchronize or overwrite; force synchronization</Value>
 		</Data>
+		<Data Name="SaveObjectAs">
+			<Value>Save {PARAM} As</Value>
+		</Data>
 		<Data Name="SavingDatabase">
 			<Value>Saving database...</Value>
 		</Data>
@@ -2323,6 +2374,9 @@
 		<Data Name="ShowFullPathInTitleBar">
 			<Value>Show full path in title bar (instead of file name only)</Value>
 		</Data>
+		<Data Name="ShowHmacOtp">
+			<Value>Show H&amp;MAC-Based OTP</Value>
+		</Data>
 		<Data Name="ShowIn">
 			<Value>Show in</Value>
 		</Data>
@@ -2332,8 +2386,8 @@
 		<Data Name="ShowMore">
 			<Value>Show more</Value>
 		</Data>
-		<Data Name="ShowObject">
-			<Value>Show {PARAM}</Value>
+		<Data Name="ShowTimeOtp">
+			<Value>Show Tim&amp;e-Based OTP</Value>
 		</Data>
 		<Data Name="ShowWithFileManager">
 			<Value>&amp;Show with File Manager</Value>
@@ -2479,9 +2533,6 @@
 		<Data Name="Time">
 			<Value>Time</Value>
 		</Data>
-		<Data Name="TimeOtp">
-			<Value>Time-Based OTP</Value>
-		</Data>
 		<Data Name="TimeReq">
 			<Value>may take some time</Value>
 		</Data>
@@ -2586,6 +2637,9 @@
 		</Data>
 		<Data Name="Unknown">
 			<Value>Unknown</Value>
+		</Data>
+		<Data Name="Unsaved">
+			<Value>unsaved</Value>
 		</Data>
 		<Data Name="UnsupportedByMono">
 			<Value>unsupported by Mono</Value>

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -990,6 +990,7 @@ namespace KeePassLib.Utility
 			return (bHasAmp ? str.Replace(@"&", string.Empty) : str);
 		}
 
+		[Obsolete] // Use AccessKeyManagerEx, if possible
 		public static string AddAccelerator(string strMenuText,
 			List<char> lAvailKeys)
 		{
@@ -2061,6 +2062,41 @@ namespace KeePassLib.Utility
 			if(strCommand.Length == 0) return string.Empty;
 
 			return TrimDots(RemoveAccelerator(strCommand), true);
+		}
+
+		internal static bool Equals(char[] vA, char[] vB, bool bIgnoreNewLineEnc)
+		{
+			if(!bIgnoreNewLineEnc) return MemUtil.ArrayHelperExOfChar.Equals(vA, vB);
+			if(object.ReferenceEquals(vA, vB)) return true;
+			if((vA == null) || (vB == null)) return false;
+
+			int cA = vA.Length, cB = vB.Length;
+			int iA = 0, iB = 0;
+
+			while(iA < cA)
+			{
+				if(iB >= cB) return false;
+
+				char chA = vA[iA], chB = vB[iB];
+
+				if(chA == '\r')
+				{
+					if(((iA + 1) < cA) && (vA[iA + 1] == '\n')) ++iA;
+					chA = '\n';
+				}
+				if(chB == '\r')
+				{
+					if(((iB + 1) < cB) && (vB[iB + 1] == '\n')) ++iB;
+					chB = '\n';
+				}
+
+				if(chA != chB) return false;
+
+				++iA;
+				++iB;
+			}
+
+			return (iB == cB);
 		}
 	}
 }

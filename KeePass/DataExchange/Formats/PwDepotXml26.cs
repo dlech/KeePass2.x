@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,49 +30,16 @@ using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
-using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.6 - 5.3.0+
+	// 2.6-16.0.7+
 	internal sealed class PwDepotXml26 : FileFormatProvider
 	{
-		private const string ElemHeader = "HEADER";
-		private const string ElemContainer = "PASSWORDS";
-
-		private const string ElemGroup = "GROUP";
-		private const string AttribGroupName = "NAME";
-
-		private const string ElemEntry = "ITEM";
-		private const string ElemEntryName = "DESCRIPTION";
-		private const string ElemEntryUser = "USERNAME";
-		private const string ElemEntryPassword = "PASSWORD";
-		private const string ElemEntryURL = "URL";
-		private const string ElemEntryNotes = "COMMENT";
-		private const string ElemEntryLastModTime = "LASTMODIFIED";
-		private const string ElemEntryExpireTime = "EXPIRYDATE";
-		private const string ElemEntryCreatedTime = "CREATED";
-		private const string ElemEntryLastAccTime = "LASTACCESSED";
-		private const string ElemEntryUsageCount = "USAGECOUNT";
-		private const string ElemEntryAutoType = "TEMPLATE";
-		private const string ElemEntryCustom = "CUSTOMFIELDS";
-
-		private static readonly string[] ElemEntryUnsupportedItems = new string[] {
-			"TYPE", "IMPORTANCE", "IMAGECUSTOM", "PARAMSTR",
-			"CATEGORY", "CUSTOMBROWSER", "AUTOCOMPLETEMETHOD",
-			"WEBFORMDATA", "TANS", "FINGERPRINT"
-		};
-
-		private const string ElemImageIndex = "IMAGEINDEX";
-
-		private const string ElemCustomField = "FIELD";
-		private const string ElemCustomFieldName = "NAME";
-		private const string ElemCustomFieldValue = "VALUE";
-
-		private const string AttribFormat = "FMT";
-
-		private const string FieldInfoText = "IDS_InformationText";
+		// Old versions used upper-case node names, whereas
+		// newer versions use lower-case node names
+		private const string ElemGroup = "group";
 
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
@@ -84,167 +51,266 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8);
+			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8, true);
 			string strData = sr.ReadToEnd();
 			sr.Close();
 
 			// Remove vertical tabulators
 			strData = strData.Replace("\u000B", string.Empty);
 
-			XmlDocument xmlDoc = XmlUtilEx.CreateXmlDocument();
-			xmlDoc.LoadXml(strData);
+			XmlDocument xd = XmlUtilEx.CreateXmlDocument();
+			xd.LoadXml(strData);
 
-			XmlNode xmlRoot = xmlDoc.DocumentElement;
+			PwGroup pgRoot = pwStorage.RootGroup;
+			Dictionary<string, IStructureItem> dItems = new Dictionary<string, IStructureItem>();
+			string strFavs = null;
 
-			foreach(XmlNode xmlChild in xmlRoot.ChildNodes)
+			foreach(XmlNode xn in xd.DocumentElement.ChildNodes)
 			{
-				if(xmlChild.Name == ElemHeader) { } // Unsupported
-				else if(xmlChild.Name == ElemContainer)
-					ReadContainer(xmlChild, pwStorage);
-				else { Debug.Assert(false); }
+				string strName = xn.Name.ToLowerInvariant();
+
+				if(strName == "passwords")
+					ReadContainer(xn, pgRoot, pwStorage, dItems);
+				else if(strName == "recyclebin")
+				{
+					PwGroup pg = new PwGroup(true, true, KPRes.RecycleBin +
+						" (Password Depot)", PwIcon.TrashBin);
+					pgRoot.AddGroup(pg, true);
+					ReadContainer(xn, pg, pwStorage, dItems);
+				}
+				else if(strName == "favorites")
+					strFavs = XmlUtil.SafeInnerText(xn).Trim();
+				else
+				{
+					Debug.Assert((strName == "header") || (strName == "sitestoignore") ||
+						(strName == "categories"));
+				}
+			}
+
+			if(!string.IsNullOrEmpty(strFavs))
+			{
+				try
+				{
+					byte[] pbList = Convert.FromBase64String(strFavs);
+					string strList = StrUtil.Utf8.GetString(pbList);
+					string[] v = strList.Split(new char[] { '\r', '\n' },
+						StringSplitOptions.RemoveEmptyEntries);
+					foreach(string str in v)
+					{
+						IStructureItem si;
+						if(!dItems.TryGetValue(str, out si)) { Debug.Assert(false); continue; }
+
+						PwGroup pg = (si as PwGroup);
+						if(pg != null) pg.Tags.Add(PwDefs.FavoriteTag);
+
+						PwEntry pe = (si as PwEntry);
+						if(pe != null) pe.AddTag(PwDefs.FavoriteTag);
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
 			}
 		}
 
-		private static void ReadContainer(XmlNode xmlNode, PwDatabase pwStorage)
+		private static void ReadContainer(XmlNode xnContainer, PwGroup pgParent,
+			PwDatabase pd, Dictionary<string, IStructureItem> dItems)
 		{
-			foreach(XmlNode xmlChild in xmlNode.ChildNodes)
+			foreach(XmlNode xn in xnContainer.ChildNodes)
 			{
-				if(xmlChild.Name == ElemGroup)
-					ReadGroup(xmlChild, pwStorage.RootGroup, pwStorage);
+				string strName = xn.Name.ToLowerInvariant();
+
+				if(strName == ElemGroup)
+					ReadGroup(xn, pgParent, pd, dItems);
 				else { Debug.Assert(false); }
 			}
 		}
 
-		private static void ReadGroup(XmlNode xmlNode, PwGroup pgParent, PwDatabase pwStorage)
+		private static void ReadGroup(XmlNode xnGroup, PwGroup pgParent, PwDatabase pd,
+			Dictionary<string, IStructureItem> dItems)
 		{
 			PwGroup pg = new PwGroup(true, true);
 			pgParent.AddGroup(pg, true);
 
-			try
-			{
-				XmlAttributeCollection xac = xmlNode.Attributes;
-				pg.Name = xac.GetNamedItem(AttribGroupName).Value;
-			}
-			catch(Exception) { }
+			string str = GetAttribute(xnGroup, "name");
+			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); str = KPRes.Group; }
+			pg.Name = str;
 
-			foreach(XmlNode xmlChild in xmlNode)
+			str = GetAttribute(xnGroup, "fingerprint");
+			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); }
+			else if(dItems == null) { Debug.Assert(false); }
+			else if(dItems.ContainsKey(str)) { } // Recycle bin UUID = primary group UUID
+			else dItems[str] = pg;
+
+			str = GetAttribute(xnGroup, "imageindex");
+			if(!string.IsNullOrEmpty(str)) pg.IconId = MapIcon(str, false);
+
+			foreach(XmlNode xn in xnGroup.ChildNodes)
 			{
-				if(xmlChild.Name == ElemGroup)
-					ReadGroup(xmlChild, pg, pwStorage);
-				else if(xmlChild.Name == ElemEntry)
-					ReadEntry(xmlChild, pg, pwStorage);
+				string strName = xn.Name.ToLowerInvariant();
+
+				if(strName == ElemGroup)
+					ReadGroup(xn, pg, pd, dItems);
+				else if(strName == "item")
+					ReadEntry(xn, pg, pd, dItems);
 				else { Debug.Assert(false); }
 			}
 		}
 
-		private static void ReadEntry(XmlNode xmlNode, PwGroup pgParent,
-			PwDatabase pwStorage)
+		private static void ReadEntry(XmlNode xnEntry, PwGroup pg, PwDatabase pd,
+			Dictionary<string, IStructureItem> dItems)
 		{
 			PwEntry pe = new PwEntry(true, true);
-			pgParent.AddEntry(pe, true);
+			pg.AddEntry(pe, true);
 
-			DateTime? ndt;
-			foreach(XmlNode xmlChild in xmlNode)
+			foreach(XmlNode xn in xnEntry.ChildNodes)
 			{
-				if(xmlChild.Name == ElemEntryName)
-					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectTitle,
-						XmlUtil.SafeInnerText(xmlChild)));
-				else if(xmlChild.Name == ElemEntryUser)
-					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectUserName,
-						XmlUtil.SafeInnerText(xmlChild)));
-				else if(xmlChild.Name == ElemEntryPassword)
-					pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectPassword,
-						XmlUtil.SafeInnerText(xmlChild)));
-				else if(xmlChild.Name == ElemEntryURL)
-					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectUrl,
-						XmlUtil.SafeInnerText(xmlChild)));
-				else if(xmlChild.Name == ElemEntryNotes)
-					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectNotes,
-						XmlUtil.SafeInnerText(xmlChild)));
-				else if(xmlChild.Name == ElemEntryLastModTime)
+				string strName = xn.Name.ToLowerInvariant();
+
+				if(strName == "description")
+					ImportUtil.AppendToField(pe, PwDefs.TitleField,
+						XmlUtil.SafeInnerText(xn), pd);
+				else if(strName == "username")
+					ImportUtil.AppendToField(pe, PwDefs.UserNameField,
+						XmlUtil.SafeInnerText(xn), pd);
+				else if(strName == "password")
+					ImportUtil.AppendToField(pe, PwDefs.PasswordField,
+						XmlUtil.SafeInnerText(xn), pd);
+				else if(strName == "url")
+					ImportUtil.CreateFieldWithIndex(pe.Strings, PwDefs.UrlField,
+						XmlUtil.SafeInnerText(xn), pd, false);
+				else if(strName == "comment")
+					ImportUtil.AppendToField(pe, PwDefs.NotesField,
+						XmlUtil.SafeInnerText(xn), pd);
+				else if(strName == "expirydate")
 				{
-					ndt = ReadTime(xmlChild);
-					if(ndt.HasValue) pe.LastModificationTime = ndt.Value;
-				}
-				else if(xmlChild.Name == ElemEntryExpireTime)
-				{
-					ndt = ReadTime(xmlChild);
-					if(ndt.HasValue)
+					DateTime? odt = ReadTime(xn);
+					if(odt.HasValue)
 					{
-						pe.ExpiryTime = ndt.Value;
+						pe.ExpiryTime = odt.Value;
 						pe.Expires = true;
 					}
 				}
-				else if(xmlChild.Name == ElemEntryCreatedTime)
+				else if(strName == "created")
 				{
-					ndt = ReadTime(xmlChild);
-					if(ndt.HasValue) pe.CreationTime = ndt.Value;
+					DateTime? odt = ReadTime(xn);
+					if(odt.HasValue) pe.CreationTime = odt.Value;
 				}
-				else if(xmlChild.Name == ElemEntryLastAccTime)
+				else if(strName == "lastmodified")
 				{
-					ndt = ReadTime(xmlChild);
-					if(ndt.HasValue) pe.LastAccessTime = ndt.Value;
+					DateTime? odt = ReadTime(xn);
+					if(odt.HasValue) pe.LastModificationTime = odt.Value;
 				}
-				else if(xmlChild.Name == ElemEntryUsageCount)
+				else if(strName == "lastaccessed")
 				{
-					ulong uUsageCount;
-					if(ulong.TryParse(XmlUtil.SafeInnerText(xmlChild), out uUsageCount))
-						pe.UsageCount = uUsageCount;
+					DateTime? odt = ReadTime(xn);
+					if(odt.HasValue) pe.LastAccessTime = odt.Value;
 				}
-				else if(xmlChild.Name == ElemEntryAutoType)
-					pe.AutoType.DefaultSequence = MapAutoType(
-						XmlUtil.SafeInnerText(xmlChild));
-				else if(xmlChild.Name == ElemEntryCustom)
-					ReadCustomContainer(xmlChild, pe);
-				else if(xmlChild.Name == ElemImageIndex)
-					pe.IconId = MapIcon(XmlUtil.SafeInnerText(xmlChild), true);
-				else if(Array.IndexOf<string>(ElemEntryUnsupportedItems,
-					xmlChild.Name) >= 0) { }
-				else { Debug.Assert(false, xmlChild.Name); }
-			}
-
-			string strInfoText = pe.Strings.ReadSafe(FieldInfoText);
-			if((pe.Strings.ReadSafe(PwDefs.NotesField).Length == 0) &&
-				(strInfoText.Length > 0))
-			{
-				pe.Strings.Remove(FieldInfoText);
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectNotes, strInfoText));
+				else if(strName == "usagecount")
+				{
+					ulong u;
+					if(ulong.TryParse(XmlUtil.SafeInnerText(xn), out u))
+						pe.UsageCount = u;
+				}
+				else if(strName == "tags")
+				{
+					List<string> l = StrUtil.StringToTags(XmlUtil.SafeInnerText(xn));
+					StrUtil.AddTags(pe.Tags, l);
+				}
+				else if(strName == "fingerprint")
+				{
+					string str = XmlUtil.SafeInnerText(xn);
+					if(str.Length == 0) { Debug.Assert(false); }
+					else if(dItems == null) { } // History, ...
+					else if(dItems.ContainsKey(str)) { Debug.Assert(false); }
+					else dItems[str] = pe;
+				}
+				else if(strName == "template")
+					pe.AutoType.DefaultSequence = MapAutoType(XmlUtil.SafeInnerText(xn));
+				else if(strName == "imageindex")
+					pe.IconId = MapIcon(XmlUtil.SafeInnerText(xn), true);
+				else if(strName == "urls")
+					ReadUrls(xn, pe, pd);
+				else if(strName == "customfields")
+					ReadCustomFields(xn, pe, pd);
+				else if(strName == "hitems")
+					ReadHistory(xn, pe, pd);
 			}
 		}
 
-		private static void ReadCustomContainer(XmlNode xmlNode, PwEntry pe)
+		private static void ReadUrls(XmlNode xnUrls, PwEntry pe, PwDatabase pd)
 		{
-			foreach(XmlNode xmlChild in xmlNode)
+			foreach(XmlNode xn in xnUrls.ChildNodes)
 			{
-				if(xmlChild.Name == ElemCustomField)
-					ReadCustomField(xmlChild, pe);
+				string strName = xn.Name.ToLowerInvariant();
+
+				if(strName == "url")
+					ImportUtil.CreateFieldWithIndex(pe.Strings, PwDefs.UrlField,
+						XmlUtil.SafeInnerText(xn), pd, false);
 				else { Debug.Assert(false); }
 			}
 		}
 
-		private static void ReadCustomField(XmlNode xmlNode, PwEntry pe)
+		private static void ReadCustomFields(XmlNode xnFields, PwEntry pe, PwDatabase pd)
 		{
-			string strName = string.Empty, strValue = string.Empty;
-
-			foreach(XmlNode xmlChild in xmlNode)
+			foreach(XmlNode xn in xnFields.ChildNodes)
 			{
-				if(xmlChild.Name == ElemCustomFieldName)
-					strName = XmlUtil.SafeInnerText(xmlChild);
-				else if(xmlChild.Name == ElemCustomFieldValue)
-					strValue = XmlUtil.SafeInnerText(xmlChild);
-				// else { } // Field 'VISIBLE'
+				string strName = xn.Name.ToLowerInvariant();
+
+				if(strName == "field")
+					ReadCustomField(xn, pe, pd);
+				else { Debug.Assert(false); }
+			}
+		}
+
+		private static void ReadCustomField(XmlNode xnField, PwEntry pe, PwDatabase pd)
+		{
+			string strKey = string.Empty, strValue = string.Empty;
+
+			foreach(XmlNode xn in xnField.ChildNodes)
+			{
+				string strName = xn.Name.ToLowerInvariant();
+
+				if(strName == "name")
+					strKey = XmlUtil.SafeInnerText(xn);
+				else if(strName == "value")
+					strValue = XmlUtil.SafeInnerText(xn);
+				else { Debug.Assert(strName == "visible"); }
 			}
 
-			if((strName.Length == 0) || PwDefs.IsStandardField(strName))
-				pe.Strings.Set(Guid.NewGuid().ToString(), new ProtectedString(false, strValue));
-			else
-				pe.Strings.Set(strName, new ProtectedString(false, strValue));
+			if(strKey == "IDS_InformationText")
+				strKey = PwDefs.NotesField;
+			else if(strKey.Length == 0)
+			{
+				Debug.Assert(false);
+				strKey = Guid.NewGuid().ToString();
+			}
+
+			ImportUtil.AppendToField(pe, strKey, strValue, pd);
+		}
+
+		private static void ReadHistory(XmlNode xnHistory, PwEntry pe, PwDatabase pd)
+		{
+			PwGroup pgH = new PwGroup(true, true);
+
+			foreach(XmlNode xn in xnHistory.ChildNodes)
+			{
+				string strName = xn.Name.ToLowerInvariant();
+
+				if(strName == "hitem")
+					ReadEntry(xn, pgH, pd, null);
+				else { Debug.Assert(false); }
+			}
+
+			foreach(PwEntry peH in pgH.Entries)
+			{
+				if(peH.History.UCount != 0) { Debug.Assert(false); peH.History.Clear(); }
+
+				peH.ParentGroup = null;
+				peH.SetUuid(pe.Uuid, false);
+
+				pe.History.Add(peH);
+			}
+
+			pe.History.Sort(EntryUtil.CompareLastMod);
 		}
 
 		private static PwIcon MapIcon(string strIconId, bool bEntryIcon)
@@ -252,27 +318,61 @@ namespace KeePass.DataExchange.Formats
 			PwIcon ico = (bEntryIcon ? PwIcon.Key : PwIcon.Folder);
 
 			int idIcon;
-			if(!int.TryParse(strIconId, out idIcon)) return ico;
+			if(!int.TryParse(strIconId, out idIcon)) { Debug.Assert(false); return ico; }
 
 			++idIcon; // In the icon picker dialog, all indices are + 1
 			switch(idIcon)
 			{
-				case 1: ico = PwIcon.Key; break;
-				case 4: ico = PwIcon.Folder; break;
-				case 5: ico = PwIcon.LockOpen; break;
-				case 15: ico = PwIcon.EMail; break;
+				// case 1: ico = PwIcon.Key; break; // 1, 2, 3
+				case 4: ico = PwIcon.FolderOpen; break;
+				case 5:
+				case 6: ico = PwIcon.LockOpen; break;
+				case 15:
 				case 16: ico = PwIcon.EMail; break;
-				case 17: ico = PwIcon.ProgramIcons; break;
+				case 17:
 				case 18: ico = PwIcon.ProgramIcons; break;
-				case 21: ico = PwIcon.World; break;
+				case 21:
 				case 22: ico = PwIcon.World; break;
-				case 25: ico = PwIcon.Money; break;
+				case 23:
+				case 24: ico = PwIcon.UserCommunication; break;
+				case 25:
 				case 26: ico = PwIcon.Money; break;
-				case 27: ico = PwIcon.Star; break;
+				case 27:
 				case 28: ico = PwIcon.Star; break;
-				case 47: ico = PwIcon.FolderOpen; break;
-				case 48: ico = PwIcon.TrashBin; break;
+				case 39: ico = PwIcon.Disk; break;
+				case 40: ico = PwIcon.Clock; break;
+				case 41: ico = PwIcon.Money; break;
+				case 42: ico = PwIcon.Star; break;
+				case 47: ico = PwIcon.Folder; break;
+				case 48:
 				case 49: ico = PwIcon.TrashBin; break;
+				case 53: ico = PwIcon.Identity; break;
+				case 54: ico = PwIcon.Info; break;
+				case 62:
+				case 64: ico = PwIcon.PaperLocked; break;
+				case 66: ico = PwIcon.Book; break;
+				case 67: ico = PwIcon.Expired; break;
+				case 68: ico = PwIcon.Warning; break;
+				case 69: ico = PwIcon.MultiKeys; break;
+				case 73: ico = PwIcon.PaperNew; break;
+				case 75: ico = PwIcon.Home; break;
+				case 77: ico = PwIcon.Archive; break;
+				case 81: ico = PwIcon.Money; break;
+				case 83: ico = PwIcon.Clock; break;
+				case 85: ico = PwIcon.Star; break;
+				case 86: ico = PwIcon.LockOpen; break;
+				case 87: ico = PwIcon.Certificate; break;
+				case 91: ico = PwIcon.World; break;
+				case 92:
+				case 93:
+				case 94:
+				case 95: ico = PwIcon.Note; break;
+				case 97: ico = PwIcon.Drive; break;
+				case 100: ico = PwIcon.UserCommunication; break;
+				case 101: ico = PwIcon.Monitor; break;
+				case 111:
+				case 112: ico = PwIcon.Identity; break;
+				case 113: ico = PwIcon.EMail; break;
 				default: break;
 			};
 
@@ -285,54 +385,72 @@ namespace KeePass.DataExchange.Formats
 			str = str.Replace('>', '}');
 
 			str = StrUtil.ReplaceCaseInsensitive(str, @"{USER}",
-				@"{" + PwDefs.UserNameField.ToUpper() + @"}");
+				@"{" + PwDefs.UserNameField.ToUpperInvariant() + @"}");
 			str = StrUtil.ReplaceCaseInsensitive(str, @"{PASS}",
-				@"{" + PwDefs.PasswordField.ToUpper() + @"}");
-			str = StrUtil.ReplaceCaseInsensitive(str, @"{CLEAR}",
-				@"{HOME}+({END}){DEL}");
+				@"{" + PwDefs.PasswordField.ToUpperInvariant() + @"}");
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{CLEAR}", @"{CLEARFIELD}");
 			str = StrUtil.ReplaceCaseInsensitive(str, @"{ARROW_LEFT}", @"{LEFT}");
 			str = StrUtil.ReplaceCaseInsensitive(str, @"{ARROW_UP}", @"{UP}");
 			str = StrUtil.ReplaceCaseInsensitive(str, @"{ARROW_RIGHT}", @"{RIGHT}");
 			str = StrUtil.ReplaceCaseInsensitive(str, @"{ARROW_DOWN}", @"{DOWN}");
+			str = StrUtil.ReplaceCaseInsensitive(str, @"{DELAY=", @"{DELAY ");
 
 			if(str.Equals(PwDefs.DefaultAutoTypeSequence, StrUtil.CaseIgnoreCmp))
 				return string.Empty;
 			return str;
 		}
 
-		private static DateTime? ReadTime(XmlNode xmlNode)
+		private static DateTime? ReadTime(XmlNode xn)
 		{
-			DateTime? ndt = ReadTimeRaw(xmlNode);
-			if(!ndt.HasValue) return null;
+			DateTime? odt = ReadTimeRaw(xn);
+			if(!odt.HasValue) return null;
 
-			if(ndt.Value.Year < 1950) return null;
+			if(odt.Value.Year < 1950) return null;
 
-			return ndt.Value;
+			return odt.Value;
 		}
 
-		private static DateTime? ReadTimeRaw(XmlNode xmlNode)
+		private static DateTime? ReadTimeRaw(XmlNode xn)
 		{
-			string strTime = XmlUtil.SafeInnerText(xmlNode);
+			string strFormat = GetAttribute(xn, "fmt");
+			string strTime = XmlUtil.SafeInnerText(xn);
 
-			string strFormat = null;
-			try
-			{
-				XmlAttributeCollection xac = xmlNode.Attributes;
-				strFormat = xac.GetNamedItem(AttribFormat).Value;
-			}
-			catch(Exception) { }
+			if(strTime == "00.00.0000") return null; // Parsing fails
+			// Another dummy value is 30.12.1899 (handled by ReadTime)
 
 			DateTime dt;
 			if(!string.IsNullOrEmpty(strFormat))
 			{
-				strFormat = strFormat.Replace("mm", "MM");
+				strFormat = strFormat.Replace("mm.", "MM.");
+				strFormat = strFormat.Replace('h', 'H');
+
 				if(DateTime.TryParseExact(strTime, strFormat, null,
 					DateTimeStyles.AssumeLocal, out dt))
 					return TimeUtil.ToUtc(dt, false);
 			}
+			Debug.Assert(false);
 
 			if(DateTime.TryParse(strTime, out dt))
 				return TimeUtil.ToUtc(dt, false);
+
+			return null;
+		}
+
+		private static string GetAttribute(XmlNode xn, string strAttrib)
+		{
+			Debug.Assert(strAttrib == strAttrib.ToLowerInvariant());
+
+			try
+			{
+				XmlAttributeCollection xac = xn.Attributes;
+
+				XmlNode xnAttrib = xac.GetNamedItem(strAttrib);
+				if(xnAttrib != null) return xnAttrib.Value;
+
+				xnAttrib = xac.GetNamedItem(strAttrib.ToUpperInvariant());
+				if(xnAttrib != null) return xnAttrib.Value;
+			}
+			catch(Exception) { Debug.Assert(false); }
 
 			return null;
 		}

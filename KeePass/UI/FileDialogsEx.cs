@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -250,6 +250,16 @@ namespace KeePass.UI
 
 			return ShowFileDialog(bSaveMode, strTitle, strSuggestedFileName,
 				strFilter, iFilterIndex, strExt, strContext, bSecureDesktop);
+		}
+
+		internal static string ShowAttachmentSaveFileDialog(string strSuggestedFileName)
+		{
+			string strName = UrlUtil.GetSafeFileName(strSuggestedFileName);
+
+			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.AttachmentSave,
+				strName, UIUtil.CreateFileTypeFilter(null, null, true), 1, null,
+				AppDefs.FileDialogContext.Attachments);
+			return ((sfd.ShowDialog() == DialogResult.OK) ? sfd.FileName : null);
 		}
 	}
 

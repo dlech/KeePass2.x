@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ using System.Text;
 using KeePassLib.Collections;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
+using KeePassLib.Native;
 using KeePassLib.Resources;
 using KeePassLib.Utility;
 
@@ -1036,22 +1037,20 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Get the full path of a group.
+		/// Get the full path of the group.
 		/// </summary>
-		/// <returns>Full path of the group.</returns>
 		public string GetFullPath()
 		{
-			return GetFullPath(".", false);
+			return GetFullPath(false, false);
 		}
 
 		/// <summary>
-		/// Get the full path of a group.
+		/// Get the full path of the group.
 		/// </summary>
 		/// <param name="strSeparator">String that separates the group
 		/// names.</param>
 		/// <param name="bIncludeTopMostGroup">Specifies whether the returned
 		/// path starts with the topmost group.</param>
-		/// <returns>Full path of the group.</returns>
 		public string GetFullPath(string strSeparator, bool bIncludeTopMostGroup)
 		{
 			Debug.Assert(strSeparator != null);
@@ -1071,6 +1070,15 @@ namespace KeePassLib
 			}
 
 			return strPath;
+		}
+
+		internal string GetFullPath(bool bForDisplay, bool bIncludeTopMostGroup)
+		{
+			string strSep;
+			if(bForDisplay) strSep = (NativeLib.IsUnix() ? " - " : " \u2192 ");
+			else strSep = ".";
+
+			return GetFullPath(strSep, bIncludeTopMostGroup);
 		}
 
 		/// <summary>

@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2022 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -54,8 +54,7 @@ Installation / Integration:
 <li><a href="#sysreq2x">Why doesn't KeePass 2.x run on my computer?</a></li>
 <li><a href="#netshare2x">Why does KeePass 2.x crash when starting it from a
 network drive/share?</a></li>
-<li><a href="#fips2x">Why does KeePass 2.x show a FIPS compliance error at
-startup?</a></li>
+<li><a href="#fips2x">Does KeePass 2.x use FIPS-validated algorithm implementations?</a></li>
 
 
 <li><a href="#remotechm">Why doesn't the CHM help file work?</a></li>
@@ -169,41 +168,33 @@ target="_blank" rel="nofollow">here</a>).</p>
 
 <a name="fips2x"></a>
 <h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Why does KeePass 2.x show a FIPS compliance error at startup?</h2>
+Does KeePass 2.x use FIPS-validated algorithm implementations?</h2>
 
-<p><b>Symptoms:</b> When trying to run KeePass 2.x,
-you get an error message like the following:<br />
-<i>&quot;This implementation is not part of the Windows Platform FIPS validated
-cryptographic algorithms&quot;</i>.</p>
+<p>KeePass uses many algorithms. This FAQ answer focuses on the algorithms
+used for encrypting/decrypting a database file.
+Typically, KeePass primarily uses AES-256, SHA-256, HMAC-SHA-256 and SHA-512
+here (unless the user has specified a different
+<a href="security.html#secencrypt">encryption algorithm</a> or a different
+<a href="security.html#secdictprotect">key derivation function</a> in the
+<a href="../v2/dbsettings.html">database settings</a>).
+For these algorithms, the .NET Framework provides classes, and KeePass
+uses these.</p>
 
-<p><b>Cause:</b> KeePass uses the AES/Rijndael encryption and SHA-256
-hashing algorithms, for which the Microsoft .NET Framework provides
-implementations. These implementations might not be FIPS compliant.
-If the local security policy of the system enforces the usage of
-FIPS compliant implementations, KeePass cannot run and shows an
-error message.</p>
+<p>Since version 4.8, the .NET Framework supports using FIPS-validated
+implementations of the algorithms above
+(see '<a href="https://learn.microsoft.com/en-us/dotnet/framework/whats-new/#whats-new-in-net-framework-48"
+target="_blank">What's new in .NET Framework 4.8</a>').</p>
 
-<p><b>Resolution:</b> Configure the local security policy of the
-system to allow FIPS non-compliant algorithm implementations. To
-do this, go to <i>Control Panel</i> &rarr; <i>Administrative Tools</i> &rarr;
-<i>Local Security Policy</i>, open <i>Local Policies</i> &rarr;
-<i>Security Options</i>, and change the option
-<i>'System cryptography: Use FIPS compliant algorithms for encryption,
-hashing, and signing'</i> to <i>'Disabled'</i>.</p>
+<p>For compatibility with older .NET Framework versions, KeePass ignores
+the FIPS mode by default. If all your PCs have the .NET Framework 4.8 or higher
+installed, you can enable the usage of FIPS-validated algorithm
+implementations by opening the 'KeePass.exe.config' file using a text editor
+and deleting the line
+'<code>&lt;enforceFIPSPolicy enabled=&quot;false&quot; /&gt;</code>'.</p>
 
-<p><b>Alternative resolution:</b> Download and run the following
-Windows registry file:
-<a href="https://keepass.info/help/download/FipsDisable.reg"
-target="_blank">FipsDisable.reg</a>.
-By running this file (i.e. importing the modifications in this file
-into the registry), FIPS compliance enforcement is disabled.</p>
-
-<p><b>Note:</b> Currently only weaker cryptographic algorithms
-in the Microsoft .NET Framework are FIPS compliant. As security is the
-top priority for the KeePass project, an option to use these weaker
-FIPS compliant algorithms will <i>not</i> be added.
-Future .NET frameworks might have FIPS compliant implementations of
-the algorithms that KeePass requires.</p>
+<p>Implementations of other algorithms (such as ChaCha20 and Argon2) are not
+FIPS-validated. If Microsoft provides validated implementations of those
+algorithms in the future, we will consider using them.</p>
 
 <br />
 
