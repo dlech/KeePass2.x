@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -129,7 +129,12 @@ namespace KeePass.UI
 			}
 			else m_iCurSortColumn = -1;
 
-			m_tsmiNoSort = new ToolStripMenuItem(KPRes.NoSort);
+			AccessKeyManagerEx ak = new AccessKeyManagerEx();
+			string strNoSort = ak.RegisterText(KPRes.NoSort);
+			string strAsc = ak.RegisterText(KPRes.Ascending);
+			string strDesc = ak.RegisterText(KPRes.Descending);
+
+			m_tsmiNoSort = new ToolStripMenuItem(strNoSort);
 			if(m_iCurSortColumn < 0) UIUtil.SetRadioChecked(m_tsmiNoSort, true);
 			m_tsmiNoSort.Click += this.OnNoSort;
 			m_tsmiMenu.DropDownItems.Add(m_tsmiNoSort);
@@ -140,8 +145,7 @@ namespace KeePass.UI
 			m_vColumns = new List<ToolStripMenuItem>();
 			foreach(ColumnHeader ch in m_lv.Columns)
 			{
-				string strText = (ch.Text ?? string.Empty);
-				strText = StrUtil.EncodeMenuText(strText);
+				string strText = ak.CreateText(ch.Text, true);
 
 				ToolStripMenuItem tsmi = new ToolStripMenuItem(strText);
 				if(ch.Index == m_iCurSortColumn) UIUtil.SetRadioChecked(tsmi, true);
@@ -154,14 +158,14 @@ namespace KeePass.UI
 			m_tssSep1 = new ToolStripSeparator();
 			m_tsmiMenu.DropDownItems.Add(m_tssSep1);
 
-			m_tsmiAsc = new ToolStripMenuItem(KPRes.Ascending);
+			m_tsmiAsc = new ToolStripMenuItem(strAsc);
 			if((m_iCurSortColumn >= 0) && m_bCurSortAsc)
 				UIUtil.SetRadioChecked(m_tsmiAsc, true);
 			m_tsmiAsc.Click += this.OnSortAscDesc;
 			if(m_iCurSortColumn < 0) m_tsmiAsc.Enabled = false;
 			m_tsmiMenu.DropDownItems.Add(m_tsmiAsc);
 
-			m_tsmiDesc = new ToolStripMenuItem(KPRes.Descending);
+			m_tsmiDesc = new ToolStripMenuItem(strDesc);
 			if((m_iCurSortColumn >= 0) && !m_bCurSortAsc)
 				UIUtil.SetRadioChecked(m_tsmiDesc, true);
 			m_tsmiDesc.Click += this.OnSortAscDesc;

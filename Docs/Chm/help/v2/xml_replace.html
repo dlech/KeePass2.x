@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2022 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -337,7 +337,11 @@ i.e. the option 'Inherit default auto-type sequence from group' is activated.</t
 <tr><td>Options:</td><td>&#9745; Case-sensitive<br />
 &#9745; Regular expressions</td></tr>
 <tr><td colspan="2">Copies the entry URL into the title field of the
-entry (overwriting any existing data in the title field).</td></tr>
+entry (overwriting any existing data in the title field).<br />
+<br />
+If you want the entry URL to be copied only if the title field is empty,
+use the following for 'Select nodes':<br />
+<code>//Entry/String[(Key = 'Title') and (Value = '')]/..</code></td></tr>
 </table>
 
 <br />

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,48 +36,49 @@ namespace KeePass.Util
 {
 	public static class AppLocator
 	{
-		private const int BrwIE = 0;
-		private const int BrwFirefox = 1;
-		private const int BrwOpera = 2;
-		private const int BrwChrome = 3;
-		private const int BrwSafari = 4;
-		private const int BrwEdge = 5;
+		private enum AlxApp
+		{
+			InternetExplorer = 0,
+			Firefox,
+			Opera,
+			Chrome,
+			Safari,
+			Edge
+		}
 
-		private static Dictionary<int, string> m_dictPaths =
-			new Dictionary<int, string>();
+		private delegate string FindAppDelegate();
+
+		private static readonly Dictionary<AlxApp, string> m_dPaths =
+			new Dictionary<AlxApp, string>();
 
 		public static string InternetExplorerPath
 		{
-			get { return GetPath(BrwIE, FindInternetExplorer); }
+			get { return GetPath(AlxApp.InternetExplorer, FindInternetExplorer); }
 		}
 
 		public static string FirefoxPath
 		{
-			get { return GetPath(BrwFirefox, FindFirefox); }
+			get { return GetPath(AlxApp.Firefox, FindFirefox); }
 		}
 
 		public static string OperaPath
 		{
-			get { return GetPath(BrwOpera, FindOpera); }
+			get { return GetPath(AlxApp.Opera, FindOpera); }
 		}
 
 		public static string ChromePath
 		{
-			get { return GetPath(BrwChrome, FindChrome); }
+			get { return GetPath(AlxApp.Chrome, FindChrome); }
 		}
 
 		public static string SafariPath
 		{
-			get { return GetPath(BrwSafari, FindSafari); }
+			get { return GetPath(AlxApp.Safari, FindSafari); }
 		}
 
-		/// <summary>
-		/// Path to the executable of the legacy Microsoft Edge (EdgeHTML).
-		/// The executable cannot be run normally.
-		/// </summary>
 		public static string EdgePath
 		{
-			get { return GetPath(BrwEdge, FindEdge); }
+			get { return GetPath(AlxApp.Edge, FindEdge); }
 		}
 
 		private static bool? m_obEdgeProtocol = null;
@@ -105,21 +106,19 @@ namespace KeePass.Util
 			}
 		}
 
-		private delegate string FindAppDelegate();
-
-		private static string GetPath(int iBrwID, FindAppDelegate f)
+		private static string GetPath(AlxApp a, FindAppDelegate f)
 		{
 			string strPath;
-			if(m_dictPaths.TryGetValue(iBrwID, out strPath)) return strPath;
+			if(m_dPaths.TryGetValue(a, out strPath)) return strPath;
 
 			try
 			{
 				strPath = f();
 				if((strPath != null) && (strPath.Length == 0)) strPath = null;
 			}
-			catch(Exception) { strPath = null; }
+			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); strPath = null; }
 
-			m_dictPaths[iBrwID] = strPath;
+			m_dPaths[a] = strPath;
 			return strPath;
 		}
 
@@ -137,7 +136,8 @@ namespace KeePass.Util
 				AppLocator.ChromePath, ctx);
 			str = AppLocator.ReplacePath(str, @"{SAFARI}",
 				AppLocator.SafariPath, ctx);
-			// Edge executable cannot be run normally
+			str = AppLocator.ReplacePath(str, @"{EDGE}",
+				AppLocator.EdgePath, ctx);
 
 			return str;
 		}
@@ -395,7 +395,8 @@ namespace KeePass.Util
 			return strPath;
 		}
 
-		private static string FindEdge()
+		// Legacy Edge (EdgeHTML)
+		/* private static string FindEdge()
 		{
 			string strSys = Environment.SystemDirectory.TrimEnd(
 				UrlUtil.LocalDirSepChar);
@@ -414,6 +415,23 @@ namespace KeePass.Util
 				string strExe = UrlUtil.EnsureTerminatingSeparator(
 					strEdgeDir, false) + "MicrosoftEdge.exe";
 				if(File.Exists(strExe)) return strExe;
+			}
+
+			return null;
+		} */
+
+		private static string FindEdge()
+		{
+			using(RegistryKey k = Registry.LocalMachine.OpenSubKey(
+				"SOFTWARE\\Clients\\StartMenuInternet\\Microsoft Edge\\shell\\open\\command",
+				false))
+			{
+				if(k != null)
+				{
+					string str = (k.GetValue(string.Empty) as string);
+					if(!string.IsNullOrEmpty(str))
+						return UrlUtil.GetQuotedAppPath(str).Trim();
+				}
 			}
 
 			return null;

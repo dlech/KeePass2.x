@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.App.Configuration;
+using KeePass.DataExchange.Formats;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util.Spr;
@@ -408,30 +409,8 @@ namespace KeePass.Forms
 				return CompileToHtml(strRaw, p, false);
 			};
 
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("<!DOCTYPE html>");
-
-			sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\"");
-			string strLang = Program.Translation.Properties.Iso6391Code;
-			if(string.IsNullOrEmpty(strLang)) strLang = "en";
-			strLang = h(strLang);
-			sb.Append(" xml:lang=\"" + strLang + "\" lang=\"" + strLang + "\"");
-			if(p.Rtl) sb.Append(" dir=\"rtl\"");
-			sb.AppendLine(">");
-
-			sb.AppendLine("<head>");
-			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
-			sb.AppendLine("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />");
-			sb.AppendLine("<meta http-equiv=\"expires\" content=\"0\" />");
-			sb.AppendLine("<meta http-equiv=\"cache-control\" content=\"no-cache\" />");
-			sb.AppendLine("<meta http-equiv=\"pragma\" content=\"no-cache\" />");
-
-			sb.Append("<title>");
-			sb.Append(h(pgDataSource.Name));
-			sb.AppendLine("</title>");
-
-			sb.AppendLine("<style type=\"text/css\">");
-			sb.AppendLine("/* <![CDATA[ */");
+			StringBuilder sb = KeePassHtml2x.HtmlPart1ToHead(p.Rtl, pgDataSource.Name);
+			KeePassHtml2x.HtmlPart2ToStyle(sb);
 
 			sb.AppendLine("body {");
 			sb.AppendLine("\tcolor: #000000;");
@@ -442,6 +421,7 @@ namespace KeePass.Forms
 			sb.AppendLine("h2, h3 {");
 			sb.AppendLine("\tcolor: #000000;");
 			sb.AppendLine("\tbackground-color: #D0D0D0;");
+			sb.AppendLine("\tborder: 1px solid #808080;");
 			sb.AppendLine("\tpadding-left: 2pt;");
 			sb.AppendLine("\tpadding-right: 2pt;"); // RTL support
 			sb.AppendLine("}");
@@ -558,10 +538,7 @@ namespace KeePass.Forms
 				sb.AppendLine("}");
 			}
 
-			sb.AppendLine("/* ]]> */");
-			sb.AppendLine("</style>");
-			sb.AppendLine("</head>");
-			sb.AppendLine("<body>");
+			KeePassHtml2x.HtmlPart3ToBody(sb);
 
 			sb.AppendLine("<h2>" + h(pgDataSource.Name) + "</h2>");
 			WriteGroupNotes(sb, pgDataSource);
@@ -748,7 +725,7 @@ namespace KeePass.Forms
 				sb.AppendLine("</table><br />");
 				sb.Append("<h3>");
 				// sb.Append(MakeIconImg(pg.IconId, pg.CustomIconUuid, pg, p));
-				sb.Append(h(pg.GetFullPath(" - ", false)));
+				sb.Append(h(pg.GetFullPath(true, false)));
 				sb.AppendLine("</h3>");
 				WriteGroupNotes(sb, pg);
 				sb.AppendLine(strTableInit);
@@ -761,8 +738,7 @@ namespace KeePass.Forms
 			if(bTabular || bBlocks) sb.AppendLine("</table>");
 			else { Debug.Assert(false); }
 
-			sb.AppendLine("</body>");
-			sb.AppendLine("</html>");
+			KeePassHtml2x.HtmlPart4ToEnd(sb);
 
 			string strDoc = sb.ToString();
 #if DEBUG
@@ -933,9 +909,7 @@ namespace KeePass.Forms
 
 		private static string MakeIconImg(PwIcon i, PwUuid ci, ITimeLogger tl, PfOptions p)
 		{
-			if(p.ClientIcons == null) return string.Empty;
-
-			Image img = null;
+			if(p.ClientIcons == null) return string.Empty; // Optional
 
 			if((tl != null) && tl.Expires && (tl.ExpiryTime <= p.Now))
 			{
@@ -943,6 +917,7 @@ namespace KeePass.Forms
 				ci = null;
 			}
 
+			Image img = null;
 			PwDatabase pd = p.Database;
 			if((ci != null) && !ci.Equals(PwUuid.Zero) && (pd != null))
 			{
@@ -964,13 +939,8 @@ namespace KeePass.Forms
 			string strData = GfxUtil.ImageToDataUri(img);
 			if(string.IsNullOrEmpty(strData)) { Debug.Assert(false); return string.Empty; }
 
-			StringBuilder sb = new StringBuilder();
-			sb.Append("<img src=\"");
-			sb.Append(strData);
-			sb.AppendLine("\"");
-			sb.Append("class=\"icon_cli\" alt=\"\" />&nbsp;");
-
-			return sb.ToString();
+			return ("<img src=\"" + strData + "\"" + Environment.NewLine +
+				"class=\"icon_cli\" alt=\"\" />&nbsp;");
 		}
 
 		private static string MakeUrlLink(string strRawUrl, PfOptions p)

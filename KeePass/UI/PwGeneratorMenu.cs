@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -104,15 +104,14 @@ namespace KeePass.UI
 		private List<ToolStripItem> ConstructMenuItems()
 		{
 			List<ToolStripItem> l = new List<ToolStripItem>();
-			List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
+			AccessKeyManagerEx ak = new AccessKeyManagerEx();
 			ProtectedString ps = GetPassword();
 
 			GFunc<string, Image, EventHandler, object, ToolStripMenuItem> fAdd =
 				delegate(string strText, Image img, EventHandler ehClick,
 				object oTag)
 			{
-				string str = StrUtil.EncodeMenuText(strText ?? string.Empty);
-				str = StrUtil.AddAccelerator(str, lAvailKeys);
+				string str = ak.CreateText(strText, true);
 
 				ToolStripMenuItem tsmi = new ToolStripMenuItem(str);
 				if(img != null) tsmi.Image = img;

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -127,6 +127,18 @@ namespace KeePass.Forms
 			m_fAction = fAction;
 		}
 	} */
+
+	[Flags]
+	public enum LvfFlags
+	{
+		None = 0,
+
+		Print = 0x1,
+		Export = 0x2,
+		Filter = 0x4,
+
+		StandardTheme = 0x8
+	}
 
 	public enum PwEditMode
 	{

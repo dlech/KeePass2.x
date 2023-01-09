@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -754,6 +754,7 @@ namespace KeePass
 				f("Switch.System.IO.Compression.DoNotUseNativeZipLibraryForDecompression", false); // 4.7.2
 				f("Switch.System.IO.Compression.ZipFile.UseBackslash", false); // 4.6.1
 				f("Switch.System.Security.Cryptography.AesCryptoServiceProvider.DontCorrectlyResetDecryptor", false); // 4.6.2
+				f("Switch.System.Security.Cryptography.UseLegacyFipsThrow", false); // 4.8
 				f("Switch.System.Windows.Forms.DoNotLoadLatestRichEditControl", false); // 4.7
 				f("Switch.System.Windows.Forms.DoNotSupportSelectAllShortcutInMultilineTextBox", false); // 4.6.1
 				f("Switch.System.Windows.Forms.DontSupportReentrantFilterMessage", false); // 4.6.1
@@ -780,7 +781,11 @@ namespace KeePass
 						strFullName + " returned an unexpected value!");
 				};
 
-				Type tS = typeof(GZipStream).Assembly.GetType(
+				Type tM = typeof(string).Assembly.GetType( // mscorlib
+					"System.AppContextSwitches", false);
+				if(tM == null) { Debug.Assert(false); return; }
+
+				Type tS = typeof(GZipStream).Assembly.GetType( // System
 					"System.LocalAppContextSwitches", false);
 				if(tS == null) { Debug.Assert(false); return; }
 
@@ -799,6 +804,7 @@ namespace KeePass
 				fCheckB(tD, "DontSupportPngFramesInIcons", false);
 				fCheckB(tD, "OptimizePrintPreview", true);
 				fCheckB(tS, "DoNotUseNativeZipLibraryForDecompression", false);
+				fCheckB(tM, "UseLegacyFipsThrow", false);
 				fCheckB(tW, "DoNotLoadLatestRichEditControl", false);
 				fCheckB(tW, "DoNotSupportSelectAllShortcutInMultilineTextBox", false);
 				fCheckB(tW, "DontSupportReentrantFilterMessage", false);

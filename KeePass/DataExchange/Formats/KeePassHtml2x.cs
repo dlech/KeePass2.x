@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -69,6 +69,53 @@ namespace KeePass.DataExchange.Formats
 			finally { UIUtil.DestroyForm(dlg); }
 
 			return bResult;
+		}
+
+		internal static StringBuilder HtmlPart1ToHead(bool bRtl, string strTitle)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("<!DOCTYPE html>");
+
+			sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\"");
+			string strLang = Program.Translation.Properties.Iso6391Code;
+			if(string.IsNullOrEmpty(strLang)) strLang = "en";
+			strLang = StrUtil.StringToHtml(strLang);
+			sb.Append(" xml:lang=\"" + strLang + "\" lang=\"" + strLang + "\"");
+			if(bRtl) sb.Append(" dir=\"rtl\"");
+			sb.AppendLine(">");
+
+			sb.AppendLine("<head>");
+			sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+			sb.AppendLine("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />");
+			sb.AppendLine("<meta http-equiv=\"expires\" content=\"0\" />");
+			sb.AppendLine("<meta http-equiv=\"cache-control\" content=\"no-cache\" />");
+			sb.AppendLine("<meta http-equiv=\"pragma\" content=\"no-cache\" />");
+
+			sb.Append("<title>");
+			sb.Append(StrUtil.StringToHtml(strTitle));
+			sb.AppendLine("</title>");
+
+			return sb;
+		}
+
+		internal static void HtmlPart2ToStyle(StringBuilder sb)
+		{
+			sb.AppendLine("<style type=\"text/css\">");
+			sb.AppendLine("/* <![CDATA[ */");
+		}
+
+		internal static void HtmlPart3ToBody(StringBuilder sb)
+		{
+			sb.AppendLine("/* ]]> */");
+			sb.AppendLine("</style>");
+			sb.AppendLine("</head>");
+			sb.AppendLine("<body>");
+		}
+
+		internal static void HtmlPart4ToEnd(StringBuilder sb)
+		{
+			sb.AppendLine("</body>");
+			sb.AppendLine("</html>");
 		}
 	}
 }

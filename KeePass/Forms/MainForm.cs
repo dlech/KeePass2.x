@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -227,13 +227,38 @@ namespace KeePass.Forms
 				@"{USERNAME}{TAB}{PASSWORD}",
 				@"{USERNAME}{TAB}{PASSWORD}{ENTER}",
 				@"{USERNAME}{TAB}{TAB}{PASSWORD}",
-				@"{USERNAME}{TAB}{TAB}{PASSWORD}{ENTER}"
+				@"{USERNAME}{TAB}{TAB}{PASSWORD}{ENTER}",
+				null,
+				EntryUtil.HotpPlh, EntryUtil.TotpPlh
 			};
+			AccessKeyManagerEx akAdvSeq = new AccessKeyManagerEx();
 			Bitmap bmpAutoType = Properties.Resources.B16x16_KTouch;
 			foreach(string strAdvSeq in vAdvSeq)
 			{
-				m_dynAutoTypeAdvMenu.AddItem(strAdvSeq, bmpAutoType);
-				m_dynAutoTypeAdvCtx.AddItem(strAdvSeq, bmpAutoType);
+				if(strAdvSeq == null)
+				{
+					m_dynAutoTypeAdvMenu.AddSeparator();
+					m_dynAutoTypeAdvCtx.AddSeparator();
+				}
+				else
+				{
+					string str = akAdvSeq.CreateText(strAdvSeq, true);
+					ToolStripMenuItem tsmiM = m_dynAutoTypeAdvMenu.AddItem(
+						str, bmpAutoType, strAdvSeq);
+					ToolStripMenuItem tsmiC = m_dynAutoTypeAdvCtx.AddItem(
+						str, bmpAutoType, strAdvSeq);
+
+					if(strAdvSeq == EntryUtil.HotpPlh)
+					{
+						m_tsmiAutoTypeHotpMenu = tsmiM;
+						m_tsmiAutoTypeHotpCtx = tsmiC;
+					}
+					else if(strAdvSeq == EntryUtil.TotpPlh)
+					{
+						m_tsmiAutoTypeTotpMenu = tsmiM;
+						m_tsmiAutoTypeTotpCtx = tsmiC;
+					}
+				}
 			}
 
 			m_dynOpenUrlMenu = new OpenWithMenu(m_menuEntryUrl);
@@ -1736,6 +1761,10 @@ namespace KeePass.Forms
 						if(e.Shift) OnEntryClipCopy(sender, e);
 						else OnEntryCopyPassword(sender, e);
 						break;
+					case Keys.T:
+						OnEntryStringClick(sender, new DynamicMenuEventArgs(
+							string.Empty, (e.Shift ? m_edcShowTotp : m_edcCopyTotp)));
+						break;
 					case Keys.V:
 						if(e.Shift) OnEntryClipPaste(sender, e);
 						else OnEntryPerformAutoType(sender, e);
@@ -1773,6 +1802,7 @@ namespace KeePass.Forms
 					case Keys.A: break;
 					case Keys.C: break;
 					case Keys.Insert: break;
+					case Keys.T: break;
 					case Keys.V: break;
 					default: bHandled = false; break;
 				}
@@ -2573,12 +2603,36 @@ namespace KeePass.Forms
 			ShowSelectedEntryParentGroup();
 		}
 
+		private void OnFindLastMod(object sender, EventArgs e)
+		{
+			CreateAndShowEntryList(EntryUtil.FindLastModEntries,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Sign,
+				KPRes.LastModified, KPRes.LastModifiedEntriesList, null,
+				LvfFlags.None, LvfFlags.None, true, false);
+		}
+
+		private void OnFindHistory(object sender, EventArgs e)
+		{
+			CreateAndShowEntryList(EntryUtil.FindHistoryEvents,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Sign,
+				KPRes.History, KPRes.LastModifiedEntriesList, null,
+				LvfFlags.None, LvfFlags.None, true, false);
+		}
+
+		private void OnFindLarge(object sender, EventArgs e)
+		{
+			CreateAndShowEntryList(EntryUtil.FindLargeEntries,
+				KPRes.SearchingOp + "...", Properties.Resources.B48x48_Ark,
+				KPRes.LargeEntries, KPRes.LargeEntriesList, null,
+				LvfFlags.None, LvfFlags.None, true, false);
+		}
+
 		private void OnFindDupPasswords(object sender, EventArgs e)
 		{
 			if(CreateAndShowEntryList(EntryUtil.FindDuplicatePasswords,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
 				KPRes.DuplicatePasswords, KPRes.DuplicatePasswordsList, null,
-				false, false) == 0)
+				LvfFlags.None, LvfFlags.Filter, false, false) == 0)
 				MessageService.ShowInfo(KPRes.DuplicatePasswordsNone);
 		}
 
@@ -2587,7 +2641,7 @@ namespace KeePass.Forms
 			CreateAndShowEntryList(EntryUtil.FindSimilarPasswordsP,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
 				KPRes.SimilarPasswords, KPRes.SimilarPasswordsList2,
-				KPRes.SimilarPasswordsNoDup, true, false);
+				KPRes.SimilarPasswordsNoDup, LvfFlags.None, LvfFlags.Filter, true, false);
 		}
 
 		private void OnFindSimPasswordsC(object sender, EventArgs e)
@@ -2595,28 +2649,15 @@ namespace KeePass.Forms
 			CreateAndShowEntryList(EntryUtil.FindSimilarPasswordsC,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
 				KPRes.SimilarPasswords, KPRes.ClusterCenters2,
-				KPRes.ClusterCentersDesc, true, true);
+				KPRes.ClusterCentersDesc, LvfFlags.None, LvfFlags.None, true, true);
 		}
 
 		private void OnFindPwQualityReport(object sender, EventArgs e)
 		{
 			CreateAndShowEntryList(EntryUtil.CreatePwQualityList,
 				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KOrganizer,
-				KPRes.PasswordQuality, KPRes.PasswordQualityReport2, null, true, false);
-		}
-
-		private void OnFindLarge(object sender, EventArgs e)
-		{
-			CreateAndShowEntryList(EntryUtil.FindLargeEntries,
-				KPRes.SearchingOp + "...", Properties.Resources.B48x48_Ark,
-				KPRes.LargeEntries, KPRes.LargeEntriesList, null, true, false);
-		}
-
-		private void OnFindLastMod(object sender, EventArgs e)
-		{
-			CreateAndShowEntryList(EntryUtil.FindLastModEntries,
-				KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Sign,
-				KPRes.LastModified, KPRes.LastModifiedEntriesList, null, true, false);
+				KPRes.PasswordQuality, KPRes.PasswordQualityReport2, null,
+				LvfFlags.None, LvfFlags.None, true, false);
 		}
 
 		private void OnTrayCancel(object sender, EventArgs e)

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -699,7 +699,7 @@ namespace KeePass.UI
 
 				if(pe.ParentGroup != null)
 				{
-					string strGroup = pe.ParentGroup.GetFullPath(" - ", false);
+					string strGroup = pe.ParentGroup.GetFullPath(true, false);
 					if(strGroup != lvg.Header)
 					{
 						lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
@@ -810,7 +810,7 @@ namespace KeePass.UI
 
 				if(pe.ParentGroup != null)
 				{
-					string strGroup = pe.ParentGroup.GetFullPath(" - ", true);
+					string strGroup = pe.ParentGroup.GetFullPath(true, true);
 					if(strGroup != lvg.Header)
 					{
 						lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
@@ -957,7 +957,7 @@ namespace KeePass.UI
 
 			if(bIncludeAllFiles)
 			{
-				if(sb.Length > 0) sb.Append(@"|");
+				if(sb.Length > 0) sb.Append('|');
 				sb.Append(KPRes.AllFiles);
 				sb.Append(@" (*.*)|*.*");
 			}
@@ -2003,6 +2003,32 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); return false; }
 
 			return true;
+		}
+
+		internal static int[] GetDisplayIndices(ListView lv)
+		{
+			if(lv == null) { Debug.Assert(false); return MemUtil.EmptyArray<int>(); }
+
+			int c = lv.Columns.Count;
+			int[] v = new int[c];
+			bool[] vDI = new bool[c];
+
+			for(int i = 0; i < c; ++i)
+			{
+				int di = lv.Columns[i].DisplayIndex;
+				if((di < 0) || (di >= c)) { Debug.Assert(false); break; }
+
+				v[i] = di;
+				vDI[di] = true;
+			}
+
+			if(Array.IndexOf<bool>(vDI, false) >= 0)
+			{
+				Debug.Assert(false); // Invalid display indices
+				for(int i = 0; i < c; ++i) v[i] = i;
+			}
+
+			return v;
 		}
 
 		public static void SetDisplayIndices(ListView lv, int[] v)
@@ -3727,18 +3753,19 @@ namespace KeePass.UI
 		internal static int GetEntryIconIndex(PwDatabase pd, PwEntry pe,
 			DateTime dtNow)
 		{
+			Debug.Assert(pd != null);
 			if(pe == null) { Debug.Assert(false); return (int)PwIcon.Key; }
 
 			if(pe.Expires && (pe.ExpiryTime <= dtNow))
 				return (int)PwIcon.Expired;
 
-			if(pe.CustomIconUuid == PwUuid.Zero)
+			if(pe.CustomIconUuid.Equals(PwUuid.Zero))
 				return (int)pe.IconId;
 
 			int i = -1;
 			if(pd != null) i = pd.GetCustomIconIndex(pe.CustomIconUuid);
-			else { Debug.Assert(false); }
 			if(i >= 0) return ((int)PwIcon.Count + i);
+
 			Debug.Assert(false);
 			return (int)pe.IconId;
 		}

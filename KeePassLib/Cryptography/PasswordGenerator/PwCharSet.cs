@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			"\u00F0\u00F1\u00F2\u00F3\u00F4\u00F5\u00F6\u00F7" +
 			"\u00F8\u00F9\u00FA\u00FB\u00FC\u00FD\u00FE\u00FF";
 
-		internal static readonly string MenuAccels = PwCharSet.LowerCase + PwCharSet.Digits;
+		// internal static readonly string MenuAccels = PwCharSet.LowerCase + PwCharSet.Digits;
 
 		[Obsolete]
 		public static string SpecialChars { get { return PwCharSet.Special; } }

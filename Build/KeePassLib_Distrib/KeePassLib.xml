@@ -1448,19 +1448,17 @@
         </member>
         <member name="M:KeePassLib.PwGroup.GetFullPath">
             <summary>
-            Get the full path of a group.
+            Get the full path of the group.
             </summary>
-            <returns>Full path of the group.</returns>
         </member>
         <member name="M:KeePassLib.PwGroup.GetFullPath(System.String,System.Boolean)">
             <summary>
-            Get the full path of a group.
+            Get the full path of the group.
             </summary>
             <param name="strSeparator">String that separates the group
             names.</param>
             <param name="bIncludeTopMostGroup">Specifies whether the returned
             path starts with the topmost group.</param>
-            <returns>Full path of the group.</returns>
         </member>
         <member name="M:KeePassLib.PwGroup.CreateNewItemUuids(System.Boolean,System.Boolean,System.Boolean)">
             <summary>

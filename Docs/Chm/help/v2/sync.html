@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2022 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -64,17 +64,27 @@ a synchronization).</p>
 <li>If the files to be synchronized are accessible via a protocol that
 KeePass supports by default (e.g. files on a local hard disk or a network
 share, FTP, HTTP, HTTPS, WebDAV, ..., see the page
-<a href="ioconnect.html">Loading/Saving From/To URL</a> for details),
+'<a href="ioconnect.html">Loading/Saving From/To URL</a>' for details),
 then no plugins/extensions are required.</li>
+
 <li>If one of the files to be synchronized should be accessed via
 SCP, SFTP or FTPS, you need the
 <a href="https://keepass.info/plugins.html#ioprotocolext"
 target="_blank">IOProtocolExt</a>
 plugin, which adds support for these protocols to KeePass.</li>
-<li>If one of the files to be synchronized is stored in an online
-storage that is not accessible via a standard protocol, you need
-a specialized online storage provider
-<a href="https://keepass.info/plugins.html" target="_blank">plugin</a>.</li>
+
+<li>If one of the files to be synchronized is stored in a cloud storage:
+for most cloud storages, there is an integration with the local file system
+available (i.e. you can access your stored files using Windows Explorer).
+For example, Dropbox, Microsoft OneDrive and Google Drive provide such
+an integration.
+If such an integration is available, it is recommended that you access
+your database file this way; this often works better than accessing it
+via a protocol like FTP or WebDAV.
+If no such integration is available and your cloud storage also is not
+accessible via a standard protocol, a specialized KeePass
+<a href="https://keepass.info/plugins.html" target="_blank">plugin</a>
+for this cloud storage might be available.</li>
 </ul>
 
 <br />
@@ -112,13 +122,13 @@ See the page
 <li><b>Triggers.</b>
 In more complex situations you can use the synchronization trigger action.
 See the page
-<a href="triggers.html">Triggers</a> for details.</li>
+'<a href="triggers.html">Triggers</a>' for details.</li>
 
 <li><b>Scripting.</b>
 In order to perform a synchronization without opening KeePass,
 the synchronization command of KPScript can be used. See the KPScript
 help page
-<a href="../v2_dev/scr_sc_index.html">Single Command Operations</a>
+'<a href="../v2_dev/scr_sc_index.html">Single Command Operations</a>'
 for details.</li>
 </ul>
 

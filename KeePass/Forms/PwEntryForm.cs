@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -96,6 +96,27 @@ namespace KeePass.Forms
 			None = 0,
 			ByIndex,
 			ByRef
+		}
+
+		private sealed class EfxHistoryItem
+		{
+			public readonly PwEntry Entry;
+			public readonly bool IsHistoric;
+			public readonly bool IsViewable;
+
+			public readonly PwIcon Icon;
+			public readonly string Name;
+
+			public EfxHistoryItem(PwEntry pe, bool bHistoric, bool bViewable,
+				PwIcon ic, string strName)
+			{
+				this.Entry = pe;
+				this.IsHistoric = bHistoric;
+				this.IsViewable = bViewable;
+
+				this.Icon = ic;
+				this.Name = strName;
+			}
 		}
 
 		public event EventHandler<CancellableOperationEventArgs> EntrySaving;
@@ -620,18 +641,22 @@ namespace KeePass.Forms
 				m_pwEntry.CreationTime));
 			UIUtil.SetText(m_lblModifiedData, TimeUtil.ToDisplayString(
 				m_pwEntry.LastModificationTime));
-			UpdatePasswordModifiedTime(bStd ? m_pwEntry : null);
+			// UpdatePasswordModifiedTime(bStd ? m_pwEntry : null);
 
 			m_lvHistory.SmallImageList = m_ilIcons;
 
 			m_lvHistory.Columns.Add(KPRes.Version);
-			m_lvHistory.Columns.Add(KPRes.Title);
-			m_lvHistory.Columns.Add(KPRes.UserName);
+			m_lvHistory.Columns.Add(KPRes.Modified);
 			m_lvHistory.Columns.Add(KPRes.Size, 72, HorizontalAlignment.Right);
 
-			UpdateHistoryList(false);
+			// UpdateHistoryList(false, false); // Updated on tab switch
 
-			if(!bStd) UIUtil.SetEnabledFast(false, m_lblPrev, m_lvHistory);
+			if(!bStd || ((m_pwEditMode == PwEditMode.AddNewEntry) &&
+				(m_vHistory.UCount == 0)))
+			{
+				UpdatePasswordModifiedTime(null);
+				UIUtil.SetEnabledFast(false, m_lblVersions, m_lvHistory);
+			}
 		}
 
 		private void UpdatePasswordModifiedTime(PwEntry pe)
@@ -642,47 +667,83 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast(b, m_lblPasswordModified, m_lblPasswordModifiedData);
 		}
 
-		private void UpdateHistoryList(bool bUpdateState)
+		private void UpdateHistoryList(bool bResizeColumns, bool bUpdateState)
 		{
-			UIScrollInfo s = UIUtil.GetScrollInfo(m_lvHistory, true);
+			if(!m_lvHistory.Enabled) { Debug.Assert(m_vHistory.UCount == 0); return; }
+
+			PwObjectList<PwEntry> lHOrig = m_pwInitialEntry.History;
+			m_pwInitialEntry.History = m_vHistory; // SaveEntry sets the password
+			UpdatePasswordModifiedTime(m_pwInitialEntry);
+			m_pwInitialEntry.History = lHOrig;
+
+			List<PwEntry> lHE = new List<PwEntry>(m_vHistory);
+			lHE.Reverse();
+			Debug.Assert((lHE.Count < 2) || (lHE[0].LastModificationTime >=
+				lHE[lHE.Count - 1].LastModificationTime));
+			lHE.Sort(EntryUtil.CompareLastModReverse);
+
+			int cHI = 2 + lHE.Count;
+			List<EfxHistoryItem> lHI = new List<EfxHistoryItem>(cHI);
+
+			PwEntry pe = m_pwInitialEntry.CloneDeep();
+			SaveEntry(pe, false);
+			pe.History = new PwObjectList<PwEntry>(); // SaveEntry sets it to m_vHistory
+			lHI.Add(new EfxHistoryItem(pe, false, false, PwIcon.List,
+				KPRes.Dialog + " (" + KPRes.Unsaved + ")"));
+
+			pe = m_pwInitialEntry.CloneDeep();
+			pe.History.Clear(); // Exclude history from size estimation, ...
+			lHI.Add(new EfxHistoryItem(pe, false, true, PwIcon.PaperQ,
+				KPRes.Current + " (" + TimeUtil.ToDisplayString(
+				pe.LastModificationTime) + ")"));
+
+			foreach(PwEntry peH in lHE)
+				lHI.Add(new EfxHistoryItem(peH, true, true, PwIcon.Clock,
+					TimeUtil.ToDisplayString(peH.LastModificationTime)));
+
+			Debug.Assert(lHI.Count == cHI);
 
 			ImageList ilIcons = m_lvHistory.SmallImageList;
-			int ci = ((ilIcons != null) ? ilIcons.Images.Count : 0);
+			int cIcons = ((ilIcons != null) ? ilIcons.Images.Count : 0);
 
-			m_lvHistory.BeginUpdate();
-			m_lvHistory.Items.Clear();
+			Color clrSpecial = (UIUtil.IsDarkColor(m_lvHistory.BackColor) ?
+				Color.FromArgb(0, 255, 0) : Color.FromArgb(0, 128, 0));
 
-			foreach(PwEntry pe in m_vHistory)
+			PwGroup pg = m_pwEntry.ParentGroup;
+
+			ListViewItem[] vLvi = new ListViewItem[cHI];
+			for(int i = 0; i < cHI; ++i)
 			{
-				ListViewItem lvi = m_lvHistory.Items.Add(TimeUtil.ToDisplayString(
-					pe.LastModificationTime));
+				EfxHistoryItem hi = lHI[i];
+				pe = hi.Entry;
 
-				int idxIcon = (int)pe.IconId;
-				PwUuid pu = pe.CustomIconUuid;
-				if(!pu.Equals(PwUuid.Zero))
-				{
-					// The user may have deleted the custom icon (using
-					// the icon dialog accessible through this entry
-					// dialog); continuing to show the deleted custom
-					// icon would be confusing
-					int idxNew = m_pwDatabase.GetCustomIconIndex(pu);
-					if(idxNew >= 0) // Icon not deleted
-					{
-						int idxOrg = m_lOrgCustomIconIDs.IndexOf(pu);
-						if(idxOrg >= 0) idxIcon = (int)PwIcon.Count + idxOrg;
-						else { Debug.Assert(false); }
-					}
-				}
-				if(idxIcon < ci) lvi.ImageIndex = idxIcon;
+				ListViewItem lvi = new ListViewItem(hi.Name);
+				lvi.Tag = hi;
+
+				int iIcon = (int)hi.Icon;
+				if(iIcon < cIcons) lvi.ImageIndex = iIcon;
 				else { Debug.Assert(false); }
 
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.TitleField));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
+				string strMod = ((i == (cHI - 1)) ? DiffUtil.CueNew :
+					DiffUtil.GetDiffNames(lHI[i + 1].Entry, pg, m_pwDatabase,
+					pe, pg, m_pwDatabase, true));
+				lvi.SubItems.Add(strMod);
+
 				lvi.SubItems.Add(StrUtil.FormatDataSizeKB(pe.GetSize()));
+
+				if(!hi.IsHistoric) lvi.ForeColor = clrSpecial;
+
+				vLvi[i] = lvi;
 			}
 
+			UIScrollInfo s = UIUtil.GetScrollInfo(m_lvHistory, true);
+			m_lvHistory.BeginUpdate();
+			m_lvHistory.Items.Clear();
+			m_lvHistory.Items.AddRange(vLvi);
 			UIUtil.Scroll(m_lvHistory, s, true);
 			m_lvHistory.EndUpdate();
+
+			if(bResizeColumns) ResizeColumnHeaders();
 
 			if(bUpdateState) EnableControlsEx();
 		}
@@ -692,7 +753,7 @@ namespace KeePass.Forms
 			UIUtil.ResizeColumns(m_lvStrings, true);
 			UIUtil.ResizeColumns(m_lvBinaries, new int[] { 4, 1 }, true);
 			UIUtil.ResizeColumns(m_lvAutoType, true);
-			UIUtil.ResizeColumns(m_lvHistory, new int[] { 21, 20, 18, 11 }, true);
+			UIUtil.ResizeColumns(m_lvHistory, new int[] { 22, 37, 11 }, true);
 		}
 
 		private void OnFormLoad(object sender, EventArgs e)
@@ -917,10 +978,13 @@ namespace KeePass.Forms
 			int nBinSel = m_lvBinaries.SelectedIndices.Count;
 			int nAutoType = m_lvAutoType.Items.Count;
 			int nAutoTypeSel = m_lvAutoType.SelectedIndices.Count;
-			int nHistorySel = m_lvHistory.SelectedIndices.Count;
 
 			bool bAutoType = (m_cbAutoTypeEnabled.CheckState != CheckState.Unchecked);
 			bool bAutoTypeCustomEdit = (bEdit && !bMulti && bAutoType);
+
+			List<EfxHistoryItem> lHistorySel = GetSelectedHistoryItems();
+			int nHistorySel = lHistorySel.Count;
+			bool bHistoricOnly = ContainsHistoricItemsOnly(lHistorySel);
 
 			m_btnStrEdit.Enabled = (nStringsSel == 1); // Supports read-only
 			m_btnStrDelete.Enabled = (bEdit && (nStringsSel >= 1));
@@ -976,9 +1040,13 @@ namespace KeePass.Forms
 
 			m_cbAutoTypeObfuscation.Enabled = (bEdit && bAutoType);
 
-			UIUtil.SetEnabledFast((bEdit && !bMulti && (nHistorySel == 1)),
-				m_btnHistoryView, m_btnHistoryRestore);
-			m_btnHistoryDelete.Enabled = (bEdit && !bMulti && (nHistorySel >= 1));
+			bool bHistory = (bEdit && !bMulti);
+			m_btnHistoryView.Enabled = (bHistory && (nHistorySel == 1) &&
+				lHistorySel[0].IsViewable);
+			m_btnHistoryCompare.Enabled = (bHistory && (nHistorySel == 2));
+			m_btnHistoryDelete.Enabled = (bHistory && (nHistorySel >= 1) && bHistoricOnly);
+			m_btnHistoryRestore.Enabled = (bHistory && (nHistorySel == 1) && bHistoricOnly &&
+				!HasModifiedEntryEx());
 		}
 
 		private bool SaveEntry(PwEntry peTarget, bool bValidate)
@@ -1224,12 +1292,8 @@ namespace KeePass.Forms
 
 			if(nSelCount == 1)
 			{
-				SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.AttachmentSave,
-					UrlUtil.GetSafeFileName(lvsc[0].Text), UIUtil.CreateFileTypeFilter(
-					null, null, true), 1, null, AppDefs.FileDialogContext.Attachments);
-
-				if(sfd.ShowDialog() == DialogResult.OK)
-					SaveAttachmentTo(lvsc[0], sfd.FileName, false);
+				string str = FileDialogsEx.ShowAttachmentSaveFileDialog(lvsc[0].Text);
+				if(!string.IsNullOrEmpty(str)) SaveAttachmentTo(lvsc[0], str, false);
 			}
 			else // nSelCount > 1
 			{
@@ -1315,14 +1379,38 @@ namespace KeePass.Forms
 			UpdateAutoTypeList(ListSelRestore.None, null, false, true);
 		}
 
+		private List<EfxHistoryItem> GetSelectedHistoryItems()
+		{
+			ListView.SelectedListViewItemCollection lvsic = m_lvHistory.SelectedItems;
+			List<EfxHistoryItem> l = new List<EfxHistoryItem>(lvsic.Count);
+
+			foreach(ListViewItem lvi in lvsic)
+			{
+				EfxHistoryItem hi = ((lvi != null) ? (lvi.Tag as EfxHistoryItem) : null);
+				if((hi == null) || (hi.Entry == null)) { Debug.Assert(false); continue; }
+
+				l.Add(hi);
+			}
+
+			return l;
+		}
+
+		private static bool ContainsHistoricItemsOnly(List<EfxHistoryItem> l)
+		{
+			foreach(EfxHistoryItem hi in l)
+			{
+				if(!hi.IsHistoric) return false;
+			}
+
+			return true;
+		}
+
 		private void OnBtnHistoryView(object sender, EventArgs e)
 		{
-			Debug.Assert(m_vHistory.UCount == m_lvHistory.Items.Count);
+			List<EfxHistoryItem> l = GetSelectedHistoryItems();
+			if((l.Count != 1) || !l[0].IsViewable) return; // No assert (item activation)
 
-			ListView.SelectedIndexCollection lvsic = m_lvHistory.SelectedIndices;
-			if(lvsic.Count != 1) { Debug.Assert(false); return; }
-
-			PwEntry pe = m_vHistory.GetAt((uint)lvsic[0]);
+			PwEntry pe = l[0].Entry;
 			if(pe == null) { Debug.Assert(false); return; }
 
 			PwEntryForm pwf = new PwEntryForm();
@@ -1332,38 +1420,63 @@ namespace KeePass.Forms
 			UIUtil.ShowDialogAndDestroy(pwf);
 		}
 
+		private void OnBtnHistoryCompare(object sender, EventArgs e)
+		{
+			List<EfxHistoryItem> l = GetSelectedHistoryItems();
+			if(l.Count != 2) { Debug.Assert(false); return; }
+
+			PwEntry peA = l[1].Entry, peB = l[0].Entry;
+			if(peA.LastModificationTime > peB.LastModificationTime)
+			{
+				Debug.Assert(false);
+				PwEntry peT = peA;
+				peA = peB;
+				peB = peT;
+			}
+
+			PwGroup pg = m_pwEntry.ParentGroup;
+			DiffUtil.ShowDiff(peA, pg, m_pwDatabase, peB, pg, m_pwDatabase);
+		}
+
 		private void OnBtnHistoryDelete(object sender, EventArgs e)
 		{
-			Debug.Assert(m_vHistory.UCount == m_lvHistory.Items.Count);
+			List<EfxHistoryItem> l = GetSelectedHistoryItems();
+			bool bHistoricOnly = ContainsHistoricItemsOnly(l);
+			if((l.Count == 0) || !bHistoricOnly) { Debug.Assert(false); return; }
 
-			ListView.SelectedIndexCollection lvsic = m_lvHistory.SelectedIndices;
-			int n = lvsic.Count; // Getting Count sends a message
-			if(n == 0) return;
+			foreach(EfxHistoryItem hi in l)
+			{
+				if(!m_vHistory.Remove(hi.Entry)) { Debug.Assert(false); }
+			}
 
-			// LVSIC: one access by index requires O(n) time, thus copy
-			// all to an array (which requires O(1) for each element)
-			int[] v = new int[n];
-			lvsic.CopyTo(v, 0);
-
-			for(int i = 0; i < n; ++i)
-				m_vHistory.RemoveAt((uint)v[n - i - 1]);
-
-			UpdateHistoryList(true);
-			ResizeColumnHeaders();
-
-			UpdatePasswordModifiedTime(null);
+			UpdateHistoryList(true, true);
 		}
 
 		private void OnBtnHistoryRestore(object sender, EventArgs e)
 		{
-			Debug.Assert(m_vHistory.UCount == m_lvHistory.Items.Count);
+			List<EfxHistoryItem> l = GetSelectedHistoryItems();
+			bool bHistoricOnly = ContainsHistoricItemsOnly(l);
+			if((l.Count != 1) || !bHistoricOnly) { Debug.Assert(false); return; }
 
-			ListView.SelectedIndexCollection lvsic = m_lvHistory.SelectedIndices;
-			if(lvsic.Count != 1) { Debug.Assert(false); return; }
+			if(HasModifiedEntryEx()) { Debug.Assert(false); return; }
 
-			m_pwEntry.RestoreFromBackup((uint)lvsic[0], m_pwDatabase);
+			PwObjectList<PwEntry> lC = m_vHistory;
+			PwObjectList<PwEntry> lE = m_pwEntry.History;
+			if(lC.UCount != lE.UCount) { Debug.Assert(false); return; }
+
+			int i = lC.IndexOf(l[0].Entry);
+			if(i < 0) { Debug.Assert(false); return; }
+
+			if(lC.GetAt((uint)i).LastModificationTime != lE.GetAt((uint)i).LastModificationTime)
+			{
+				Debug.Assert(false);
+				return;
+			}
+
+			m_pwEntry.RestoreFromBackup((uint)i, m_pwDatabase);
 			m_pwEntry.Touch(true, false);
 			m_bTouchedOnce = true;
+			m_bForceClosing = true;
 			this.DialogResult = DialogResult.OK; // Doesn't invoke OnBtnOK
 		}
 
@@ -1641,7 +1754,7 @@ namespace KeePass.Forms
 
 			UIUtil.DestroyForm(ipf);
 
-			UpdateHistoryList(true); // User may have deleted a custom icon
+			// UpdateHistoryList(false, true); // User may have deleted a custom icon
 		}
 
 		private void OnAutoTypeSeqInheritCheckedChanged(object sender, EventArgs e)
@@ -1978,6 +2091,15 @@ namespace KeePass.Forms
 			CreateFieldReferenceIn(m_rtNotes, PwDefs.NotesField, "\r\n");
 		}
 
+		private bool HasModifiedEntryEx()
+		{
+			PwEntry pe = m_pwInitialEntry.CloneDeep();
+			SaveEntry(pe, false);
+
+			return (!pe.EqualsEntry(m_pwInitialEntry, m_cmpOpt,
+				MemProtCmpMode.CustomOnly) || !m_icgPassword.ValidateData(false));
+		}
+
 		private bool m_bClosing = false; // Mono bug workaround
 		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -1990,52 +2112,43 @@ namespace KeePass.Forms
 		private void HandleFormClosing(FormClosingEventArgs e)
 		{
 			bool bCancel = false;
-			if(!m_bForceClosing && (m_pwEditMode != PwEditMode.ViewReadOnlyEntry))
+			if(!m_bForceClosing && (m_pwEditMode != PwEditMode.ViewReadOnlyEntry) &&
+				HasModifiedEntryEx())
 			{
-				PwEntry pe = m_pwInitialEntry.CloneDeep();
-				SaveEntry(pe, false);
+				string strTitle = m_tbTitle.Text.Trim();
+				string strHeader = ((strTitle.Length == 0) ? string.Empty :
+					(KPRes.Entry + @" '" + strTitle + @"'"));
+				string strText = KPRes.SaveBeforeCloseEntry;
 
-				bool bModified = !pe.EqualsEntry(m_pwInitialEntry, m_cmpOpt,
-					MemProtCmpMode.CustomOnly);
-				bModified |= !m_icgPassword.ValidateData(false);
-
-				if(bModified)
+				if(m_mvec != null)
 				{
-					string strTitle = pe.Strings.ReadSafe(PwDefs.TitleField).Trim();
-					string strHeader = ((strTitle.Length == 0) ? string.Empty :
-						(KPRes.Entry + @" '" + strTitle + @"'"));
-					string strText = KPRes.SaveBeforeCloseEntry;
-
-					if(m_mvec != null)
-					{
-						strHeader = string.Empty;
-						strText = KPRes.SaveBeforeCloseQuestion;
-					}
-
-					VistaTaskDialog dlg = new VistaTaskDialog();
-					dlg.CommandLinks = false;
-					dlg.Content = strText;
-					dlg.MainInstruction = strHeader;
-					dlg.WindowTitle = PwDefs.ShortProductName;
-					dlg.SetIcon(VtdCustomIcon.Question);
-					dlg.AddButton((int)DialogResult.Yes, KPRes.YesCmd, null);
-					dlg.AddButton((int)DialogResult.No, KPRes.NoCmd, null);
-					dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, null);
-					dlg.DefaultButtonID = (int)DialogResult.Yes;
-
-					DialogResult dr;
-					if(dlg.ShowDialog(this)) dr = (DialogResult)dlg.Result;
-					else dr = MessageService.Ask(strText, PwDefs.ShortProductName,
-						MessageBoxButtons.YesNoCancel);
-
-					if((dr == DialogResult.Yes) || (dr == DialogResult.OK))
-					{
-						bCancel = !SaveEntry(m_pwEntry, true);
-						if(!bCancel) this.DialogResult = DialogResult.OK;
-					}
-					else if((dr == DialogResult.Cancel) || (dr == DialogResult.None))
-						bCancel = true;
+					strHeader = string.Empty;
+					strText = KPRes.SaveBeforeCloseQuestion;
 				}
+
+				VistaTaskDialog dlg = new VistaTaskDialog();
+				dlg.CommandLinks = false;
+				dlg.Content = strText;
+				dlg.MainInstruction = strHeader;
+				dlg.WindowTitle = PwDefs.ShortProductName;
+				dlg.SetIcon(VtdCustomIcon.Question);
+				dlg.AddButton((int)DialogResult.Yes, KPRes.YesCmd, null);
+				dlg.AddButton((int)DialogResult.No, KPRes.NoCmd, null);
+				dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, null);
+				dlg.DefaultButtonID = (int)DialogResult.Yes;
+
+				DialogResult dr;
+				if(dlg.ShowDialog(this)) dr = (DialogResult)dlg.Result;
+				else dr = MessageService.Ask(strText, PwDefs.ShortProductName,
+					MessageBoxButtons.YesNoCancel);
+
+				if((dr == DialogResult.Yes) || (dr == DialogResult.OK))
+				{
+					bCancel = !SaveEntry(m_pwEntry, true);
+					if(!bCancel) this.DialogResult = DialogResult.OK;
+				}
+				else if((dr == DialogResult.Cancel) || (dr == DialogResult.None))
+					bCancel = true;
 			}
 
 			if(bCancel)
@@ -2214,11 +2327,11 @@ namespace KeePass.Forms
 		{
 			List<KeyValuePair<string, Image>> l = new List<KeyValuePair<string, Image>>();
 
-			AddOverrideUrlItem(l, "cmd://{INTERNETEXPLORER} \"{URL}\"",
-				AppLocator.InternetExplorerPath);
-			AddOverrideUrlItem(l, "cmd://{INTERNETEXPLORER} -private \"{URL}\"",
-				AppLocator.InternetExplorerPath);
-			AddOverrideUrlItem(l, "microsoft-edge:{URL}",
+			// AddOverrideUrlItem(l, "microsoft-edge:{URL}",
+			//	AppLocator.EdgePath);
+			AddOverrideUrlItem(l, "cmd://{EDGE} \"{URL}\"",
+				AppLocator.EdgePath);
+			AddOverrideUrlItem(l, "cmd://{EDGE} --inprivate \"{URL}\"",
 				AppLocator.EdgePath);
 			AddOverrideUrlItem(l, "cmd://{FIREFOX} \"{URL}\"",
 				AppLocator.FirefoxPath);
@@ -2228,6 +2341,10 @@ namespace KeePass.Forms
 				AppLocator.ChromePath);
 			AddOverrideUrlItem(l, "cmd://{GOOGLECHROME} --incognito \"{URL}\"",
 				AppLocator.ChromePath);
+			AddOverrideUrlItem(l, "cmd://{INTERNETEXPLORER} \"{URL}\"",
+				AppLocator.InternetExplorerPath);
+			AddOverrideUrlItem(l, "cmd://{INTERNETEXPLORER} -private \"{URL}\"",
+				AppLocator.InternetExplorerPath);
 			AddOverrideUrlItem(l, "cmd://{OPERA} \"{URL}\"",
 				AppLocator.OperaPath);
 			AddOverrideUrlItem(l, "cmd://{OPERA} --private \"{URL}\"",
@@ -2484,7 +2601,13 @@ namespace KeePass.Forms
 		private void OnCtxToolsCopyInitialPassword(object sender, EventArgs e)
 		{
 			string str = m_pwInitialEntry.Strings.ReadSafe(PwDefs.PasswordField);
-			ClipboardUtil.Copy(str, false, false, null, null, this.Handle);
+			ClipboardUtil.Copy(str, false, true, null, null, this.Handle);
+		}
+
+		private void OnTabMainSelectedIndexChanged(object sender, EventArgs e)
+		{
+			if(m_tabMain.SelectedTab == m_tabHistory)
+				UpdateHistoryList(true, true);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -83,9 +83,27 @@ namespace KeePass.Resources
 		}
 
 		[Obsolete]
+		public static string HmacOtp
+		{
+			get { return string.Empty; } // "HMAC-Based OTP"
+		}
+
+		[Obsolete]
 		public static string NewDatabaseFileName
 		{
 			get { return (KPRes.Database + "." + AppDefs.FileExtension.FileExt); }
+		}
+
+		[Obsolete]
+		public static string ShowObject
+		{
+			get { return @"{PARAM}"; } // "Show {PARAM}"
+		}
+
+		[Obsolete]
+		public static string TimeOtp
+		{
+			get { return string.Empty; } // "Time-Based OTP"
 		}
 
 		[Obsolete]

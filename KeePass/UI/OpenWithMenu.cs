@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -93,15 +93,11 @@ namespace KeePass.UI
 			}
 		}
 
-		public void AddMenuItem(List<char> lAvailKeys)
+		public void AddMenuItem(AccessKeyManagerEx ak)
 		{
 			if(m_tsmi != null) { Debug.Assert(false); return; }
 
-			string strNameAccel = StrUtil.AddAccelerator(
-				StrUtil.EncodeMenuText(m_strName), lAvailKeys);
-
-			Debug.Assert(StrUtil.EncodeMenuText(KPRes.OpenWith) == KPRes.OpenWith);
-			string strText = KPRes.OpenWith.Replace(@"{PARAM}", strNameAccel);
+			string strText = ak.CreateText(KPRes.OpenWith, true, null, m_strName);
 
 			m_tsmi = m_dynMenu.AddItem(strText, m_imgIcon, this);
 
@@ -208,27 +204,17 @@ namespace KeePass.UI
 			if(m_lOpenWith.Count == 0) m_dynMenu.Clear(); // Remove separator
 			else
 			{
-				List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
+				AccessKeyManagerEx ak = new AccessKeyManagerEx();
 
-				// Remove keys that are used by non-dynamic menu items
+				// Exclude keys that are used by non-dynamic menu items
 				foreach(ToolStripItem tsi in m_tsmiHost.DropDownItems)
 				{
 					string str = ((tsi != null) ? tsi.Text : null);
-					if(!string.IsNullOrEmpty(str))
-					{
-						str = str.Replace(@"&&", string.Empty);
-						int i = str.IndexOf('&');
-						Debug.Assert(i == str.LastIndexOf('&'));
-						if((i >= 0) && (i < (str.Length - 1)))
-						{
-							lAvailKeys.Remove(char.ToLowerInvariant(str[i + 1]));
-							lAvailKeys.Remove(char.ToUpperInvariant(str[i + 1]));
-						}
-					}
+					if(!string.IsNullOrEmpty(str)) ak.RegisterText(str);
 				}
 
 				foreach(OpenWithItem it in m_lOpenWith)
-					it.AddMenuItem(lAvailKeys);
+					it.AddMenuItem(ak);
 			}
 		}
 
