@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -92,6 +92,18 @@ namespace KeePass.Forms
 		private OpenWithMenu m_dynOpenUrlCtx;
 		private OpenWithMenu m_dynOpenUrlToolBar;
 		private MenuItemLinks m_milMain = new MenuItemLinks();
+
+		private ToolStripMenuItem m_tsmiAutoTypeHotpMenu = null;
+		private ToolStripMenuItem m_tsmiAutoTypeHotpCtx = null;
+		private ToolStripMenuItem m_tsmiAutoTypeTotpMenu = null;
+		private ToolStripMenuItem m_tsmiAutoTypeTotpCtx = null;
+
+		private readonly EntryDataCommand m_edcCopyTotp = new EntryDataCommand(
+			EntryDataCommandType.CopyValue, EntryUtil.TotpPlh,
+			(new FormatException()).Message);
+		private readonly EntryDataCommand m_edcShowTotp = new EntryDataCommand(
+			EntryDataCommandType.ShowValue, EntryUtil.TotpPlh,
+			(new FormatException()).Message);
 
 		private readonly AsyncPwListUpdate m_asyncListUpdate;
 
@@ -636,7 +648,7 @@ namespace KeePass.Forms
 				m_menuFindExp1, m_menuFindExp2, m_menuFindExp3, m_menuFindExp7,
 				m_menuFindExp14, m_menuFindExp30, m_menuFindExp60, m_menuFindExpInF);
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuFindLastMod,
-				m_menuFindLarge, m_menuFindDupPasswords,
+				m_menuFindHistory, m_menuFindLarge, m_menuFindDupPasswords,
 				m_menuFindSimPasswordsP, m_menuFindSimPasswordsC,
 				m_menuFindPwQuality);
 
@@ -805,23 +817,12 @@ namespace KeePass.Forms
 
 			if(bMenuVisible)
 			{
-				GFunc<string, List<char>, string> fMenuText = delegate(
-					string strText, List<char> lAvailKeys)
-				{
-					string str = StrUtil.EncodeMenuText(strText);
-					return StrUtil.AddAccelerator(str, lAvailKeys);
-				};
+				AccessKeyManagerEx akStr = new AccessKeyManagerEx();
+				AccessKeyManagerEx akBin = new AccessKeyManagerEx();
 
-				List<char> lAvailKeysS = new List<char>(PwCharSet.MenuAccels);
-				GFunc<string, string> fMenuTextS = delegate(string strText)
-				{
-					return fMenuText(strText, lAvailKeysS);
-				};
+				string strBinSave = akBin.CreateText(KPRes.SaveFilesTo + "...", true);
 
-				List<char> lAvailKeysB = new List<char>(PwCharSet.MenuAccels);
-				string strSaveBins = fMenuText(KPRes.SaveFilesTo + "...", lAvailKeysB); // Fixed key
-
-				bool bStr = true, bBin1 = false;
+				bool bStr = true, bHotp = false, bTotp = false, bBin1 = false;
 				dynStrings.Clear();
 				dynBinaries.Clear();
 
@@ -832,14 +833,19 @@ namespace KeePass.Forms
 					Image imgCopyOtp = Properties.Resources.B16x16_KGPG_Gen;
 					Image imgShowOtp = Properties.Resources.B16x16_File_Locked;
 
-					dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(
-						@"{PARAM}", KPRes.Title)), imgCopy, new EntryDataCommand(
-							EntryDataCommandType.CopyField, PwDefs.TitleField, null));
-					dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(
-						@"{PARAM}", KPRes.Notes)), imgCopy, new EntryDataCommand(
-							EntryDataCommandType.CopyField, PwDefs.NotesField, null));
+					string strCopyTitle = akStr.RegisterText(KPRes.CopyTitle);
+					string strCopyNotes = akStr.RegisterText(KPRes.CopyNotes);
+					string strCopyHmacOtp = akStr.RegisterText(KPRes.CopyHmacOtp);
+					string strShowHmacOtp = akStr.RegisterText(KPRes.ShowHmacOtp);
+					string strCopyTimeOtp = akStr.RegisterText(KPRes.CopyTimeOtp);
+					string strShowTimeOtp = akStr.RegisterText(KPRes.ShowTimeOtp);
 
-					bool bFirstCustom = true, bHotp = false, bTotp = false;
+					dynStrings.AddItem(strCopyTitle, imgCopy, new EntryDataCommand(
+						EntryDataCommandType.CopyField, PwDefs.TitleField, null));
+					dynStrings.AddItem(strCopyNotes, imgCopy, new EntryDataCommand(
+						EntryDataCommandType.CopyField, PwDefs.NotesField, null));
+
+					bool bFirstCustom = true;
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
 						if(PwDefs.IsStandardField(kvp.Key)) continue;
@@ -856,41 +862,45 @@ namespace KeePass.Forms
 								bFirstCustom = false;
 							}
 
+							string str = akStr.CreateText(KPRes.CopyObject, true,
+								null, kvp.Key);
 							Image img = (kvp.Value.IsProtected ? imgCopyP : imgCopy);
-							dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(
-								@"{PARAM}", kvp.Key)), img, new EntryDataCommand(
-									EntryDataCommandType.CopyField, kvp.Key, null));
+
+							dynStrings.AddItem(str, img, new EntryDataCommand(
+								EntryDataCommandType.CopyField, kvp.Key, null));
 						}
 					}
 
 					dynStrings.AddSeparator();
+
 					string strError = (new FormatException()).Message;
-					dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(@"{PARAM}",
-						KPRes.HmacOtp)), imgCopyOtp, new EntryDataCommand(
-							EntryDataCommandType.CopyValue, EntryUtil.HotpPlh,
-							strError)).Enabled = bHotp;
-					dynStrings.AddItem(fMenuTextS(KPRes.ShowObject.Replace(@"{PARAM}",
-						KPRes.HmacOtp)), imgShowOtp, new EntryDataCommand(
-							EntryDataCommandType.ShowValue, EntryUtil.HotpPlh,
-							strError)).Enabled = bHotp;
-					dynStrings.AddItem(fMenuTextS(KPRes.CopyObject.Replace(@"{PARAM}",
-						KPRes.TimeOtp)), imgCopyOtp, new EntryDataCommand(
-							EntryDataCommandType.CopyValue, EntryUtil.TotpPlh,
-							strError)).Enabled = bTotp;
-					dynStrings.AddItem(fMenuTextS(KPRes.ShowObject.Replace(@"{PARAM}",
-						KPRes.TimeOtp)), imgShowOtp, new EntryDataCommand(
-							EntryDataCommandType.ShowValue, EntryUtil.TotpPlh,
-							strError)).Enabled = bTotp;
+					ToolStripMenuItem tsmiCopyHotp = dynStrings.AddItem(
+						strCopyHmacOtp, imgCopyOtp, new EntryDataCommand(
+							EntryDataCommandType.CopyValue, EntryUtil.HotpPlh, strError));
+					ToolStripMenuItem tsmiShowHotp = dynStrings.AddItem(
+						strShowHmacOtp, imgShowOtp, new EntryDataCommand(
+							EntryDataCommandType.ShowValue, EntryUtil.HotpPlh, strError));
+
+					ToolStripMenuItem tsmiCopyTotp = dynStrings.AddItem(
+						strCopyTimeOtp, imgCopyOtp, m_edcCopyTotp);
+					UIUtil.AssignShortcut(tsmiCopyTotp, Keys.Control | Keys.T, null, true);
+					ToolStripMenuItem tsmiShowTotp = dynStrings.AddItem(
+						strShowTimeOtp, imgShowOtp, m_edcShowTotp);
+					UIUtil.AssignShortcut(tsmiShowTotp, Keys.Control | Keys.Shift | Keys.T, null, true);
+
+					UIUtil.SetEnabledFast(bHotp, tsmiCopyHotp, tsmiShowHotp);
+					UIUtil.SetEnabledFast(bTotp, tsmiCopyTotp, tsmiShowTotp);
 
 					foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
 					{
-						Image imgIcon = FileIcons.GetImageForName(kvp.Key, null);
+						string str = akBin.CreateText(kvp.Key, true);
+						Image img = FileIcons.GetImageForName(kvp.Key, null);
 
 						EntryBinaryDataContext ctxBin = new EntryBinaryDataContext();
 						ctxBin.Entry = pe;
 						ctxBin.Name = kvp.Key;
 
-						dynBinaries.AddItem(fMenuText(kvp.Key, lAvailKeysB), imgIcon, ctxBin);
+						dynBinaries.AddItem(str, img, ctxBin);
 						bBin1 = true;
 					}
 				}
@@ -916,27 +926,31 @@ namespace KeePass.Forms
 				}
 
 				dynBinaries.AddSeparator();
-				dynBinaries.AddItem(strSaveBins, Properties.Resources.B16x16_Attach,
+				dynBinaries.AddItem(strBinSave, Properties.Resources.B16x16_Attach,
 					EntryBinaryDataContext.SaveAll).Enabled = bBinM;
 
 				m_menuEntryOtherData.Enabled = bStr;
 				// m_milMain.SetCopyAvailable(m_menuEntryOtherData, bStr);
 				m_menuEntryAttachments.Enabled = bBinM;
 				m_milMain.SetCopyAvailable(m_menuEntryAttachments, bBinM);
+
+				m_menuEntryAutoTypeAdv.Enabled = s.CanPerformAutoType;
+				m_menuEntryAutoTypeAdv.Available = Program.Config.UI.ShowAdvAutoTypeCommands;
+				foreach(ToolStripItem tsi in m_menuEntryAutoTypeAdv.DropDownItems)
+				{
+					tsi.Enabled = s.CanPerformAutoType;
+				}
+				foreach(ToolStripItem tsi in m_ctxEntryAutoTypeAdv.DropDownItems)
+				{
+					tsi.Enabled = s.CanPerformAutoType;
+				}
+				UIUtil.SetEnabledFast(bHotp && s.CanPerformAutoType,
+					m_tsmiAutoTypeHotpMenu, m_tsmiAutoTypeHotpCtx);
+				UIUtil.SetEnabledFast(bTotp && s.CanPerformAutoType,
+					m_tsmiAutoTypeTotpMenu, m_tsmiAutoTypeTotpCtx);
 			}
 
 			m_menuEntryPerformAutoType.Enabled = s.CanPerformAutoType;
-
-			m_menuEntryAutoTypeAdv.Enabled = s.CanPerformAutoType;
-			m_menuEntryAutoTypeAdv.Available = Program.Config.UI.ShowAdvAutoTypeCommands;
-			foreach(ToolStripItem tsiAdv in m_menuEntryAutoTypeAdv.DropDownItems)
-			{
-				tsiAdv.Enabled = s.CanPerformAutoType;
-			}
-			foreach(ToolStripItem tsiAdv in m_ctxEntryAutoTypeAdv.DropDownItems)
-			{
-				tsiAdv.Enabled = s.CanPerformAutoType;
-			}
 
 			UIUtil.SetEnabledFast(s.DatabaseOpened, m_menuEntryAdd);
 			UIUtil.SetEnabledFast(bEntrySel, m_menuEntryEdit,
@@ -964,8 +978,8 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast((s.DatabaseOpened && (s.EntriesCount > 0)),
 				m_menuEntrySelectAll);
 
-			UIUtil.SetEnabledFast(bEntrySel, m_menuEntryRearrange, m_menuEntryMoveToGroup);
-			UIUtil.SetEnabledFast((bEntrySel && (m_pListSorter.Column < 0)),
+			UIUtil.SetEnabledFast(bEntrySel, m_menuEntryRearrange, m_menuEntryMoveToGroup,
+				// (bEntrySel && (m_pListSorter.Column < 0)), // Message box
 				m_menuEntryMoveToTop, m_menuEntryMoveOneUp, m_menuEntryMoveOneDown,
 				m_menuEntryMoveToBottom);
 
@@ -1272,7 +1286,7 @@ namespace KeePass.Forms
 					if(pgContainer != pgLast)
 					{
 						m_lvgLastEntryGroup = new ListViewGroup(
-							pgContainer.GetFullPath(" - ", false));
+							pgContainer.GetFullPath(true, false));
 						m_lvgLastEntryGroup.Tag = pgContainer;
 
 						m_lvEntries.Groups.Add(m_lvgLastEntryGroup);
@@ -1767,8 +1781,9 @@ namespace KeePass.Forms
 			if(af.OverrideUIDefault) rb.DefaultFont = af.ToFont();
 			else rb.DefaultFont = fontUI;
 
-			string strItemSeparator = ((m_splitHorizontal.Orientation == Orientation.Horizontal) ?
-				", " : Environment.NewLine);
+			bool bHorz = (m_splitHorizontal.Orientation == Orientation.Horizontal);
+			string strItemSeparator = (bHorz ? ". " : Environment.NewLine);
+			string strItemTerminator = (bHorz ? "." : string.Empty);
 
 			List<KeyValuePair<string, bool>> lLinks = new List<KeyValuePair<string, bool>>();
 			GAction<string, string> fSetLink = delegate(string strPre, string strLink)
@@ -1839,6 +1854,8 @@ namespace KeePass.Forms
 					kvp.Value) ? PwDefs.HiddenPassword : kvp.Value.ReadString());
 				EvAppendEntryField(rb, strItemSeparator, kvp.Key, strCustomValue, pe, null);
 			}
+
+			rb.Append(strItemTerminator);
 
 			string strNotes = (mw.IsColumnHidden(AceColumnType.Notes) ?
 				PwDefs.HiddenPassword : pe.Strings.ReadSafe(PwDefs.NotesField).Trim());
@@ -2837,9 +2854,13 @@ namespace KeePass.Forms
 		/// move one up/down.</param>
 		private void MoveSelectedEntries(int iMove)
 		{
-			// Don't allow moving when sorting is enabled
 			if((m_pListSorter.Column >= 0) && (m_pListSorter.Order != SortOrder.None))
+			{
+				if(MessageService.AskYesNo(KPRes.AutoSortNoRearrange +
+					MessageService.NewParagraph + KPRes.AutoSortDeactivateQ))
+					SortPasswordList(false, 0, null, true);
 				return;
+			}
 
 			PwEntry[] vEntries = GetSelectedEntries();
 			if((vEntries == null) || (vEntries.Length == 0)) { Debug.Assert(false); return; }
@@ -3251,7 +3272,7 @@ namespace KeePass.Forms
 				if(edc == null) { Debug.Assert(false); return; }
 
 				PwEntry pe = GetSelectedEntry(false);
-				if(pe == null) { Debug.Assert(false); return; }
+				if(pe == null) return;
 
 				PwDatabase pd = m_docMgr.ActiveDatabase;
 				string strToCopy = null;
@@ -5658,15 +5679,15 @@ namespace KeePass.Forms
 
 			if(g_vProfileCmdTexts == null)
 			{
-				List<char> lCmdAvailKeys = new List<char>(PwCharSet.MenuAccels);
+				AccessKeyManagerEx akCmd = new AccessKeyManagerEx();
 				GFunc<string, string, bool, string> f = delegate(string str,
 					string strSuffix, bool bDots)
 				{
 					str = StrUtil.CommandToText(str);
 					if(!string.IsNullOrEmpty(strSuffix))
-						str += " (" + StrUtil.EncodeMenuText(strSuffix) + ")";
+						str += " (" + strSuffix + ")";
 					if(bDots) str += "...";
-					return StrUtil.AddAccelerator(str, lCmdAvailKeys);
+					return akCmd.CreateText(str, true);
 				};
 
 				g_vProfileCmdTexts = new string[4];
@@ -5677,7 +5698,7 @@ namespace KeePass.Forms
 			}
 
 			List<ToolStripItem> lTsi = new List<ToolStripItem>();
-			List<char> lPrfAvailKeys = new List<char>(PwCharSet.MenuAccels);
+			AccessKeyManagerEx akPrf = new AccessKeyManagerEx();
 
 			AceSearch aceSearch = Program.Config.Search;
 			aceSearch.SortProfiles();
@@ -5685,8 +5706,7 @@ namespace KeePass.Forms
 			foreach(SearchParameters sp in aceSearch.UserProfiles)
 			{
 				ToolStripMenuItem tsmi = new ToolStripMenuItem(
-					StrUtil.AddAccelerator(StrUtil.EncodeMenuText(sp.Name),
-					lPrfAvailKeys));
+					akPrf.CreateText(sp.Name, true));
 				lTsi.Add(tsmi);
 
 				ToolStripMenuItem tsmiFD = new ToolStripMenuItem(
@@ -5843,12 +5863,11 @@ namespace KeePass.Forms
 
 			string strPrefix = StrUtil.EncodeMenuText(KPRes.Tag + ": ");
 			Image imgIcon = Properties.Resources.B16x16_KNotes;
+			AccessKeyManagerEx ak = new AccessKeyManagerEx();
 
-			List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
 			foreach(string strTag in lAllTags)
 			{
-				string strText = StrUtil.EncodeMenuText(strTag);
-				strText = StrUtil.AddAccelerator(strText, lAvailKeys);
+				string strText = ak.CreateText(strTag, true);
 				if(bPrefixTag) strText = strPrefix + strText;
 
 				ToolStripMenuItem tsmi = dm.AddItem(strText, imgIcon, strTag);
@@ -6231,18 +6250,17 @@ namespace KeePass.Forms
 				return;
 			}
 
-			List<char> lAvailKeys = new List<char>(PwCharSet.MenuAccels);
+			AccessKeyManagerEx ak = new AccessKeyManagerEx();
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				string strName = StrUtil.EncodeMenuText(pg.Name);
-				strName = StrUtil.AddAccelerator(strName, lAvailKeys);
-				strName = strName.PadLeft(((int)pg.GetDepth() * 4) + strName.Length);
+				string strText = ak.CreateText(pg.Name, true);
+				strText = strText.PadLeft(((int)pg.GetDepth() << 2) + strText.Length);
 
 				int nIconID = ((!pg.CustomIconUuid.Equals(PwUuid.Zero)) ?
 					((int)PwIcon.Count + pd.GetCustomIconIndex(
 					pg.CustomIconUuid)) : (int)pg.IconId);
 
-				ToolStripMenuItem tsmi = dm.AddItem(strName,
+				ToolStripMenuItem tsmi = dm.AddItem(strText,
 					m_ilCurrentIcons.Images[nIconID], pg);
 
 				if(pd.RecycleBinEnabled && pg.Uuid.Equals(pd.RecycleBinUuid) &&
@@ -6343,7 +6361,7 @@ namespace KeePass.Forms
 		{
 			if(e == null) { Debug.Assert(false); return; }
 
-			string strSeq = e.ItemName;
+			string strSeq = (e.Tag as string);
 			if(string.IsNullOrEmpty(strSeq)) { Debug.Assert(false); return; }
 
 			PerformAutoType(strSeq);
@@ -6351,7 +6369,7 @@ namespace KeePass.Forms
 
 		private int CreateAndShowEntryList(EntryReportDelegate f, string strStatus,
 			Image imgIcon, string strTitle, string strSubTitle, string strNote,
-			bool bForceDialog, bool bDisableSorting)
+			LvfFlags flAdd, LvfFlags flRemove, bool bForceDialog, bool bDisableSorting)
 		{
 			if(f == null) { Debug.Assert(false); return -1; }
 
@@ -6382,6 +6400,7 @@ namespace KeePass.Forms
 			ListViewForm dlg = new ListViewForm();
 			dlg.InitEx(strTitle, strSubTitle, strNote, imgIcon, l,
 				m_ilCurrentIcons, fInit);
+			dlg.FlagsEx = ((dlg.FlagsEx | flAdd) & ~flRemove);
 			UIUtil.ShowDialogAndDestroy(dlg, this);
 
 			PwGroup pg = (dlg.ResultGroup as PwGroup);

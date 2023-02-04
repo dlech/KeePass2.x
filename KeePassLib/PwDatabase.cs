@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -873,7 +873,7 @@ namespace KeePassLib
 
 					const PwCompareOptions cmpOpt = (PwCompareOptions.IgnoreParentGroup |
 						PwCompareOptions.IgnoreLastAccess | PwCompareOptions.IgnoreHistory |
-						PwCompareOptions.NullEmptyEquivStd);
+						PwCompareOptions.NullEmptyEquivStd); // Cf. EntryUtil.GetDifferences
 					bool bEquals = peLocal.EqualsEntry(pe, cmpOpt, MemProtCmpMode.None);
 
 					bool bOrgBackup = !bEquals;

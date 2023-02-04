@@ -290,6 +290,7 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
+			this.m_menuFindHistory = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -1007,7 +1008,7 @@
 			// 
 			this.m_menuEntryCopyUserName.Image = global::KeePass.Properties.Resources.B16x16_Personal;
 			this.m_menuEntryCopyUserName.Name = "m_menuEntryCopyUserName";
-			this.m_menuEntryCopyUserName.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryCopyUserName.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryCopyUserName.Text = "Copy &User Name";
 			this.m_menuEntryCopyUserName.Click += new System.EventHandler(this.OnEntryCopyUserName);
 			// 
@@ -1015,7 +1016,7 @@
 			// 
 			this.m_menuEntryCopyPassword.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
 			this.m_menuEntryCopyPassword.Name = "m_menuEntryCopyPassword";
-			this.m_menuEntryCopyPassword.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryCopyPassword.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryCopyPassword.Text = "<>";
 			this.m_menuEntryCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
 			// 
@@ -1025,7 +1026,7 @@
             this.m_menuEntryOpenUrl,
             this.m_menuEntryCopyUrl});
 			this.m_menuEntryUrl.Name = "m_menuEntryUrl";
-			this.m_menuEntryUrl.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryUrl.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryUrl.Text = "UR&L(s)";
 			// 
 			// m_menuEntryOpenUrl
@@ -1047,44 +1048,44 @@
 			// m_menuEntryOtherData
 			// 
 			this.m_menuEntryOtherData.Name = "m_menuEntryOtherData";
-			this.m_menuEntryOtherData.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryOtherData.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryOtherData.Text = "&Other Data";
 			// 
 			// m_menuEntryAttachments
 			// 
 			this.m_menuEntryAttachments.Name = "m_menuEntryAttachments";
-			this.m_menuEntryAttachments.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryAttachments.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryAttachments.Text = "Attach&ments";
 			// 
 			// m_menuEntrySep0
 			// 
 			this.m_menuEntrySep0.Name = "m_menuEntrySep0";
-			this.m_menuEntrySep0.Size = new System.Drawing.Size(204, 6);
+			this.m_menuEntrySep0.Size = new System.Drawing.Size(172, 6);
 			// 
 			// m_menuEntryPerformAutoType
 			// 
 			this.m_menuEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KTouch;
 			this.m_menuEntryPerformAutoType.Name = "m_menuEntryPerformAutoType";
-			this.m_menuEntryPerformAutoType.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryPerformAutoType.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryPerformAutoType.Text = "Perform Auto-&Type";
 			this.m_menuEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
 			// 
 			// m_menuEntryAutoTypeAdv
 			// 
 			this.m_menuEntryAutoTypeAdv.Name = "m_menuEntryAutoTypeAdv";
-			this.m_menuEntryAutoTypeAdv.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryAutoTypeAdv.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryAutoTypeAdv.Text = "Per&form Auto-Type";
 			// 
 			// m_menuEntrySep1
 			// 
 			this.m_menuEntrySep1.Name = "m_menuEntrySep1";
-			this.m_menuEntrySep1.Size = new System.Drawing.Size(204, 6);
+			this.m_menuEntrySep1.Size = new System.Drawing.Size(172, 6);
 			// 
 			// m_menuEntryAdd
 			// 
 			this.m_menuEntryAdd.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_menuEntryAdd.Name = "m_menuEntryAdd";
-			this.m_menuEntryAdd.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryAdd.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryAdd.Text = "&Add Entry...";
 			this.m_menuEntryAdd.Click += new System.EventHandler(this.OnEntryAdd);
 			// 
@@ -1092,7 +1093,7 @@
 			// 
 			this.m_menuEntryEdit.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Sign;
 			this.m_menuEntryEdit.Name = "m_menuEntryEdit";
-			this.m_menuEntryEdit.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryEdit.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryEdit.Text = "<>";
 			this.m_menuEntryEdit.Click += new System.EventHandler(this.OnEntryEdit);
 			// 
@@ -1110,7 +1111,7 @@
             this.m_menuEntryEditQuickSep2,
             this.m_menuEntryOtpGenSettings});
 			this.m_menuEntryEditQuick.Name = "m_menuEntryEditQuick";
-			this.m_menuEntryEditQuick.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryEditQuick.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryEditQuick.Text = "<>";
 			// 
 			// m_menuEntryIcon
@@ -1255,7 +1256,7 @@
 			// 
 			this.m_menuEntryDuplicate.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key2;
 			this.m_menuEntryDuplicate.Name = "m_menuEntryDuplicate";
-			this.m_menuEntryDuplicate.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryDuplicate.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryDuplicate.Text = "<>";
 			this.m_menuEntryDuplicate.Click += new System.EventHandler(this.OnEntryDuplicate);
 			// 
@@ -1263,26 +1264,26 @@
 			// 
 			this.m_menuEntryDelete.Image = global::KeePass.Properties.Resources.B16x16_DeleteEntry;
 			this.m_menuEntryDelete.Name = "m_menuEntryDelete";
-			this.m_menuEntryDelete.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryDelete.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryDelete.Text = "<>";
 			this.m_menuEntryDelete.Click += new System.EventHandler(this.OnEntryDelete);
 			// 
 			// m_menuEntrySep2
 			// 
 			this.m_menuEntrySep2.Name = "m_menuEntrySep2";
-			this.m_menuEntrySep2.Size = new System.Drawing.Size(204, 6);
+			this.m_menuEntrySep2.Size = new System.Drawing.Size(172, 6);
 			// 
 			// m_menuEntrySelectAll
 			// 
 			this.m_menuEntrySelectAll.Name = "m_menuEntrySelectAll";
-			this.m_menuEntrySelectAll.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntrySelectAll.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntrySelectAll.Text = "&Select All";
 			this.m_menuEntrySelectAll.Click += new System.EventHandler(this.OnEntrySelectAll);
 			// 
 			// m_menuEntrySep3
 			// 
 			this.m_menuEntrySep3.Name = "m_menuEntrySep3";
-			this.m_menuEntrySep3.Size = new System.Drawing.Size(204, 6);
+			this.m_menuEntrySep3.Size = new System.Drawing.Size(172, 6);
 			// 
 			// m_menuEntryRearrange
 			// 
@@ -1295,7 +1296,7 @@
             this.m_menuEntryMoveToGroup,
             this.m_menuEntryMoveToPreviousParent});
 			this.m_menuEntryRearrange.Name = "m_menuEntryRearrange";
-			this.m_menuEntryRearrange.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryRearrange.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryRearrange.Text = "&Rearrange";
 			// 
 			// m_menuEntryMoveToTop
@@ -1360,7 +1361,7 @@
             this.m_menuEntryPrint,
             this.m_menuEntryExport});
 			this.m_menuEntryDX.Name = "m_menuEntryDX";
-			this.m_menuEntryDX.Size = new System.Drawing.Size(207, 22);
+			this.m_menuEntryDX.Size = new System.Drawing.Size(175, 22);
 			this.m_menuEntryDX.Text = "Data E&xchange";
 			this.m_menuEntryDX.DropDownOpening += new System.EventHandler(this.OnEntryDXOpening);
 			// 
@@ -1425,6 +1426,7 @@
             this.m_menuFindExpIn,
             this.m_menuFindSep3,
             this.m_menuFindLastMod,
+            this.m_menuFindHistory,
             this.m_menuFindLarge,
             this.m_menuFindSep4,
             this.m_menuFindDupPasswords,
@@ -2491,6 +2493,14 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
+			// m_menuFindHistory
+			// 
+			this.m_menuFindHistory.Image = global::KeePass.Properties.Resources.B16x16_History;
+			this.m_menuFindHistory.Name = "m_menuFindHistory";
+			this.m_menuFindHistory.Size = new System.Drawing.Size(230, 22);
+			this.m_menuFindHistory.Text = "&History...";
+			this.m_menuFindHistory.Click += new System.EventHandler(this.OnFindHistory);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2795,6 +2805,7 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryMoveToPreviousParent;
 		private System.Windows.Forms.ToolStripSeparator m_menuEntryEditQuickSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryOtpGenSettings;
+		private System.Windows.Forms.ToolStripMenuItem m_menuFindHistory;
 	}
 }
 

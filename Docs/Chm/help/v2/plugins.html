@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2022 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 	<meta name="flattr:id" content="42rykv" />
@@ -115,6 +115,16 @@ be in the application directory. Therefore, plugins cannot inject themselves any
 
 <p>If you use the portable package of KeePass or installed it into a different
 directory, you need to adjust the directory permissions yourself.</p>
+
+<p>KeePass supports two plugin file formats: DLL and
+<a href="https://keepass.info/help/v2_dev/plg_index.html#plgx" target="_blank">PLGX</a>.
+A DLL plugin can be loaded directly, whereas KeePass needs to compile a PLGX
+plugin to a DLL plugin first, which is then stored in a
+<a href="#cache">plugin cache</a> (see the section below).
+By default, the user has write access in the plugin cache directory
+(without administrator privileges).
+If you want to use a PLGX plugin, consider to adjust the access rights of the
+plugin cache directory to require administrator privileges for write access.</p>
 
 <br />
 

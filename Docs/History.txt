@@ -1,3 +1,93 @@
+2023-01-09: 2.53
+- For each entry listed on the 'History' tab page of the entry
+  dialog, the fields modified with respect to the previous
+  entry are displayed
+- Added 'Compare' button on the 'History' tab page of the entry
+  dialog; when two (not necessarily consecutive) history
+  entries are selected, clicking the button shows a detailed
+  comparison (with values, etc.)
+- When editing an entry, the history entry list of the entry
+  dialog now contains an entry called 'Dialog (unsaved)', which
+  represents all data entered in the current dialog (other tab
+  pages)
+- When editing an entry, the history entry list of the entry
+  dialog now contains an entry called 'Current (TIME)', which
+  is the entry that is currently stored in the database
+  (without any changes made in the current dialog)
+- Added 'History' command in the 'Find' main menu; it lists all
+  entry modifications (sorted by time)
+- Added filter box in most report dialogs (last modified
+  entries, history, large entries, similar password clusters,
+  password quality, history entry comparison, database file
+  search, ...)
+- Added 'Print' button in most report dialogs
+- Added 'Export' button in most report dialogs; supported
+  formats are CSV and HTML
+- Added {EDGE} placeholder, which is replaced by the executable
+  path of the new (Chromium-based) Microsoft Edge, if installed
+- Added URL override suggestion for Microsoft Edge in private
+  mode in the URL override suggestions drop-down list of the
+  entry dialog
+- Added optional built-in global URL overrides for opening
+  HTTP/HTTPS URLs with Microsoft Edge in private mode
+- When trying to rearrange entries while automatic sorting is
+  activated, KeePass now asks whether to deactivate automatic
+  sorting
+- Added access keys in the tags button drop-down menu of the
+  entry/group dialogs
+- Added access keys in the 'View' -> 'Sort By' menu
+- Added access keys in the entry templates menu
+- Added access keys in the 'Perform Auto-Type' menu (which is
+  displayed if the 'Show additional auto-type menu commands'
+  option is turned on)
+- Added {HMACOTP} and {TIMEOTP} in the 'Perform Auto-Type' menu
+- Added keyboard shortcut Ctrl+T for the 'Copy Time-Based OTP'
+  entry data command
+- Added keyboard shortcut Ctrl+Shift+T for the 'Show Time-Based
+  OTP' entry data command
+- Enhanced Password Depot XML import module to support the new
+  format (added support for the new node names, group icons,
+  recycle bin, tags, favorites, auto-type delay conversion,
+  history, enhanced icon mapping, enhanced date/time parsing,
+  ...)
+- Added border for headings in HTML exports/printouts
+- Added support for running KeePass in FIPS mode
+
+- History entries listed on the 'History' tab page of the entry
+  dialog are now sorted from newest to oldest
+- The icons in the list on the 'History' tab page of the entry
+  dialog now indicate the type of the entry
+- History entry controls of the entry dialog are now disabled
+  when creating a new entry
+- The history entry 'Restore' button is now disabled when any
+  change has been made in the current dialog
+- The 'Password modified' time is now updated immediately when
+  deleting a history entry
+- Improved URL override suggestion for Microsoft Edge in the
+  URL override suggestions drop-down list of the entry dialog
+  (changed from 'microsoft-edge:{URL}' to 'cmd://{EDGE}
+  "{URL}"')
+- Improved optional built-in global URL overrides for opening
+  HTTP/HTTPS URLs with Microsoft Edge (changed from
+  'microsoft-edge:{BASE}' to 'cmd://{EDGE} "{BASE}"')
+- Reordered web browser URL overrides alphabetically
+- Improved dynamic menu item access key assignment
+- Improved item separation in the entry details view
+- In most places, groups in a group path are now separated by
+  right arrows instead of hyphens
+- Improved last modification time comparison for plugin data
+  dictionaries
+- Unified generation of common HTML parts
+- The 'Copy Initial Password' command in the 'Tools' menu of
+  the entry dialog now requires the 'Copy' application policy
+  flag
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- The history entry 'Restore' button now always works as
+  expected
+
 2022-09-09: 2.52
 - Added 'Copy Initial Password' command in the tools menu of
   the entry dialog; it copies (to the clipboard) the password

@@ -420,6 +420,7 @@
     <Compile Include="App\Configuration\AppConfigSerializer.cs" />
     <Compile Include="DataExchange\CsvStreamReader.cs" />
     <Compile Include="DataExchange\CsvStreamReaderEx.cs" />
+    <Compile Include="DataExchange\CsvStreamWriter.cs" />
     <Compile Include="DataExchange\CsvTableEntryReader.cs" />
     <Compile Include="DataExchange\CsvTableObjectReader.cs" />
     <Compile Include="DataExchange\ExportUtil.cs" />
@@ -838,6 +839,7 @@
     <Compile Include="Resources\KPRes.cs" />
     <Compile Include="Resources\KPRes.Generated.cs" />
     <Compile Include="UI\AccessibilityEx.cs" />
+    <Compile Include="UI\AccessKeyManagerEx.cs" />
     <Compile Include="UI\AsyncPwListUpdate.cs" />
     <Compile Include="UI\BackgroundForm.cs">
       <SubType>Form</SubType>
@@ -1183,6 +1185,7 @@
     <Compile Include="Ecas\IEcasParameterized.cs" />
     <Compile Include="Util\CriticalSectionEx.cs" />
     <Compile Include="Util\CustomResourceManager.cs" />
+    <Compile Include="Util\DiffUtil.cs" />
     <Compile Include="Util\EmergencySheet.cs" />
     <Compile Include="Util\EntryMenu.cs" />
     <Compile Include="Util\EntryTemplates.cs" />
