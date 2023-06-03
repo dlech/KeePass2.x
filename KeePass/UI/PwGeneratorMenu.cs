@@ -106,10 +106,11 @@ namespace KeePass.UI
 			List<ToolStripItem> l = new List<ToolStripItem>();
 			AccessKeyManagerEx ak = new AccessKeyManagerEx();
 			ProtectedString ps = GetPassword();
+			bool bProfiles = Program.Config.PasswordGenerator.ProfilesEnabled;
 
-			GFunc<string, Image, EventHandler, object, ToolStripMenuItem> fAdd =
+			GAction<string, Image, EventHandler, object, bool> fAdd =
 				delegate(string strText, Image img, EventHandler ehClick,
-				object oTag)
+				object oTag, bool bEnabled)
 			{
 				string str = ak.CreateText(strText, true);
 
@@ -117,21 +118,20 @@ namespace KeePass.UI
 				if(img != null) tsmi.Image = img;
 				if(ehClick != null) tsmi.Click += ehClick;
 				if(oTag != null) tsmi.Tag = oTag;
+				if(!bEnabled) tsmi.Enabled = false;
 
 				l.Add(tsmi);
-				return tsmi;
 			};
 
 			fAdd(KPRes.PwGenOpen, Properties.Resources.B16x16_Key_New,
-				this.OnGenOpen, null);
+				this.OnGenOpen, null, true);
 
 			l.Add(new ToolStripSeparator());
 
-			ToolStripMenuItem tsmiDerive = fAdd(GenDeriveFromPrevious,
-				Properties.Resources.B16x16_CompFile, this.OnGenDeriveFromPrevious, null);
-			if(IsMultipleValues(ps)) tsmiDerive.Enabled = false;
-
-			fAdd(GenAuto, Properties.Resources.B16x16_FileNew, this.OnGenAuto, null);
+			fAdd(GenDeriveFromPrevious, Properties.Resources.B16x16_CompFile,
+				this.OnGenDeriveFromPrevious, null, !IsMultipleValues(ps));
+			fAdd(GenAuto, Properties.Resources.B16x16_FileNew,
+				this.OnGenAuto, null, bProfiles);
 
 			bool bHideBuiltIn = ((Program.Config.UI.UIFlags &
 				(ulong)AceUIFlags.HideBuiltInPwGenPrfInEntryDlg) != 0);
@@ -151,7 +151,7 @@ namespace KeePass.UI
 				}
 
 				fAdd(prf.Name, Properties.Resources.B16x16_KOrganizer,
-					this.OnGenProfile, prf);
+					this.OnGenProfile, prf, bProfiles);
 			}
 
 			return l;

@@ -756,7 +756,7 @@
         <member name="P:KeePassLib.Resources.KLRes.UnknownHeaderId">
             <summary>
             Look up a localized string similar to
-            'Unknown header ID!'.
+            'Unknown header ID'.
             </summary>
         </member>
         <member name="P:KeePassLib.Resources.KLRes.UnknownKdf">

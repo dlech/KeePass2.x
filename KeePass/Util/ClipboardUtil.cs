@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 using KeePass.App;
@@ -205,7 +206,29 @@ namespace KeePass.Util
 			// a clipboard extension utility, ...) the clipboard cannot
 			// be cleared; for this case we first overwrite the clipboard
 			// with a non-sensitive text
-			try { Copy("--", false, false, null, null, IntPtr.Zero); }
+			try
+			{
+				Copy("--", false, false, null, null, IntPtr.Zero);
+
+				// On KDE/Klipper, trying to clear the clipboard immediately
+				// after copying the dummy text may result in the previous
+				// content (before the dummy text) remaining in the
+				// clipboard. Getting the clipboard text and waiting a bit
+				// seems to avoid this. On Kubuntu 23.04, 3 iterations /
+				// 25 ms (in total) seem to be sufficient. For safety, we do
+				// more.
+				if((NativeLib.GetDesktopType() == DesktopType.Kde) &&
+					!MonoWorkarounds.IsRequired(1613))
+				{
+					int tStart = Environment.TickCount;
+					for(int i = 0; i < 6; ++i) GetText();
+					while((Environment.TickCount - tStart) <= 125)
+					{
+						Thread.Sleep(1);
+						GetText();
+					}
+				}
+			}
 			catch(Exception) { Debug.Assert(false); }
 
 			bool bNativeSuccess = false;

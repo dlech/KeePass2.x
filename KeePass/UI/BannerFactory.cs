@@ -27,6 +27,7 @@ using System.Globalization;
 using System.Windows.Forms;
 
 using KeePass.App;
+using KeePass.Resources;
 using KeePass.Util;
 
 using KeePassLib.Utility;
@@ -37,10 +38,15 @@ namespace KeePass.UI
 	{
 		Default = 0,
 
-		WinXPLogin = 1,
-		WinVistaBlack = 2,
-		KeePassWin32 = 3,
-		BlueCarbon = 4
+		Blue = 1,
+		Dark = 2,
+		Light = 3,
+		BlueCarbon = 4,
+
+		// Obsolete (mapped to the nearest latest style):
+		WinXPLogin = Blue,
+		WinVistaBlack = Dark,
+		KeePassWin32 = Light
 	}
 
 	public sealed class BfBannerInfo
@@ -104,7 +110,7 @@ namespace KeePass.UI
 			if(bs == BannerStyle.Default)
 			{
 				Debug.Assert(false);
-				bs = BannerStyle.WinVistaBlack;
+				bs = BannerStyle.Dark;
 			}
 
 			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
@@ -129,11 +135,15 @@ namespace KeePass.UI
 				img = new Bitmap(nWidth, nHeight, PixelFormat.Format24bppRgb);
 				Graphics g = Graphics.FromImage(img);
 
-				Color clrStart = Color.White;
-				Color clrEnd = Color.LightBlue;
+				bool bCaution = (strTitle == KeyUtil.GetReAskKeyTitle(KPRes.Export));
+				Debug.Assert(bCaution || !Environment.StackTrace.Contains("Export") ||
+					Environment.StackTrace.Contains("ExchangeDataForm"));
+
+				Color clrStart = Color.FromArgb(64, 64, 128);
+				Color clrEnd = Color.FromArgb(192, 192, 255);
 				float fAngle = fHorz;
 
-				if(bs == BannerStyle.BlueCarbon)
+				if(!bCaution && (bs == BannerStyle.BlueCarbon))
 				{
 					fAngle = fVert;
 
@@ -172,23 +182,29 @@ namespace KeePass.UI
 				}
 				else
 				{
-					if(bs == BannerStyle.WinXPLogin)
+					if(bCaution)
 					{
-						clrStart = Color.FromArgb(200, 208, 248);
-						clrEnd = Color.FromArgb(40, 64, 216);
-					}
-					else if(bs == BannerStyle.WinVistaBlack)
-					{
-						clrStart = Color.FromArgb(151, 154, 173);
-						clrEnd = Color.FromArgb(27, 27, 37);
-
+						clrStart = Color.FromArgb(255, 255, 0);
+						clrEnd = Color.FromArgb(255, 128, 0);
 						fAngle = fVert;
 					}
-					else if(bs == BannerStyle.KeePassWin32)
+					else if(bs == BannerStyle.Blue)
 					{
-						clrStart = Color.FromArgb(235, 235, 255);
+						clrStart = Color.FromArgb(160, 176, 255);
+						clrEnd = Color.FromArgb(32, 64, 224);
+					}
+					else if(bs == BannerStyle.Dark)
+					{
+						clrStart = Color.FromArgb(160, 160, 176);
+						clrEnd = Color.FromArgb(16, 16, 32);
+						fAngle = fVert;
+					}
+					else if(bs == BannerStyle.Light)
+					{
+						clrStart = Color.FromArgb(240, 240, 255);
 						clrEnd = Color.FromArgb(192, 192, 255);
 					}
+					else { Debug.Assert(false); }
 
 					Rectangle rect = new Rectangle(0, 0, nWidth, nHeight);
 					using(LinearGradientBrush brBack = new LinearGradientBrush(
@@ -236,7 +252,17 @@ namespace KeePass.UI
 						GraphicsUnit.Pixel, ia);
 				}
 
-				if((bs == BannerStyle.WinXPLogin) || (bs == BannerStyle.WinVistaBlack) ||
+				if(bCaution || (bs == BannerStyle.Light))
+				{
+					int sh = DpiUtil.ScaleIntY(10) / 10; // Force floor
+
+					using(Pen pen = new Pen(Color.FromArgb(128, 128, 128)))
+					{
+						for(int i = 0; i < sh; ++i)
+							g.DrawLine(pen, 0, nHeight - i - 1, nWidth - 1, nHeight - i - 1);
+					}
+				}
+				else if((bs == BannerStyle.Blue) || (bs == BannerStyle.Dark) ||
 					(bs == BannerStyle.BlueCarbon))
 				{
 					int sh = DpiUtil.ScaleIntY(20) / 10; // Force floor
@@ -245,7 +271,7 @@ namespace KeePass.UI
 
 					rect.Width = nWidth / 2 + 1;
 					rect.X = nWidth / 2;
-					clrStart = Color.FromArgb(248, 136, 24);
+					clrStart = Color.FromArgb(255, 128, 0);
 					clrEnd = Color.White;
 					using(LinearGradientBrush brushOrangeWhite = new LinearGradientBrush(
 						rect, clrStart, clrEnd, fHorz, true))
@@ -256,23 +282,11 @@ namespace KeePass.UI
 					rect.Width = nWidth / 2 + 1;
 					rect.X = 0;
 					clrStart = Color.White;
-					clrEnd = Color.FromArgb(248, 136, 24);
+					clrEnd = Color.FromArgb(255, 128, 0);
 					using(LinearGradientBrush brushWhiteOrange = new LinearGradientBrush(
 						rect, clrStart, clrEnd, fHorz, true))
 					{
 						g.FillRectangle(brushWhiteOrange, rect);
-					}
-				}
-				else if(bs == BannerStyle.KeePassWin32)
-				{
-					int sh = DpiUtil.ScaleIntY(10) / 10; // Force floor
-
-					// Black separator line
-					using(Pen penBlack = new Pen(Color.Black))
-					{
-						for(int i = 0; i < sh; ++i)
-							g.DrawLine(penBlack, 0, nHeight - i - 1,
-								nWidth - 1, nHeight - i - 1);
 					}
 				}
 
@@ -280,7 +294,7 @@ namespace KeePass.UI
 
 				// Brush brush;
 				Color clrText;
-				if(bs == BannerStyle.KeePassWin32)
+				if(bCaution || (bs == BannerStyle.Light))
 				{
 					// brush = Brushes.Black;
 					clrText = Color.Black;

@@ -123,18 +123,17 @@ namespace KeePass.Util.XmlSerialization
 		internal static string GetXmlName(MemberInfo mi)
 		{
 			object[] vAttribs = mi.GetCustomAttributes(true);
-			string strXmlName = mi.Name;
 
-			XmlTypeAttribute xmlType = GetAttribute<XmlTypeAttribute>(vAttribs);
-			if(xmlType != null) strXmlName = xmlType.TypeName;
-			XmlRootAttribute xmlRoot = GetAttribute<XmlRootAttribute>(vAttribs);
-			if(xmlRoot != null) strXmlName = xmlRoot.ElementName;
-			XmlArrayAttribute xmlArray = GetAttribute<XmlArrayAttribute>(vAttribs);
-			if(xmlArray != null) strXmlName = xmlArray.ElementName;
-			XmlElementAttribute xmlElement = GetAttribute<XmlElementAttribute>(vAttribs);
-			if(xmlElement != null) strXmlName = xmlElement.ElementName;
+			XmlTypeAttribute xt = GetAttribute<XmlTypeAttribute>(vAttribs);
+			if(xt != null) return xt.TypeName;
+			XmlRootAttribute xr = GetAttribute<XmlRootAttribute>(vAttribs);
+			if(xr != null) return xr.ElementName;
+			XmlArrayAttribute xa = GetAttribute<XmlArrayAttribute>(vAttribs);
+			if(xa != null) return xa.ElementName;
+			XmlElementAttribute xe = GetAttribute<XmlElementAttribute>(vAttribs);
+			if(xe != null) return xe.ElementName;
 
-			return strXmlName;
+			return mi.Name;
 		}
 
 		private sealed class XmlsTypeInfo

@@ -398,7 +398,9 @@
     <Compile Include="App\Configuration\AceTrayIcon.cs" />
     <Compile Include="App\Configuration\AceUI.cs" />
     <Compile Include="App\Configuration\AppConfigEx.cs" />
+    <Compile Include="App\Configuration\AppConfigEx.Sections.cs" />
     <Compile Include="App\Configuration\AppConfigSerializer.cs" />
+    <Compile Include="App\Configuration\AppEnforcedConfig.cs" />
     <Compile Include="DataExchange\CsvStreamReader.cs" />
     <Compile Include="DataExchange\CsvStreamReaderEx.cs" />
     <Compile Include="DataExchange\CsvStreamWriter.cs" />
@@ -492,6 +494,12 @@
     </Compile>
     <Compile Include="Forms\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\OptionsEnfForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OptionsEnfForm.Designer.cs">
+      <DependentUpon>OptionsEnfForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\OtpGeneratorForm.cs">
       <SubType>Form</SubType>
@@ -1053,6 +1061,9 @@
     <EmbeddedResource Include="Forms\MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OptionsEnfForm.resx">
+      <DependentUpon>OptionsEnfForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\OptionsForm.resx">
       <SubType>Designer</SubType>

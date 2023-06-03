@@ -93,10 +93,12 @@ namespace KeePass.Plugins
 
 		public static string GetCacheRoot()
 		{
-			if(Program.Config.Application.PluginCachePath.Length > 0)
+			AceApplication aceApp = Program.Config.Application;
+			string strRoot = aceApp.PluginCachePath;
+			if(!string.IsNullOrEmpty(strRoot) && AppConfigEx.IsOptionEnforced(
+				aceApp, "PluginCachePath"))
 			{
-				string strRoot = SprEngine.Compile(Program.Config.Application.PluginCachePath,
-					null);
+				strRoot = SprEngine.Compile(strRoot, null);
 				if(!string.IsNullOrEmpty(strRoot))
 				{
 					if(strRoot.EndsWith(new string(Path.DirectorySeparatorChar, 1)))

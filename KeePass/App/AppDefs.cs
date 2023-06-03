@@ -148,6 +148,8 @@ namespace KeePass.App
 
 			public static readonly string KbFaq = "kb/faq";
 			public static readonly string KbFaqURtf = "urtf";
+
+			internal const string KbConfigEnf = "kb/config_enf";
 		}
 
 		public static class CommandLineOptions
@@ -206,6 +208,11 @@ namespace KeePass.App
 			public static readonly string ConfigRemoveUrlOverride = "remove-urloverride";
 
 			public static readonly string ConfigSetLanguageFile = "set-languagefile";
+
+			internal const string ConfigEnfSetupFile = "cfg-enf-setup-f";
+			internal const string ConfigEnfSetupHash = "cfg-enf-setup-h";
+
+			internal const string KdfTest = "kdf-test";
 
 			public static readonly string PlgxCreate = "plgx-create";
 			public static readonly string PlgxCreateInfo = "plgx-create-info";

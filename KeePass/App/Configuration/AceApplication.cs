@@ -129,7 +129,7 @@ namespace KeePass.App.Configuration
 			set { m_bRememberWorkDirs = value; }
 		}
 
-		private Dictionary<string, string> m_dictWorkingDirs =
+		private readonly Dictionary<string, string> m_dictWorkingDirs =
 			new Dictionary<string, string>();
 
 		/// <summary>
@@ -245,14 +245,14 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private EcasTriggerSystem m_triggers = new EcasTriggerSystem();
+		private EcasTriggerSystem m_ets = new EcasTriggerSystem();
 		public EcasTriggerSystem TriggerSystem
 		{
-			get { return m_triggers; }
+			get { return m_ets; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				m_triggers = value;
+				m_ets = value;
 			}
 		}
 
@@ -393,7 +393,7 @@ namespace KeePass.App.Configuration
 
 			List<string> l = new List<string>();
 			foreach(KeyValuePair<string, string> kvp in m_dictWorkingDirs)
-				l.Add(kvp.Key + @"@" + kvp.Value);
+				l.Add(kvp.Key + "@" + kvp.Value);
 			return l.ToArray();
 		}
 

@@ -454,20 +454,7 @@ Instead of compiling your plugin to a DLL file, the plugin source code
 files can be packed into a PLGX file and KeePass will compile the plugin
 itself when loading it.</p>
 
-<p>One advantage of the PLGX approach is a strong compatibility detection.
-In the case of a DLL plugin, an incompatibility (caused by an API
-change within KeePass) is detected by the runtime when the plugin tries
-to call/access the method/class, not at loading time.
-So, an incompatibility is detected late and might crash KeePass.
-In contrast, when using the PLGX format, an incompatibility is
-detected immediately at loading time: if there is a problem, the
-compile process fails and KeePass can show an informative
-plugin incompatibility message to the user.
-For DLL plugins, KeePass performs an own compatibility check,
-which does not detect all incompatibilities though;
-PLGX is far superior here.</p>
-
-<p>Another advantage of the PLGX approach is compatibility with
+<p>The main advantage of the PLGX approach is the compatibility with
 custom KeePass builds.
 A DLL plugin references an official KeePass build, and unless there
 is a change within KeePass that breaks the plugin, the plugin is
@@ -484,21 +471,38 @@ In contrast, PLGX plugins are compatible with custom KeePass builds,
 because KeePass can adjust the KeePass reference of the plugin
 before compiling it.</p>
 
+<p>Another advantage of the PLGX approach is a strong compatibility detection.
+In the case of a DLL plugin, an incompatibility (caused by an API
+change within KeePass) is detected by the runtime when the plugin tries
+to call/access the method/class, not at loading time.
+So, an incompatibility is detected late and might crash KeePass.
+In contrast, when using the PLGX format, an incompatibility is
+detected immediately at loading time: if there is a problem, the
+compile process fails and KeePass can show an informative
+plugin incompatibility message to the user.
+For DLL plugins, KeePass performs an own compatibility check,
+which does not detect all incompatibilities though;
+PLGX is superior here.</p>
+
+<p>Regarding security, DLL plugins are better, because they can be
+digitally signed (Authenticode). Furthermore, DLL plugins are typically
+loaded slightly faster (because they can be loaded directly; no
+<a href="../v2/plugins.html#cache">plugin cache</a>).</p>
+
 <p>For users, the procedure to install a DLL plugin is exactly the
 same as for a PLGX plugin; both need to be copied into the 'Plugins'
 folder.</p>
 
-<p><b>Comparison.</b></p>
+<!-- <p><b>Comparison.</b></p> -->
 <table class="tablebox75">
 <tr><th>&nbsp;</th><th>DLL</th><th>PLGX</th></tr>
-<tr><td>Compatibility check</td>
-<td><img src="../images/b16x16_cancel.png" alt="No" /> Weak only.</td>
-<td><img src="../images/b16x16_ok.png" alt="Yes" /> Strong.</td></tr>
-
 <tr><td>Compatibility with custom builds (Linux)</td>
-<td><img src="../images/b16x16_cancel.png" alt="No" />
-Partial, see above.</td>
+<td><img src="../images/b16x16_cancel.png" alt="No" /> Partial.</td>
 <td><img src="../images/b16x16_ok.png" alt="Yes" /></td></tr>
+
+<tr><td>Compatibility check</td>
+<td><img src="../images/b16x16_cancel.png" alt="No" /> Weak.</td>
+<td><img src="../images/b16x16_ok.png" alt="Yes" /> Strong.</td></tr>
 
 <tr><td>Authenticode signing support</td>
 <td><img src="../images/b16x16_ok.png" alt="Yes" /></td>
@@ -513,27 +517,20 @@ Partial, see above.</td>
 <td><img src="../images/b16x16_cancel.png" alt="No" /></td></tr>
 </table>
 
-<p>So, both formats have unique advantages and disadvantages;
-there is no &quot;best&quot; format.</p>
+<p>So, both formats have unique advantages and disadvantages.</p>
 
 <p><b>Dual package.</b>
 You can ship a plugin both as a DLL and as a PLGX in one package
-(e.g. 'SecretImporter.dll' and 'SecretImporter.plgx' within one folder).
+(e.g. 'SecretImporter.dll' and 'SecretImporter.plgx' within the same folder).
 KeePass will load the most appropriate file
 (if KeePass has been signed with the official assembly signing key,
 it will load the DLL, otherwise the PLGX).
-If KeePass loads the DLL, the PLGX is ignored, which especially means
-that only a weak compatibility check is performed (i.e. the strong
-compatibility detection ensured by the PLGX is lost).
-So, a dual package inherits the DLL disadvantages and is not
-the &quot;best&quot; solution either.</p>
+If KeePass loads the DLL, the PLGX is ignored.</p>
 
 <p><b>Recommendation.</b>
-In any case, create a PLGX file (in order to ensure
-compatibility with all KeePass builds).
-If you think that the advantages of a DLL outweigh the risk
-of an undetected compatibility problem, additionally provide
-the plugin in DLL form.</p>
+In any case, provide a DLL file (for security reasons).
+If you want to support custom KeePass builds, additionally provide
+a PLGX file (i.e. provide a dual package).</p>
 
 <p><b>Creating PLGX files.</b>
 PLGX files can be created from plugin sources by calling <code>KeePass.exe</code>
@@ -590,7 +587,8 @@ to 'C# 5'.</li>
 <li>In Visual Studio 2019 and later, the project XML file must be edited:
 the element '<code>LangVersion</code>' must contain '<code>5</code>'.
 For details, see
-<a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version"
+<!-- https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version -->
+<a href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version"
 target="_blank">C# Language Versioning</a>.</li> 
 </ul></li>
 <li>Linked resources (in different assemblies) are unsupported.</li>
@@ -634,7 +632,8 @@ the cache directory. Example:<br />
 <p>In order to specify a quote character on the command line, it has
 to be encoded using three quotes (this is Windows standard, see
 <!-- https://msdn.microsoft.com/en-us/library/bb759784.aspx -->
-<a href="https://docs.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow"
+<!-- https://docs.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow -->
+<a href="https://learn.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow"
 target="_blank">MSDN: <code>SHELLEXECUTEINFOW</code></a>). So, the command
 line above will actually embed the post-build command
 <code>cmd /c COPY &quot;{PLGX_TEMP_DIR}MyFile.txt&quot;

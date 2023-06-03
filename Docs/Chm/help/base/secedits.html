@@ -39,14 +39,14 @@
 <p>KeePass supports security-enhanced edit controls.</p></td>
 </tr></table>
 
-<p>KeePass was one of the first password managers featuring secure edit controls. The
-edit controls used in KeePass are resistant to password revealers and password
+<p>KeePass was one of the first password managers featuring secure edit controls.
+The edit controls used in KeePass are resistant to password revealers and password
 control spies. Additionally, the entered passwords are protected against
-memory dumping attacks: the passwords aren't even visible in the process memory space
-of KeePass!</p>
+memory dumping attacks: the passwords are not visible in the process memory
+of KeePass.</p>
 
 <p>KeePass uses secure edit controls only when the hiding behind asterisks option
-is turned on! If you show the passwords in plaintext, they won't be protected
+is turned on. If you show the passwords in plaintext, they are not protected
 (secure edit controls are just disabled then, replaced by standard Windows edit
 controls).</p>
 
@@ -55,8 +55,16 @@ controls).</p>
 
 
 
+<b>Selection:</b><br />
 There are no selection limitations. Secure edit controls behave exactly like
-standard Windows edit controls.
+standard Windows edit controls.<br />
+<br />
+<b>Process memory protection:</b><br />
+On Windows systems, all characters are protected.
+On Unix-like systems (Linux, MacOS, ...), characters above U+D7FF
+(see <a href="https://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane"
+target="_blank">Basic Multilingual Plane</a>)
+are not protected.
 
 
 </body></html>

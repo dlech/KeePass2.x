@@ -117,6 +117,11 @@ namespace KeePass.Native
 		private static extern int GetWindowText(IntPtr hWnd, IntPtr lpString,
 			int nMaxCount);
 
+		[DllImport("User32.dll", CharSet = CharSet.Auto, ExactSpelling = false,
+			SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool SetWindowText(IntPtr hWnd, string lpString);
+
 		[DllImport("User32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
@@ -420,6 +425,10 @@ namespace KeePass.Native
 		private static extern IntPtr SHGetFileInfo(string pszPath,
 			uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo,
 			uint uFlags);
+
+		[DllImport("ComCtl32.dll")]
+		internal static extern int LoadIconWithScaleDown(IntPtr hInst,
+			IntPtr pszName, int cx, int cy, ref IntPtr phIco);
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]

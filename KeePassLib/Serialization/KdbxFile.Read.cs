@@ -417,7 +417,7 @@ namespace KeePassLib.Serialization
 					Debug.Assert(false);
 					if(m_slLogger != null)
 						m_slLogger.SetText(KLRes.UnknownHeaderId + ": " +
-							kdbID.ToString() + "!", LogStatusType.Warning);
+							btFieldID.ToString() + "!", LogStatusType.Warning);
 					break;
 			}
 

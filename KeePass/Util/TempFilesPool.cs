@@ -250,17 +250,16 @@ namespace KeePass.Util
 			int i = m_lFiles.IndexOf(strTempFile);
 			if(i < 0) { Debug.Assert(false); return false; }
 
-			bool bResult = false;
 			try
 			{
 				File.Delete(strTempFile);
 
 				m_lFiles.RemoveAt(i);
-				bResult = true;
+				return true;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			return bResult;
+			return false;
 		}
 
 		private void ClearContentAsync()

@@ -78,18 +78,38 @@ to define a complex state-dependent system of triggers.</p>
 <a href="../base/placeholders.html">placeholders</a>
 (except state-changing ones), environment variables, etc. can be used.</p>
 
+<p><strong>All Users.</strong><br />
+Triggers are saved to an <a href="https://keepass.info/help/kb/config_enf.html"
+target="_blank">enforced configuration file</a>, which applies to all users
+who use this KeePass installation. Therefore, make sure that your triggers are
+suitable for all users. Especially, the triggers should not contain any
+sensitive data (for security/privacy reasons).</p>
+
 <p><strong>Sensitive Data.</strong><br />
 Some trigger events/conditions/actions support fields for potentially
 sensitive data (for instance the password field of the 'Open database file'
-action). As triggers are saved in a plain text
-<a href="../base/configuration.html">configuration</a> file,
-it is generally not recommended to directly enter sensitive data in trigger fields.
+action). As triggers are saved in an unencrypted configuration file, it is
+generally not recommended to directly enter sensitive data in trigger fields.
 If a database is open when the trigger runs, the sensitive data can be
 stored in the database and the trigger field can point to the data using
 a <a href="../base/fieldrefs.html">field reference</a>
 (which KeePass resolves when evaluating the field).
 In this way, only the field reference appears in the configuration file
 and the actual sensitive data is stored in the encrypted database file.</p>
+
+<p><strong>User-Specific Triggers.</strong><br />
+In order to limit a trigger to one or more specific users, you can add a
+condition of type 'Environment variable'. Set the 'Name' parameter to
+'USERNAME' (without the quotes).
+In the case of a single user, select 'Equals' as comparison
+and set the 'Value' parameter to the system user name.
+In the case of multiple users, select 'Matches regular expression' as comparison
+and set the 'Value' parameter to an appropriate regular expression
+(for example, if you specify '<code>^(Michael|Tobias)$</code>', the trigger
+applies to the users 'Michael' and 'Tobias' only).
+Information on regular expressions can be found here:
+<a href="https://keepass.info/help/base/search.html#mode_re"
+target="_blank">Search Mode 'Regular Expression'</a>.</p>
 
 <p><strong>I/O Connection Properties.</strong><br />
 Most trigger actions having a file path/URL parameter only allow

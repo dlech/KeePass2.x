@@ -34,6 +34,9 @@
 		<Data Name="AddStringFieldDesc">
 			<Value>Create a new string field for the current entry.</Value>
 		</Data>
+		<Data Name="AdminPassword">
+			<Value>Administrator password</Value>
+		</Data>
 		<Data Name="Advanced">
 			<Value>Advanced</Value>
 		</Data>
@@ -60,6 +63,9 @@
 		</Data>
 		<Data Name="AllSupportedFiles">
 			<Value>All Supported Files</Value>
+		</Data>
+		<Data Name="AllUsers">
+			<Value>All Users</Value>
 		</Data>
 		<Data Name="Application">
 			<Value>Application</Value>
@@ -259,6 +265,9 @@
 		<Data Name="BitsEx">
 			<Value>{PARAM} bits</Value>
 		</Data>
+		<Data Name="Blue">
+			<Value>Blue</Value>
+		</Data>
 		<Data Name="Bold">
 			<Value>Bold</Value>
 		</Data>
@@ -334,6 +343,9 @@
 		<Data Name="ClipboardClearOnExit">
 			<Value>Clear clipboard when closing KeePass</Value>
 		</Data>
+		<Data Name="ClipboardClearTime">
+			<Value>&amp;Clipboard auto-clear time (seconds; main entry list)</Value>
+		</Data>
 		<Data Name="ClipboardDataCopied">
 			<Value>Data copied to clipboard.</Value>
 		</Data>
@@ -398,10 +410,28 @@
 			<Value>Condition</Value>
 		</Data>
 		<Data Name="ConfigAffectAdmin">
-			<Value>Changes to the configuration/policy will affect you and all users of this KeePass installation.</Value>
+			<Value>Changes to the configuration/policy will affect all users of this KeePass installation.</Value>
 		</Data>
 		<Data Name="ConfigAffectUser">
-			<Value>Changes to the configuration/policy will only affect you. Policy flags that are enforced by the administrator are reset after restarting KeePass.</Value>
+			<Value>Changes to the configuration/policy will affect only you. Policy flags that are enforced by the administrator are reset when restarting KeePass.</Value>
+		</Data>
+		<Data Name="ConfigEnfAdminUac">
+			<Value>Write access to the enforced configuration file may require administrator permission. A User Account Control dialog will be displayed, if necessary.</Value>
+		</Data>
+		<Data Name="ConfigEnfAllUsers">
+			<Value>The enforced configuration file applies to all users who use this KeePass installation. Therefore, make sure that your items are suitable for all users.</Value>
+		</Data>
+		<Data Name="ConfigEnfChangeValue">
+			<Value>If you want to change the value of an enforced option, deactivate the enforcement (using this dialog), change the value (using the options dialog) and activate the enforcement again (using this dialog).</Value>
+		</Data>
+		<Data Name="ConfigEnfDialogSubset">
+			<Value>This dialog supports only a subset of all options. More options can be enforced by editing the enforced configuration file using an XML/text editor.</Value>
+		</Data>
+		<Data Name="ConfigEnfEdit">
+			<Value>Edit the enforced configuration file.</Value>
+		</Data>
+		<Data Name="ConfigEnfSaveItemsAbout">
+			<Value>You are about to save items to the enforced configuration file.</Value>
 		</Data>
 		<Data Name="ConfigError">
 			<Value>Configuration error</Value>
@@ -435,6 +465,9 @@
 		</Data>
 		<Data Name="ConfigureOnNewDatabase3">
 			<Value>Configure New Database</Value>
+		</Data>
+		<Data Name="ConfirmExport">
+			<Value>Confirm Export</Value>
 		</Data>
 		<Data Name="ConsiderDashesEq">
 			<Value>Consider similar dashes as identical</Value>
@@ -582,6 +615,9 @@
 		</Data>
 		<Data Name="Cut">
 			<Value>Cut</Value>
+		</Data>
+		<Data Name="Dark">
+			<Value>Dark</Value>
 		</Data>
 		<Data Name="Data">
 			<Value>Data</Value>
@@ -758,7 +794,7 @@
 			<Value>&amp;Edit Entry...</Value>
 		</Data>
 		<Data Name="EditEntryDesc">
-			<Value>You're editing an existing entry.</Value>
+			<Value>You are editing an existing entry.</Value>
 		</Data>
 		<Data Name="EditEntryQuickCmd">
 			<Value>Edit Entry (&amp;Quick)</Value>
@@ -826,6 +862,12 @@
 		<Data Name="EndsWith">
 			<Value>Ends with</Value>
 		</Data>
+		<Data Name="Enforce">
+			<Value>Enforce</Value>
+		</Data>
+		<Data Name="EnforceOptions">
+			<Value>Enforce Options</Value>
+		</Data>
 		<Data Name="EnterCompositeKey">
 			<Value>Enter Master Key</Value>
 		</Data>
@@ -888,6 +930,9 @@
 		</Data>
 		<Data Name="ExpiredEntriesCanMatch">
 			<Value>Expired entries can match</Value>
+		</Data>
+		<Data Name="ExpiryDefaultDays">
+			<Value>By default, &amp;new entries expire in the following number of days</Value>
 		</Data>
 		<Data Name="ExpiryTime">
 			<Value>Expiry Time</Value>
@@ -1333,6 +1378,15 @@
 		<Data Name="Italic">
 			<Value>Italic</Value>
 		</Data>
+		<Data Name="ItemsCheckEnable">
+			<Value>If you want to use these items, open the corresponding dialogs, check the items (with regard to security, privacy, functionality, compatibility, etc.) and enable them.</Value>
+		</Data>
+		<Data Name="ItemsDisabled">
+			<Value>The following items have been disabled:</Value>
+		</Data>
+		<Data Name="ItemsNoSensitiveEsp">
+			<Value>Especially, the items should not contain any sensitive data (for security/privacy reasons).</Value>
+		</Data>
 		<Data Name="Iterations">
 			<Value>Iterations</Value>
 		</Data>
@@ -1480,6 +1534,9 @@
 		<Data Name="LatestVersionWeb">
 			<Value>The latest KeePass version can be found on the KeePass website</Value>
 		</Data>
+		<Data Name="Light">
+			<Value>Light</Value>
+		</Data>
 		<Data Name="LimitSingleInstance">
 			<Value>Limit to single instance</Value>
 		</Data>
@@ -1497,6 +1554,12 @@
 		</Data>
 		<Data Name="LngInAppDirQ">
 			<Value>Do you want to open the application directory (in order to move or delete language files)?</Value>
+		</Data>
+		<Data Name="LockAfterGlobalTime">
+			<Value>L&amp;ock workspace after global user inactivity (seconds)</Value>
+		</Data>
+		<Data Name="LockAfterTime">
+			<Value>&amp;Lock workspace after KeePass inactivity (seconds)</Value>
 		</Data>
 		<Data Name="Locked">
 			<Value>Locked</Value>
@@ -1987,6 +2050,9 @@
 		<Data Name="PluginUpdateHint">
 			<Value>Have a look at the plugin's website for an appropriate version.</Value>
 		</Data>
+		<Data Name="Policy">
+			<Value>Policy</Value>
+		</Data>
 		<Data Name="PolicyAutoTypeDesc">
 			<Value>Allow auto-typing entries to other windows.</Value>
 		</Data>
@@ -2082,6 +2148,9 @@
 		</Data>
 		<Data Name="PwGenOpen">
 			<Value>Open Password Generator...</Value>
+		</Data>
+		<Data Name="PwGenProfiles">
+			<Value>Password Generator Profiles</Value>
 		</Data>
 		<Data Name="Quality">
 			<Value>Quality</Value>
@@ -2753,7 +2822,7 @@
 			<Value>&amp;View</Value>
 		</Data>
 		<Data Name="ViewEntryDesc">
-			<Value>You're viewing an entry.</Value>
+			<Value>You are viewing an entry.</Value>
 		</Data>
 		<Data Name="ViewEntryReadOnly">
 			<Value>View Entry (Read-Only)</Value>
@@ -2975,7 +3044,7 @@
 			<Value>An unknown error occurred.</Value>
 		</Data>
 		<Data Name="UnknownHeaderId">
-			<Value>Unknown header ID!</Value>
+			<Value>Unknown header ID</Value>
 		</Data>
 		<Data Name="UnknownKdf">
 			<Value>Unknown key derivation function!</Value>

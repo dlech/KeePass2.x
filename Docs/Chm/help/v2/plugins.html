@@ -92,39 +92,63 @@ because they are generated on each system and do not contain any user data.</p>
 
 <br />
 
+<a name="sec"></a>
 <h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="" />
 Security</h2>
 
-<p><i>What about the security of plugins? Can't malicious plugins
-'inject' themselves into KeePass?</i></p>
+<p>Plugins must be stored in the 'Plugins' folder of the KeePass application
+directory. An attacker who can copy a malicious plugin into this folder
+could typically also replace the 'KeePass.exe' file by malware.
+As protection against such attacks, an appropriate file system
+<a href="https://learn.microsoft.com/en-us/windows/win32/secauthz/access-control-lists"
+target="_blank">access control list</a> (ACL) should be used
+(for the whole KeePass application directory, including the 'Plugins' folder);
+administrator privileges should be required for write access.</p>
 
-<p>If plugins can register themselves
-(i.e. have write access to the KeePass directory), they could also just
-replace the whole 'KeePass.exe' file. It's a problem of file access
-rights, not the plugin system.</p>
+<ul>
+<li>The KeePass installer and the MSI package install KeePass into the
+Program Files directory by default. This directory typically has an
+appropriate ACL, and the KeePass application directory inherits this ACL.
+So, you do not need to specify an ACL manually.</li>
 
-<p>If you worry about this,
-install KeePass as administrator into the program files directory
-(which is the default, typically in a folder in 'C:\Program Files').
-Afterwards, run KeePass and other applications only as normal user
-(without administrator privileges).</p>
+<li>If you installed KeePass to a different directory or if you use the
+portable package, it is recommended that you specify an appropriate ACL
+manually.</li>
+</ul>
 
-<p>This solves the problem above. As the KeePass directory is write-protected
-for normal users, no other program can copy files into it. KeePass requires the plugins to
-be in the application directory. Therefore, plugins cannot inject themselves anymore.</p>
-
-<p>If you use the portable package of KeePass or installed it into a different
-directory, you need to adjust the directory permissions yourself.</p>
-
-<p>KeePass supports two plugin file formats: DLL and
+<p><strong>DLL vs. PLGX:</strong><br />
+KeePass supports two plugin file formats: DLL and
 <a href="https://keepass.info/help/v2_dev/plg_index.html#plgx" target="_blank">PLGX</a>.
-A DLL plugin can be loaded directly, whereas KeePass needs to compile a PLGX
+A DLL plugin is loaded directly, whereas KeePass needs to compile a PLGX
 plugin to a DLL plugin first, which is then stored in a
-<a href="#cache">plugin cache</a> (see the section below).
-By default, the user has write access in the plugin cache directory
+<a href="#cache">plugin cache</a> (see the section below).</p>
+
+<p>By default, the user has write access in the PLGX plugin cache directory
 (without administrator privileges).
-If you want to use a PLGX plugin, consider to adjust the access rights of the
-plugin cache directory to require administrator privileges for write access.</p>
+This is not a security vulnerability. Let us assume that an attacker has write
+access in the plugin cache directory and the goal is code execution.
+The plugin cache folder is typically located in the user's profile directory
+and has the same ACL, i.e. the attacker has write access in the user's profile
+directory.
+With this, there are many ways to execute malware (a few examples can be found
+here: '<a href="https://keepass.info/help/kb/sec_issues.html#cfgw" target="_blank">Write
+Access to Configuration File</a>').
+Stand-alone malware can also be specialized on attacking KeePass (see
+'<a href="../base/security.html#secspecattacks">Specialized Spyware</a>');
+it does not need to be a plugin for this.
+Furthermore, an anti-virus software scans all files containing executable code
+(EXE, DLL, ...); a malware is either detected or not, independent of where in
+the user's profile directory it is stored.</p>
+
+<p>If you worry about this anyway, consider to adjust the ACL of the PLGX
+plugin cache directory to require administrator privileges for write access.
+Note though that this may result in some plugins not working properly anymore
+(those that assume to have write access in the plugin cache directory),
+and the KeePass option 'Delete old files from cache automatically' also may
+not work anymore.</p>
+
+<p>In the case of a dual package (DLL and PLGX in the same folder), KeePass
+loads the DLL file (and ignores the PLGX file), if possible.</p>
 
 <br />
 
@@ -132,17 +156,20 @@ plugin cache directory to require administrator privileges for write access.</p>
 <h2 class="sectiontitle"><img src="../images/b16x16_package_system.png" alt="" />
 Plugin Cache</h2>
 
-<p>PLGX plugins are compiled and stored in a plugin cache directory on the
-user's system. This cache highly improves the startup performance of KeePass.
-Old files are normally deleted from the cache
-automatically (this can be disabled in the plugins dialog).
+<p>PLGX plugins (not DLL plugins) are compiled and stored in a plugin cache directory
+on the user's system. This cache improves the startup performance of KeePass.
+Old files are normally deleted from the cache automatically
+(this can be disabled in the plugins dialog).
 The cache does not contain any user data.</p>
 
-<p>By default, the plugin cache is located in the user's application data
-directory. However, this can be overridden using the
-<code>Application/PluginCachePath</code> setting in the configuration file
+<p>By default, the plugin cache is located in the user's local application data
+directory (<code>%LOCALAPPDATA%\KeePass\PluginCache</code>).
+However, this can be overridden using the
+<code>Application/PluginCachePath</code> setting in the
+<a href="https://keepass.info/help/kb/config_enf.html" target="_blank">enforced
+configuration file</a>
 (this setting supports placeholders and environment variables).
-So, if you're for example using KeePass on a portable device and don't want
+So, if you are for example using KeePass on a portable device and do not want
 the cache to be on the system, you could set the path to <code>{APPDIR}\PluginCache</code>.</p>
 
 <p><img src="../images/b16x16_warning.png" class="textimg" alt="Warning" />

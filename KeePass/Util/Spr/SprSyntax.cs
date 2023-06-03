@@ -118,11 +118,12 @@ namespace KeePass.Util.Spr
 		{
 			if(rtb == null) { Debug.Assert(false); return; }
 
+			string strText = rtb.Text;
 			int iSelStart = rtb.SelectionStart;
 			int iSelLen = rtb.SelectionLength;
+			// bool bHideSel = rtb.HideSelection;
 
-			string strText = rtb.Text;
-
+			// rtb.HideSelection = true;
 			rtb.SelectAll();
 			// rtb.SelectionBackColor = SystemColors.Window;
 			rtb.SelectionColor = SystemColors.ControlText;
@@ -159,6 +160,7 @@ namespace KeePass.Util.Spr
 			}
 
 			rtb.Select(iSelStart, iSelLen);
+			// rtb.HideSelection = bHideSel;
 		}
 
 		private static List<SprStyle> GetHighlight(string str, SprContext ctx)

@@ -20,12 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
 
-using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
 using KeePass.Util.XmlSerialization;
@@ -54,11 +54,7 @@ namespace KeePass.App.Configuration
 		/// </summary>
 		public static string AppDataDirectory
 		{
-			get
-			{
-				GetConfigPaths();
-				return g_strAppDataDir;
-			}
+			get { GetConfigPaths(); return g_strAppDataDir; }
 		}
 
 		/// <summary>
@@ -66,11 +62,12 @@ namespace KeePass.App.Configuration
 		/// </summary>
 		public static string LocalAppDataDirectory
 		{
-			get
-			{
-				GetConfigPaths();
-				return g_strAppDataLocalDir;
-			}
+			get { GetConfigPaths(); return g_strAppDataLocalDir; }
+		}
+
+		internal static string EnforcedConfigFile
+		{
+			get { GetConfigPaths(); return g_strEnforcedConfigFile; }
 		}
 
 		/// <summary>
@@ -99,6 +96,7 @@ namespace KeePass.App.Configuration
 		public static XmlDocument EnforcedConfigXml
 		{
 			get { return g_xdEnforced; }
+			internal set { g_xdEnforced = value; }
 		}
 
 		private static void GetConfigPaths()
@@ -195,13 +193,19 @@ namespace KeePass.App.Configuration
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		private static XmlDocument LoadEnforcedConfigFile()
+		internal static XmlDocument LoadEnforced(bool bSetPrimary)
 		{
+			GetConfigPaths();
+
+			if(bSetPrimary)
+			{
+				Debug.Assert(g_xdEnforced == null);
+				g_xdEnforced = null;
+			}
+
 #if DEBUG
 			Stopwatch sw = Stopwatch.StartNew();
 #endif
-
-			g_xdEnforced = null;
 			try
 			{
 				if(!File.Exists(g_strEnforcedConfigFile)) return null;
@@ -209,7 +213,7 @@ namespace KeePass.App.Configuration
 				XmlDocument xd = XmlUtilEx.CreateXmlDocument();
 				xd.Load(g_strEnforcedConfigFile);
 
-				g_xdEnforced = xd;
+				if(bSetPrimary) g_xdEnforced = xd;
 				return xd;
 			}
 			catch(Exception ex)
@@ -227,12 +231,11 @@ namespace KeePass.App.Configuration
 			return null;
 		}
 
-		private static AppConfigEx LoadConfigFileEx(string strFilePath,
-			XmlDocument xdEnforced)
+		private static AppConfigEx Load(string strFilePath, XmlDocument xdEnforced)
 		{
 			if(string.IsNullOrEmpty(strFilePath)) { Debug.Assert(false); return null; }
 
-			AppConfigEx tConfig = null;
+			AppConfigEx cfg = null;
 			try
 			{
 				if(!File.Exists(strFilePath)) return null;
@@ -244,7 +247,7 @@ namespace KeePass.App.Configuration
 					using(FileStream fs = new FileStream(strFilePath,
 						FileMode.Open, FileAccess.Read, FileShare.Read))
 					{
-						tConfig = (AppConfigEx)xs.Deserialize(fs);
+						cfg = (AppConfigEx)xs.Deserialize(fs);
 					}
 				}
 				else // Enforced configuration
@@ -263,7 +266,7 @@ namespace KeePass.App.Configuration
 
 						using(MemoryStream msR = new MemoryStream(msW.ToArray(), false))
 						{
-							tConfig = (AppConfigEx)xs.Deserialize(msR);
+							cfg = (AppConfigEx)xs.Deserialize(msR);
 						}
 					}
 				}
@@ -273,27 +276,27 @@ namespace KeePass.App.Configuration
 				FileDialogsEx.ShowConfigError(strFilePath, ex.Message, false, true);
 			}
 
-			if(tConfig != null) tConfig.OnLoad();
-			return tConfig;
+			if(cfg != null) cfg.OnLoad();
+			return cfg;
 		}
 
 		public static AppConfigEx Load()
 		{
 			GetConfigPaths();
 
-			// AppConfigEx cfgEnf = LoadConfigFileEx(g_strEnforcedConfigFile);
+			// AppConfigEx cfgEnf = Load(g_strEnforcedConfigFile);
 			// if(cfgEnf != null)
 			// {
 			//	cfgEnf.Meta.IsEnforcedConfiguration = true;
 			//	return cfgEnf;
 			// }
-			XmlDocument xdEnforced = LoadEnforcedConfigFile();
+			XmlDocument xdEnforced = LoadEnforced(true);
 
-			AppConfigEx cfgGlobal = LoadConfigFileEx(g_strGlobalConfigFile, xdEnforced);
+			AppConfigEx cfgGlobal = Load(g_strGlobalConfigFile, xdEnforced);
 			if((cfgGlobal != null) && !cfgGlobal.Meta.PreferUserConfiguration)
 				return cfgGlobal; // Do not show error for corrupted local configuration
 
-			AppConfigEx cfgUser = LoadConfigFileEx(g_strUserConfigFile, xdEnforced);
+			AppConfigEx cfgUser = Load(g_strUserConfigFile, xdEnforced);
 
 			if((cfgGlobal == null) && (cfgUser == null))
 			{
@@ -305,10 +308,10 @@ namespace KeePass.App.Configuration
 					try
 					{
 						string strFile = Program.TempFilesPool.GetTempFileName("xml");
-						File.WriteAllText(strFile, AppConfigEx.GetEmptyConfigXml(),
+						File.WriteAllText(strFile, AppConfigEx.GetEmptyXml(),
 							StrUtil.Utf8);
 
-						AppConfigEx cfg = LoadConfigFileEx(strFile, xdEnforced);
+						AppConfigEx cfg = Load(strFile, xdEnforced);
 						if(cfg != null) return cfg;
 						Debug.Assert(false);
 					}
@@ -326,71 +329,89 @@ namespace KeePass.App.Configuration
 			return (cfgGlobal.Meta.PreferUserConfiguration ? cfgUser : cfgGlobal);
 		}
 
-		private static bool SaveConfigFileEx(AppConfigEx tConfig, string strFilePath)
+		internal static void SaveEx(AppConfigEx cfg, Stream s)
+		{
+			if(cfg == null) throw new ArgumentNullException("cfg");
+			if(s == null) throw new ArgumentNullException("s");
+
+			cfg.OnSavePre();
+
+			// Temporarily remove user file preference (restore after saving)
+			bool bPrefUser = cfg.Meta.PreferUserConfiguration;
+			cfg.Meta.PreferUserConfiguration = false;
+
+			try
+			{
+				using(XmlWriter xw = XmlUtilEx.CreateXmlWriter(s))
+				{
+					XmlSerializerEx xs = new XmlSerializerEx(typeof(AppConfigEx));
+					xs.Serialize(xw, cfg);
+				}
+			}
+			finally
+			{
+				cfg.Meta.PreferUserConfiguration = bPrefUser;
+				cfg.OnSavePost();
+			}
+		}
+
+		private static bool Save(AppConfigEx cfg, string strFilePath)
 		{
 			if(string.IsNullOrEmpty(strFilePath)) { Debug.Assert(false); return false; }
 
-			tConfig.OnSavePre();
-
-			// Temporarily remove user file preference (restore after saving)
-			bool bPref = tConfig.Meta.PreferUserConfiguration;
-			tConfig.Meta.PreferUserConfiguration = false;
-
-			bool bResult = true;
 			try
 			{
 				IOConnectionInfo iocPath = IOConnectionInfo.FromPath(strFilePath);
 
 				using(FileTransactionEx ft = new FileTransactionEx(iocPath,
-					Program.Config.Application.UseTransactedConfigWrites))
+					cfg.Application.UseTransactedConfigWrites))
 				{
 					using(Stream s = ft.OpenWrite())
 					{
-						using(XmlWriter xw = XmlUtilEx.CreateXmlWriter(s))
-						{
-							XmlSerializerEx xs = new XmlSerializerEx(typeof(AppConfigEx));
-							xs.Serialize(xw, tConfig);
-						}
+						SaveEx(cfg, s);
 					}
 
 					ft.CommitWrite();
 				}
+
+				return true;
 			}
 			catch(Exception ex)
 			{
 				FileDialogsEx.ShowConfigError(strFilePath, ex.Message, true, false);
-				bResult = false;
-			}
-
-			tConfig.Meta.PreferUserConfiguration = bPref;
-
-			tConfig.OnSavePost();
-			return bResult;
-		}
-
-		public static bool Save(AppConfigEx tConfig)
-		{
-			if(tConfig == null) { Debug.Assert(false); return false; }
-			if(!tConfig.Application.ConfigSave) return false;
-
-			GetConfigPaths();
-
-			if(tConfig.Meta.PreferUserConfiguration)
-			{
-				EnsureDirOfFileExists(g_strUserConfigFile);
-				if(SaveConfigFileEx(tConfig, g_strUserConfigFile)) return true;
-
-				if(SaveConfigFileEx(tConfig, g_strGlobalConfigFile)) return true;
-			}
-			else // Prefer global
-			{
-				if(SaveConfigFileEx(tConfig, g_strGlobalConfigFile)) return true;
-
-				EnsureDirOfFileExists(g_strUserConfigFile);
-				if(SaveConfigFileEx(tConfig, g_strUserConfigFile)) return true;
 			}
 
 			return false;
+		}
+
+		public static bool Save(AppConfigEx cfg)
+		{
+			if(cfg == null) { Debug.Assert(false); return false; }
+			if(!cfg.Application.ConfigSave) return false;
+
+			GetConfigPaths();
+
+			if(cfg.Meta.PreferUserConfiguration)
+			{
+				EnsureDirOfFileExists(g_strUserConfigFile);
+				if(Save(cfg, g_strUserConfigFile)) return true;
+
+				if(Save(cfg, g_strGlobalConfigFile)) return true;
+			}
+			else // Prefer global
+			{
+				if(Save(cfg, g_strGlobalConfigFile)) return true;
+
+				EnsureDirOfFileExists(g_strUserConfigFile);
+				if(Save(cfg, g_strUserConfigFile)) return true;
+			}
+
+			return false;
+		}
+
+		internal static bool Save()
+		{
+			return Save(Program.Config);
 		}
 
 		internal static string TryCreateBackup(string strFilePath)
@@ -399,17 +420,57 @@ namespace KeePass.App.Configuration
 
 			try
 			{
-				DateTime dt = DateTime.Now;
-				string strBackupPath = UrlUtil.EnsureTerminatingSeparator(
-					UrlUtil.GetTempPath(), false) + PwDefs.ShortProductName +
-					"_" + dt.ToString("yyyyMMddHHmmss") + g_strFileSuffix;
+				if(!File.Exists(strFilePath)) return null;
 
-				File.Copy(strFilePath, strBackupPath, true);
-				return strBackupPath;
+				string strToS = UrlUtil.EnsureTerminatingSeparator(
+					UrlUtil.GetTempPath(), false) + PwDefs.ShortProductName +
+					"_" + DateTime.Now.ToString(@"yyMMdd'_'HHmmss");
+				NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
+
+				for(int i = 1; i < 100; ++i)
+				{
+					string strTo = strToS + ((i == 1) ? string.Empty :
+						("_" + i.ToString(nfi))) + g_strFileSuffix;
+
+					if(File.Exists(strTo)) continue;
+
+					File.Copy(strFilePath, strTo, true);
+					return strTo;
+				}
+
+				Debug.Assert(false);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
 			return null;
+		}
+
+		internal static void CreateBackupIfNecessary()
+		{
+			AppConfigEx cfg = Program.Config;
+			ulong uVersion = cfg.Meta.GetVersion();
+			bool b = false;
+
+			// if(!string.IsNullOrEmpty(cfg.Application.HelpUrl) &&
+			//	!AppConfigEx.IsOptionEnforced(cfg.Application, "HelpUrl"))
+			//	b = true; // Help URL might be deleted by auto-disable
+			// else
+			if(uVersion < 0x0002003600000000UL) // < 2.54
+			{
+				// The default content mode of the following elements has been
+				// changed in KeePass 2.54
+				if(AppConfigEx.IsOptionEnforced(cfg.Application, "TriggerSystem") ||
+					AppConfigEx.IsOptionEnforced(cfg.Integration, "UrlSchemeOverrides") ||
+					AppConfigEx.IsOptionEnforced(cfg.PasswordGenerator, "UserProfiles"))
+					b = true;
+			}
+
+			if(b)
+			{
+				GetConfigPaths();
+				TryCreateBackup(cfg.Meta.PreferUserConfiguration ?
+					g_strUserConfigFile : g_strGlobalConfigFile);
+			}
 		}
 	}
 }

@@ -147,25 +147,19 @@ namespace KeePass.Util.Spr
 
 		public SprContext() { }
 
-		public SprContext(PwEntry pe, PwDatabase pd, SprCompileFlags fl)
+		public SprContext(PwEntry pe, PwDatabase pd, SprCompileFlags fl) :
+			this(pe, pd, fl, false, false)
 		{
-			Init(pe, pd, false, false, fl);
 		}
 
 		public SprContext(PwEntry pe, PwDatabase pd, SprCompileFlags fl,
 			bool bEncodeAsAutoTypeSequence, bool bEncodeForCommandLine)
 		{
-			Init(pe, pd, bEncodeAsAutoTypeSequence, bEncodeForCommandLine, fl);
-		}
-
-		private void Init(PwEntry pe, PwDatabase pd, bool bAT, bool bCmd,
-			SprCompileFlags fl)
-		{
 			m_pe = pe;
 			m_pd = pd;
-			m_bMakeAT = bAT;
-			m_bMakeCmd = bCmd;
 			m_flags = fl;
+			m_bMakeAT = bEncodeAsAutoTypeSequence;
+			m_bMakeCmd = bEncodeForCommandLine;
 		}
 
 		public SprContext Clone()

@@ -225,5 +225,45 @@ requests to the other instances.</p>
 <code>--unlock-all</code> command line options lock/unlock the workspaces
 of all other KeePass instances.</p>
 
+<br />
+
+<a name="urloverride"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_enhanced_browsing.png" alt="" />
+Editing URL Overrides (2.x)</h2>
+
+<p>KeePass 2.x supports the following command line options for editing
+<a href="autourl.html#override">URL overrides</a>:</p>
+
+<ul class="withspc">
+<li><code>-add-urloverride</code>:<br />
+Adds a URL override for a specific scheme. Specify the scheme using the
+'<code>-scheme:</code>' command line parameter and the override using the
+'<code>-value:</code>' command line parameter.
+If the URL override should be enabled, additionally pass the
+'<code>-activate</code>' command line option.</li>
+
+<li><code>-remove-urloverride</code>:<br />
+Removes a URL override for a specific scheme. Specify the scheme using the
+'<code>-scheme:</code>' command line parameter and the override using the
+'<code>-value:</code>' command line parameter.</li>
+
+<li><code>-set-urloverride</code>:<br />
+The value of this command line parameter (not the
+'<code>-value:</code>' command line parameter) is saved as override
+for all entry URLs.</li>
+
+<li><code>-get-urloverride</code>:<br />
+Saves the current override for all entry URLs to the file
+'<code>%TEMP%\KeePass_UrlOverride.tmp</code>' (INI format).</li>
+
+<li><code>-clear-urloverride</code>:<br />
+Removes the override for all entry URLs.</li>
+</ul>
+
+<p>URL overrides are stored in the
+<a href="https://keepass.info/help/kb/config_enf.html" target="_blank">enforced configuration file</a>.
+For each of the command line options above except '<code>-get-urloverride</code>',
+a User Account Control dialog is displayed, if necessary.</p>
+
 </body></html>
 

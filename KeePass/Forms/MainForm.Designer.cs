@@ -189,6 +189,7 @@
 			this.m_menuFindExpInF = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFindSep3 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFindLastMod = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuFindHistory = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFindLarge = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuFindSep4 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuFindDupPasswords = new System.Windows.Forms.ToolStripMenuItem();
@@ -290,7 +291,8 @@
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
 			this.m_lvEntries = new KeePass.UI.CustomListViewEx();
 			this.m_richEntryView = new KeePass.UI.CustomRichTextBoxEx();
-			this.m_menuFindHistory = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuToolsAdvSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuToolsOptionsEnf = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxGroupList.SuspendLayout();
 			this.m_ctxPwList.SuspendLayout();
 			this.m_menuMain.SuspendLayout();
@@ -1604,6 +1606,14 @@
 			this.m_menuFindLastMod.Text = "Last &Modified Entries...";
 			this.m_menuFindLastMod.Click += new System.EventHandler(this.OnFindLastMod);
 			// 
+			// m_menuFindHistory
+			// 
+			this.m_menuFindHistory.Image = global::KeePass.Properties.Resources.B16x16_History;
+			this.m_menuFindHistory.Name = "m_menuFindHistory";
+			this.m_menuFindHistory.Size = new System.Drawing.Size(230, 22);
+			this.m_menuFindHistory.Text = "&History...";
+			this.m_menuFindHistory.Click += new System.EventHandler(this.OnFindHistory);
+			// 
 			// m_menuFindLarge
 			// 
 			this.m_menuFindLarge.Image = global::KeePass.Properties.Resources.B16x16_HwInfo;
@@ -1908,7 +1918,9 @@
 			// m_menuToolsAdv
 			// 
 			this.m_menuToolsAdv.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_menuToolsRecreateKeyFile});
+            this.m_menuToolsRecreateKeyFile,
+            this.m_menuToolsAdvSep0,
+            this.m_menuToolsOptionsEnf});
 			this.m_menuToolsAdv.Name = "m_menuToolsAdv";
 			this.m_menuToolsAdv.Size = new System.Drawing.Size(204, 22);
 			this.m_menuToolsAdv.Text = "&Advanced Tools";
@@ -2493,13 +2505,17 @@
 			this.m_richEntryView.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnEntryViewLinkClicked);
 			this.m_richEntryView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnEntryViewKeyUp);
 			// 
-			// m_menuFindHistory
+			// m_menuToolsAdvSep0
 			// 
-			this.m_menuFindHistory.Image = global::KeePass.Properties.Resources.B16x16_History;
-			this.m_menuFindHistory.Name = "m_menuFindHistory";
-			this.m_menuFindHistory.Size = new System.Drawing.Size(230, 22);
-			this.m_menuFindHistory.Text = "&History...";
-			this.m_menuFindHistory.Click += new System.EventHandler(this.OnFindHistory);
+			this.m_menuToolsAdvSep0.Name = "m_menuToolsAdvSep0";
+			this.m_menuToolsAdvSep0.Size = new System.Drawing.Size(282, 6);
+			// 
+			// m_menuToolsOptionsEnf
+			// 
+			this.m_menuToolsOptionsEnf.Name = "m_menuToolsOptionsEnf";
+			this.m_menuToolsOptionsEnf.Size = new System.Drawing.Size(285, 22);
+			this.m_menuToolsOptionsEnf.Text = "&Enforce Options...";
+			this.m_menuToolsOptionsEnf.Click += new System.EventHandler(this.OnToolsOptionsEnf);
 			// 
 			// MainForm
 			// 
@@ -2806,6 +2822,8 @@
 		private System.Windows.Forms.ToolStripSeparator m_menuEntryEditQuickSep2;
 		private System.Windows.Forms.ToolStripMenuItem m_menuEntryOtpGenSettings;
 		private System.Windows.Forms.ToolStripMenuItem m_menuFindHistory;
+		private System.Windows.Forms.ToolStripSeparator m_menuToolsAdvSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_menuToolsOptionsEnf;
 	}
 }
 

@@ -643,10 +643,10 @@ namespace KeePassLib.Resources
 		}
 
 		private static string m_strUnknownHeaderId =
-			@"Unknown header ID!";
+			@"Unknown header ID";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Unknown header ID!'.
+		/// 'Unknown header ID'.
 		/// </summary>
 		public static string UnknownHeaderId
 		{

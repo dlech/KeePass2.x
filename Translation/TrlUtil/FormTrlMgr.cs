@@ -78,6 +78,7 @@ namespace TrlUtil
 			AddForm(l, new LanguageForm());
 			AddForm(l, new ListViewForm());
 			AddForm(l, new KeePass.Forms.MainForm());
+			AddForm(l, new OptionsEnfForm());
 			AddForm(l, new OptionsForm());
 			AddForm(l, new OtpGeneratorForm());
 			AddForm(l, new PluginsForm());

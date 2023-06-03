@@ -387,6 +387,10 @@ namespace KeePass.Forms
 			imgC = UIUtil.CreateColorBitmap24(w, h, AppDefs.NamedEntryColor.LightYellow);
 			m_milMain.SetImage(m_menuEntryColorLightYellow, imgC);
 
+			Debug.Assert(m_menuToolsOptionsEnf.Image == null);
+			m_menuToolsOptionsEnf.Image = UIUtil.AddShieldOverlay(
+				Properties.Resources.B16x16_Misc);
+
 			Debug.Assert(!m_tvGroups.ShowRootLines); // See designer
 			// m_lvEntries.GridLines = mw.ShowGridLines;
 			if(UIUtil.VistaStyleListsSupported)
@@ -892,8 +896,7 @@ namespace KeePass.Forms
 
 		private void OnHelpAbout(object sender, EventArgs e)
 		{
-			AboutForm abf = new AboutForm();
-			UIUtil.ShowDialogAndDestroy(abf);
+			UIUtil.ShowDialogAndDestroy(new AboutForm());
 		}
 
 		private void OnEntryCopyUserName(object sender, EventArgs e)
@@ -1260,7 +1263,7 @@ namespace KeePass.Forms
 
 				GlobalWindowManager.CustomizeFormHandleCreated(this, null, true);
 
-				AppConfigSerializer.Save(Program.Config);
+				AppConfigSerializer.Save();
 				UpdateTrayIcon(true);
 			}
 			UIUtil.DestroyForm(ofDlg);
@@ -2873,6 +2876,11 @@ namespace KeePass.Forms
 				RefreshEntriesList();
 				UpdateUIState(true);
 			}
+		}
+
+		private void OnToolsOptionsEnf(object sender, EventArgs e)
+		{
+			UIUtil.ShowDialogAndDestroy(new OptionsEnfForm());
 		}
 	}
 }

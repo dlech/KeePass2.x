@@ -41,6 +41,16 @@ namespace KeePass.Forms
 
 		private Control m_cEdit = null;
 
+		private SlfFlags m_fl = SlfFlags.None;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue(SlfFlags.None)]
+		public SlfFlags FlagsEx
+		{
+			get { return m_fl; }
+			set { m_fl = value; }
+		}
+
 		private string m_strResult = string.Empty;
 		public string ResultString
 		{
@@ -83,12 +93,16 @@ namespace KeePass.Forms
 			Debug.Assert(!m_lblLongDesc.AutoSize); // For RTL support
 			m_lblLongDesc.Text = m_strLongDesc;
 
+			bool bSensitive = ((m_fl & SlfFlags.Sensitive) != SlfFlags.None);
+
 			if((m_vSelectable == null) || (m_vSelectable.Length == 0))
 			{
 				m_cmbEdit.Enabled = false;
 				m_cmbEdit.Visible = false;
 
 				m_cEdit = m_tbEdit;
+
+				if(bSensitive) m_tbEdit.UseSystemPasswordChar = true;
 			}
 			else // With selectable values
 			{
@@ -96,6 +110,8 @@ namespace KeePass.Forms
 				m_tbEdit.Visible = false;
 
 				m_cEdit = m_cmbEdit;
+
+				Debug.Assert(!bSensitive);
 
 				m_cmbEdit.BeginUpdate();
 				foreach(string strItem in m_vSelectable)
@@ -106,6 +122,13 @@ namespace KeePass.Forms
 			}
 
 			m_cEdit.Text = m_strDefaultText;
+
+			if((m_fl & SlfFlags.ElevationRequired) != SlfFlags.None)
+			{
+				m_btnOK.FlatStyle = FlatStyle.System;
+				m_btnCancel.FlatStyle = FlatStyle.System;
+				UIUtil.SetShield(m_btnOK, true);
+			}
 		}
 
 		private void OnFormShown(object sender, EventArgs e)

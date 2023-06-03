@@ -22,9 +22,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using KeePassLib.Utility;
+
 namespace KeePassLib.Cryptography.PasswordGenerator
 {
-	public sealed class PwCharSet
+	public sealed class PwCharSet : IEquatable<PwCharSet>
 	{
 		public static readonly string UpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		public static readonly string LowerCase = "abcdefghijklmnopqrstuvwxyz";
@@ -70,10 +72,8 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		[Obsolete]
 		public static string HighAnsiChars { get { return PwCharSet.Latin1S; } }
 
-		private const int CharTabSize = 0x10000 / 8;
-
-		private List<char> m_lChars = new List<char>();
-		private byte[] m_vTab = new byte[CharTabSize];
+		private readonly List<char> m_lChars = new List<char>();
+		private readonly byte[] m_vTab = new byte[0x10000 / 8];
 
 		/// <summary>
 		/// Create a new, empty character set.
@@ -111,6 +111,26 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 				return m_lChars[(int)uPos];
 			}
+		}
+
+		public bool Equals(PwCharSet other)
+		{
+			if(object.ReferenceEquals(other, this)) return true;
+			if(object.ReferenceEquals(other, null)) return false;
+
+			if(m_lChars.Count != other.m_lChars.Count) return false;
+
+			return MemUtil.ArraysEqual(m_vTab, other.m_vTab);
+		}
+
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as PwCharSet);
+		}
+
+		public override int GetHashCode()
+		{
+			return (int)MemUtil.Hash32(m_vTab, 0, m_vTab.Length);
 		}
 
 		/// <summary>

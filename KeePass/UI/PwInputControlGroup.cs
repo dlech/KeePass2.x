@@ -546,7 +546,7 @@ namespace KeePass.UI
 				MonoWorkarounds.IsRequired(100001));
 
 			// Too much spacing between the dots when using the default font
-			// cb.Text = new string(SecureTextBoxEx.PasswordCharEx, 3);
+			// cb.Text = SecureTextBoxEx.GetPasswordCharString(3);
 			cb.Text = string.Empty;
 
 			Image img = Properties.Resources.B19x07_3BlackDots;

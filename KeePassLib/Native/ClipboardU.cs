@@ -40,7 +40,7 @@ namespace KeePassLib.Native
 		public static string GetText()
 		{
 			// System.Windows.Forms.Clipboard doesn't work properly,
-			// see Mono workaround 1530
+			// see Mono workarounds 1530/1613
 
 			// string str = GtkGetText();
 			// if(str != null) return str;
@@ -53,7 +53,7 @@ namespace KeePassLib.Native
 			string str = (strText ?? string.Empty);
 
 			// System.Windows.Forms.Clipboard doesn't work properly,
-			// see Mono workaround 1530
+			// see Mono workarounds 1530/1613
 
 			// if(GtkSetText(str)) return true;
 

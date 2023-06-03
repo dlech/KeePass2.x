@@ -43,7 +43,8 @@ namespace KeePassLib.Utility
 	{
 		private const string AppXDoTool = "xdotool";
 
-		private static Dictionary<uint, bool> g_dForceReq = new Dictionary<uint, bool>();
+		private static readonly Dictionary<uint, bool> g_dForceReq =
+			new Dictionary<uint, bool>();
 		private static Thread g_thFixClip = null;
 		// private static Predicate<IntPtr> g_fOwnWindow = null;
 
@@ -51,11 +52,11 @@ namespace KeePassLib.Utility
 		private static DebugBreakTraceListener g_tlBreak = null;
 #endif
 
-		private static bool? g_bReq = null;
+		private static bool? g_obReq = null;
 		public static bool IsRequired()
 		{
-			if(!g_bReq.HasValue) g_bReq = NativeLib.IsUnix();
-			return g_bReq.Value;
+			if(!g_obReq.HasValue) g_obReq = NativeLib.IsUnix();
+			return g_obReq.Value;
 		}
 
 		// 106:
@@ -95,12 +96,19 @@ namespace KeePassLib.Utility
 		//   Timer causes 100% CPU load.
 		//   https://sourceforge.net/p/keepass/bugs/1527/
 		// 1530:
-		//   Mono's clipboard functions don't work properly.
+		//   Mono's clipboard functions don't work properly; use other in thread.
+		//   See also 1613.
 		//   https://sourceforge.net/p/keepass/bugs/1530/
+		//   https://bugzilla.redhat.com/show_bug.cgi?id=2052696
 		// 1574:
 		//   Finalizer of NotifyIcon throws on MacOS.
 		//   See also 1354.
 		//   https://sourceforge.net/p/keepass/bugs/1574/
+		// 1613:
+		//   Mono's clipboard functions don't work properly; use other.
+		//   See also 1530.
+		//   https://sourceforge.net/p/keepass/feature-requests/1613/
+		//   https://bugzilla.redhat.com/show_bug.cgi?id=2052696
 		// 1632:
 		//   RichTextBox rendering bug for bold/italic text.
 		//   https://sourceforge.net/p/keepass/bugs/1632/
@@ -122,7 +130,7 @@ namespace KeePassLib.Utility
 		// 2140:
 		//   Explicit control focusing is ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2140/
-		// 5795: [Fixed]
+		// 5795:
 		//   Text in input field is incomplete.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=5795
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d23dc88b/
@@ -177,7 +185,7 @@ namespace KeePassLib.Utility
 		// 686017:
 		//   Minimum sizes must be enforced.
 		//   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=686017
-		// 688007: [Fixed]
+		// 688007:
 		//   Credentials are required for anonymous web requests.
 		//   https://bugzilla.novell.com/show_bug.cgi?id=688007
 		//   https://sourceforge.net/p/keepass/bugs/1950/
@@ -209,6 +217,8 @@ namespace KeePassLib.Utility
 
 			bool bForce;
 			if(g_dForceReq.TryGetValue(uBugID, out bForce)) return bForce;
+
+			if((uBugID == 1530) || (uBugID == 1613)) return false;
 
 			ulong v = NativeLib.MonoVersion;
 			if(v == 0) return true;

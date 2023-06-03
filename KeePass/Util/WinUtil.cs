@@ -36,6 +36,7 @@ using KeePass.App;
 using KeePass.Forms;
 using KeePass.Native;
 using KeePass.Resources;
+using KeePass.UI;
 using KeePass.Util.Spr;
 
 using KeePassLib;
@@ -212,8 +213,10 @@ namespace KeePass.Util
 				OpenUrl(pe.OverrideUrl, pe, true, strUrl);
 			else
 			{
-				string strOverride = Program.Config.Integration.UrlOverride;
-				if(strOverride.Length > 0)
+				string strOverride = (Program.Config.Integration.UrlOverrideEnabled ?
+					Program.Config.Integration.UrlOverride : null);
+
+				if(!string.IsNullOrEmpty(strOverride))
 					OpenUrl(strOverride, pe, true, strUrl);
 				else
 					OpenUrl(strUrl, pe, true);
@@ -388,8 +391,31 @@ namespace KeePass.Util
 
 		public static void Restart()
 		{
-			try { NativeLib.StartProcess(WinUtil.GetExecutable()); }
+			try { using(Process p = StartSelfEx(null)) { Debug.Assert(p != null); } }
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
+		}
+
+		internal static Process StartSelfEx(string strArgs)
+		{
+			string strExe = WinUtil.GetExecutable();
+
+			ProcessStartInfo psi = new ProcessStartInfo();
+
+			// Mono detects CLR binaries and runs them with the same Mono
+			// binary (see mono/metadata/w32process-unix.c)
+			// if(NativeLib.IsUnix())
+			// {
+			//	psi.FileName = "mono";
+			//	string strArgsEx = "\"" + NativeLib.EncodeDataToArgs(strExe) + "\"";
+			//	if(!string.IsNullOrEmpty(strArgs)) strArgsEx += " " + strArgs;
+			//	psi.Arguments = strArgsEx;
+			// }
+			// else
+
+			psi.FileName = strExe;
+			if(!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
+
+			return NativeLib.StartProcessEx(psi);
 		}
 
 		public static string GetExecutable()
@@ -569,28 +595,23 @@ namespace KeePass.Util
 
 		public static byte[] HashFile(IOConnectionInfo iocFile)
 		{
-			if(iocFile == null) { Debug.Assert(false); return null; } // Assert only
+			if(iocFile == null) { Debug.Assert(false); return null; }
 
-			Stream sIn;
 			try
 			{
-				sIn = IOConnection.OpenRead(iocFile);
-				if(sIn == null) throw new FileNotFoundException();
-			}
-			catch(Exception) { return null; }
-
-			byte[] pbHash;
-			try
-			{
-				using(SHA256Managed sha256 = new SHA256Managed())
+				using(Stream s = IOConnection.OpenRead(iocFile))
 				{
-					pbHash = sha256.ComputeHash(sIn);
+					if(s == null) { Debug.Assert(false); return null; }
+
+					using(SHA256Managed h = new SHA256Managed())
+					{
+						return h.ComputeHash(s);
+					}
 				}
 			}
-			catch(Exception) { Debug.Assert(false); sIn.Close(); return null; }
+			catch(Exception) { Debug.Assert(false); }
 
-			sIn.Close();
-			return pbHash;
+			return null;
 		}
 
 		// See GetCommandLineFromUrl when editing this method
@@ -622,19 +643,57 @@ namespace KeePass.Util
 		public static bool RunElevated(string strExe, string strArgs,
 			bool bShowMessageIfFailed)
 		{
-			if(strExe == null) throw new ArgumentNullException("strExe");
+			return RunElevated(strExe, strArgs, bShowMessageIfFailed, 0);
+		}
 
+		internal static bool RunElevated(string strExe, string strArgs,
+			bool bShowMessageIfFailed, int iWaitForExitMS)
+		{
 			try
 			{
+				if(strExe == null) throw new ArgumentNullException("strExe");
+
 				ProcessStartInfo psi = new ProcessStartInfo();
 				psi.FileName = strExe;
 				if(!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
 				psi.UseShellExecute = true;
 
-				// Elevate on Windows Vista and higher
-				if(WinUtil.IsAtLeastWindowsVista) psi.Verb = "runas";
+				string strStdIn = null;
 
-				NativeLib.StartProcess(psi);
+				// Elevate on Windows Vista and higher
+				if(WinUtil.IsAtLeastWindowsVista) psi.Verb = "RunAs";
+				else if(NativeLib.IsUnix())
+				{
+					string strArgsEx = "\"" + NativeLib.EncodeDataToArgs(strExe) + "\"";
+					if(strExe == GetExecutable()) strArgsEx = "mono " + strArgsEx;
+					if(!string.IsNullOrEmpty(strArgs)) strArgsEx += " " + strArgs;
+
+					psi.FileName = "sudo";
+					psi.Arguments = "-k -S " + strArgsEx;
+					psi.UseShellExecute = false;
+					psi.RedirectStandardInput = true;
+
+					SingleLineEditForm dlg = new SingleLineEditForm();
+					dlg.InitEx(KPRes.AdminPassword, psi.FileName + " " + psi.Arguments,
+						KPRes.AdminPassword + " (" + psi.FileName + "):",
+						Properties.Resources.B48x48_KGPG_Key2, string.Empty, null);
+					dlg.FlagsEx |= SlfFlags.Sensitive;
+					if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK)
+						return false;
+
+					strStdIn = dlg.ResultString + Environment.NewLine;
+				}
+
+				using(Process p = NativeLib.StartProcessEx(psi))
+				{
+					if(!string.IsNullOrEmpty(strStdIn))
+						p.StandardInput.Write(strStdIn);
+
+					if(iWaitForExitMS == 0) { }
+					else if(iWaitForExitMS < 0) p.WaitForExit();
+					else if(!p.WaitForExit(iWaitForExitMS))
+						throw new TimeoutException();
+				}
 			}
 			catch(Exception ex)
 			{
