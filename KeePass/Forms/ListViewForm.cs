@@ -28,6 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.DataExchange;
 using KeePass.DataExchange.Formats;
 using KeePass.Resources;
@@ -50,6 +51,8 @@ namespace KeePass.Forms
 		private List<object> m_lData = new List<object>();
 		private ImageList m_ilIcons = null;
 		private Action<ListView> m_fInit = null;
+
+		private bool[] m_vVisible = MemUtil.EmptyArray<bool>();
 
 		private object m_resItem = null;
 		public object ResultItem
@@ -85,6 +88,16 @@ namespace KeePass.Forms
 			set { m_fl = value; }
 		}
 
+		private PwDatabase m_pd = null;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue((object)null)]
+		public PwDatabase DatabaseEx
+		{
+			get { return m_pd; }
+			set { Debug.Assert((value == null) || value.IsOpen); m_pd = value; }
+		}
+
 		public void InitEx(string strTitle, string strSubTitle,
 			string strInfo, Image imgIcon, List<object> lData,
 			ImageList ilIcons, Action<ListView> fInit)
@@ -93,12 +106,16 @@ namespace KeePass.Forms
 			m_strSubTitle = (strSubTitle ?? string.Empty);
 			m_strInfo = (strInfo ?? string.Empty);
 			m_imgIcon = imgIcon;
-			if(lData != null) m_lData = lData;
 
-			if(ilIcons != null)
-				m_ilIcons = UIUtil.CloneImageList(ilIcons, true);
+			Debug.Assert((m_lData.Count == 0) && (lData != null));
+			m_lData = (lData ?? new List<object>());
+
+			Debug.Assert(m_ilIcons == null);
+			m_ilIcons = ((ilIcons != null) ? UIUtil.CloneImageList(ilIcons, true) : null);
 
 			m_fInit = fInit;
+
+			m_vVisible = new bool[m_lData.Count];
 		}
 
 		public ListViewForm()
@@ -166,6 +183,42 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast(((m_fl & LvfFlags.Filter) != LvfFlags.None),
 				m_tslFilter, m_tstFilter);
 
+			bool bHasSensitive = false;
+			foreach(object o in m_lData)
+			{
+				LvfItem lvfi = (o as LvfItem);
+				if(lvfi == null) continue;
+
+				for(int i = lvfi.SubItems.Length - 1; i >= 0; --i)
+				{
+					if((lvfi.SubItems[i].Flags & LvfiFlags.Sensitive) != LvfiFlags.None)
+					{
+						bHasSensitive = true;
+						break;
+					}
+				}
+
+				if(bHasSensitive) break;
+			}
+
+			m_tsbHideSensitive.Text = SecureTextBoxEx.GetPasswordCharString(3);
+			m_tsbHideSensitive.ToolTipText = KPRes.TogglePasswordAsterisks;
+			m_tsbHideSensitive.Checked = (bHasSensitive &&
+				(!AppPolicy.Current.UnhidePasswords ||
+				Program.Config.MainWindow.IsColumnHidden(AceColumnType.Password)));
+			m_tsbHideSensitive.CheckedChanged += delegate(object senderD, EventArgs eD)
+			{
+				if(!m_tsbHideSensitive.Checked && !AppPolicy.Try(AppPolicyId.UnhidePasswords))
+					m_tsbHideSensitive.Checked = true;
+				else UpdateListViewEx(true);
+			};
+			if(!bHasSensitive)
+			{
+				m_tsbHideSensitive.Enabled = false;
+				m_tsbHideSensitive.Visible = false;
+				m_tssSep1.Visible = false;
+			}
+
 			// Check all callers when changing defaults
 			Debug.Assert(m_lvMain.Activation == ItemActivation.OneClick);
 			Debug.Assert(m_lvMain.HotTracking);
@@ -187,7 +240,7 @@ namespace KeePass.Forms
 			}
 			else { Debug.Assert(false); }
 
-			UpdateListViewEx();
+			UpdateListViewEx(false);
 
 			if(m_bEnsureForeground)
 			{
@@ -209,23 +262,41 @@ namespace KeePass.Forms
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
-		private void UpdateListViewEx()
+		private void UpdateListViewEx(bool bRestoreView)
 		{
+			bool bHideSensitive = m_tsbHideSensitive.Checked;
+
 			string strFilter = m_tstFilter.Text;
 			if((strFilter != null) && (strFilter.Length == 0)) strFilter = null;
 
 			const StringComparison sc = StringComparison.InvariantCultureIgnoreCase;
+
+			if(m_vVisible.Length != m_lData.Count)
+			{
+				Debug.Assert(false);
+				m_vVisible = new bool[m_lData.Count];
+			}
+			Array.Clear(m_vVisible, 0, m_vVisible.Length);
+
+			int iTop = (bRestoreView ? UIUtil.GetTopVisibleItem(m_lvMain) : -1);
+			ListViewItem lviTop = ((iTop >= 0) ? m_lvMain.Items[iTop] : null);
+			UIScrollInfo uisi = UIUtil.GetScrollInfo(m_lvMain, true);
 
 			m_lvMain.BeginUpdateEx();
 			m_lvMain.Items.Clear();
 			m_lvMain.Groups.Clear();
 
 			ListViewGroup lvgCur = null;
-			foreach(object o in m_lData)
+			for(int i = 0; i < m_lData.Count; ++i)
 			{
+				object o = m_lData[i];
 				if(o == null) { Debug.Assert(false); continue; }
 
-				ListViewItem lvi = (o as ListViewItem);
+				LvfItem lvfi = (o as LvfItem);
+				if(lvfi != null) lvfi.UpdateListViewItem(bHideSensitive);
+
+				ListViewItem lvi = ((lvfi != null) ? lvfi.ListViewItem :
+					(o as ListViewItem));
 				if(lvi != null)
 				{
 					// Caller should not care about associations
@@ -239,9 +310,10 @@ namespace KeePass.Forms
 					else
 					{
 						bool bMatch = false;
-						foreach(ListViewItem.ListViewSubItem lvsi in lvi.SubItems)
+						int cSI = lvi.SubItems.Count;
+						for(int iSI = 0; iSI < cSI; ++iSI)
 						{
-							if(lvsi.Text.IndexOf(strFilter, sc) >= 0)
+							if(GetText(lvi, lvfi, iSI).IndexOf(strFilter, sc) >= 0)
 							{
 								bMatch = true;
 								break;
@@ -252,6 +324,7 @@ namespace KeePass.Forms
 
 					m_lvMain.Items.Add(lvi);
 					if(lvgCur != null) lvgCur.Items.Add(lvi);
+					m_vVisible[i] = true;
 
 					Debug.Assert(lvi.ListView == m_lvMain);
 					Debug.Assert(lvi.Group == lvgCur);
@@ -266,6 +339,7 @@ namespace KeePass.Forms
 
 					m_lvMain.Groups.Add(lvg);
 					lvgCur = lvg;
+					m_vVisible[i] = true;
 
 					Debug.Assert(lvg.ListView == m_lvMain);
 					continue;
@@ -274,7 +348,19 @@ namespace KeePass.Forms
 				Debug.Assert(false); // Unknown data type
 			}
 
+			if((lviTop != null) && (lviTop.ListView == m_lvMain))
+				UIUtil.Scroll(m_lvMain, uisi, false);
 			m_lvMain.EndUpdateEx();
+		}
+
+		private static string GetText(ListViewItem lvi, LvfItem lvfi, int iSubItem)
+		{
+			Debug.Assert(lvi != null);
+			Debug.Assert((lvfi == null) || (lvfi.ListViewItem == lvi));
+			Debug.Assert((iSubItem >= 0) && (iSubItem < lvi.SubItems.Count));
+
+			return (((lvfi != null) ? lvfi.SubItems[iSubItem].Text :
+				lvi.SubItems[iSubItem].Text) ?? string.Empty);
 		}
 
 		private bool CreateResult()
@@ -322,12 +408,15 @@ namespace KeePass.Forms
 
 		private void OnFilterTextChanged(object sender, EventArgs e)
 		{
-			UpdateListViewEx();
+			UpdateListViewEx(false);
 		}
 
 		private void PerformExport(string strDefaultFormat)
 		{
 			if((m_fl & LvfFlags.Export) == LvfFlags.None) { Debug.Assert(false); return; }
+
+			if(!AppPolicy.TryWithKey(AppPolicyId.Export, (m_pd == null), m_pd, KPRes.Export))
+				return;
 
 			try
 			{
@@ -378,29 +467,39 @@ namespace KeePass.Forms
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
 		}
 
-		private void PerformExportLV(Action<ListViewGroup> fGroup, Action<ListViewItem> fItem)
+		private void PerformExport(GAction<ListViewGroup> fGroup,
+			GAction<ListViewItem, LvfItem> fItem)
 		{
 			if(fItem == null) { Debug.Assert(false); return; }
 
-			bool bExpGroups = ((fGroup != null) && m_lvMain.ShowGroups &&
-				(m_lvMain.Groups.Count != 0));
+			int c = m_lData.Count;
+			if(c != m_vVisible.Length) { Debug.Assert(false); return; }
+
 			ListViewGroup lvgLast = null;
-
-			foreach(ListViewItem lvi in m_lvMain.Items)
+			for(int i = 0; i < c; ++i)
 			{
-				if(lvi == null) { Debug.Assert(false); continue; }
+				if(!m_vVisible[i]) continue;
 
-				if(bExpGroups)
+				object o = m_lData[i];
+
+				ListViewItem lvi = (o as ListViewItem);
+				LvfItem lvfi = (o as LvfItem);
+				if((lvi != null) || (lvfi != null))
 				{
-					ListViewGroup lvg = lvi.Group;
-					if((lvg != null) && (lvg != lvgLast))
+					if(lvgLast != null)
 					{
-						fGroup(lvg);
-						lvgLast = lvg;
+						if(fGroup != null) fGroup(lvgLast);
+						lvgLast = null;
 					}
+
+					fItem(((lvfi != null) ? lvfi.ListViewItem : lvi), lvfi);
+					continue;
 				}
 
-				fItem(lvi);
+				ListViewGroup lvg = (o as ListViewGroup);
+				if(lvg != null) { lvgLast = lvg; continue; }
+
+				Debug.Assert(false); // Unknown data type
 			}
 		}
 
@@ -422,12 +521,13 @@ namespace KeePass.Forms
 							vFields[vDI[i]] = (m_lvMain.Columns[i].Text ?? string.Empty);
 						csw.WriteLine(vFields);
 
-						Action<ListViewItem> fItem = delegate(ListViewItem lvi)
+						GAction<ListViewItem, LvfItem> fItem = delegate(ListViewItem lvi,
+							LvfItem lvfi)
 						{
 							if(lvi.SubItems.Count == c)
 							{
 								for(int i = 0; i < c; ++i)
-									vFields[vDI[i]] = (lvi.SubItems[i].Text ?? string.Empty);
+									vFields[vDI[i]] = GetText(lvi, lvfi, i);
 							}
 							else
 							{
@@ -437,7 +537,7 @@ namespace KeePass.Forms
 							csw.WriteLine(vFields);
 						};
 
-						PerformExportLV(null, fItem);
+						PerformExport(null, fItem);
 					}
 				}
 			}
@@ -613,7 +713,7 @@ namespace KeePass.Forms
 				bInTable = bEnsure;
 			};
 
-			Action<ListViewGroup> fGroup = delegate(ListViewGroup lvg)
+			GAction<ListViewGroup> fGroup = delegate(ListViewGroup lvg)
 			{
 				fEnsureTable(false);
 				sb.Append("<h3>");
@@ -621,7 +721,7 @@ namespace KeePass.Forms
 				sb.AppendLine("</h3>");
 			};
 
-			Action<ListViewItem> fItem = delegate(ListViewItem lvi)
+			GAction<ListViewItem, LvfItem> fItem = delegate(ListViewItem lvi, LvfItem lvfi)
 			{
 				fEnsureTable(true);
 				sb.AppendLine("<tr>");
@@ -664,7 +764,7 @@ namespace KeePass.Forms
 							}
 						}
 
-						sb.Append(h(lvsi.Text));
+						sb.Append(h(GetText(lvi, lvfi, i)));
 						sb.AppendLine("</td>");
 					}
 				}
@@ -677,7 +777,7 @@ namespace KeePass.Forms
 				sb.AppendLine("</tr>");
 			};
 
-			PerformExportLV(fGroup, fItem);
+			PerformExport(fGroup, fItem);
 			fEnsureTable(false);
 
 			KeePassHtml2x.HtmlPart4ToEnd(sb);
@@ -687,6 +787,10 @@ namespace KeePass.Forms
 		private void OnFilePrint(object sender, EventArgs e)
 		{
 			if((m_fl & LvfFlags.Print) == LvfFlags.None) { Debug.Assert(false); return; }
+
+			if(!AppPolicy.TryWithKey(AppPolicyId.Print, ((m_pd != null) ?
+				AppPolicy.Current.PrintNoKey : true), m_pd, KPRes.Print))
+				return;
 
 			try { PrintUtil.PrintHtml(GetExportHtml(true)); }
 			catch(Exception ex) { MessageService.ShowWarning(ex); }

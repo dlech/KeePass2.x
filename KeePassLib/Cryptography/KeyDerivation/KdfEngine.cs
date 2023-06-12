@@ -138,5 +138,23 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
 			p.SetUInt64(strName, uLow);
 		}
+
+		internal ulong Test(KdfParameters p)
+		{
+			if(p == null) throw new ArgumentNullException("p");
+
+			Random r = CryptoRandom.NewWeakRandom();
+
+			byte[] pbMsg = new byte[32];
+			r.NextBytes(pbMsg);
+
+			Randomize(p);
+
+			Stopwatch sw = Stopwatch.StartNew();
+			Transform(pbMsg, p);
+			sw.Stop();
+
+			return (ulong)sw.ElapsedMilliseconds;
+		}
 	}
 }

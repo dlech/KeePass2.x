@@ -30,6 +30,7 @@ using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Cryptography.Cipher;
@@ -767,21 +768,15 @@ namespace KeePass.Forms
 				KdfEngine kdf = KdfPool.Get(p.KdfUuid);
 				if(kdf == null) { Debug.Assert(false); return; }
 
-				byte[] pbMsg = new byte[32];
-				Program.GlobalRandom.NextBytes(pbMsg);
+				ulong uTimeMS;
+				if(!KeyUtil.KdfPrcTest(p, out uTimeMS))
+					uTimeMS = kdf.Test(p);
 
-				kdf.Randomize(p);
-
-				Stopwatch sw = Stopwatch.StartNew();
-				kdf.Transform(pbMsg, p);
-				sw.Stop();
-
-				long lMS = sw.ElapsedMilliseconds;
-				lMS = Math.Max(lMS, 1L);
-				double dS = (double)lMS / 1000.0;
+				if(uTimeMS == 0) uTimeMS = 1;
+				double dTimeS = (double)uTimeMS / 1000.0;
 
 				strMsg = KPRes.TestSuccess + MessageService.NewParagraph +
-					KPRes.TransformTime.Replace(@"{PARAM}", dS.ToString());
+					KPRes.TransformTime.Replace(@"{PARAM}", dTimeS.ToString());
 			}
 			catch(ThreadAbortException)
 			{

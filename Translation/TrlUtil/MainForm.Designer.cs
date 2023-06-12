@@ -91,11 +91,14 @@
 			this.m_menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEdit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuEditNextUntrl = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuEditSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_menuEditMoveUnusedToDialog = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tsMain = new KeePass.UI.CustomToolStripEx();
 			this.m_tbOpen = new System.Windows.Forms.ToolStripButton();
 			this.m_tbSave = new System.Windows.Forms.ToolStripButton();
 			this.m_tbSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbNextUntrl = new System.Windows.Forms.ToolStripButton();
+			this.m_tbMoveUnusedToDialog = new System.Windows.Forms.ToolStripButton();
 			this.m_tbSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tbFind = new System.Windows.Forms.ToolStripTextBox();
 			this.m_tabMain.SuspendLayout();
@@ -577,6 +580,7 @@
 			this.m_rtbUnusedText.TabIndex = 0;
 			this.m_rtbUnusedText.Text = "";
 			this.m_rtbUnusedText.WordWrap = false;
+			this.m_rtbUnusedText.SelectionChanged += new System.EventHandler(this.OnUnusedTextSelectionChanged);
 			// 
 			// m_tabValidation
 			// 
@@ -627,8 +631,7 @@
 			// 
 			this.m_menuFileOpen.Image = global::TrlUtil.Properties.Resources.B16x16_Folder_Yellow_Open;
 			this.m_menuFileOpen.Name = "m_menuFileOpen";
-			this.m_menuFileOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.m_menuFileOpen.Size = new System.Drawing.Size(155, 22);
+			this.m_menuFileOpen.Size = new System.Drawing.Size(152, 22);
 			this.m_menuFileOpen.Text = "&Open...";
 			this.m_menuFileOpen.Click += new System.EventHandler(this.OnFileOpen);
 			// 
@@ -636,8 +639,7 @@
 			// 
 			this.m_menuFileSave.Image = global::TrlUtil.Properties.Resources.B16x16_FileSave;
 			this.m_menuFileSave.Name = "m_menuFileSave";
-			this.m_menuFileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-			this.m_menuFileSave.Size = new System.Drawing.Size(155, 22);
+			this.m_menuFileSave.Size = new System.Drawing.Size(152, 22);
 			this.m_menuFileSave.Text = "&Save";
 			this.m_menuFileSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
@@ -645,14 +647,14 @@
 			// 
 			this.m_menuFileSaveAs.Image = global::TrlUtil.Properties.Resources.B16x16_FileSaveAs;
 			this.m_menuFileSaveAs.Name = "m_menuFileSaveAs";
-			this.m_menuFileSaveAs.Size = new System.Drawing.Size(155, 22);
+			this.m_menuFileSaveAs.Size = new System.Drawing.Size(152, 22);
 			this.m_menuFileSaveAs.Text = "Save &As...";
 			this.m_menuFileSaveAs.Click += new System.EventHandler(this.OnFileSaveAs);
 			// 
 			// m_menuFileSep0
 			// 
 			this.m_menuFileSep0.Name = "m_menuFileSep0";
-			this.m_menuFileSep0.Size = new System.Drawing.Size(152, 6);
+			this.m_menuFileSep0.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_menuFileImport
 			// 
@@ -662,7 +664,7 @@
             this.m_menuFileImportSep0,
             this.m_menuFileImport2xNoChecks});
 			this.m_menuFileImport.Name = "m_menuFileImport";
-			this.m_menuFileImport.Size = new System.Drawing.Size(155, 22);
+			this.m_menuFileImport.Size = new System.Drawing.Size(152, 22);
 			this.m_menuFileImport.Text = "&Import";
 			// 
 			// m_menuFileImportLng
@@ -694,19 +696,21 @@
 			// m_menuFileSep1
 			// 
 			this.m_menuFileSep1.Name = "m_menuFileSep1";
-			this.m_menuFileSep1.Size = new System.Drawing.Size(152, 6);
+			this.m_menuFileSep1.Size = new System.Drawing.Size(149, 6);
 			// 
 			// m_menuFileExit
 			// 
 			this.m_menuFileExit.Name = "m_menuFileExit";
-			this.m_menuFileExit.Size = new System.Drawing.Size(155, 22);
-			this.m_menuFileExit.Text = "&Exit";
+			this.m_menuFileExit.Size = new System.Drawing.Size(152, 22);
+			this.m_menuFileExit.Text = "E&xit";
 			this.m_menuFileExit.Click += new System.EventHandler(this.OnFileExit);
 			// 
 			// m_menuEdit
 			// 
 			this.m_menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.m_menuEditNextUntrl});
+            this.m_menuEditNextUntrl,
+            this.m_menuEditSep0,
+            this.m_menuEditMoveUnusedToDialog});
 			this.m_menuEdit.Name = "m_menuEdit";
 			this.m_menuEdit.Size = new System.Drawing.Size(39, 20);
 			this.m_menuEdit.Text = "&Edit";
@@ -715,10 +719,22 @@
 			// 
 			this.m_menuEditNextUntrl.Image = global::TrlUtil.Properties.Resources.B16x16_Down;
 			this.m_menuEditNextUntrl.Name = "m_menuEditNextUntrl";
-			this.m_menuEditNextUntrl.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
-			this.m_menuEditNextUntrl.Size = new System.Drawing.Size(243, 22);
+			this.m_menuEditNextUntrl.Size = new System.Drawing.Size(312, 22);
 			this.m_menuEditNextUntrl.Text = "Go to Next &Untranslated";
 			this.m_menuEditNextUntrl.Click += new System.EventHandler(this.OnEditNextUntrl);
+			// 
+			// m_menuEditSep0
+			// 
+			this.m_menuEditSep0.Name = "m_menuEditSep0";
+			this.m_menuEditSep0.Size = new System.Drawing.Size(309, 6);
+			// 
+			// m_menuEditMoveUnusedToDialog
+			// 
+			this.m_menuEditMoveUnusedToDialog.Image = global::TrlUtil.Properties.Resources.B16x16_Rotate;
+			this.m_menuEditMoveUnusedToDialog.Name = "m_menuEditMoveUnusedToDialog";
+			this.m_menuEditMoveUnusedToDialog.Size = new System.Drawing.Size(312, 22);
+			this.m_menuEditMoveUnusedToDialog.Text = "&Move Selected Unused Text to Dialog Control";
+			this.m_menuEditMoveUnusedToDialog.Click += new System.EventHandler(this.OnEditMoveUnusedToDialog);
 			// 
 			// m_tsMain
 			// 
@@ -727,6 +743,7 @@
             this.m_tbSave,
             this.m_tbSep0,
             this.m_tbNextUntrl,
+            this.m_tbMoveUnusedToDialog,
             this.m_tbSep1,
             this.m_tbFind});
 			this.m_tsMain.Location = new System.Drawing.Point(0, 24);
@@ -742,7 +759,6 @@
 			this.m_tbOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbOpen.Name = "m_tbOpen";
 			this.m_tbOpen.Size = new System.Drawing.Size(23, 22);
-			this.m_tbOpen.Text = "Open... (Ctrl+O)";
 			this.m_tbOpen.Click += new System.EventHandler(this.OnFileOpen);
 			// 
 			// m_tbSave
@@ -752,7 +768,6 @@
 			this.m_tbSave.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbSave.Name = "m_tbSave";
 			this.m_tbSave.Size = new System.Drawing.Size(23, 22);
-			this.m_tbSave.Text = "Save (Ctrl+S)";
 			this.m_tbSave.Click += new System.EventHandler(this.OnFileSave);
 			// 
 			// m_tbSep0
@@ -767,8 +782,16 @@
 			this.m_tbNextUntrl.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.m_tbNextUntrl.Name = "m_tbNextUntrl";
 			this.m_tbNextUntrl.Size = new System.Drawing.Size(23, 22);
-			this.m_tbNextUntrl.Text = "Go to Next Untranslated (Ctrl+U)";
 			this.m_tbNextUntrl.Click += new System.EventHandler(this.OnEditNextUntrl);
+			// 
+			// m_tbMoveUnusedToDialog
+			// 
+			this.m_tbMoveUnusedToDialog.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.m_tbMoveUnusedToDialog.Image = global::TrlUtil.Properties.Resources.B16x16_Rotate;
+			this.m_tbMoveUnusedToDialog.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tbMoveUnusedToDialog.Name = "m_tbMoveUnusedToDialog";
+			this.m_tbMoveUnusedToDialog.Size = new System.Drawing.Size(23, 22);
+			this.m_tbMoveUnusedToDialog.Click += new System.EventHandler(this.OnEditMoveUnusedToDialog);
 			// 
 			// m_tbSep1
 			// 
@@ -894,6 +917,9 @@
 		private System.Windows.Forms.ToolStripMenuItem m_menuEditNextUntrl;
 		private System.Windows.Forms.TabPage m_tabValidation;
 		private KeePass.UI.CustomRichTextBoxEx m_rtbValidation;
+		private System.Windows.Forms.ToolStripSeparator m_menuEditSep0;
+		private System.Windows.Forms.ToolStripMenuItem m_menuEditMoveUnusedToDialog;
+		private System.Windows.Forms.ToolStripButton m_tbMoveUnusedToDialog;
 	}
 }
 

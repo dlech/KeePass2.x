@@ -34,6 +34,8 @@
 			this.m_tsbPrint = new System.Windows.Forms.ToolStripButton();
 			this.m_tsbExport = new System.Windows.Forms.ToolStripSplitButton();
 			this.m_tssSep0 = new System.Windows.Forms.ToolStripSeparator();
+			this.m_tsbHideSensitive = new System.Windows.Forms.ToolStripButton();
+			this.m_tssSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_tslFilter = new System.Windows.Forms.ToolStripLabel();
 			this.m_tstFilter = new System.Windows.Forms.ToolStripTextBox();
 			this.m_lvMain = new KeePass.UI.CustomListViewEx();
@@ -64,6 +66,8 @@
             this.m_tsbPrint,
             this.m_tsbExport,
             this.m_tssSep0,
+            this.m_tsbHideSensitive,
+            this.m_tssSep1,
             this.m_tslFilter,
             this.m_tstFilter});
 			this.m_tsMain.Location = new System.Drawing.Point(0, 60);
@@ -93,6 +97,20 @@
 			// 
 			this.m_tssSep0.Name = "m_tssSep0";
 			this.m_tssSep0.Size = new System.Drawing.Size(6, 25);
+			// 
+			// m_tsbHideSensitive
+			// 
+			this.m_tsbHideSensitive.CheckOnClick = true;
+			this.m_tsbHideSensitive.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.m_tsbHideSensitive.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.m_tsbHideSensitive.Name = "m_tsbHideSensitive";
+			this.m_tsbHideSensitive.Size = new System.Drawing.Size(27, 22);
+			this.m_tsbHideSensitive.Text = "<>";
+			// 
+			// m_tssSep1
+			// 
+			this.m_tssSep1.Name = "m_tssSep1";
+			this.m_tssSep1.Size = new System.Drawing.Size(6, 25);
 			// 
 			// m_tslFilter
 			// 
@@ -163,5 +181,7 @@
 		private System.Windows.Forms.ToolStripSeparator m_tssSep0;
 		private System.Windows.Forms.ToolStripLabel m_tslFilter;
 		private System.Windows.Forms.ToolStripTextBox m_tstFilter;
+		private System.Windows.Forms.ToolStripSeparator m_tssSep1;
+		private System.Windows.Forms.ToolStripButton m_tsbHideSensitive;
 	}
 }

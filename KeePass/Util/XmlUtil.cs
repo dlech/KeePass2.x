@@ -364,23 +364,51 @@ namespace KeePass.Util
 			return null;
 		}
 
-		/* internal static XmlElement FindOrCreateChildElement(XmlNode xn,
+		internal static string GetPath(XmlElement xe)
+		{
+			if(xe == null) { Debug.Assert(false); return null; }
+
+			StringBuilder sb = new StringBuilder();
+			GetPathRec(sb, xe);
+			return sb.ToString();
+		}
+
+		private static void GetPathRec(StringBuilder sb, XmlNode xn)
+		{
+			XmlNode xnP = xn.ParentNode;
+			if(xnP != null)
+			{
+				if(xnP.NodeType == XmlNodeType.Element)
+					GetPathRec(sb, xnP);
+				else { Debug.Assert(xnP.NodeType == XmlNodeType.Document); }
+			}
+			else { Debug.Assert(false); }
+
+			Debug.Assert(xn.NodeType == XmlNodeType.Element);
+			sb.Append('/');
+			sb.Append(xn.Name);
+		}
+
+		internal static XmlElement FindOrCreateElement(XmlNode xnBase,
 			string strChildPath, XmlDocument xd)
 		{
-			if(xn == null) { Debug.Assert(false); return null; }
+			if(xnBase == null) { Debug.Assert(false); return null; }
 			if(string.IsNullOrEmpty(strChildPath)) { Debug.Assert(false); return null; }
 			if(xd == null) { Debug.Assert(false); return null; }
 
-			string[] v = strChildPath.Split('/');
-			if((v != null) && (v.Length >= 2))
+			if(strChildPath.IndexOf('/') >= 0)
 			{
-				XmlElement xeCur = FindOrCreateChildElement(xn, v[0], xd);
+				string[] v = strChildPath.Split('/');
+				if((v == null) || (v.Length < 2)) { Debug.Assert(false); return null; }
+
+				XmlElement xeCur = FindOrCreateElement(xnBase, v[0], xd);
 				for(int i = 1; i < v.Length; ++i)
-					xeCur = FindOrCreateChildElement(xeCur, v[i], xd);
+					xeCur = FindOrCreateElement(xeCur, v[i], xd);
+
 				return xeCur;
 			}
 
-			foreach(XmlNode xnChild in xn.ChildNodes)
+			foreach(XmlNode xnChild in xnBase.ChildNodes)
 			{
 				if((xnChild.NodeType == XmlNodeType.Element) &&
 					(xnChild.Name == strChildPath))
@@ -392,8 +420,8 @@ namespace KeePass.Util
 			}
 
 			XmlElement xeNew = xd.CreateElement(strChildPath);
-			xn.AppendChild(xeNew);
+			xnBase.AppendChild(xeNew);
 			return xeNew;
-		} */
+		}
 	}
 }

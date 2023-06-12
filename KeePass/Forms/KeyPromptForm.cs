@@ -149,6 +149,21 @@ namespace KeePass.Forms
 			// https://sourceforge.net/p/keepass/bugs/1807/
 			Debug.Assert((m_tbPassword.TabIndex >= 2) && !m_tbPassword.Focused);
 
+			Debug.Assert(m_btnOK.Image == null);
+			if(m_strCustomTitle == KeyUtil.GetReAskKeyTitle(KPRes.Export))
+			{
+				string str = KPRes.ConfirmExport;
+				Rectangle r = m_btnOK.Bounds;
+				int wReq = TextRenderer.MeasureText(str, m_btnOK.Font).Width +
+					UIUtil.GetSmallIconSize().Width;
+
+				if(wReq > r.Width)
+					m_btnOK.SetBounds(r.X - (wReq - r.Width), r.Y, wReq, r.Height,
+						BoundsSpecified.X | BoundsSpecified.Width);
+
+				m_btnOK.Text = str;
+			}
+
 			GlobalWindowManager.AddWindow(this);
 			// if(m_bRedirectActivation) Program.MainForm.RedirectActivationPush(this);
 

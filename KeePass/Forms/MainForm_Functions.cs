@@ -437,7 +437,7 @@ namespace KeePass.Forms
 
 			// mw.ShowGridLines = m_lvEntries.GridLines;
 
-			AppConfigSerializer.Save(Program.Config);
+			AppConfigSerializer.Save();
 		}
 
 		private void SaveWindowPositionAndSize()
@@ -2719,11 +2719,9 @@ namespace KeePass.Forms
 			PwDatabase pd = m_docMgr.ActiveDatabase;
 			if((pd == null) || !pd.IsOpen) return;
 
-			if(!AppPolicy.Try(AppPolicyId.Print)) return;
-			if(!AppPolicy.Current.PrintNoKey)
-			{
-				if(!KeyUtil.ReAskKey(pd, true)) return;
-			}
+			if(!AppPolicy.TryWithKey(AppPolicyId.Print, AppPolicy.Current.PrintNoKey,
+				pd, KPRes.Print))
+				return;
 
 			// Printing selected entries should not always reveal parent
 			// group information (group notes, ...)
@@ -5264,11 +5262,9 @@ namespace KeePass.Forms
 			PwDatabase pd = (pdOf ?? m_docMgr.ActiveDatabase);
 			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return false; }
 
-			if(!AppPolicy.Try(AppPolicyId.ChangeMasterKey)) return false;
-			if(!AppPolicy.Current.ChangeMasterKeyNoKey)
-			{
-				if(!KeyUtil.ReAskKey(pd, true)) return false;
-			}
+			if(!AppPolicy.TryWithKey(AppPolicyId.ChangeMasterKey,
+				AppPolicy.Current.ChangeMasterKeyNoKey, pd, null))
+				return false;
 
 			KeyCreationFormResult r;
 			DialogResult dr = KeyCreationForm.ShowDialog(pd.IOConnectionInfo, false, out r);
@@ -6401,6 +6397,7 @@ namespace KeePass.Forms
 			dlg.InitEx(strTitle, strSubTitle, strNote, imgIcon, l,
 				m_ilCurrentIcons, fInit);
 			dlg.FlagsEx = ((dlg.FlagsEx | flAdd) & ~flRemove);
+			dlg.DatabaseEx = pd;
 			UIUtil.ShowDialogAndDestroy(dlg, this);
 
 			PwGroup pg = (dlg.ResultGroup as PwGroup);

@@ -23,9 +23,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 using KeePass.App.Configuration;
 using KeePass.Resources;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -39,7 +41,7 @@ namespace KeePass.App
 	{
 		Plugins = 0,
 		Export,
-		ExportNoKey, // Don't require the current key to be repeated
+		ExportNoKey, // Obsolete (for backward compatibility with plugins only)
 		Import,
 		Print,
 		PrintNoKey, // Don't require the current key to be repeated
@@ -77,12 +79,13 @@ namespace KeePass.App
 			set { m_bExport = value; }
 		}
 
-		private bool m_bExportNoKey = true;
-		[DefaultValue(true)]
+		// Obsolete (for backward compatibility with plugins only)
+		[DefaultValue(false)]
+		[XmlIgnore]
 		public bool ExportNoKey
 		{
-			get { return m_bExportNoKey; }
-			set { m_bExportNoKey = value; }
+			get { Debug.Assert(false); return false; }
+			set { Debug.Assert(false); }
 		}
 
 		private bool m_bImport = true;
@@ -403,6 +406,15 @@ namespace KeePass.App
 			}
 
 			return b;
+		}
+
+		internal static bool TryWithKey(AppPolicyId p, bool bNoKeyRepeat,
+			PwDatabase pd, string strContext)
+		{
+			if(!Try(p)) return false;
+
+			if(bNoKeyRepeat) return true;
+			return KeyUtil.ReAskKey(pd, true, strContext);
 		}
 
 		internal static void ApplyToConfig()

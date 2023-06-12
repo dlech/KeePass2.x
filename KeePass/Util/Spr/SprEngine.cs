@@ -276,7 +276,7 @@ namespace KeePass.Util.Spr
 					string strValue = (de.Value as string);
 					if(strValue == null) { Debug.Assert(false); strValue = string.Empty; }
 
-					str = Fill(str, @"%" + strKey + @"%", strValue, ctx, uRecursionLevel);
+					str = Fill(str, "%" + strKey + "%", strValue, ctx, uRecursionLevel);
 				}
 			}
 

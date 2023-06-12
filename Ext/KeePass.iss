@@ -13,11 +13,11 @@
 #define MyAppHelpName "KeePass.chm"
 #define MyAppId "KeePassPasswordSafe2"
 
-#define KeeVersionStr "2.53"
-#define KeeVersionStrWithMinor "2.53"
-#define KeeVersionStrWithMinorPath "2.53"
-#define KeeVersionWin "2.53.0.0"
-#define KeeVersionWinShort "2.53"
+#define KeeVersionStr "2.54"
+#define KeeVersionStrWithMinor "2.54"
+#define KeeVersionStrWithMinorPath "2.54"
+#define KeeVersionWin "2.54.0.0"
+#define KeeVersionWinShort "2.54"
 
 #define KeeDevPeriod "2003-2023"
 
@@ -239,10 +239,20 @@ ru.MyStatusNGen=Оптимизация производительности KeeP
 ru.MyStatusPreLoad=Оптимизация скорости запуска KeePass...
 ru.MyOptPlgPage=Открыть веб-страницу плагинов
 
+sl.MyCompCore=Datoteke jedra KeePassa
+sl.MyCompHelp=Navodila za uporabo
+sl.MyCompNtvLib=Izvorna podporna knjižnica
+sl.MyCompXSL=XSL slogovne datoteke za datoteke KDBX XML
+sl.MyCompNGen=Optimizirajte delovanja KeePassa
+sl.MyCompPreLoad=Optimizirajte delovanje zagona KeePassa
+sl.MyStatusNGen=Optimizacija delovanja KeePassa...
+sl.MyStatusPreLoad=Optimizacija zagonskega delovanja KeePassa...
+sl.MyOptPlgPage=Odpri spletno stran vtičnikov
+
 [Tasks]
 Name: FileAssoc; Description: {cm:AssocFileExtension,{#MyAppNameShort},.kdbx}
 Name: DesktopIcon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
-Name: QuickLaunchIcon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
+; Name: QuickLaunchIcon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Components]
 Name: Core; Description: "{cm:MyCompCore}"; Flags: fixed; Types: full compact custom
@@ -297,8 +307,8 @@ Root: HKCR; Subkey: kdbxfile\shell\open\command; ValueType: string; ValueData: "
 ; Name: {group}\Help; Filename: {app}\{#MyAppHelpName}; Components: UserDoc
 ; Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
 Name: {autoprograms}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}
-Name: {userdesktop}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks: DesktopIcon; Check: MyDesktopCheck
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks: QuickLaunchIcon; Check: MyAppDataCheck
+Name: {autodesktop}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks: DesktopIcon
+; Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks: QuickLaunchIcon; Check: MyAppDataCheck
 
 [Run]
 ; Filename: {app}\KeePass.exe; Parameters: -RegisterFileExt; Components: FileAssoc
@@ -328,7 +338,9 @@ Name: {group}\Help.lnk; Type: files
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}.lnk; Type: files
 Name: {group}; Type: dirifempty
 Name: {userdesktop}\{#MyAppName}.lnk; Type: files; Check: MyDesktopCheck
+Name: {userdesktop}\{#MyAppNameShortEx}.lnk; Type: files; Check: MyDesktopCheck
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}.lnk; Type: files; Check: MyAppDataCheck
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppNameShortEx}.lnk; Type: files; Check: MyAppDataCheck
 
 ; [UninstallDelete]
 ; Type: files; Name: {app}\{#MyAppUrlName}

@@ -26,6 +26,7 @@ using System.Windows.Forms;
 
 using KeePassLib;
 using KeePassLib.Native;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -55,57 +56,71 @@ namespace KeePass.Util
 
 		private static string GetStringU()
 		{
-			// string strGtk = GtkGetString();
-			// if(strGtk != null) return strGtk;
+			if(MonoWorkarounds.IsRequired(1613))
+			{
+				// string strGtk = GtkGetString();
+				// if(strGtk != null) return strGtk;
 
-			// string str = NativeLib.RunConsoleApp("xclip",
-			//	"-out -selection clipboard");
-			// if(str != null) return str;
+				// string str = NativeLib.RunConsoleApp("xclip",
+				//	"-out -selection clipboard");
+				// if(str != null) return str;
 
-			string str = NativeLib.RunConsoleApp("xsel",
-				"--output --clipboard", null, XSelFlags);
-			if(str != null) return str;
+				string str = NativeLib.RunConsoleApp("xsel",
+					"--output --clipboard", null, XSelFlags);
+				if(str != null) return str;
+			}
 
-			if(Clipboard.ContainsText())
-				return (Clipboard.GetText() ?? string.Empty);
+			try
+			{
+				if(Clipboard.ContainsText())
+					return (Clipboard.GetText() ?? string.Empty);
+			}
+			catch(Exception) { Debug.Assert(false); }
 
 			return string.Empty;
 		}
 
 		private static void SetStringU(string str)
 		{
-			// if(GtkSetString(str)) return;
-
-			// string r = NativeLib.RunConsoleApp("xclip",
-			//	"-in -selection clipboard", str);
-			// if(r != null) return;
-
-			if(string.IsNullOrEmpty(str))
+			if(MonoWorkarounds.IsRequired(1613))
 			{
-				// xsel with an empty input can hang, thus use --clear
-				if(NativeLib.RunConsoleApp("xsel", "--clear --primary",
-					null, XSelFlags) != null)
+				// if(GtkSetString(str)) return;
+
+				// string r = NativeLib.RunConsoleApp("xclip",
+				//	"-in -selection clipboard", str);
+				// if(r != null) return;
+
+				if(string.IsNullOrEmpty(str))
 				{
-					NativeLib.RunConsoleApp("xsel", "--clear --clipboard",
-						null, XSelFlags);
+					// xsel with an empty input can hang, thus use --clear
+					if(NativeLib.RunConsoleApp("xsel", "--clear --primary",
+						null, XSelFlags) != null)
+					{
+						NativeLib.RunConsoleApp("xsel", "--clear --clipboard",
+							null, XSelFlags);
+						return;
+					}
+
+					try { Clipboard.Clear(); }
+					catch(Exception) { Debug.Assert(false); }
 					return;
 				}
 
-				try { Clipboard.Clear(); }
-				catch(Exception) { Debug.Assert(false); }
-				return;
+				// xsel does not support --primary and --clipboard together
+				if(NativeLib.RunConsoleApp("xsel", "--input --primary",
+					str, XSelFlags) != null)
+				{
+					NativeLib.RunConsoleApp("xsel", "--input --clipboard",
+						str, XSelFlags);
+					return;
+				}
 			}
 
-			// xsel does not support --primary and --clipboard together
-			if(NativeLib.RunConsoleApp("xsel", "--input --primary",
-				str, XSelFlags) != null)
+			try
 			{
-				NativeLib.RunConsoleApp("xsel", "--input --clipboard",
-					str, XSelFlags);
-				return;
+				if(string.IsNullOrEmpty(str)) Clipboard.Clear();
+				else Clipboard.SetText(str);
 			}
-
-			try { Clipboard.SetText(str); }
 			catch(Exception) { Debug.Assert(false); }
 		}
 

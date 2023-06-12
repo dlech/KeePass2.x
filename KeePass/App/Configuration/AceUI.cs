@@ -158,7 +158,7 @@ namespace KeePass.App.Configuration
 			set { m_bForceSysFont = value; }
 		}
 
-		private BannerStyle m_bannerStyle = BannerStyle.WinVistaBlack;
+		private BannerStyle m_bannerStyle = BannerStyle.Dark;
 		public BannerStyle BannerStyle
 		{
 			get { return m_bannerStyle; }

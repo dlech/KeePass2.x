@@ -105,13 +105,16 @@ supported, i.e. do not need to be prefixed with <code>cmd://</code>.</p>
 
 <p><b>Double Quotes (<code>&quot;</code>) and Backslashes (<code>\</code>):</b><br />
 There are multiple rule sets for parsing command lines
-(<a href="https://docs.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow"
+<!-- https://docs.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow -->
+(<a href="https://learn.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow"
 target="_blank"><code>SHELLEXECUTEINFOW</code> structure</a>,
-<a href="https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw"
+<!-- https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw -->
+<a href="https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw"
 target="_blank"><code>CommandLineToArgvW</code> function</a>,
 <!-- https://docs.microsoft.com/en-us/cpp/cpp/parsing-cpp-command-line-arguments -->
-<a href="https://docs.microsoft.com/en-us/cpp/cpp/main-function-command-line-args"
-target="_blank">Microsoft C/C++ startup code</a>, etc.).
+<!-- https://docs.microsoft.com/en-us/cpp/cpp/main-function-command-line-args -->
+<a href="https://learn.microsoft.com/en-us/cpp/cpp/main-function-command-line-args"
+target="_blank"><code>main</code> function and command line arguments</a>, etc.).
 These rule sets are contradictory; command lines are interpreted differently.
 For example, in the <code>SHELLEXECUTEINFOW</code> structure documentation,
 backslashes have no special meaning, whereas the
@@ -119,8 +122,8 @@ backslashes have no special meaning, whereas the
 as an escape character.
 Another example: <code>A&quot;&quot;&quot;B C&quot;&quot;&quot;D</code> is
 interpreted as <em>one</em> argument (namely <code>A&quot;B C&quot;D</code>)
-by the Microsoft C/C++ startup code, whereas the <code>CommandLineToArgvW</code>
-function returns <em>two</em> arguments
+by the Microsoft C/C++ startup code (<code>main</code> function), whereas the
+<code>CommandLineToArgvW</code> function returns <em>two</em> arguments
 (namely <code>A&quot;B</code> and <code>C&quot;D</code>).
 KeePass cannot know how the executed application will interpret its
 command line, and there is no command line encoding that is

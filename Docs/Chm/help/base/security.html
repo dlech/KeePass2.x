@@ -391,10 +391,12 @@ before releasing them.</p>
 
 <p>KeePass uses the Windows DPAPI for encrypting sensitive data in memory
 <!-- https://msdn.microsoft.com/en-us/library/windows/desktop/aa380262.aspx -->
-(via <a href="https://docs.microsoft.com/en-us/windows/win32/api/dpapi/nf-dpapi-cryptprotectmemory"
+<!-- https://docs.microsoft.com/en-us/windows/win32/api/dpapi/nf-dpapi-cryptprotectmemory -->
+(via <a href="https://learn.microsoft.com/en-us/windows/win32/api/dpapi/nf-dpapi-cryptprotectmemory"
 target="_blank">CryptProtectMemory</a> /
 <!-- https://msdn.microsoft.com/en-us/library/system.security.cryptography.protectedmemory.aspx -->
-<a href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.protectedmemory"
+<!-- https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.protectedmemory -->
+<a href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.protectedmemory"
 target="_blank">ProtectedMemory</a>).
 With DPAPI, the key for the memory encryption is stored in a
 secure, non-swappable memory area managed by Windows.
@@ -417,9 +419,11 @@ the cell content (the password) as unencrypted string
 (unless hiding using asterisks is enabled).
 Operations that result in unencrypted data in the process memory include,
 but are not limited to: displaying data (not asterisks) in standard controls,
-searching data, replacing placeholders (during auto-type, drag&amp;drop,
-copying to clipboard, ...), importing/exporting files (except KDBX)
-and loading/saving unencrypted files.
+transferring data to/from other applications (via the clipboard, drag&amp;drop,
+StdIn/StdOut, ...),
+replacing placeholders (e.g. during auto-type),
+searching data (e.g. the commands in the 'Find' menu that involve sensitive data),
+importing/exporting files (except KDBX) and loading/saving unencrypted files.
 Windows and .NET may make copies of the data (in the process memory)
 that cannot be erased by KeePass.</p>
 
@@ -550,7 +554,8 @@ target="_blank" rel="nofollow">Ten Immutable Laws of Security</a>
 (Microsoft TechNet article; see also the
 Microsoft TechNet article
 <!-- https://technet.microsoft.com/en-us/library/2008.10.securitywatch.aspx -->
-<a href="https://docs.microsoft.com/en-us/previous-versions/technet-magazine/cc895640(v=msdn.10)"
+<!-- https://docs.microsoft.com/en-us/previous-versions/technet-magazine/cc895640(v=msdn.10) -->
+<a href="https://learn.microsoft.com/en-us/previous-versions/technet-magazine/cc895640(v=msdn.10)"
 target="_blank">Revisiting the 10 Immutable Laws of Security, Part 1</a>):<br />
 <i>&quot;If a bad guy can persuade you to run his program on your
 computer, it's not your computer anymore&quot;</i>.</p>

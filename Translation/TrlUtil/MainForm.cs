@@ -71,6 +71,8 @@ namespace TrlUtil
 
 		private PreviewForm m_prev = new PreviewForm();
 
+		private static readonly char[] g_vNewLine = new char[] { '\r', '\n' };
+
 		private delegate void ImportFn(KPTranslation trlInto, IOConnectionInfo ioc);
 
 		public MainForm()
@@ -81,6 +83,17 @@ namespace TrlUtil
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			this.Icon = Properties.Resources.KeePass;
+
+			UIUtil.AssignShortcut(m_menuFileOpen, Keys.Control | Keys.O);
+			UIUtil.AssignShortcut(m_menuFileSave, Keys.Control | Keys.S);
+			UIUtil.AssignShortcut(m_menuEditNextUntrl, Keys.Control | Keys.U);
+			UIUtil.AssignShortcut(m_menuEditMoveUnusedToDialog, Keys.Control | Keys.M);
+
+			UIUtil.ConfigureTbButton(m_tbOpen, m_menuFileOpen.Text, null, m_menuFileOpen);
+			UIUtil.ConfigureTbButton(m_tbSave, m_menuFileSave.Text, null, m_menuFileSave);
+			UIUtil.ConfigureTbButton(m_tbNextUntrl, m_menuEditNextUntrl.Text, null, m_menuEditNextUntrl);
+			UIUtil.ConfigureTbButton(m_tbMoveUnusedToDialog, m_menuEditMoveUnusedToDialog.Text,
+				null, m_menuEditMoveUnusedToDialog);
 
 			m_trl.Forms = FormTrlMgr.CreateListOfCurrentVersion();
 			m_rtbUnusedText.SimpleTextOnly = true;
@@ -278,8 +291,14 @@ namespace TrlUtil
 		{
 			bool bTrlTab = ((m_tabMain.SelectedTab == m_tabStrings) ||
 				(m_tabMain.SelectedTab == m_tabDialogs));
+
 			m_menuEditNextUntrl.Enabled = bTrlTab;
 			m_tbNextUntrl.Enabled = bTrlTab;
+
+			bool b = CanMoveUnusedToDialog();
+			m_menuEditMoveUnusedToDialog.Enabled = b;
+			m_tbMoveUnusedToDialog.Enabled = b;
+
 			m_tbFind.Enabled = bTrlTab;
 
 			string str = TuDefs.ProductName + " " + PwDefs.VersionString;
@@ -607,7 +626,6 @@ namespace TrlUtil
 		private void OnCustomControlsAfterSelect(object sender, TreeViewEventArgs e)
 		{
 			ShowCustomControlProps(e.Node.Tag as KPControlCustomization);
-			UpdatePreviewForm();
 		}
 
 		private void ShowCustomControlProps(KPControlCustomization kpcc)
@@ -636,6 +654,9 @@ namespace TrlUtil
 				m_tbLayoutW.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.Width);
 				m_tbLayoutH.Text = KpccLayout.ToControlRelativeString(m_kpccLast.Layout.Height);
 			}
+
+			UpdateUIState();
+			UpdatePreviewForm();
 		}
 
 		private void OnCtrlTrlTextChanged(object sender, EventArgs e)
@@ -648,6 +669,7 @@ namespace TrlUtil
 			}
 
 			UpdateStatusImages(null);
+			UpdateUIState();
 			UpdatePreviewForm();
 		}
 
@@ -1250,6 +1272,40 @@ namespace TrlUtil
 				m_prev = null;
 			}
 			else { Debug.Assert(false); }
+		}
+
+		private bool CanMoveUnusedToDialog()
+		{
+			TextBox tb = m_tbCtrlTrlText;
+			if(!tb.Enabled || tb.ReadOnly || (tb.TextLength != 0)) return false;
+
+			RichTextBox rtb = m_rtbUnusedText;
+			if(!rtb.Enabled || rtb.ReadOnly) return false;
+
+			string str = (rtb.SelectedText ?? string.Empty).Trim();
+			if(str.Length == 0) return false;
+			if(str.IndexOfAny(g_vNewLine) >= 0) return false;
+
+			return true;
+		}
+
+		private void OnEditMoveUnusedToDialog(object sender, EventArgs e)
+		{
+			if(!CanMoveUnusedToDialog()) { Debug.Assert(false); return; }
+
+			TextBox tb = m_tbCtrlTrlText;
+			RichTextBox rtb = m_rtbUnusedText;
+
+			tb.Text = (rtb.SelectedText ?? string.Empty).Trim();
+			rtb.SelectedText = string.Empty;
+
+			m_tabMain.SelectedTab = m_tabDialogs;
+			UIUtil.SetFocus(tb, this);
+		}
+
+		private void OnUnusedTextSelectionChanged(object sender, EventArgs e)
+		{
+			UpdateUIState();
 		}
 	}
 }

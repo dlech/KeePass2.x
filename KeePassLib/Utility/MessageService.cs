@@ -86,7 +86,7 @@ namespace KeePassLib.Utility
 		public static string NewParagraph
 		{
 #if !KeePassLibSD
-			get { return Environment.NewLine + Environment.NewLine; }
+			get { return (Environment.NewLine + Environment.NewLine); }
 #else
 			get { return "\r\n\r\n"; }
 #endif

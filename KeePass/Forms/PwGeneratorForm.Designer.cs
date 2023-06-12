@@ -63,6 +63,7 @@
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_tabMain = new System.Windows.Forms.TabControl();
 			this.m_tabSettings = new System.Windows.Forms.TabPage();
+			this.m_btnProfileEnforce = new System.Windows.Forms.Button();
 			this.m_tabAdvanced = new System.Windows.Forms.TabPage();
 			this.m_tbExcludeChars = new System.Windows.Forms.TextBox();
 			this.m_lblExcludeChars = new System.Windows.Forms.Label();
@@ -162,13 +163,13 @@
 			this.m_cmbProfiles.Location = new System.Drawing.Point(51, 6);
 			this.m_cmbProfiles.MaxDropDownItems = 16;
 			this.m_cmbProfiles.Name = "m_cmbProfiles";
-			this.m_cmbProfiles.Size = new System.Drawing.Size(341, 21);
+			this.m_cmbProfiles.Size = new System.Drawing.Size(309, 21);
 			this.m_cmbProfiles.TabIndex = 1;
 			this.m_cmbProfiles.SelectedIndexChanged += new System.EventHandler(this.OnProfilesSelectedIndexChanged);
 			// 
 			// m_btnProfileAdd
 			// 
-			this.m_btnProfileAdd.Location = new System.Drawing.Point(398, 5);
+			this.m_btnProfileAdd.Location = new System.Drawing.Point(366, 5);
 			this.m_btnProfileAdd.Name = "m_btnProfileAdd";
 			this.m_btnProfileAdd.Size = new System.Drawing.Size(25, 23);
 			this.m_btnProfileAdd.TabIndex = 2;
@@ -177,7 +178,7 @@
 			// 
 			// m_btnProfileRemove
 			// 
-			this.m_btnProfileRemove.Location = new System.Drawing.Point(426, 5);
+			this.m_btnProfileRemove.Location = new System.Drawing.Point(396, 5);
 			this.m_btnProfileRemove.Name = "m_btnProfileRemove";
 			this.m_btnProfileRemove.Size = new System.Drawing.Size(25, 23);
 			this.m_btnProfileRemove.TabIndex = 3;
@@ -210,13 +211,12 @@
 			this.m_grpCurOpt.Location = new System.Drawing.Point(6, 31);
 			this.m_grpCurOpt.Name = "m_grpCurOpt";
 			this.m_grpCurOpt.Size = new System.Drawing.Size(445, 377);
-			this.m_grpCurOpt.TabIndex = 4;
+			this.m_grpCurOpt.TabIndex = 5;
 			this.m_grpCurOpt.TabStop = false;
 			this.m_grpCurOpt.Text = "Current settings";
 			// 
 			// m_btnCustomOpt
 			// 
-			this.m_btnCustomOpt.Image = global::KeePass.Properties.Resources.B16x16_Misc;
 			this.m_btnCustomOpt.Location = new System.Drawing.Point(414, 321);
 			this.m_btnCustomOpt.Name = "m_btnCustomOpt";
 			this.m_btnCustomOpt.Size = new System.Drawing.Size(25, 23);
@@ -422,6 +422,7 @@
 			// 
 			// m_tabSettings
 			// 
+			this.m_tabSettings.Controls.Add(this.m_btnProfileEnforce);
 			this.m_tabSettings.Controls.Add(this.m_lblProfile);
 			this.m_tabSettings.Controls.Add(this.m_cmbProfiles);
 			this.m_tabSettings.Controls.Add(this.m_grpCurOpt);
@@ -434,6 +435,15 @@
 			this.m_tabSettings.TabIndex = 0;
 			this.m_tabSettings.Text = "Settings";
 			this.m_tabSettings.UseVisualStyleBackColor = true;
+			// 
+			// m_btnProfileEnforce
+			// 
+			this.m_btnProfileEnforce.Location = new System.Drawing.Point(426, 5);
+			this.m_btnProfileEnforce.Name = "m_btnProfileEnforce";
+			this.m_btnProfileEnforce.Size = new System.Drawing.Size(25, 23);
+			this.m_btnProfileEnforce.TabIndex = 4;
+			this.m_btnProfileEnforce.UseVisualStyleBackColor = true;
+			this.m_btnProfileEnforce.Click += new System.EventHandler(this.OnBtnProfileEnforce);
 			// 
 			// m_tabAdvanced
 			// 
@@ -607,5 +617,6 @@
 		private System.Windows.Forms.ComboBox m_cmbCustomAlgo;
 		private System.Windows.Forms.RadioButton m_rbCustom;
 		private System.Windows.Forms.Button m_btnCustomOpt;
+		private System.Windows.Forms.Button m_btnProfileEnforce;
 	}
 }

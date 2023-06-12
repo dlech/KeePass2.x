@@ -1,3 +1,85 @@
+2023-06-03: 2.54
+- Triggers, global URL overrides, password generator profiles
+  and a few more settings are now stored in the enforced
+  configuration file
+- Added dialog 'Enforce Options (All Users)' (menu 'Tools' ->
+  'Advanced Tools' -> 'Enforce Options'), which facilitates
+  storing certain options in the enforced configuration file
+- Export confirmation dialog banners now have a yellow-orange
+  background
+- In export confirmation dialogs, the text of the 'OK' button
+  is now changed to 'Confirm Export'
+- In report dialogs, passwords (and other sensitive data) are
+  now hidden using asterisks by default (if hiding is activated
+  in the main window); the hiding can be toggled using the new
+  '***' button in the toolbar
+- The 'Print' command in most report dialogs now requires the
+  'Print' application policy flag, and the master key must be
+  entered if the 'Print - No Key Repeat' application policy
+  flag is deactivated
+- The 'Export' command in most report dialogs now requires the
+  'Export' application policy flag, and the master key must be
+  entered
+- Single line edit dialogs now support hiding the value using
+  asterisks
+- On Unix-like systems, commands that require elevation now
+  have a shield icon (like on Windows)
+- TrlUtil: added 'Move Selected Unused Text to Dialog Control'
+  command
+
+- Improved process memory protection of secure edit controls
+- The content mode of the configuration elements
+  '/Configuration/Application/TriggerSystem',
+  '/Configuration/Integration/UrlSchemeOverrides' and
+  '/Configuration/PasswordGenerator/UserProfiles' is now
+  'Replace' by default
+- The built-in override for the 'ssh' URI scheme is now
+  deactivated by default (it can be activated in the 'URL
+  Overrides' dialog)
+- When opening the password generator dialog without a derived
+  profile, the '(Automatically generated passwords for new
+  entries)' profile is now selected by default, if profiles are
+  enabled (otherwise the default profile is used)
+- Improved UI update performance in the password generator
+  dialog
+- Improved and renamed dialog banner styles
+- The separator line of light dialog banners is gray now
+- Improved serialization/deserialization of custom
+  configuration settings (used by plugins)
+- Improved reporting of unknown database header fields
+- On Unix-like systems, the clipboard workarounds are now
+  disabled by default (they are not needed anymore on most
+  systems)
+- Improved clipboard clearing on Unix-like systems
+- Improved starting of an elevated process on Unix-like systems
+- TrlUtil: improved keyboard shortcut assignment and toolbar
+  construction
+- Installer: the desktop shortcut is now created for all users
+  (if the option 'Create a desktop shortcut' is activated)
+- Installer: removed the Quick Launch shortcut option
+- Upgraded installer
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- In report dialogs, the 'Print' and 'Export' commands now
+  always use the actual data (in previous versions, asterisks
+  were printed/exported when the application policy flag
+  'Unhide Passwords' was turned off)
+- The icon of the custom algorithm options button in the
+  password generator dialog is not cut off anymore
+
+2023-02-08: 2.53.1
+- When testing a KDF ('Test' button in the database settings
+  dialog), KeePass now spawns a child process that performs the
+  KDF computation (which allows to cancel the test more cleanly
+  in the case of excessive parameters; security is unaffected,
+  because dummy data is used for the test)
+- Removed the 'Export - No Key Repeat' application policy flag;
+  KeePass now always asks for the current master key when
+  trying to export data
+- Minor other improvements
+
 2023-01-09: 2.53
 - For each entry listed on the 'History' tab page of the entry
   dialog, the fields modified with respect to the previous

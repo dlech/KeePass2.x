@@ -469,7 +469,7 @@ div.tipdiv {
 	padding: 16px 16px 16px 16px;
 	background-color: #EEEEEE;
 }
-@media (max-height: 540px) {
+@media (max-height: 600px) {
 	#consent_dlg {
 		margin-top: 4px;
 	}

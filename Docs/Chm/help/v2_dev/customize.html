@@ -174,7 +174,10 @@ to expire &quot;soon&quot;. The default value is 7.</li>
 Specifies the URL that is opened for a help page.
 This overrides all other help sources (local and online).
 <a href="../base/placeholders.html">Spr</a>-compiled;
-the relative help page path is inserted by <code>{BASE}</code>.</li>
+the relative help page path is inserted by <code>{BASE}</code>.
+This element is used only if it is stored in the
+<a href="https://keepass.info/help/kb/config_enf.html" target="_blank">enforced
+configuration file</a>.</li>
 
 <li><b>Configuration/Defaults/WinFavsBaseFolderName</b>:<br />
 For the 'Windows Favorites' export:
@@ -214,7 +217,8 @@ master keys. The default value is 3.</li>
 If this option is set to <code>true</code>, KeePass protects its windows
 against certain screen capture operations (on Windows 7 and higher;
 for details, see the
-<a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowdisplayaffinity"
+<!-- https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowdisplayaffinity -->
+<a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowdisplayaffinity"
 target="_blank"><code>SetWindowDisplayAffinity</code></a> function).<br />
 <img src="../images/b16x16_warning.png" class="textimg" alt="Warning" />
 This may also prevent legitimate other software
@@ -222,8 +226,9 @@ This may also prevent legitimate other software
 solutions, etc.) from seeing KeePass windows.</li>
 
 <li><b>Configuration/Security/ProtectProcessWithDacl</b>:<br />
-If this option is set to <code>true</code>, KeePass protects its process
-with a <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/dacls-and-aces"
+If this option is set to <code>true</code>, KeePass protects its process with a
+<!-- https://docs.microsoft.com/en-us/windows/win32/secauthz/dacls-and-aces -->
+<a href="https://learn.microsoft.com/en-us/windows/win32/secauthz/dacls-and-aces"
 target="_blank">discretionary access control list</a> (DACL).<br />
 <img src="../images/b16x16_warning.png" class="textimg" alt="Warning" />
 Please note that this also blocks legitimate other software

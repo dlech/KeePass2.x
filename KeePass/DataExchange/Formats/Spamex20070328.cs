@@ -88,6 +88,7 @@ namespace KeePass.DataExchange.Formats
 			dlgPassword.InitEx("Spamex.com", KPRes.WebSiteLogin + " - " + KPRes.Password,
 				KPRes.PasswordPrompt, KeePass.Properties.Resources.B48x48_WWW,
 				string.Empty, null);
+			dlgPassword.FlagsEx |= SlfFlags.Sensitive;
 			if(UIUtil.ShowDialogNotValue(dlgPassword, DialogResult.OK)) return;
 			string strPassword = dlgPassword.ResultString;
 			UIUtil.DestroyForm(dlgPassword);

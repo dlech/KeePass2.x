@@ -652,20 +652,6 @@ namespace KeePass.Util
 			{
 				if((psA != null) && psA.IsEmpty) psA = null;
 				if((psB != null) && psB.IsEmpty) psB = null;
-
-				if(!AppPolicy.Current.UnhidePasswords && (strKey == PwDefs.PasswordField))
-				{
-					string strA = ((psA != null) ? PwDefs.HiddenPassword : null);
-					string strB = ((psB != null) ? PwDefs.HiddenPassword : null);
-
-					DfxChange c;
-					if(psA == null) c = ((psB == null) ? DfxChange.None : DfxChange.Add);
-					else if(psB == null) c = DfxChange.Remove;
-					else c = (psA.Equals(psB, false) ? DfxChange.None : DfxChange.Edit);
-
-					Report(ctx, ic, strName, strA, psA, strB, psB, c);
-					return;
-				}
 			}
 
 			// if((ic == DfxIcon.Text) && (((psB != null) && psB.IsProtected) ||
@@ -673,6 +659,28 @@ namespace KeePass.Util
 			//	ic = DfxIcon.Password;
 
 			Report(ctx, ic, strName, psA, psB, !bStd);
+
+			if(ctx.OutLvo != null)
+			{
+				bool bProtA = ((psA != null) && psA.IsProtected);
+				bool bProtB = ((psB != null) && psB.IsProtected);
+				if(strKey == PwDefs.PasswordField) { bProtA = true; bProtB = true; }
+
+				if(bProtA || bProtB)
+				{
+					int i = ctx.OutLvo.Count - 1;
+					ListViewItem lvi = ((i >= 0) ? (ctx.OutLvo[i] as ListViewItem) : null);
+					if((lvi != null) && (lvi.Text == strName))
+					{
+						LvfItem lvfi = new LvfItem(lvi);
+						if(bProtA) lvfi.SubItems[LvsiValueA].Flags |= LvfiFlags.Sensitive;
+						if(bProtB) lvfi.SubItems[LvsiValueB].Flags |= LvfiFlags.Sensitive;
+
+						ctx.OutLvo[i] = lvfi;
+					}
+					else { Debug.Assert(false); }
+				}
+			}
 		}
 
 		private static void Report(DfxContext ctx, DfxIcon ic, string strName,
@@ -798,7 +806,8 @@ namespace KeePass.Util
 				dlg.InitEx(KPRes.CompareEntries, KPRes.EntryDifferences + ".", null,
 					Properties.Resources.B48x48_View_Detailed, lLvo, il, fInit);
 				dlg.FlagsEx |= LvfFlags.StandardTheme; // For colors on hover
-				dlg.FlagsEx &= ~(LvfFlags.Print | LvfFlags.Export);
+				dlg.FlagsEx &= ~(LvfFlags.Print | LvfFlags.Export); // MultiToSingleLine
+				dlg.DatabaseEx = (pdA ?? pdB);
 
 				UIUtil.ShowDialogAndDestroy(dlg);
 			}

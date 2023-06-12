@@ -286,7 +286,7 @@ namespace KeePass.Forms
 
 			m_tbSelected.EnableProtection(bHide);
 
-			string strHiddenChar = new string(SecureTextBoxEx.PasswordCharEx, 1);
+			string strHiddenChar = SecureTextBoxEx.GetPasswordCharString(1);
 
 			bool bHideBtns = bHide;
 			bHideBtns |= !Program.Config.UI.Hiding.UnhideButtonAlsoUnhidesSource;

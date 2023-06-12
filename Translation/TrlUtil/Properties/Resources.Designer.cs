@@ -173,6 +173,16 @@ namespace TrlUtil.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap B16x16_Rotate {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Rotate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap B16x16_View_Remove {
             get {
                 object obj = ResourceManager.GetObject("B16x16_View_Remove", resourceCulture);

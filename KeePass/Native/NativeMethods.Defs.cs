@@ -192,6 +192,8 @@ namespace KeePass.Native
 		internal const int MA_NOACTIVATE = 3;
 		internal const int MA_NOACTIVATEANDEAT = 4;
 
+		internal const int IDI_SHIELD = 32518;
+
 		internal const int BCM_SETSHIELD = 0x160C;
 
 		internal const int SHCNE_ASSOCCHANGED = 0x08000000;

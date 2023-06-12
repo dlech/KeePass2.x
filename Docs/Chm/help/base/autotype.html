@@ -145,7 +145,8 @@ rights as the target application. Especially, if the target application
 is running with administrative rights, KeePass must be running with
 administrative rights, too. For details, see
 <!-- https://msdn.microsoft.com/en-us/library/bb625963.aspx -->
-<a href="https://docs.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10)"
+<!-- https://docs.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10) -->
+<a href="https://learn.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10)"
 target="_blank">Windows Integrity Mechanism Design</a>.
 An example are certain instances of VMware Workstation that run on
 a higher integrity level.</p>
@@ -388,7 +389,8 @@ delay to <i>X</i> milliseconds for all following keypresses.</td></tr>
 edit control that currently has the focus (only single-line edit controls).</td></tr>
 <tr><td><code>{VKEY <i>X</i>}</code></td><td>Sends the
 <!-- https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731.aspx -->
-<a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
+<!-- https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes -->
+<a href="https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
 target="_blank">virtual key</a> of value <i>X</i>.</td></tr>
 <tr><td><code>{APPACTIVATE <i>WindowTitle</i>}</code></td><td>Activates
 the window &quot;<i>WindowTitle</i>&quot;.<!-- <br />
@@ -413,7 +415,7 @@ If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr>
 extended virtual key of value <i>X</i>.
 If possible, use <code>{VKEY <i>X</i>}</code> instead.</td></tr> -->
 <tr><td><code>{VKEY <i>X</i> <i>F</i>}</code></td><td>Sends the
-<a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
+<a href="https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
 target="_blank">virtual key</a> of value <i>X</i>; see <a href="#vkey">below</a>.</td></tr>
 </table>
 
@@ -424,13 +426,14 @@ target="_blank">virtual key</a> of value <i>X</i>; see <a href="#vkey">below</a>
 
 <b><code>{VKEY <i>X</i> <i>F</i>}</code>:</b><br />
 This command sends the
-<a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
+<a href="https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
 target="_blank">virtual key</a> of value <i>X</i>.
 The parameter <i>F</i> is optional and may be a combination of the following
 values:
 <ul>
 <li><b><code>E</code></b>:
-Send an <a href="https://docs.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#extended-key-flag"
+<!-- https://docs.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#extended-key-flag -->
+Send an <a href="https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#extended-key-flag"
 target="_blank">extended key</a>; see below.</li>
 <li><b><code>N</code></b>:
 Send a non-extended key; see below.</li>
@@ -558,7 +561,8 @@ For example, <code>*Windows*Explorer*</code> would match
 <br />
 Additionally, matching using
 <!-- https://msdn.microsoft.com/en-us/library/az24scfc.aspx -->
-<a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference"
+<!-- https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference -->
+<a href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference"
 target="_blank">regular expressions</a> is supported. In order to
 tell KeePass that the pattern is a regular expression, enclose it in
 <code>//</code>. For example, <code>//B.?g Window//</code> would

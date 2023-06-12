@@ -83,7 +83,6 @@ namespace KeePass
 		private static KPTranslation m_kpTranslation = new KPTranslation();
 		private static TempFilesPool m_tempFilesPool = null;
 		private static EcasPool m_ecasPool = null;
-		private static EcasTriggerSystem m_ecasTriggers = null;
 		private static CustomPwGeneratorPool m_pwGenPool = null;
 		private static ColumnProviderPool m_colProvPool = null;
 
@@ -142,7 +141,7 @@ namespace KeePass
 		{
 			get
 			{
-				if(m_appConfig == null) m_appConfig = new AppConfigEx();
+				if(m_appConfig == null) { Debug.Assert(false); m_appConfig = new AppConfigEx(); }
 				return m_appConfig;
 			}
 		}
@@ -199,11 +198,7 @@ namespace KeePass
 
 		public static EcasTriggerSystem TriggerSystem
 		{
-			get
-			{
-				if(m_ecasTriggers == null) m_ecasTriggers = new EcasTriggerSystem();
-				return m_ecasTriggers;
-			}
+			get { return Program.Config.Application.TriggerSystem; }
 		}
 
 		public static CustomPwGeneratorPool PwGeneratorPool
@@ -312,7 +307,7 @@ namespace KeePass
 			{
 				PlgxCache.Clear();
 				m_appConfig.Application.Start.PluginCacheClearOnce = false;
-				AppConfigSerializer.Save(Program.Config);
+				AppConfigSerializer.Save();
 			}
 
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.FileExtRegister] != null)
@@ -366,14 +361,16 @@ namespace KeePass
 			{
 				Program.Config.Integration.UrlOverride = m_cmdLineArgs[
 					AppDefs.CommandLineOptions.ConfigSetUrlOverride];
-				AppConfigSerializer.Save(Program.Config);
+				Program.Config.Integration.UrlOverrideEnabled = true;
+				EnforceAndSave(AceSections.UrlOverride);
 				MainCleanUp();
 				return;
 			}
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.ConfigClearUrlOverride] != null)
 			{
 				Program.Config.Integration.UrlOverride = string.Empty;
-				AppConfigSerializer.Save(Program.Config);
+				Program.Config.Integration.UrlOverrideEnabled = false;
+				EnforceAndSave(AceSections.UrlOverride);
 				MainCleanUp();
 				return;
 			}
@@ -397,7 +394,7 @@ namespace KeePass
 				Program.Config.Integration.UrlSchemeOverrides.AddCustomOverride(
 					m_cmdLineArgs[AppDefs.CommandLineOptions.Scheme],
 					m_cmdLineArgs[AppDefs.CommandLineOptions.Value], bAct, bAct);
-				AppConfigSerializer.Save(Program.Config);
+				EnforceAndSave(AceSections.UrlSchemeOverrides);
 				MainCleanUp();
 				return;
 			}
@@ -406,7 +403,7 @@ namespace KeePass
 				Program.Config.Integration.UrlSchemeOverrides.RemoveCustomOverride(
 					m_cmdLineArgs[AppDefs.CommandLineOptions.Scheme],
 					m_cmdLineArgs[AppDefs.CommandLineOptions.Value]);
-				AppConfigSerializer.Save(Program.Config);
+				EnforceAndSave(AceSections.UrlSchemeOverrides);
 				MainCleanUp();
 				return;
 			}
@@ -414,10 +411,12 @@ namespace KeePass
 			{
 				Program.Config.Application.LanguageFile = m_cmdLineArgs[
 					AppDefs.CommandLineOptions.ConfigSetLanguageFile];
-				AppConfigSerializer.Save(Program.Config);
+				AppConfigSerializer.Save();
 				MainCleanUp();
 				return;
 			}
+			if(AppEnforcedConfig.SetupAsChild()) { MainCleanUp(); return; }
+			if(KeyUtil.KdfPrcTestAsChild()) { MainCleanUp(); return; }
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.PlgxCreate] != null)
 			{
 				PlgxPlugin.CreateFromCommandLine();
@@ -614,6 +613,7 @@ namespace KeePass
 			m_rndGlobal = CryptoRandom.NewWeakRandom();
 
 			InitEnvSecurity();
+			// InitEnvWorkarounds();
 			InitAppContext();
 			MonoWorkarounds.Initialize();
 
@@ -631,7 +631,9 @@ namespace KeePass
 			PwDatabase.LocalizedAppName = PwDefs.ShortProductName;
 			KdbxFile.DetermineLanguageId();
 
+			Debug.Assert(m_appConfig == null);
 			m_appConfig = AppConfigSerializer.Load();
+
 			if(m_appConfig.Logging.Enabled)
 				AppLogEx.Open(PwDefs.ShortProductName);
 
@@ -643,13 +645,20 @@ namespace KeePass
 
 			m_appConfig.Apply(AceApplyFlags.All);
 
-			m_ecasTriggers = m_appConfig.Application.TriggerSystem;
-			m_ecasTriggers.SetToInitialState();
+			Program.TriggerSystem.SetToInitialState();
 
-			// InitEnvWorkarounds();
 			LoadTranslation();
-
 			CustomResourceManager.Override(typeof(KeePass.Properties.Resources));
+
+			AppConfigSerializer.CreateBackupIfNecessary();
+
+			AceSections s = AppConfigEx.GetEnabledNonEnforcedSections();
+			if((s != AceSections.None) && !m_appConfig.Meta.PreferUserConfiguration)
+			{
+				if(AppConfigEx.EnforceSections(s, m_appConfig, false, false, null, null))
+					s = AceSections.None;
+			}
+			AppConfigEx.DisableSections(s);
 
 #if KP_DEVSNAP
 			if(!m_bAsmResReg)
@@ -701,6 +710,12 @@ namespace KeePass
 			GlobalMutexPool.ReleaseAll();
 
 			CommonTerminate();
+		}
+
+		private static void EnforceAndSave(AceSections s)
+		{
+			if(AppConfigEx.EnforceSections(s, Program.Config, false, true, null, null))
+				AppConfigSerializer.Save();
 		}
 
 		private static void ShowFatal(Exception ex)

@@ -53,6 +53,7 @@ namespace KeePass.DataExchange.Formats
 			dlg.InitEx(KPRes.Password, KPRes.Import + ": " + this.FormatName,
 				KPRes.PasswordPrompt, Properties.Resources.B48x48_KGPG_Key2,
 				string.Empty, null);
+			dlg.FlagsEx |= SlfFlags.Sensitive;
 			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return;
 			string strPassword = dlg.ResultString;
 			UIUtil.DestroyForm(dlg);
