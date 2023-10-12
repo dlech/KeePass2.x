@@ -384,17 +384,13 @@ namespace KeePassLib.Utility
 			// when shrinking images, do not apply a -0.5 offset,
 			// otherwise the image is cropped on the bottom/right
 			// side; this applies to all interpolation modes
-			if(rDest.Width > rSource.Width)
-				rSource.X = rSource.X - 0.5f;
-			if(rDest.Height > rSource.Height)
-				rSource.Y = rSource.Y - 0.5f;
+			if(rDest.Width > rSource.Width) rSource.X -= 0.5f;
+			if(rDest.Height > rSource.Height) rSource.Y -= 0.5f;
 
 			// When shrinking, apply a +0.5 offset, such that the
 			// scaled image is less cropped on the bottom/right side
-			if(rDest.Width < rSource.Width)
-				rSource.X = rSource.X + 0.5f;
-			if(rDest.Height < rSource.Height)
-				rSource.Y = rSource.Y + 0.5f;
+			if(rDest.Width < rSource.Width) rSource.X += 0.5f;
+			if(rDest.Height < rSource.Height) rSource.Y += 0.5f;
 		}
 
 #if DEBUG

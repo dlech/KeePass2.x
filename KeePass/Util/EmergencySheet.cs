@@ -76,7 +76,7 @@ namespace KeePass.Util
 
 			if(b)
 			{
-				bool bPrintKF = (bKeyFile ? dlg.ResultVerificationChecked : false);
+				bool bPrintKF = (bKeyFile && dlg.ResultVerificationChecked);
 				Print(pd, true, bPrintKF);
 			}
 		}

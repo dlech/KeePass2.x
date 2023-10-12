@@ -94,7 +94,7 @@ namespace KeePassLib.Collections
 		private AutoTypeObfuscationOptions m_atooObfuscation =
 			AutoTypeObfuscationOptions.None;
 		private string m_strDefaultSequence = string.Empty;
-		private List<AutoTypeAssociation> m_lWindowAssocs =
+		private readonly List<AutoTypeAssociation> m_lWindowAssocs =
 			new List<AutoTypeAssociation>();
 
 		/// <summary>

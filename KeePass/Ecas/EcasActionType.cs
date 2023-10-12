@@ -29,31 +29,31 @@ namespace KeePass.Ecas
 
 	public sealed class EcasActionType : IEcasParameterized
 	{
-		private PwUuid m_type;
+		private readonly PwUuid m_type;
 		public PwUuid Type
 		{
 			get { return m_type; }
 		}
 
-		private string m_strName;
+		private readonly string m_strName;
 		public string Name
 		{
 			get { return m_strName; }
 		}
 
-		private PwIcon m_pwIcon;
+		private readonly PwIcon m_pwIcon;
 		public PwIcon Icon
 		{
 			get { return m_pwIcon; }
 		}
 
-		private EcasParameter[] m_vParams;
+		private readonly EcasParameter[] m_vParams;
 		public EcasParameter[] Parameters
 		{
 			get { return m_vParams; }
 		}
 
-		private EcasActionExecute m_fn;
+		private readonly EcasActionExecute m_fn;
 		public EcasActionExecute ExecuteMethod
 		{
 			get { return m_fn; }

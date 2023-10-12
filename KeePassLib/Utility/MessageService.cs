@@ -34,10 +34,10 @@ namespace KeePassLib.Utility
 {
 	public sealed class MessageServiceEventArgs : EventArgs
 	{
-		private string m_strTitle = string.Empty;
-		private string m_strText = string.Empty;
-		private MessageBoxButtons m_msgButtons = MessageBoxButtons.OK;
-		private MessageBoxIcon m_msgIcon = MessageBoxIcon.None;
+		private readonly string m_strTitle = string.Empty;
+		private readonly string m_strText = string.Empty;
+		private readonly MessageBoxButtons m_msgButtons = MessageBoxButtons.OK;
+		private readonly MessageBoxIcon m_msgIcon = MessageBoxIcon.None;
 
 		public string Title { get { return m_strTitle; } }
 		public string Text { get { return m_strText; } }

@@ -38,7 +38,7 @@ namespace KeePass.App
 
 	public static class AppIcons
 	{
-		private static Dictionary<string, Icon> g_dCache = new Dictionary<string, Icon>();
+		private static readonly Dictionary<string, Icon> g_dCache = new Dictionary<string, Icon>();
 		private static readonly object g_oCacheSync = new object();
 
 		private const int g_hMain = 225; // Average hue of the main icon in degrees

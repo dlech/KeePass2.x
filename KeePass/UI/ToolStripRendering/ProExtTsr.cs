@@ -34,7 +34,7 @@ namespace KeePass.UI.ToolStripRendering
 {
 	internal sealed class ProExtTsrFactory : TsrFactory
 	{
-		private PwUuid m_uuid = new PwUuid(new byte[] {
+		private readonly PwUuid m_uuid = new PwUuid(new byte[] {
 			0x21, 0xED, 0x54, 0x1A, 0xE2, 0xEB, 0xCB, 0x0C,
 			0x57, 0x18, 0x41, 0x32, 0x70, 0xD8, 0xE0, 0xE9
 		});
@@ -57,7 +57,7 @@ namespace KeePass.UI.ToolStripRendering
 
 	public class ProExtTsr : ToolStripProfessionalRenderer
 	{
-		private bool m_bCustomColorTable = false;
+		private readonly bool m_bCustomColorTable;
 
 		protected bool IsDarkStyle
 		{
@@ -77,6 +77,7 @@ namespace KeePass.UI.ToolStripRendering
 
 		public ProExtTsr() : base()
 		{
+			m_bCustomColorTable = false;
 		}
 
 		public ProExtTsr(ProfessionalColorTable ct) : base(ct)

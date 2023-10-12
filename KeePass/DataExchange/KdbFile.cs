@@ -43,8 +43,8 @@ namespace KeePass.DataExchange
 	/// </summary>
 	public sealed class KdbFile
 	{
-		private PwDatabase m_pwDatabase;
-		private IStatusLogger m_slLogger;
+		private readonly PwDatabase m_pwDatabase;
+		private readonly IStatusLogger m_slLogger;
 
 		private const string KdbPrefix = "KDB: ";
 
@@ -157,7 +157,7 @@ namespace KeePass.DataExchange
 		private Dictionary<UInt32, PwGroup> ReadGroups(KdbManager mgr)
 		{
 			uint uGroupCount = mgr.GroupCount;
-			Dictionary<UInt32, PwGroup> dictGroups = new Dictionary<uint, PwGroup>();
+			Dictionary<UInt32, PwGroup> dictGroups = new Dictionary<UInt32, PwGroup>();
 
 			Stack<PwGroup> vGroupStack = new Stack<PwGroup>();
 			vGroupStack.Push(m_pwDatabase.RootGroup);
@@ -317,7 +317,7 @@ namespace KeePass.DataExchange
 		private static Dictionary<PwGroup, UInt32> WriteGroups(KdbManager mgr,
 			PwGroup pgRoot)
 		{
-			Dictionary<PwGroup, UInt32> dictGroups = new Dictionary<PwGroup, uint>();
+			Dictionary<PwGroup, UInt32> dictGroups = new Dictionary<PwGroup, UInt32>();
 
 			uint uGroupIndex = 1;
 			DateTime dtNeverExpire = KdbManager.GetNeverExpireTime();
@@ -395,7 +395,7 @@ namespace KeePass.DataExchange
 			uGroupIndex = uLocalIndex;
 		}
 
-		private void WriteEntries(KdbManager mgr, Dictionary<PwGroup, uint> dictGroups,
+		private void WriteEntries(KdbManager mgr, Dictionary<PwGroup, UInt32> dictGroups,
 			PwGroup pgRoot)
 		{
 			bool bWarnedOnce = false;
@@ -629,41 +629,42 @@ namespace KeePass.DataExchange
 			return null;
 		}
 
-		private static Dictionary<string, string> m_dSeq1xTo2x = null;
-		private static Dictionary<string, string> m_dSeq1xTo2xBiDir = null;
+		private static Dictionary<string, string> g_dSeq1xTo2x = null;
+		private static Dictionary<string, string> g_dSeq1xTo2xBiDir = null;
 		private static string ConvertAutoTypeSequence(string strSeq, bool b1xTo2x)
 		{
 			if(string.IsNullOrEmpty(strSeq)) return string.Empty;
 
-			if(m_dSeq1xTo2x == null)
+			if(g_dSeq1xTo2x == null)
 			{
-				m_dSeq1xTo2x = new Dictionary<string, string>();
-				m_dSeq1xTo2xBiDir = new Dictionary<string, string>();
-
+				g_dSeq1xTo2x = new Dictionary<string, string>();
 				// m_dSeq1xTo2x[@"{SPACE}"] = " ";
 				// m_dSeq1xTo2x[@"{CLEARFIELD}"] = @"{HOME}+({END}){DEL}";
 
-				m_dSeq1xTo2xBiDir[@"{AT}"] = @"@";
-				m_dSeq1xTo2xBiDir[@"{PLUS}"] = @"{+}";
-				m_dSeq1xTo2xBiDir[@"{PERCENT}"] = @"{%}";
-				m_dSeq1xTo2xBiDir[@"{CARET}"] = @"{^}";
-				m_dSeq1xTo2xBiDir[@"{TILDE}"] = @"{~}";
-				m_dSeq1xTo2xBiDir[@"{LEFTBRACE}"] = @"{{}";
-				m_dSeq1xTo2xBiDir[@"{RIGHTBRACE}"] = @"{}}";
-				m_dSeq1xTo2xBiDir[@"{LEFTPAREN}"] = @"{(}";
-				m_dSeq1xTo2xBiDir[@"{RIGHTPAREN}"] = @"{)}";
-				m_dSeq1xTo2xBiDir[@"(+{END})"] = @"+({END})";
+				g_dSeq1xTo2xBiDir = new Dictionary<string, string>
+				{
+					{ @"{AT}", @"@" },
+					{ @"{PLUS}", @"{+}" },
+					{ @"{PERCENT}", @"{%}" },
+					{ @"{CARET}", @"{^}" },
+					{ @"{TILDE}", @"{~}" },
+					{ @"{LEFTBRACE}", @"{{}" },
+					{ @"{RIGHTBRACE}", @"{}}" },
+					{ @"{LEFTPAREN}", @"{(}" },
+					{ @"{RIGHTPAREN}", @"{)}" },
+					{ @"(+{END})", @"+({END})" }
+				};
 			}
 
 			string str = strSeq.Trim();
 
 			if(b1xTo2x)
 			{
-				foreach(KeyValuePair<string, string> kvp in m_dSeq1xTo2x)
+				foreach(KeyValuePair<string, string> kvp in g_dSeq1xTo2x)
 					str = StrUtil.ReplaceCaseInsensitive(str, kvp.Key, kvp.Value);
 			}
 
-			foreach(KeyValuePair<string, string> kvp in m_dSeq1xTo2xBiDir)
+			foreach(KeyValuePair<string, string> kvp in g_dSeq1xTo2xBiDir)
 			{
 				if(b1xTo2x) str = StrUtil.ReplaceCaseInsensitive(str, kvp.Key, kvp.Value);
 				else str = StrUtil.ReplaceCaseInsensitive(str, kvp.Value, kvp.Key);

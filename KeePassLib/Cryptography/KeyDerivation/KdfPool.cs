@@ -28,7 +28,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 {
 	public static class KdfPool
 	{
-		private static List<KdfEngine> g_l = new List<KdfEngine>();
+		private static readonly List<KdfEngine> g_l = new List<KdfEngine>();
 
 		public static IEnumerable<KdfEngine> Engines
 		{

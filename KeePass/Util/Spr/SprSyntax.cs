@@ -19,12 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Diagnostics;
-
-using KeePass.App;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -33,9 +31,9 @@ namespace KeePass.Util.Spr
 {
 	public static class SprSyntax
 	{
-		private static readonly string[] m_vDynSepPlh = new string[] {
-			@"{NEWPASSWORD:", @"{T-REPLACE-RX:", @"{T-CONV:",
-			@"{CMD:"
+		private static readonly string[] g_vDynSepPlh = new string[] {
+			"{CLIPBOARD-SET:", "{CMD:", "{NEWPASSWORD:",
+			"{T-CONV:", "{T-REPLACE-RX:"
 		};
 
 		private static readonly SprStyle SprStyleOK = new SprStyle(
@@ -203,7 +201,7 @@ namespace KeePass.Util.Spr
 			string str = pPart.Text;
 
 			int iStart = -1, p = -1;
-			foreach(string strPlh in m_vDynSepPlh)
+			foreach(string strPlh in g_vDynSepPlh)
 			{
 				iStart = str.IndexOf(strPlh, StrUtil.CaseIgnoreCmp);
 				if(iStart >= 0)

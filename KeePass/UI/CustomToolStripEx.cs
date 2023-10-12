@@ -31,7 +31,7 @@ namespace KeePass.UI
 {
 	public sealed class CustomToolStripEx : ToolStrip
 	{
-		private CriticalSectionEx m_csSizeAuto = new CriticalSectionEx();
+		private readonly CriticalSectionEx m_csSizeAuto = new CriticalSectionEx();
 		private int m_iLockedHeight = 0;
 
 		public CustomToolStripEx() : base()

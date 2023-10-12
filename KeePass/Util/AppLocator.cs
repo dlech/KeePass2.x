@@ -166,7 +166,7 @@ namespace KeePass.Util
 
 			for(int i = 0; i < 6; ++i)
 			{
-				RegistryKey k = null;
+				RegistryKey k;
 
 				// https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067.aspx
 				if(i == 0)
@@ -271,7 +271,7 @@ namespace KeePass.Util
 
 			for(int i = 0; i < 5; ++i)
 			{
-				RegistryKey k = null;
+				RegistryKey k;
 
 				// https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067.aspx
 				if(i == 0)

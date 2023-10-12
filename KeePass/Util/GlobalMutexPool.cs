@@ -36,9 +36,9 @@ namespace KeePass.Util
 	/// </summary>
 	public static class GlobalMutexPool
 	{
-		private static List<KeyValuePair<string, Mutex>> m_vMutexesWin =
+		private static readonly List<KeyValuePair<string, Mutex>> g_lMutexesWin =
 			new List<KeyValuePair<string, Mutex>>();
-		private static List<KeyValuePair<string, string>> m_vMutexesUnix =
+		private static readonly List<KeyValuePair<string, string>> g_lMutexesUnix =
 			new List<KeyValuePair<string, string>>();
 
 		private static int m_iLastRefresh = 0;
@@ -53,7 +53,7 @@ namespace KeePass.Util
 			if(!NativeLib.IsUnix()) // Windows
 				return CreateMutexWin(strName, bInitiallyOwned);
 
-			return CreateMutexUnix(strName, bInitiallyOwned);
+			return CreateMutexUnix(strName);
 		}
 
 		private static bool CreateMutexWin(string strName, bool bInitiallyOwned)
@@ -65,7 +65,7 @@ namespace KeePass.Util
 
 				if(bCreatedNew)
 				{
-					m_vMutexesWin.Add(new KeyValuePair<string, Mutex>(strName, m));
+					g_lMutexesWin.Add(new KeyValuePair<string, Mutex>(strName, m));
 					return true;
 				}
 			}
@@ -74,7 +74,7 @@ namespace KeePass.Util
 			return false;
 		}
 
-		private static bool CreateMutexUnix(string strName, bool bInitiallyOwned)
+		private static bool CreateMutexUnix(string strName)
 		{
 			string strPath = GetMutexPath(strName);
 			try
@@ -111,7 +111,7 @@ namespace KeePass.Util
 			try { WriteMutexFilePriv(strPath); }
 			catch(Exception) { Debug.Assert(false); }
 
-			m_vMutexesUnix.Add(new KeyValuePair<string, string>(strName, strPath));
+			g_lMutexesUnix.Add(new KeyValuePair<string, string>(strName, strPath));
 			return true;
 		}
 
@@ -135,17 +135,17 @@ namespace KeePass.Util
 
 		private static bool ReleaseMutexWin(string strName)
 		{
-			for(int i = 0; i < m_vMutexesWin.Count; ++i)
+			for(int i = 0; i < g_lMutexesWin.Count; ++i)
 			{
-				if(m_vMutexesWin[i].Key.Equals(strName, StrUtil.CaseIgnoreCmp))
+				if(g_lMutexesWin[i].Key.Equals(strName, StrUtil.CaseIgnoreCmp))
 				{
-					try { m_vMutexesWin[i].Value.ReleaseMutex(); }
+					try { g_lMutexesWin[i].Value.ReleaseMutex(); }
 					catch(Exception) { Debug.Assert(false); }
 
-					try { m_vMutexesWin[i].Value.Close(); }
+					try { g_lMutexesWin[i].Value.Close(); }
 					catch(Exception) { Debug.Assert(false); }
 
-					m_vMutexesWin.RemoveAt(i);
+					g_lMutexesWin.RemoveAt(i);
 					return true;
 				}
 			}
@@ -155,17 +155,17 @@ namespace KeePass.Util
 
 		private static bool ReleaseMutexUnix(string strName)
 		{
-			for(int i = 0; i < m_vMutexesUnix.Count; ++i)
+			for(int i = 0; i < g_lMutexesUnix.Count; ++i)
 			{
-				if(m_vMutexesUnix[i].Key.Equals(strName, StrUtil.CaseIgnoreCmp))
+				if(g_lMutexesUnix[i].Key.Equals(strName, StrUtil.CaseIgnoreCmp))
 				{
 					for(int r = 0; r < 12; ++r)
 					{
 						try
 						{
-							if(!File.Exists(m_vMutexesUnix[i].Value)) break;
+							if(!File.Exists(g_lMutexesUnix[i].Value)) break;
 
-							File.Delete(m_vMutexesUnix[i].Value);
+							File.Delete(g_lMutexesUnix[i].Value);
 							break;
 						}
 						catch(Exception) { }
@@ -173,7 +173,7 @@ namespace KeePass.Util
 						Thread.Sleep(10);
 					}
 
-					m_vMutexesUnix.RemoveAt(i);
+					g_lMutexesUnix.RemoveAt(i);
 					return true;
 				}
 			}
@@ -185,13 +185,13 @@ namespace KeePass.Util
 		{
 			if(!NativeLib.IsUnix()) // Windows
 			{
-				for(int i = m_vMutexesWin.Count - 1; i >= 0; --i)
-					ReleaseMutexWin(m_vMutexesWin[i].Key);
+				for(int i = g_lMutexesWin.Count - 1; i >= 0; --i)
+					ReleaseMutexWin(g_lMutexesWin[i].Key);
 			}
 			else
 			{
-				for(int i = m_vMutexesUnix.Count - 1; i >= 0; --i)
-					ReleaseMutexUnix(m_vMutexesUnix[i].Key);
+				for(int i = g_lMutexesUnix.Count - 1; i >= 0; --i)
+					ReleaseMutexUnix(g_lMutexesUnix[i].Key);
 			}
 		}
 
@@ -205,9 +205,9 @@ namespace KeePass.Util
 			{
 				m_iLastRefresh = Environment.TickCount;
 
-				for(int i = 0; i < m_vMutexesUnix.Count; ++i)
+				for(int i = 0; i < g_lMutexesUnix.Count; ++i)
 				{
-					try { WriteMutexFilePriv(m_vMutexesUnix[i].Value); }
+					try { WriteMutexFilePriv(g_lMutexesUnix[i].Value); }
 					catch(Exception) { Debug.Assert(false); }
 				}
 			}

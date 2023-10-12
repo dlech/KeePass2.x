@@ -202,7 +202,7 @@ namespace KeePassLib.Serialization
 		private const string ElemCustomData = "CustomData";
 		private const string ElemStringDictExItem = "Item";
 
-		private PwDatabase m_pwDatabase; // Not null, see constructor
+		private readonly PwDatabase m_pwDatabase; // Not null
 		private bool m_bUsedOnce = false;
 
 		private XmlWriter m_xmlWriter = null;

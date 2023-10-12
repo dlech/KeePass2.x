@@ -26,11 +26,11 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 {
 	public sealed class CustomPwGeneratorPool : IEnumerable<CustomPwGenerator>
 	{
-		private List<CustomPwGenerator> m_vGens = new List<CustomPwGenerator>();
+		private readonly List<CustomPwGenerator> m_lGens = new List<CustomPwGenerator>();
 
 		public int Count
 		{
-			get { return m_vGens.Count; }
+			get { return m_lGens.Count; }
 		}
 
 		public CustomPwGeneratorPool()
@@ -39,12 +39,12 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_vGens.GetEnumerator();
+			return m_lGens.GetEnumerator();
 		}
 
 		public IEnumerator<CustomPwGenerator> GetEnumerator()
 		{
-			return m_vGens.GetEnumerator();
+			return m_lGens.GetEnumerator();
 		}
 
 		public void Add(CustomPwGenerator pwg)
@@ -56,15 +56,15 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			int nIndex = FindIndex(uuid);
 
-			if(nIndex >= 0) m_vGens[nIndex] = pwg; // Replace
-			else m_vGens.Add(pwg);
+			if(nIndex >= 0) m_lGens[nIndex] = pwg; // Replace
+			else m_lGens.Add(pwg);
 		}
 
 		public CustomPwGenerator Find(PwUuid uuid)
 		{
 			if(uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(CustomPwGenerator pwg in m_vGens)
+			foreach(CustomPwGenerator pwg in m_lGens)
 			{
 				if(uuid.Equals(pwg.Uuid)) return pwg;
 			}
@@ -76,7 +76,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		{
 			if(strName == null) throw new ArgumentNullException("strName");
 
-			foreach(CustomPwGenerator pwg in m_vGens)
+			foreach(CustomPwGenerator pwg in m_lGens)
 			{
 				if(pwg.Name == strName) return pwg;
 			}
@@ -88,9 +88,9 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 		{
 			if(uuid == null) throw new ArgumentNullException("uuid");
 
-			for(int i = 0; i < m_vGens.Count; ++i)
+			for(int i = 0; i < m_lGens.Count; ++i)
 			{
-				if(uuid.Equals(m_vGens[i].Uuid)) return i;
+				if(uuid.Equals(m_lGens[i].Uuid)) return i;
 			}
 
 			return -1;
@@ -103,7 +103,7 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 			int nIndex = FindIndex(uuid);
 			if(nIndex < 0) return false;
 
-			m_vGens.RemoveAt(nIndex);
+			m_lGens.RemoveAt(nIndex);
 			return true;
 		}
 	}

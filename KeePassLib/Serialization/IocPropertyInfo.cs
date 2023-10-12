@@ -51,7 +51,7 @@ namespace KeePassLib.Serialization
 			}
 		}
 
-		private List<string> m_lProtocols = new List<string>();
+		private readonly List<string> m_lProtocols = new List<string>();
 		public IEnumerable<string> Protocols
 		{
 			get { return m_lProtocols; }

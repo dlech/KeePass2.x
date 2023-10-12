@@ -75,7 +75,7 @@ namespace KeePass.UI
 		{
 			lock(m_objSync) { m_uProgress = uPercent; }
 
-			return ((m_dlgModal != null) ? m_dlgModal.SetProgress(uPercent) : true);
+			return ((m_dlgModal == null) || m_dlgModal.SetProgress(uPercent));
 		}
 
 		public bool SetText(string strNewText, LogStatusType lsType)
@@ -93,12 +93,12 @@ namespace KeePass.UI
 				m_dlgModal = ConstructStatusDialog();
 
 			lock(m_objSync) { m_strProgress = strNewText; }
-			return ((m_dlgModal != null) ? m_dlgModal.SetText(strNewText, lsType) : true);
+			return ((m_dlgModal == null) || m_dlgModal.SetText(strNewText, lsType));
 		}
 
 		public bool ContinueWork()
 		{
-			return ((m_dlgModal != null) ? m_dlgModal.ContinueWork() : true);
+			return ((m_dlgModal == null) || m_dlgModal.ContinueWork());
 		}
 
 		private void GuiThread()
@@ -172,7 +172,7 @@ namespace KeePass.UI
 
 	public sealed class UIBlockerStatusLogger : IStatusLogger
 	{
-		private MainForm m_mf;
+		private readonly MainForm m_mf;
 
 		private string m_strText = string.Empty;
 		private int m_tLastAnim = Environment.TickCount;

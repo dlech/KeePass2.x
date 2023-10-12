@@ -38,7 +38,7 @@ namespace KeePassLib.Keys
 	/// </summary>
 	public sealed class KcpUserAccount : IUserKey
 	{
-		private ProtectedBinary m_pbKeyData = null;
+		private readonly ProtectedBinary m_pbKeyData;
 
 		// Constant initialization vector (unique for KeePass)
 		private static readonly byte[] m_pbEntropy = new byte[] {

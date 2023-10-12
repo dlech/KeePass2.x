@@ -49,10 +49,11 @@ namespace KeePass.Forms
 		private bool m_bCreatingNew = false;
 		private PwDatabase m_pwDatabase = null;
 
-		private string m_strAutoCreateNew = "(" + KPRes.AutoCreateNew + ")";
-		private Dictionary<int, PwUuid> m_dictRecycleBinGroups = new Dictionary<int, PwUuid>();
-
-		private Dictionary<int, PwUuid> m_dictEntryTemplateGroups = new Dictionary<int, PwUuid>();
+		private readonly string m_strAutoCreateNew = "(" + KPRes.AutoCreateNew + ")";
+		private readonly Dictionary<int, PwUuid> m_dictRecycleBinGroups =
+			new Dictionary<int, PwUuid>();
+		private readonly Dictionary<int, PwUuid> m_dictEntryTemplateGroups =
+			new Dictionary<int, PwUuid>();
 
 		private bool m_bInitializing = true;
 		private volatile Thread m_thKdf = null;
@@ -78,7 +79,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
+			if(m_pwDatabase == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			m_bInitializing = true;
 
@@ -322,7 +323,7 @@ namespace KeePass.Forms
 				m_pwDatabase.DataCipherUuid = StandardAesEngine.AesUuid;
 
 			// m_pwDatabase.KeyEncryptionRounds = (ulong)m_numKdfIt.Value;
-			KdfParameters pKdf = GetKdfParameters(true);
+			KdfParameters pKdf = GetKdfParameters(true, true);
 			if(pKdf != null) m_pwDatabase.KdfParameters = pKdf;
 			// No assert, plugins may assign KDF parameters
 
@@ -494,16 +495,16 @@ namespace KeePass.Forms
 			return KdfPool.Get(m_cmbKdf.Text);
 		}
 
-		private KdfParameters GetKdfParameters(bool bShowAdjustments)
+		private KdfParameters GetKdfParameters(bool bShowAdjustments, bool bAdjustWeak)
 		{
 			KdfEngine kdf = GetKdf();
 			if(kdf == null) { Debug.Assert(false); return null; }
 
 			string strAdj = string.Empty;
 
-			KdfParameters pKdf = kdf.GetDefaultParameters();
+			KdfParameters p = kdf.GetDefaultParameters();
 			if(kdf is AesKdf)
-				pKdf.SetUInt64(AesKdf.ParamRounds, (ulong)m_numKdfIt.Value);
+				p.SetUInt64(AesKdf.ParamRounds, (ulong)m_numKdfIt.Value);
 			else if(kdf is Argon2Kdf)
 			{
 				ulong uIt = (ulong)m_numKdfIt.Value;
@@ -511,7 +512,7 @@ namespace KeePass.Forms
 					KPRes.Iterations, ref strAdj);
 				AdjustKdfParam<ulong>(ref uIt, "<=", Argon2Kdf.MaxIterations,
 					KPRes.Iterations, ref strAdj);
-				pKdf.SetUInt64(Argon2Kdf.ParamIterations, uIt);
+				p.SetUInt64(Argon2Kdf.ParamIterations, uIt);
 
 				// Adjust parallelism first, as memory depends on it
 				uint uPar = (uint)m_numKdfPar.Value;
@@ -523,7 +524,7 @@ namespace KeePass.Forms
 					uParMax = Math.Min(uParMax, (uint)(cp * 2));
 				AdjustKdfParam<uint>(ref uPar, "<=", uParMax,
 					KPRes.Parallelism, ref strAdj);
-				pKdf.SetUInt32(Argon2Kdf.ParamParallelism, uPar);
+				p.SetUInt32(Argon2Kdf.ParamParallelism, uPar);
 
 				ulong uMem = (ulong)m_numKdfMem.Value;
 				int iMemUnit = m_cmbKdfMem.SelectedIndex;
@@ -539,24 +540,26 @@ namespace KeePass.Forms
 					--iMemUnit;
 				}
 
-				// 8*p blocks = 1024*8*p bytes minimum memory, see spec
+				// 8*p blocks = 1024*8*p bytes minimum memory, see spec.
 				Debug.Assert(Argon2Kdf.MinMemory == (1024UL * 8UL));
 				ulong uMemMin = Argon2Kdf.MinMemory * uPar;
 				AdjustKdfParam<ulong>(ref uMem, ">=", uMemMin,
 					KPRes.Memory, ref strAdj);
 				AdjustKdfParam<ulong>(ref uMem, "<=", Argon2Kdf.MaxMemory,
 					KPRes.Memory, ref strAdj);
-				pKdf.SetUInt64(Argon2Kdf.ParamMemory, uMem);
+				p.SetUInt64(Argon2Kdf.ParamMemory, uMem);
 			}
 			else return null; // Plugins may handle it
 
-			if(bShowAdjustments && (strAdj.Length > 0))
+			if(bShowAdjustments && (strAdj.Length != 0))
 			{
 				strAdj = KPRes.KdfAdjust + MessageService.NewParagraph + strAdj;
 				MessageService.ShowInfo(strAdj);
 			}
 
-			return pKdf;
+			if(bAdjustWeak) KeyUtil.KdfAdjustWeakParameters(ref p, null);
+
+			return p;
 		}
 
 		private static void AdjustKdfParam<T>(ref T tValue, string strReq,
@@ -734,7 +737,7 @@ namespace KeePass.Forms
 
 		private void OnBtnKdfTest(object sender, EventArgs e)
 		{
-			KdfParameters p = GetKdfParameters(true);
+			KdfParameters p = GetKdfParameters(true, false);
 			if(p == null) return; // No assert, plugins
 
 			if(m_thKdf != null) { Debug.Assert(false); return; }

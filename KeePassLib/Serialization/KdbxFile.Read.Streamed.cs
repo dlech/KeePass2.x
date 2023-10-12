@@ -72,7 +72,7 @@ namespace KeePassLib.Serialization
 		}
 
 		private bool m_bReadNextNode = true;
-		private Stack<PwGroup> m_ctxGroups = new Stack<PwGroup>();
+		private readonly Stack<PwGroup> m_ctxGroups = new Stack<PwGroup>();
 		private PwGroup m_ctxGroup = null;
 		private PwEntry m_ctxEntry = null;
 		private string m_ctxStringName = null;

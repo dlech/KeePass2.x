@@ -68,27 +68,26 @@ namespace KeePassLib.Serialization
 			string[] vHttp = new string[] { strHttp, strHttps, strWebDav };
 			string[] vFtp = new string[] { strFtp };
 
-			List<IocPropertyInfo> l = new List<IocPropertyInfo>();
+			m_l = new List<IocPropertyInfo>
+			{
+				new IocPropertyInfo(IocKnownProperties.Timeout,
+					typeof(long), KLRes.Timeout + " [ms]", vGen),
+				new IocPropertyInfo(IocKnownProperties.PreAuth,
+					typeof(bool), KLRes.PreAuth, vGen),
 
-			l.Add(new IocPropertyInfo(IocKnownProperties.Timeout,
-				typeof(long), KLRes.Timeout + " [ms]", vGen));
-			l.Add(new IocPropertyInfo(IocKnownProperties.PreAuth,
-				typeof(bool), KLRes.PreAuth, vGen));
+				new IocPropertyInfo(IocKnownProperties.UserAgent,
+					typeof(string), KLRes.UserAgent, vHttp),
+				new IocPropertyInfo(IocKnownProperties.Expect100Continue,
+					typeof(bool), KLRes.Expect100Continue, vHttp),
 
-			l.Add(new IocPropertyInfo(IocKnownProperties.UserAgent,
-				typeof(string), KLRes.UserAgent, vHttp));
-			l.Add(new IocPropertyInfo(IocKnownProperties.Expect100Continue,
-				typeof(bool), KLRes.Expect100Continue, vHttp));
+				new IocPropertyInfo(IocKnownProperties.Passive,
+					typeof(bool), KLRes.Passive, vFtp)
 
-			l.Add(new IocPropertyInfo(IocKnownProperties.Passive,
-				typeof(bool), KLRes.Passive, vFtp));
-
-			// l.Add(new IocPropertyInfo("Test", typeof(bool),
-			//	"Long long long long long long long long long long long long long long long long long long long long",
-			//	new string[] { "Proto 1/9", "Proto 2/9", "Proto 3/9", "Proto 4/9", "Proto 5/9",
-			//	"Proto 6/9", "Proto 7/9", "Proto 8/9", "Proto 9/9" }));
-
-			m_l = l;
+				// new IocPropertyInfo("Test", typeof(bool),
+				//	"Long long long long long long long long long long long long long long long long long long long long",
+				//	new string[] { "Proto 1/9", "Proto 2/9", "Proto 3/9", "Proto 4/9", "Proto 5/9",
+				//	"Proto 6/9", "Proto 7/9", "Proto 8/9", "Proto 9/9" }));
+			};
 		}
 
 		public static IocPropertyInfo Get(string strName)

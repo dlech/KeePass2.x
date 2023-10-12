@@ -487,7 +487,7 @@ namespace KeePassLib.Utility
 			return (pi.GetValue(c, null) as EventHandlerList);
 		}
 
-		private static Dictionary<object, MwaHandlerInfo> m_dictHandlers =
+		private static readonly Dictionary<object, MwaHandlerInfo> g_dHandlers =
 			new Dictionary<object, MwaHandlerInfo>();
 		private static void ApplyToButton(Button btn, Form fContext)
 		{
@@ -500,7 +500,7 @@ namespace KeePassLib.Utility
 			Delegate fnClick = ehl[objClickEvent]; // May be null
 
 			EventHandler fnOvr = new EventHandler(MonoWorkarounds.OnButtonClick);
-			m_dictHandlers[btn] = new MwaHandlerInfo(fnClick, fnOvr, dr, fContext);
+			g_dHandlers[btn] = new MwaHandlerInfo(fnClick, fnOvr, dr, fContext);
 
 			btn.DialogResult = DialogResult.None;
 			if(fnClick != null) ehl.RemoveHandler(objClickEvent, fnClick);
@@ -510,13 +510,13 @@ namespace KeePassLib.Utility
 		private static void ReleaseControl(Control c, Form fContext)
 		{
 			Button btn = (c as Button);
-			if(btn != null) ReleaseButton(btn, fContext);
+			if(btn != null) ReleaseButton(btn);
 		}
 
-		private static void ReleaseButton(Button btn, Form fContext)
+		private static void ReleaseButton(Button btn)
 		{
 			MwaHandlerInfo hi;
-			m_dictHandlers.TryGetValue(btn, out hi);
+			g_dHandlers.TryGetValue(btn, out hi);
 			if(hi == null) return;
 
 			object objClickEvent;
@@ -528,7 +528,7 @@ namespace KeePassLib.Utility
 				ehl[objClickEvent] = hi.FunctionOriginal;
 
 			btn.DialogResult = hi.Result;
-			m_dictHandlers.Remove(btn);
+			g_dHandlers.Remove(btn);
 		}
 
 		private static void OnButtonClick(object sender, EventArgs e)
@@ -537,7 +537,7 @@ namespace KeePassLib.Utility
 			if(btn == null) { Debug.Assert(false); return; }
 
 			MwaHandlerInfo hi;
-			m_dictHandlers.TryGetValue(btn, out hi);
+			g_dHandlers.TryGetValue(btn, out hi);
 			if(hi == null) { Debug.Assert(false); return; }
 
 			Form f = hi.FormContext;

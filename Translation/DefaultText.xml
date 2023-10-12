@@ -67,6 +67,9 @@
 		<Data Name="AllUsers">
 			<Value>All Users</Value>
 		</Data>
+		<Data Name="AlwaysP">
+			<Value>always '{PARAM}'</Value>
+		</Data>
 		<Data Name="Application">
 			<Value>Application</Value>
 		</Data>
@@ -1507,6 +1510,15 @@
 		<Data Name="KeyProvIncmpWithSDHint">
 			<Value>If you want to use the selected key provider, you have to disable the secure desktop option in 'Tools' -&gt; 'Options' -&gt; tab 'Security'.</Value>
 		</Data>
+		<Data Name="KeyTransformDefaultsQ">
+			<Value>Do you want to set them to the current default values (recommended)?</Value>
+		</Data>
+		<Data Name="KeyTransformWeak">
+			<Value>The key transformation settings of the database are weak.</Value>
+		</Data>
+		<Data Name="KeyTransformWeakWarning">
+			<Value>Show warning when the key transformation settings are weak</Value>
+		</Data>
 		<Data Name="LanguageSelected">
 			<Value>The selected language has been activated. KeePass must be restarted in order to load the language.</Value>
 		</Data>
@@ -1610,7 +1622,7 @@
 			<Value>Master key changed</Value>
 		</Data>
 		<Data Name="MasterKeyChangeForce">
-			<Value>The master key for this database has been used for quite a while and must be changed now.</Value>
+			<Value>The master key for this database has been used for a while and must be changed now.</Value>
 		</Data>
 		<Data Name="MasterKeyChangeInfo">
 			<Value>Click [OK] to open the master key changing dialog.</Value>
@@ -1619,7 +1631,7 @@
 			<Value>Do you want to change the master key now?</Value>
 		</Data>
 		<Data Name="MasterKeyChangeRec">
-			<Value>The master key for this database has been used for quite a while and it is recommended to change it now.</Value>
+			<Value>The master key for this database has been used for a while and it is recommended to change it now.</Value>
 		</Data>
 		<Data Name="MasterKeyComponents">
 			<Value>The master key for this database file consists of the following components:</Value>

@@ -49,7 +49,7 @@ namespace KeePass.Forms
 		private bool m_bCanRememberCred = true;
 		private bool m_bTestConnection = false;
 
-		private List<KeyValuePair<IocPropertyInfo, Control>> m_lProps =
+		private readonly List<KeyValuePair<IocPropertyInfo, Control>> m_lProps =
 			new List<KeyValuePair<IocPropertyInfo, Control>>();
 
 		public IOConnectionInfo IOConnectionInfo
@@ -303,12 +303,7 @@ namespace KeePass.Forms
 
 				List<IocPropertyInfo> l;
 				if(d.TryGetValue(strPrt, out l)) l.Add(pi);
-				else
-				{
-					l = new List<IocPropertyInfo>();
-					l.Add(pi);
-					d[strPrt] = l;
-				}
+				else d[strPrt] = new List<IocPropertyInfo> { pi };
 			}
 
 			return d;

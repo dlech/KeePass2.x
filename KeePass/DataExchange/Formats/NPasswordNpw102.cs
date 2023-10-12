@@ -60,7 +60,7 @@ namespace KeePass.DataExchange.Formats
 
 		private static readonly string Password2Key = PwDefs.PasswordField + " 2";
 
-		private static Dictionary<string, string> m_dAutoTypeConv = null;
+		private static Dictionary<string, string> g_dAutoTypeConv = null;
 
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
@@ -72,20 +72,17 @@ namespace KeePass.DataExchange.Formats
 		public override void Import(PwDatabase pwStorage, Stream sInput,
 			IStatusLogger slLogger)
 		{
-			if(m_dAutoTypeConv == null)
-			{
-				Dictionary<string, string> d = new Dictionary<string, string>();
-
-				d[@"{login}"] = @"{USERNAME}";
-				d[@"{password}"] = @"{PASSWORD}";
-				d[@"{additional key}"] = @"{S:" + Password2Key + @"}";
-				d[@"{url}"] = @"{URL}";
-				d[@"{memo}"] = @"{NOTES}";
-				d[@"[tab]"] = @"{TAB}";
-				d[@"[enter]"] = @"{ENTER}";
-
-				m_dAutoTypeConv = d;
-			}
+			if(g_dAutoTypeConv == null)
+				g_dAutoTypeConv = new Dictionary<string, string>
+				{
+					{ @"{login}", @"{USERNAME}" },
+					{ @"{password}", @"{PASSWORD}" },
+					{ @"{additional key}", @"{S:" + Password2Key + @"}" },
+					{ @"{url}", @"{URL}" },
+					{ @"{memo}", @"{NOTES}" },
+					{ @"[tab]", @"{TAB}" },
+					{ @"[enter]", @"{ENTER}" }
+				};
 
 			byte[] pbData = MemUtil.Read(sInput);
 
@@ -213,7 +210,7 @@ namespace KeePass.DataExchange.Formats
 					string strValue = XmlUtil.SafeInnerText(xmlChild);
 
 					string strConv = null;
-					foreach(KeyValuePair<string, string> kvp in m_dAutoTypeConv)
+					foreach(KeyValuePair<string, string> kvp in g_dAutoTypeConv)
 					{
 						if(kvp.Key.Equals(strValue, StrUtil.CaseIgnoreCmp))
 						{

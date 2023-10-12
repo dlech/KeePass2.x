@@ -53,8 +53,8 @@ namespace KeePass.Forms
 		private uint m_uUIAutoBlocked = 0;
 		private bool m_bDisposed = false;
 
-		private List<string> m_lKeyFileNames = new List<string>();
-		// private List<Image> m_lKeyFileImages = new List<Image>();
+		private readonly List<string> m_lKeyFileNames = new List<string>();
+		// private readonly List<Image> m_lKeyFileImages = new List<Image>();
 
 		private bool m_bSecureDesktop = false;
 		[Browsable(false)]

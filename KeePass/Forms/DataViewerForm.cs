@@ -65,7 +65,7 @@ namespace KeePass.Forms
 		private bool m_bDataExpanded = false;
 
 		private string m_strInitialFormRect = string.Empty;
-		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
+		private readonly RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
 
 		private Image m_img = null;
 		private Image m_imgResized = null;
@@ -662,7 +662,7 @@ namespace KeePass.Forms
 				if(!str.EndsWith("%")) continue;
 				str = str.Substring(0, str.Length - 1);
 
-				int zItem = 0;
+				int zItem;
 				if(!int.TryParse(str, out zItem)) { Debug.Assert(false); continue; }
 
 				int d = Math.Abs(z - zItem);

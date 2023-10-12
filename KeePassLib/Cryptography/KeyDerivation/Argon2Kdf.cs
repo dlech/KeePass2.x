@@ -55,14 +55,14 @@ namespace KeePassLib.Cryptography.KeyDerivation
 		private const uint MaxVersion = 0x13;
 
 		private const int MinSalt = 8;
-		private const int MaxSalt = int.MaxValue; // .NET limit; 2^32 - 1 in spec.
+		private const int MaxSalt = int.MaxValue; // 2^32 - 1 in spec.
 
 		internal const ulong MinIterations = 1;
 		internal const ulong MaxIterations = uint.MaxValue;
 
 		internal const ulong MinMemory = 1024 * 8; // For parallelism = 1
 		// internal const ulong MaxMemory = (ulong)uint.MaxValue * 1024UL; // Spec.
-		internal const ulong MaxMemory = int.MaxValue; // .NET limit
+		internal const ulong MaxMemory = int.MaxValue;
 
 		internal const uint MinParallelism = 1;
 		internal const uint MaxParallelism = (1 << 24) - 1;
@@ -106,6 +106,21 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			p.SetUInt32(ParamParallelism, DefaultParallelism);
 
 			return p;
+		}
+
+		public override bool AreParametersWeak(KdfParameters p)
+		{
+			if(p == null) { Debug.Assert(false); return false; }
+
+			ulong uIt = p.GetUInt64(ParamIterations, 0);
+			if(uIt < MinIterations) { Debug.Assert(false); return false; }
+			ulong uMem = p.GetUInt64(ParamMemory, 0);
+			if(uMem < MinMemory) { Debug.Assert(false); return false; }
+
+			const ulong wDefault = checked(DefaultIterations * DefaultMemory);
+			try { return (checked(uIt * uMem) < wDefault); }
+			catch(Exception) { Debug.Assert(false); }
+			return false;
 		}
 
 		public override void Randomize(KdfParameters p)

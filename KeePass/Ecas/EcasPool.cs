@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using KeePass.Resources;
+
 using KeePassLib;
 using KeePassLib.Utility;
 
@@ -29,26 +30,26 @@ namespace KeePass.Ecas
 {
 	public sealed class EcasPool
 	{
-		private List<EcasEventProvider> m_vEventProviders =
+		private readonly List<EcasEventProvider> m_lEventProviders =
 			new List<EcasEventProvider>();
-		private List<EcasConditionProvider> m_vConditionProviders =
+		private readonly List<EcasConditionProvider> m_lConditionProviders =
 			new List<EcasConditionProvider>();
-		private List<EcasActionProvider> m_vActionProviders =
+		private readonly List<EcasActionProvider> m_lActionProviders =
 			new List<EcasActionProvider>();
 
 		internal List<EcasEventProvider> EventProviders
 		{
-			get { return m_vEventProviders; }
+			get { return m_lEventProviders; }
 		}
 
 		internal List<EcasConditionProvider> ConditionProviders
 		{
-			get { return m_vConditionProviders; }
+			get { return m_lConditionProviders; }
 		}
 
 		internal List<EcasActionProvider> ActionProviders
 		{
-			get { return m_vActionProviders; }
+			get { return m_lActionProviders; }
 		}
 
 		public EcasPool()
@@ -62,28 +63,28 @@ namespace KeePass.Ecas
 
 		private void AddDefaultProviders()
 		{
-			m_vEventProviders.Add(new EcasDefaultEventProvider());
-			m_vConditionProviders.Add(new EcasDefaultConditionProvider());
-			m_vActionProviders.Add(new EcasDefaultActionProvider());
+			m_lEventProviders.Add(new EcasDefaultEventProvider());
+			m_lConditionProviders.Add(new EcasDefaultConditionProvider());
+			m_lActionProviders.Add(new EcasDefaultActionProvider());
 		}
 
 		public void AddEventProvider(EcasEventProvider p)
 		{
 			if(p == null) throw new ArgumentNullException("p");
-			m_vEventProviders.Add(p);
+			m_lEventProviders.Add(p);
 		}
 
 		public bool RemoveEventProvider(EcasEventProvider p)
 		{
 			if(p == null) throw new ArgumentNullException("p");
-			return m_vEventProviders.Remove(p);
+			return m_lEventProviders.Remove(p);
 		}
 
 		public EcasEventType FindEvent(string strEventName)
 		{
 			if(strEventName == null) throw new ArgumentNullException("strEventName");
 
-			foreach(EcasEventProvider p in m_vEventProviders)
+			foreach(EcasEventProvider p in m_lEventProviders)
 			{
 				EcasEventType t = p.Find(strEventName);
 				if(t != null) return t;
@@ -96,7 +97,7 @@ namespace KeePass.Ecas
 		{
 			if(uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(EcasEventProvider p in m_vEventProviders)
+			foreach(EcasEventProvider p in m_lEventProviders)
 			{
 				EcasEventType t = p.Find(uuid);
 				if(t != null) return t;
@@ -108,20 +109,20 @@ namespace KeePass.Ecas
 		public void AddConditionProvider(EcasConditionProvider p)
 		{
 			if(p == null) throw new ArgumentNullException("p");
-			m_vConditionProviders.Add(p);
+			m_lConditionProviders.Add(p);
 		}
 
 		public bool RemoveConditionProvider(EcasConditionProvider p)
 		{
 			if(p == null) throw new ArgumentNullException("p");
-			return m_vConditionProviders.Remove(p);
+			return m_lConditionProviders.Remove(p);
 		}
 
 		public EcasConditionType FindCondition(string strConditionName)
 		{
 			if(strConditionName == null) throw new ArgumentNullException("strConditionName");
 
-			foreach(EcasConditionProvider p in m_vConditionProviders)
+			foreach(EcasConditionProvider p in m_lConditionProviders)
 			{
 				EcasConditionType t = p.Find(strConditionName);
 				if(t != null) return t;
@@ -134,7 +135,7 @@ namespace KeePass.Ecas
 		{
 			if(uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(EcasConditionProvider p in m_vConditionProviders)
+			foreach(EcasConditionProvider p in m_lConditionProviders)
 			{
 				EcasConditionType t = p.Find(uuid);
 				if(t != null) return t;
@@ -146,20 +147,20 @@ namespace KeePass.Ecas
 		public void AddActionProvider(EcasActionProvider p)
 		{
 			if(p == null) throw new ArgumentNullException("p");
-			m_vActionProviders.Add(p);
+			m_lActionProviders.Add(p);
 		}
 
 		public bool RemoveActionProvider(EcasActionProvider p)
 		{
 			if(p == null) throw new ArgumentNullException("p");
-			return m_vActionProviders.Remove(p);
+			return m_lActionProviders.Remove(p);
 		}
 
 		public EcasActionType FindAction(string strActionName)
 		{
 			if(strActionName == null) throw new ArgumentNullException("strActionName");
 
-			foreach(EcasActionProvider p in m_vActionProviders)
+			foreach(EcasActionProvider p in m_lActionProviders)
 			{
 				EcasActionType t = p.Find(strActionName);
 				if(t != null) return t;
@@ -172,7 +173,7 @@ namespace KeePass.Ecas
 		{
 			if(uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(EcasActionProvider p in m_vActionProviders)
+			foreach(EcasActionProvider p in m_lActionProviders)
 			{
 				EcasActionType t = p.Find(uuid);
 				if(t != null) return t;
@@ -188,7 +189,7 @@ namespace KeePass.Ecas
 
 			if(!e.Type.Equals(ctx.Event.Type)) return false;
 
-			foreach(EcasEventProvider p in m_vEventProviders)
+			foreach(EcasEventProvider p in m_lEventProviders)
 			{
 				if(p.IsSupported(e.Type))
 					return p.Compare(e, ctx);
@@ -202,7 +203,7 @@ namespace KeePass.Ecas
 		{
 			if(c == null) throw new ArgumentNullException("c");
 
-			foreach(EcasConditionProvider p in m_vConditionProviders)
+			foreach(EcasConditionProvider p in m_lConditionProviders)
 			{
 				if(p.IsSupported(c.Type))
 				{
@@ -219,7 +220,7 @@ namespace KeePass.Ecas
 		{
 			if(a == null) throw new ArgumentNullException("a");
 
-			foreach(EcasActionProvider p in m_vActionProviders)
+			foreach(EcasActionProvider p in m_lActionProviders)
 			{
 				if(p.IsSupported(a.Type))
 				{

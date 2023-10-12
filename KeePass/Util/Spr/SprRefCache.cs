@@ -42,7 +42,7 @@ namespace KeePass.Util.Spr
 			}
 		}
 
-		private List<SprRefCacheItem> m_l = new List<SprRefCacheItem>();
+		private readonly List<SprRefCacheItem> m_l = new List<SprRefCacheItem>();
 
 		public SprRefCache()
 		{

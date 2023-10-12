@@ -233,7 +233,7 @@ namespace KeePass.Util
 			else return;
 			if(strData == null) { Debug.Assert(false); strData = string.Empty; }
 
-			string str = null;
+			string str;
 			if(rxFind != null) str = rxFind.Replace(strData, opt.ReplaceText);
 			else
 			{

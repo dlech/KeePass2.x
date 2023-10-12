@@ -872,6 +872,7 @@
     <Compile Include="UI\FileIcons.cs" />
     <Compile Include="UI\FontControlGroup.cs" />
     <Compile Include="UI\FontUtil.cs" />
+    <Compile Include="UI\FormDataExchange.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IconColorizer.cs" />
     <Compile Include="UI\IGwmWindow.cs" />
@@ -1454,6 +1455,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_27A70973F3FC3787 /compiler:/delaysign-</PostBuildEvent>
+    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_8C26407DBC890166 /compiler:/delaysign-</PostBuildEvent>
   </PropertyGroup>
 </Project>

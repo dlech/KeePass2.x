@@ -113,7 +113,7 @@ namespace KeePass.UI
 			this.AutoWordSelection = false;
 		}
 
-		private CriticalSectionEx m_csAutoProps = new CriticalSectionEx();
+		private readonly CriticalSectionEx m_csAutoProps = new CriticalSectionEx();
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);

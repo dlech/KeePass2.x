@@ -104,7 +104,7 @@ namespace KeePass.Util
 
 	public static class UpdateCheckEx
 	{
-		private static Dictionary<string, string> g_dFileSigKeys =
+		private static readonly Dictionary<string, string> g_dFileSigKeys =
 			new Dictionary<string, string>();
 
 		private static readonly string CompMain = PwDefs.ShortProductName;

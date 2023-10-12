@@ -30,7 +30,7 @@ namespace KeePassLib.Keys
 	public sealed class KcpCustomKey : IUserKey
 	{
 		private readonly string m_strName;
-		private ProtectedBinary m_pbKey;
+		private readonly ProtectedBinary m_pbKey;
 
 		/// <summary>
 		/// Name of the provider that generated the custom key.

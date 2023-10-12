@@ -457,9 +457,11 @@ namespace KeePass
 #if DEBUG
 			if(m_cmdLineArgs[AppDefs.CommandLineOptions.TestGfx] != null)
 			{
-				List<Image> lImg = new List<Image>();
-				lImg.Add(Properties.Resources.B16x16_Browser);
-				lImg.Add(Properties.Resources.B48x48_Keyboard_Layout);
+				List<Image> lImg = new List<Image>
+				{
+					Properties.Resources.B16x16_Browser,
+					Properties.Resources.B48x48_Keyboard_Layout
+				};
 				ImageArchive aHighRes = new ImageArchive();
 				aHighRes.Load(Properties.Resources.Images_Client_HighRes);
 				lImg.Add(aHighRes.GetForObject("C12_IRKickFlash"));

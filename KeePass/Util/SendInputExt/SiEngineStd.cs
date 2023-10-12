@@ -39,9 +39,9 @@ namespace KeePass.Util.SendInputExt
 
 		protected bool Cancelled = false;
 
-		private Stopwatch m_swLastEvent = new Stopwatch();
+		private readonly Stopwatch m_swLastEvent = new Stopwatch();
 #if DEBUG
-		private List<long> m_lDelaysRec = new List<long>();
+		private readonly List<long> m_lDelaysRec = new List<long>();
 #endif
 
 		public virtual void Init()

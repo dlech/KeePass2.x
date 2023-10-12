@@ -100,9 +100,7 @@ namespace KeePass.Forms
 
 			UIUtil.SetExplorerTheme(m_lvLanguages, true);
 
-			List<Image> lImg = new List<Image>();
-			lImg.Add(Properties.Resources.B16x16_Browser);
-
+			List<Image> lImg = new List<Image> { Properties.Resources.B16x16_Browser };
 			m_ilIcons = UIUtil.BuildImageListUnscaled(lImg,
 				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
 			m_lvLanguages.SmallImageList = m_ilIcons;
@@ -125,8 +123,10 @@ namespace KeePass.Forms
 			string strDirU = AceApplication.GetLanguagesDir(AceDir.User, false);
 
 			List<KeyValuePair<string, KPTranslation>> lTrls =
-				new List<KeyValuePair<string, KPTranslation>>();
-			lTrls.Add(new KeyValuePair<string, KPTranslation>(string.Empty, trlEng));
+				new List<KeyValuePair<string, KPTranslation>>
+			{
+				new KeyValuePair<string, KPTranslation>(string.Empty, trlEng)
+			};
 			AddTranslations(strDirA, lTrls);
 			if(WinUtil.IsAppX) AddTranslations(strDirU, lTrls);
 			lTrls.Sort(LanguageForm.CompareTrlItems);

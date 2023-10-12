@@ -838,7 +838,7 @@ namespace KeePassLib
 					// else if(mm == PwMergeMethod.KeepExisting) ...
 				}
 
-				return ((slStatus != null) ? slStatus.ContinueWork() : true);
+				return ((slStatus == null) || slStatus.ContinueWork());
 			};
 
 			EntryHandler ehSrc = delegate(PwEntry pe)
@@ -899,7 +899,7 @@ namespace KeePassLib
 					MergeEntryHistory(peLocal, pe, mm);
 				}
 
-				return ((slStatus != null) ? slStatus.ContinueWork() : true);
+				return ((slStatus == null) || slStatus.ContinueWork());
 			};
 
 			ghSrc(pdSource.RootGroup);

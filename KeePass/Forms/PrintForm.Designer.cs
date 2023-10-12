@@ -501,8 +501,6 @@
 			// m_cbNotes
 			// 
 			this.m_cbNotes.AutoSize = true;
-			this.m_cbNotes.Checked = true;
-			this.m_cbNotes.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_cbNotes.Location = new System.Drawing.Point(464, 20);
 			this.m_cbNotes.Name = "m_cbNotes";
 			this.m_cbNotes.Size = new System.Drawing.Size(54, 17);
@@ -513,8 +511,6 @@
 			// m_cbPassword
 			// 
 			this.m_cbPassword.AutoSize = true;
-			this.m_cbPassword.Checked = true;
-			this.m_cbPassword.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_cbPassword.Location = new System.Drawing.Point(245, 20);
 			this.m_cbPassword.Name = "m_cbPassword";
 			this.m_cbPassword.Size = new System.Drawing.Size(72, 17);
@@ -535,8 +531,6 @@
 			// m_cbUser
 			// 
 			this.m_cbUser.AutoSize = true;
-			this.m_cbUser.Checked = true;
-			this.m_cbUser.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_cbUser.Location = new System.Drawing.Point(107, 20);
 			this.m_cbUser.Name = "m_cbUser";
 			this.m_cbUser.Size = new System.Drawing.Size(77, 17);
@@ -547,8 +541,6 @@
 			// m_cbTitle
 			// 
 			this.m_cbTitle.AutoSize = true;
-			this.m_cbTitle.Checked = true;
-			this.m_cbTitle.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_cbTitle.Location = new System.Drawing.Point(10, 20);
 			this.m_cbTitle.Name = "m_cbTitle";
 			this.m_cbTitle.Size = new System.Drawing.Size(46, 17);

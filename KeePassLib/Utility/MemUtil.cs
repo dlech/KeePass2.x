@@ -870,6 +870,19 @@ namespace KeePassLib.Utility
 			return true;
 		}
 
+		internal static int Count(byte[] pb, byte bt)
+		{
+			if(pb == null) { Debug.Assert(false); return 0; }
+
+			int cb = pb.Length, r = 0;
+			for(int i = 0; i < cb; ++i)
+			{
+				if(pb[i] == bt) ++r;
+			}
+
+			return r;
+		}
+
 		[MethodImpl(MioNoOptimize)]
 		internal static void DisposeIfPossible(object o)
 		{

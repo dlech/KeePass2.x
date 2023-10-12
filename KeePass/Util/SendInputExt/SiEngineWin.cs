@@ -40,7 +40,7 @@ namespace KeePass.Util.SendInputExt
 
 		private SiSendMethod? m_osmEnforced = null;
 
-		private Dictionary<IntPtr, SiWindowInfo> m_dWindowInfos =
+		private readonly Dictionary<IntPtr, SiWindowInfo> m_dWindowInfos =
 			new Dictionary<IntPtr, SiWindowInfo>();
 		private SiWindowInfo m_swiCurrent = new SiWindowInfo(IntPtr.Zero);
 

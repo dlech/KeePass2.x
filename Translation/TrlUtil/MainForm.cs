@@ -48,18 +48,20 @@ namespace TrlUtil
 {
 	public partial class MainForm : Form
 	{
-		private KPTranslation m_trl = new KPTranslation();
+		private readonly KPTranslation m_trl = new KPTranslation();
 		private string m_strFile = string.Empty;
 
-		private ImageList m_ilStr = new ImageList();
+		private readonly ImageList m_ilStr = new ImageList();
 
 		private const string m_strFileFilter = "KeePass Translation (*.lngx)|*.lngx|All Files (*.*)|*.*";
 		private static readonly string[] m_vEmpty = new string[2] {
 			@"<DYN>", @"<>" };
 
 		private KPControlCustomization m_kpccLast = null;
-		private Dictionary<string, ListViewItem> m_dStrings = new Dictionary<string, ListViewItem>();
-		private Dictionary<string, TreeNode> m_dControls = new Dictionary<string, TreeNode>();
+		private readonly Dictionary<string, ListViewItem> m_dStrings =
+			new Dictionary<string, ListViewItem>();
+		private readonly Dictionary<string, TreeNode> m_dControls =
+			new Dictionary<string, TreeNode>();
 
 		private const int m_inxWindow = 6;
 		private const int m_inxMissing = 1;
@@ -346,7 +348,7 @@ namespace TrlUtil
 
 			if(ofd.ShowDialog() != DialogResult.OK) return;
 
-			KPTranslation kpTrl = null;
+			KPTranslation kpTrl;
 			try
 			{
 				XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));

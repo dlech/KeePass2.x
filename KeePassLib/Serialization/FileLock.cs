@@ -126,7 +126,7 @@ namespace KeePassLib.Serialization
 					s = IOConnection.OpenRead(iocLockFile);
 					if(s == null) return null;
 
-					string str = null;
+					string str;
 					using(StreamReader sr = new StreamReader(s, StrUtil.Utf8))
 					{
 						str = sr.ReadToEnd();

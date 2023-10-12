@@ -56,8 +56,8 @@ namespace KeePassLib.Cryptography.Cipher
 		{
 			get
 			{
-				return ("ChaCha20 (" + KLRes.KeyBits.Replace(@"{PARAM}",
-					"256") + ", RFC 7539)");
+				return ("ChaCha20 (" + KLRes.KeyBits.Replace("{PARAM}",
+					"256") + ", RFC 8439)");
 			}
 		}
 

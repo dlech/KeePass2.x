@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using KeePass.Util.Spr;
 
@@ -136,7 +136,7 @@ namespace KeePass.Util
 			get { return m_pd; }
 		}
 
-		private List<string> m_lSeqs = new List<string>();
+		private readonly List<string> m_lSeqs = new List<string>();
 		internal IEnumerable<string> Sequences
 		{
 			get { return m_lSeqs; }

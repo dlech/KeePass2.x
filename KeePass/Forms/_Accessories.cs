@@ -206,17 +206,34 @@ namespace KeePass.Forms
 			set { m_fl = value; }
 		}
 
-		private readonly string m_strText;
+		private object m_oText;
 		public string Text
 		{
-			get { return m_strText; }
+			get
+			{
+				string str = (m_oText as string);
+				if(str != null) return str;
+
+				ProtectedString ps = (m_oText as ProtectedString);
+				if(ps != null) return ps.ReadString();
+
+				Debug.Assert(false);
+				return string.Empty;
+			}
 		}
 
 		public LvfSubItem(ListViewItem lvi, int iSubItem)
 		{
 			if(lvi == null) throw new ArgumentNullException("lvi");
 
-			m_strText = (lvi.SubItems[iSubItem].Text ?? string.Empty);
+			m_oText = (lvi.SubItems[iSubItem].Text ?? string.Empty);
+		}
+
+		public void SetText(ProtectedString ps)
+		{
+			if(ps == null) { Debug.Assert(false); return; }
+
+			m_oText = ps;
 		}
 	}
 

@@ -28,7 +28,7 @@ namespace KeePass.DataExchange
 {
 	public sealed class CsvStreamReader
 	{
-		private CharStream m_sChars;
+		private readonly CharStream m_sChars;
 		private readonly bool m_bAllowUnquoted;
 
 		[Obsolete]

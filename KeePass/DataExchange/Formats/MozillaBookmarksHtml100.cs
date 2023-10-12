@@ -300,9 +300,7 @@ namespace KeePass.DataExchange.Formats
 			}
 
 #if DEBUG
-			List<string> l = new List<string>();
-			l.Add("Tag 1");
-			l.Add("Tag 2");
+			List<string> l = new List<string> { "Tag 1", "Tag 2" };
 			Debug.Assert(StrUtil.TagsToString(l, false) == "Tag 1;Tag 2");
 #endif
 

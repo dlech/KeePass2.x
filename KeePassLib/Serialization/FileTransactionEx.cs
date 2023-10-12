@@ -40,19 +40,19 @@ namespace KeePassLib.Serialization
 {
 	public sealed class FileTransactionEx : IDisposable
 	{
-		private bool m_bTransacted;
+		private readonly bool m_bTransacted;
 		private IOConnectionInfo m_iocBase; // Null means disposed
 		private IOConnectionInfo m_iocTemp;
 		private IOConnectionInfo m_iocTxfMidFallback = null; // Null <=> TxF not used
 
 		private bool m_bMadeUnhidden = false;
-		private List<IOConnectionInfo> m_lToDelete = new List<IOConnectionInfo>();
+		private readonly List<IOConnectionInfo> m_lToDelete = new List<IOConnectionInfo>();
 
 		internal const string StrTempSuffix = ".tmp";
 		private static readonly string StrTxfTempPrefix = PwDefs.ShortProductName + "_TxF_";
 		internal const string StrTxfTempSuffix = ".tmp";
 
-		private static Dictionary<string, bool> g_dEnabled =
+		private static readonly Dictionary<string, bool> g_dEnabled =
 			new Dictionary<string, bool>(StrUtil.CaseIgnoreComparer);
 
 		private static bool g_bExtraSafe = false;

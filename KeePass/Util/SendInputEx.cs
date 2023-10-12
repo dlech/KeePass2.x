@@ -104,7 +104,7 @@ namespace KeePass.Util
 
 	public static class SendInputEx
 	{
-		private static CriticalSectionEx g_csSending = new CriticalSectionEx();
+		private static readonly CriticalSectionEx g_csSending = new CriticalSectionEx();
 
 		private static int g_cCurSending = 0;
 		public static bool IsSending
@@ -168,9 +168,7 @@ namespace KeePass.Util
 			string strError = KPRes.AutoTypeSequenceInvalid;
 
 			Keys kCurKbMods = Keys.None;
-
-			List<Keys> lMods = new List<Keys>();
-			lMods.Add(Keys.None);
+			List<Keys> lMods = new List<Keys> { Keys.None };
 
 			while(true)
 			{

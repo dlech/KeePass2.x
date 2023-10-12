@@ -40,7 +40,7 @@ namespace KeePass.Forms
 {
 	public partial class EcasTriggersForm : Form
 	{
-		private EcasTriggerSystem m_etsInOut = null;
+		// private EcasTriggerSystem m_etsInOut = null;
 		private EcasTriggerSystem m_ets = null;
 
 		private ImageList m_ilIcons = null;
@@ -52,7 +52,7 @@ namespace KeePass.Forms
 
 		public bool InitEx(EcasTriggerSystem ets, ImageList ilIcons)
 		{
-			m_etsInOut = ets;
+			// m_etsInOut = ets;
 			m_ets = ets.CloneDeep();
 
 			m_ilIcons = ilIcons;

@@ -131,13 +131,13 @@ namespace KeePass.Forms
 		private void OnBtnPrev(object sender, EventArgs e)
 		{
 			if(m_tabMain.SelectedIndex > 0)
-				m_tabMain.SelectedIndex = (m_tabMain.SelectedIndex - 1);
+				--m_tabMain.SelectedIndex;
 		}
 
 		private void OnBtnNext(object sender, EventArgs e)
 		{
 			if(m_tabMain.SelectedIndex < (m_tabMain.TabCount - 1))
-				m_tabMain.SelectedIndex = (m_tabMain.SelectedIndex + 1);
+				++m_tabMain.SelectedIndex;
 		}
 
 		private void EnableControlsEx()

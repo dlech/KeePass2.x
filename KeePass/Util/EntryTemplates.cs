@@ -36,10 +36,10 @@ namespace KeePass.Util
 {
 	public sealed class TemplateEntryEventArgs : EventArgs
 	{
-		private PwEntry m_peTemplate;
+		private readonly PwEntry m_peTemplate;
 		public PwEntry TemplateEntry { get { return m_peTemplate; } }
 
-		private PwEntry m_pe;
+		private readonly PwEntry m_pe;
 		public PwEntry Entry { get { return m_pe; } }
 
 		public TemplateEntryEventArgs(PwEntry peTemplate, PwEntry pe)
@@ -52,7 +52,7 @@ namespace KeePass.Util
 	public static class EntryTemplates
 	{
 		private static ToolStripDropDownItem g_tsiHost = null;
-		private static List<ToolStripItem> g_lTopLevelItems = new List<ToolStripItem>();
+		private static readonly List<ToolStripItem> g_lTopLevelItems = new List<ToolStripItem>();
 
 		public static event EventHandler<TemplateEntryEventArgs> EntryCreating;
 		public static event EventHandler<TemplateEntryEventArgs> EntryCreated;

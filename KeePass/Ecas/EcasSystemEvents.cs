@@ -25,13 +25,13 @@ namespace KeePass.Ecas
 {
 	public sealed class EcasRaisingEventArgs : CancellableOperationEventArgs
 	{
-		private EcasEvent m_evt;
+		private readonly EcasEvent m_evt;
 		public EcasEvent Event
 		{
 			get { return m_evt; }
 		}
 
-		private EcasPropertyDictionary m_props;
+		private readonly EcasPropertyDictionary m_props;
 		public EcasPropertyDictionary Properties
 		{
 			get { return m_props; }

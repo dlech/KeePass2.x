@@ -25,7 +25,9 @@ using System.Windows.Forms;
 
 using KeePass.Ecas;
 using KeePass.Resources;
+using KeePass.UI;
 
+using KeePassLib;
 using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Utility;
 
@@ -152,7 +154,27 @@ namespace KeePass.App.Configuration
 			AppConfigSerializer.Save();
 
 			strMsg += strNL + KPRes.ItemsCheckEnable;
-			MessageService.ShowWarning(strMsg);
+
+			VistaTaskDialog dlg = new VistaTaskDialog();
+			dlg.Content = strMsg;
+			dlg.DefaultButtonID = (int)DialogResult.Cancel;
+			dlg.EnableHyperlinks = true;
+			dlg.FooterText = VistaTaskDialog.CreateLink("h", KPRes.MoreInfo);
+			dlg.SetFooterIcon(VtdIcon.Information);
+			dlg.SetIcon(VtdIcon.Warning);
+			dlg.WindowTitle = PwDefs.ShortProductName;
+			dlg.AddButton((int)DialogResult.Cancel, KPRes.Ok, null);
+
+			dlg.LinkClicked += delegate(object sender, LinkClickedEventArgs e)
+			{
+				string str = ((e != null) ? e.LinkText : null);
+				if(string.Equals(str, "h", StrUtil.CaseIgnoreCmp))
+					AppHelp.ShowHelp(AppDefs.HelpTopics.Configuration,
+						AppDefs.HelpTopics.ConfigurationEnableEnf);
+				else { Debug.Assert(false); }
+			};
+
+			if(!dlg.ShowDialog()) MessageService.ShowWarning(strMsg);
 		}
 
 		private static List<AecItem> GetSectionItems(AceSections s, AppConfigEx cfg)

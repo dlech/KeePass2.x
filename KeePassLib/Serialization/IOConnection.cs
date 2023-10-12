@@ -42,7 +42,7 @@ namespace KeePassLib.Serialization
 #if !KeePassLibSD
 	internal sealed class IOWebClient : WebClient
 	{
-		private IOConnectionInfo m_ioc;
+		private readonly IOConnectionInfo m_ioc;
 
 		public IOWebClient(IOConnectionInfo ioc) : base()
 		{
@@ -126,7 +126,7 @@ namespace KeePassLib.Serialization
 		public override IAsyncResult BeginWrite(byte[] buffer, int offset,
 			int count, AsyncCallback callback, object state)
 		{
-			return BeginWrite(buffer, offset, count, callback, state);
+			return m_s.BeginWrite(buffer, offset, count, callback, state);
 		}
 #endif
 

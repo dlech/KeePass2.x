@@ -294,7 +294,6 @@ namespace KeePass.App.Configuration
 			ulong uVersion = this.Meta.GetVersion();
 			AceMainWindow aceMW = this.MainWindow;
 			AceSearch aceSearch = this.Search;
-			AceDefaults aceDef = this.Defaults;
 			AceIntegration aceInt = this.Integration;
 
 			// aceInt.UrlSchemeOverrides.SetDefaultsIfEmpty();
@@ -639,6 +638,7 @@ namespace KeePass.App.Configuration
 				case "/Configuration/Application/PluginCompatibility":
 				case "/Configuration/Meta/DpiFactorX":
 				case "/Configuration/Meta/DpiFactorY":
+				case "/Configuration/Meta/PreferUserConfiguration":
 				case "/Configuration/Meta/Version":
 					o.NodeMode = XmNodeMode.None;
 					break;

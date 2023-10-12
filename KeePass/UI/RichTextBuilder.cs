@@ -31,7 +31,7 @@ namespace KeePass.UI
 {
 	public sealed class RichTextBuilder
 	{
-		private StringBuilder m_sb = new StringBuilder();
+		private readonly StringBuilder m_sb = new StringBuilder();
 
 		private static List<RtfbTag> g_vTags = null;
 		private static bool? g_obURtf = null;
@@ -109,16 +109,17 @@ namespace KeePass.UI
 				strOvrE = "\\ul0 ";
 			}
 
-			List<RtfbTag> l = new List<RtfbTag>();
-			l.Add(new RtfbTag(null, (strOvrS ?? "\\b "), true, FontStyle.Bold));
-			l.Add(new RtfbTag(null, (strOvrE ?? "\\b0 "), false, FontStyle.Bold));
-			l.Add(new RtfbTag(null, (strOvrS ?? "\\i "), true, FontStyle.Italic));
-			l.Add(new RtfbTag(null, (strOvrE ?? "\\i0 "), false, FontStyle.Italic));
-			l.Add(new RtfbTag(null, "\\ul ", true, FontStyle.Underline));
-			l.Add(new RtfbTag(null, "\\ul0 ", false, FontStyle.Underline));
-			l.Add(new RtfbTag(null, "\\strike ", true, FontStyle.Strikeout));
-			l.Add(new RtfbTag(null, "\\strike0 ", false, FontStyle.Strikeout));
-			g_vTags = l;
+			g_vTags = new List<RtfbTag>
+			{
+				new RtfbTag(null, (strOvrS ?? "\\b "), true, FontStyle.Bold),
+				new RtfbTag(null, (strOvrE ?? "\\b0 "), false, FontStyle.Bold),
+				new RtfbTag(null, (strOvrS ?? "\\i "), true, FontStyle.Italic),
+				new RtfbTag(null, (strOvrE ?? "\\i0 "), false, FontStyle.Italic),
+				new RtfbTag(null, "\\ul ", true, FontStyle.Underline),
+				new RtfbTag(null, "\\ul0 ", false, FontStyle.Underline),
+				new RtfbTag(null, "\\strike ", true, FontStyle.Strikeout),
+				new RtfbTag(null, "\\strike0 ", false, FontStyle.Strikeout)
+			};
 		}
 
 		public static KeyValuePair<string, string> GetStyleIdCodes(FontStyle fs)

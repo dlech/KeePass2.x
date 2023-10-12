@@ -35,7 +35,7 @@ namespace KeePassLib.Collections
 	public sealed class StringDictionaryEx : IDeepCloneable<StringDictionaryEx>,
 		IEnumerable<KeyValuePair<string, string>>, IEquatable<StringDictionaryEx>
 	{
-		private SortedDictionary<string, string> m_d =
+		private readonly SortedDictionary<string, string> m_d =
 			new SortedDictionary<string, string>();
 
 		// Non-null if and only if last mod. times should be remembered

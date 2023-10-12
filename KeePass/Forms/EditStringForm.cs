@@ -45,11 +45,11 @@ namespace KeePass.Forms
 		private ProtectedString m_psInitValue = null;
 		private PwDatabase m_pdContext = null;
 
-		private List<string> m_lSuggestedNames = new List<string>();
-		private List<string> m_lStdNames = PwDefs.GetStandardFields();
+		private readonly List<string> m_lSuggestedNames = new List<string>();
+		private readonly List<string> m_lStdNames = PwDefs.GetStandardFields();
 		private readonly char[] m_vInvalidChars = new char[] { '{', '}' };
 
-		private RichTextBoxContextMenu m_ctxValue = new RichTextBoxContextMenu();
+		private readonly RichTextBoxContextMenu m_ctxValue = new RichTextBoxContextMenu();
 		private PwGeneratorMenu m_pgm = null;
 
 		private bool m_bReadOnly = false;

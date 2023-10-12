@@ -935,9 +935,9 @@ namespace KeePassLib
 
 	public sealed class PwEntryComparer : IComparer<PwEntry>
 	{
-		private string m_strFieldName;
-		private bool m_bCaseInsensitive;
-		private bool m_bCompareNaturally;
+		private readonly string m_strFieldName;
+		private readonly bool m_bCaseInsensitive;
+		private readonly bool m_bCompareNaturally;
 
 		public PwEntryComparer(string strFieldName, bool bCaseInsensitive,
 			bool bCompareNaturally)

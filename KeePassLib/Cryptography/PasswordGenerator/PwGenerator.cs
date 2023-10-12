@@ -85,12 +85,13 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
 			// Mix in additional entropy
 			Debug.Assert(pbKey.Length >= 64);
-			if((pbAdditionalEntropy != null) && (pbAdditionalEntropy.Length > 0))
+			if((pbAdditionalEntropy != null) && (pbAdditionalEntropy.Length != 0))
 			{
 				using(SHA512Managed h = new SHA512Managed())
 				{
 					byte[] pbHash = h.ComputeHash(pbAdditionalEntropy);
 					MemUtil.XorArray(pbHash, 0, pbKey, 0, pbHash.Length);
+					MemUtil.ZeroByteArray(pbHash);
 				}
 			}
 

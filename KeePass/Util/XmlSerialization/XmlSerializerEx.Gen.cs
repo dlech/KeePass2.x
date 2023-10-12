@@ -624,6 +624,12 @@ namespace KeePass.Util.XmlSerialization
 					case "MasterKeyExpiryRec":
 						o.MasterKeyExpiryRec = ReadString(xr);
 						break;
+					case "MasterKeyExpiryForce":
+						o.MasterKeyExpiryForce = ReadString(xr);
+						break;
+					case "KeyTransformWeakWarning":
+						o.KeyTransformWeakWarning = ReadBoolean(xr);
+						break;
 					case "ClipboardClearOnExit":
 						o.ClipboardClearOnExit = ReadBoolean(xr);
 						break;
@@ -818,6 +824,15 @@ namespace KeePass.Util.XmlSerialization
 					case "CustomColors":
 						o.CustomColors = ReadString(xr);
 						break;
+					case "RecycleBinCollapse":
+						o.RecycleBinCollapse = ReadBoolean(xr);
+						break;
+					case "Duplication":
+						o.Duplication = ReadAceDuplication(xr);
+						break;
+					case "Print":
+						o.Print = ReadAcePrint(xr);
+						break;
 					case "ExportMasterKeySpec":
 						o.ExportMasterKeySpec = ReadBoolean(xr);
 						break;
@@ -838,9 +853,6 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "WinFavsFileNameSuffix":
 						o.WinFavsFileNameSuffix = ReadString(xr);
-						break;
-					case "RecycleBinCollapse":
-						o.RecycleBinCollapse = ReadBoolean(xr);
 						break;
 					default:
 						Debug.Assert(false);
@@ -2269,6 +2281,154 @@ namespace KeePass.Util.XmlSerialization
 			return o;
 		}
 
+		private static KeePass.App.Configuration.AceDuplication ReadAceDuplication(XmlReader xr)
+		{
+			KeePass.App.Configuration.AceDuplication o = new KeePass.App.Configuration.AceDuplication();
+
+			if(SkipEmptyElement(xr)) return o;
+
+			Debug.Assert(xr.NodeType == XmlNodeType.Element);
+			xr.ReadStartElement();
+			xr.MoveToContent();
+
+			while(true)
+			{
+				XmlNodeType nt = xr.NodeType;
+				if((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+				if(nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
+
+				switch(xr.LocalName)
+				{
+					case "ExtendTitle":
+						o.ExtendTitle = ReadBoolean(xr);
+						break;
+					case "CreateFieldReferences":
+						o.CreateFieldReferences = ReadBoolean(xr);
+						break;
+					case "CopyHistory":
+						o.CopyHistory = ReadBoolean(xr);
+						break;
+					default:
+						Debug.Assert(false);
+						xr.Skip();
+						break;
+				}
+
+				xr.MoveToContent();
+			}
+
+			Debug.Assert(xr.NodeType == XmlNodeType.EndElement);
+			xr.ReadEndElement();
+			return o;
+		}
+
+		private static KeePass.App.Configuration.AcePrint ReadAcePrint(XmlReader xr)
+		{
+			KeePass.App.Configuration.AcePrint o = new KeePass.App.Configuration.AcePrint();
+
+			if(SkipEmptyElement(xr)) return o;
+
+			Debug.Assert(xr.NodeType == XmlNodeType.Element);
+			xr.ReadStartElement();
+			xr.MoveToContent();
+
+			while(true)
+			{
+				XmlNodeType nt = xr.NodeType;
+				if((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+				if(nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
+
+				switch(xr.LocalName)
+				{
+					case "Layout":
+						o.Layout = ReadAcePrintLayout(xr);
+						break;
+					case "IncludeTitle":
+						o.IncludeTitle = ReadBoolean(xr);
+						break;
+					case "IncludeUserName":
+						o.IncludeUserName = ReadBoolean(xr);
+						break;
+					case "IncludePassword":
+						o.IncludePassword = ReadBoolean(xr);
+						break;
+					case "IncludeUrl":
+						o.IncludeUrl = ReadBoolean(xr);
+						break;
+					case "IncludeNotes":
+						o.IncludeNotes = ReadBoolean(xr);
+						break;
+					case "IncludeCreationTime":
+						o.IncludeCreationTime = ReadBoolean(xr);
+						break;
+					case "IncludeLastModificationTime":
+						o.IncludeLastModificationTime = ReadBoolean(xr);
+						break;
+					case "IncludeExpiryTime":
+						o.IncludeExpiryTime = ReadBoolean(xr);
+						break;
+					case "IncludeAutoType":
+						o.IncludeAutoType = ReadBoolean(xr);
+						break;
+					case "IncludeTags":
+						o.IncludeTags = ReadBoolean(xr);
+						break;
+					case "IncludeIcon":
+						o.IncludeIcon = ReadBoolean(xr);
+						break;
+					case "IncludeCustomStrings":
+						o.IncludeCustomStrings = ReadBoolean(xr);
+						break;
+					case "IncludeGroupName":
+						o.IncludeGroupName = ReadBoolean(xr);
+						break;
+					case "IncludeUuid":
+						o.IncludeUuid = ReadBoolean(xr);
+						break;
+					case "ColorP":
+						o.ColorP = ReadBoolean(xr);
+						break;
+					case "ColorPU":
+						o.ColorPU = ReadString(xr);
+						break;
+					case "ColorPL":
+						o.ColorPL = ReadString(xr);
+						break;
+					case "ColorPD":
+						o.ColorPD = ReadString(xr);
+						break;
+					case "ColorPO":
+						o.ColorPO = ReadString(xr);
+						break;
+					case "MainFont":
+						o.MainFont = ReadAceFont(xr);
+						break;
+					case "PasswordFont":
+						o.PasswordFont = ReadAceFont(xr);
+						break;
+					case "SortEntries":
+						o.SortEntries = ReadBoolean(xr);
+						break;
+					case "SortEntriesBy":
+						o.SortEntriesBy = ReadAceColumnType(xr);
+						break;
+					case "Spr":
+						o.Spr = ReadInt32(xr);
+						break;
+					default:
+						Debug.Assert(false);
+						xr.Skip();
+						break;
+				}
+
+				xr.MoveToContent();
+			}
+
+			Debug.Assert(xr.NodeType == XmlNodeType.EndElement);
+			xr.ReadEndElement();
+			return o;
+		}
+
 		private static KeePass.App.Configuration.AceUrlSchemeOverrides ReadAceUrlSchemeOverrides(XmlReader xr)
 		{
 			KeePass.App.Configuration.AceUrlSchemeOverrides o = new KeePass.App.Configuration.AceUrlSchemeOverrides();
@@ -2791,6 +2951,62 @@ namespace KeePass.Util.XmlSerialization
 			return o;
 		}
 
+		private static Dictionary<string, KeePass.App.Configuration.AcePrintLayout> m_dictAcePrintLayout = null;
+		private static KeePass.App.Configuration.AcePrintLayout ReadAcePrintLayout(XmlReader xr)
+		{
+			if(m_dictAcePrintLayout == null)
+			{
+				m_dictAcePrintLayout = new Dictionary<string, KeePass.App.Configuration.AcePrintLayout>();
+				m_dictAcePrintLayout["None"] = KeePass.App.Configuration.AcePrintLayout.None;
+				m_dictAcePrintLayout["Tables"] = KeePass.App.Configuration.AcePrintLayout.Tables;
+				m_dictAcePrintLayout["Blocks"] = KeePass.App.Configuration.AcePrintLayout.Blocks;
+			}
+
+			string strValue = xr.ReadElementString();
+			KeePass.App.Configuration.AcePrintLayout eResult;
+			if(!m_dictAcePrintLayout.TryGetValue(strValue, out eResult))
+				{ Debug.Assert(false); }
+			return eResult;
+		}
+
+		private static Dictionary<string, KeePass.App.Configuration.AceColumnType> m_dictAceColumnType = null;
+		private static KeePass.App.Configuration.AceColumnType ReadAceColumnType(XmlReader xr)
+		{
+			if(m_dictAceColumnType == null)
+			{
+				m_dictAceColumnType = new Dictionary<string, KeePass.App.Configuration.AceColumnType>();
+				m_dictAceColumnType["Title"] = KeePass.App.Configuration.AceColumnType.Title;
+				m_dictAceColumnType["UserName"] = KeePass.App.Configuration.AceColumnType.UserName;
+				m_dictAceColumnType["Password"] = KeePass.App.Configuration.AceColumnType.Password;
+				m_dictAceColumnType["Url"] = KeePass.App.Configuration.AceColumnType.Url;
+				m_dictAceColumnType["Notes"] = KeePass.App.Configuration.AceColumnType.Notes;
+				m_dictAceColumnType["CreationTime"] = KeePass.App.Configuration.AceColumnType.CreationTime;
+				m_dictAceColumnType["LastModificationTime"] = KeePass.App.Configuration.AceColumnType.LastModificationTime;
+				m_dictAceColumnType["LastAccessTime"] = KeePass.App.Configuration.AceColumnType.LastAccessTime;
+				m_dictAceColumnType["ExpiryTime"] = KeePass.App.Configuration.AceColumnType.ExpiryTime;
+				m_dictAceColumnType["Uuid"] = KeePass.App.Configuration.AceColumnType.Uuid;
+				m_dictAceColumnType["Attachment"] = KeePass.App.Configuration.AceColumnType.Attachment;
+				m_dictAceColumnType["CustomString"] = KeePass.App.Configuration.AceColumnType.CustomString;
+				m_dictAceColumnType["PluginExt"] = KeePass.App.Configuration.AceColumnType.PluginExt;
+				m_dictAceColumnType["OverrideUrl"] = KeePass.App.Configuration.AceColumnType.OverrideUrl;
+				m_dictAceColumnType["Tags"] = KeePass.App.Configuration.AceColumnType.Tags;
+				m_dictAceColumnType["ExpiryTimeDateOnly"] = KeePass.App.Configuration.AceColumnType.ExpiryTimeDateOnly;
+				m_dictAceColumnType["Size"] = KeePass.App.Configuration.AceColumnType.Size;
+				m_dictAceColumnType["HistoryCount"] = KeePass.App.Configuration.AceColumnType.HistoryCount;
+				m_dictAceColumnType["AttachmentCount"] = KeePass.App.Configuration.AceColumnType.AttachmentCount;
+				m_dictAceColumnType["LastPasswordModTime"] = KeePass.App.Configuration.AceColumnType.LastPasswordModTime;
+				m_dictAceColumnType["AutoTypeEnabled"] = KeePass.App.Configuration.AceColumnType.AutoTypeEnabled;
+				m_dictAceColumnType["AutoTypeSequences"] = KeePass.App.Configuration.AceColumnType.AutoTypeSequences;
+				m_dictAceColumnType["Count"] = KeePass.App.Configuration.AceColumnType.Count;
+			}
+
+			string strValue = xr.ReadElementString();
+			KeePass.App.Configuration.AceColumnType eResult;
+			if(!m_dictAceColumnType.TryGetValue(strValue, out eResult))
+				{ Debug.Assert(false); }
+			return eResult;
+		}
+
 		private static System.Collections.Generic.List<KeePass.App.Configuration.AceUrlSchemeOverride> ReadListOfAceUrlSchemeOverride(XmlReader xr)
 		{
 			System.Collections.Generic.List<KeePass.App.Configuration.AceUrlSchemeOverride> o = new System.Collections.Generic.List<KeePass.App.Configuration.AceUrlSchemeOverride>();
@@ -2983,44 +3199,6 @@ namespace KeePass.Util.XmlSerialization
 			Debug.Assert(xr.NodeType == XmlNodeType.EndElement);
 			xr.ReadEndElement();
 			return o;
-		}
-
-		private static Dictionary<string, KeePass.App.Configuration.AceColumnType> m_dictAceColumnType = null;
-		private static KeePass.App.Configuration.AceColumnType ReadAceColumnType(XmlReader xr)
-		{
-			if(m_dictAceColumnType == null)
-			{
-				m_dictAceColumnType = new Dictionary<string, KeePass.App.Configuration.AceColumnType>();
-				m_dictAceColumnType["Title"] = KeePass.App.Configuration.AceColumnType.Title;
-				m_dictAceColumnType["UserName"] = KeePass.App.Configuration.AceColumnType.UserName;
-				m_dictAceColumnType["Password"] = KeePass.App.Configuration.AceColumnType.Password;
-				m_dictAceColumnType["Url"] = KeePass.App.Configuration.AceColumnType.Url;
-				m_dictAceColumnType["Notes"] = KeePass.App.Configuration.AceColumnType.Notes;
-				m_dictAceColumnType["CreationTime"] = KeePass.App.Configuration.AceColumnType.CreationTime;
-				m_dictAceColumnType["LastModificationTime"] = KeePass.App.Configuration.AceColumnType.LastModificationTime;
-				m_dictAceColumnType["LastAccessTime"] = KeePass.App.Configuration.AceColumnType.LastAccessTime;
-				m_dictAceColumnType["ExpiryTime"] = KeePass.App.Configuration.AceColumnType.ExpiryTime;
-				m_dictAceColumnType["Uuid"] = KeePass.App.Configuration.AceColumnType.Uuid;
-				m_dictAceColumnType["Attachment"] = KeePass.App.Configuration.AceColumnType.Attachment;
-				m_dictAceColumnType["CustomString"] = KeePass.App.Configuration.AceColumnType.CustomString;
-				m_dictAceColumnType["PluginExt"] = KeePass.App.Configuration.AceColumnType.PluginExt;
-				m_dictAceColumnType["OverrideUrl"] = KeePass.App.Configuration.AceColumnType.OverrideUrl;
-				m_dictAceColumnType["Tags"] = KeePass.App.Configuration.AceColumnType.Tags;
-				m_dictAceColumnType["ExpiryTimeDateOnly"] = KeePass.App.Configuration.AceColumnType.ExpiryTimeDateOnly;
-				m_dictAceColumnType["Size"] = KeePass.App.Configuration.AceColumnType.Size;
-				m_dictAceColumnType["HistoryCount"] = KeePass.App.Configuration.AceColumnType.HistoryCount;
-				m_dictAceColumnType["AttachmentCount"] = KeePass.App.Configuration.AceColumnType.AttachmentCount;
-				m_dictAceColumnType["LastPasswordModTime"] = KeePass.App.Configuration.AceColumnType.LastPasswordModTime;
-				m_dictAceColumnType["AutoTypeEnabled"] = KeePass.App.Configuration.AceColumnType.AutoTypeEnabled;
-				m_dictAceColumnType["AutoTypeSequences"] = KeePass.App.Configuration.AceColumnType.AutoTypeSequences;
-				m_dictAceColumnType["Count"] = KeePass.App.Configuration.AceColumnType.Count;
-			}
-
-			string strValue = xr.ReadElementString();
-			KeePass.App.Configuration.AceColumnType eResult;
-			if(!m_dictAceColumnType.TryGetValue(strValue, out eResult))
-				{ Debug.Assert(false); }
-			return eResult;
 		}
 
 		private static KeePass.App.Configuration.AceUrlSchemeOverride ReadAceUrlSchemeOverride(XmlReader xr)

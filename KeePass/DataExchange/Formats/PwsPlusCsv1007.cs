@@ -103,9 +103,8 @@ namespace KeePass.DataExchange.Formats
 						ImportUtil.AppendToField(pe, PwDefs.NotesField, strNotes, pwStorage);
 					else
 						pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-							((pwStorage == null) ? false :
-							pwStorage.MemoryProtection.ProtectNotes), strNotesPre +
-							Environment.NewLine + Environment.NewLine + strNotes));
+							((pwStorage != null) && pwStorage.MemoryProtection.ProtectNotes),
+							strNotesPre + Environment.NewLine + Environment.NewLine + strNotes));
 				}
 			}
 		}

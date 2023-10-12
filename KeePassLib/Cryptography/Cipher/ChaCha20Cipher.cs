@@ -29,21 +29,17 @@ namespace KeePassLib.Cryptography.Cipher
 {
 	/// <summary>
 	/// Implementation of the ChaCha20 cipher with a 96-bit nonce,
-	/// as specified in RFC 7539.
-	/// https://tools.ietf.org/html/rfc7539
+	/// as specified in RFC 8439 (7539).
+	/// https://datatracker.ietf.org/doc/html/rfc8439
 	/// </summary>
 	public sealed class ChaCha20Cipher : CtrBlockCipher
 	{
-		private uint[] m_s = new uint[16]; // State
-		private uint[] m_x = new uint[16]; // Working buffer
+		private readonly uint[] m_s = new uint[16]; // State
+		private readonly uint[] m_x = new uint[16]; // Working buffer
 
-		private bool m_bLargeCounter; // See constructor documentation
+		private readonly bool m_bLargeCounter; // See constructor documentation
 
-		private static readonly uint[] g_sigma = new uint[4] {
-			0x61707865, 0x3320646E, 0x79622D32, 0x6B206574
-		};
-
-		private const string StrNameRfc = "ChaCha20 (RFC 7539)";
+		private const string StrNameRfc = "ChaCha20 (RFC 8439)";
 
 		public override int BlockSize
 		{
@@ -60,7 +56,7 @@ namespace KeePassLib.Cryptography.Cipher
 		/// </summary>
 		/// <param name="pbKey32">Key (32 bytes).</param>
 		/// <param name="pbIV12">Nonce (12 bytes).</param>
-		/// <param name="bLargeCounter">If <c>false</c>, the RFC 7539 version
+		/// <param name="bLargeCounter">If <c>false</c>, the RFC 8439 version
 		/// of ChaCha20 is used. In this case, only 256 GB of data can be
 		/// encrypted securely (because the block counter is a 32-bit variable);
 		/// an attempt to encrypt more data throws an exception.
@@ -73,7 +69,7 @@ namespace KeePassLib.Cryptography.Cipher
 		/// and the first 4 bytes must be 0.
 		/// If the IV was generated randomly, a 12-byte IV and a large counter
 		/// can be used to securely encrypt more than 256 GB of data (but note
-		/// this is incompatible with RFC 7539 and the original specification).</param>
+		/// this is incompatible with RFC 8439 and the original specification).</param>
 		public ChaCha20Cipher(byte[] pbKey32, byte[] pbIV12, bool bLargeCounter) :
 			base()
 		{
@@ -82,9 +78,11 @@ namespace KeePassLib.Cryptography.Cipher
 			if(pbIV12 == null) throw new ArgumentNullException("pbIV12");
 			if(pbIV12.Length != 12) throw new ArgumentOutOfRangeException("pbIV12");
 
-			m_bLargeCounter = bLargeCounter;
+			m_s[0] = 0x61707865;
+			m_s[1] = 0x3320646E;
+			m_s[2] = 0x79622D32;
+			m_s[3] = 0x6B206574;
 
-			// Key setup
 			m_s[4] = MemUtil.BytesToUInt32(pbKey32, 0);
 			m_s[5] = MemUtil.BytesToUInt32(pbKey32, 4);
 			m_s[6] = MemUtil.BytesToUInt32(pbKey32, 8);
@@ -93,16 +91,13 @@ namespace KeePassLib.Cryptography.Cipher
 			m_s[9] = MemUtil.BytesToUInt32(pbKey32, 20);
 			m_s[10] = MemUtil.BytesToUInt32(pbKey32, 24);
 			m_s[11] = MemUtil.BytesToUInt32(pbKey32, 28);
-			m_s[0] = g_sigma[0];
-			m_s[1] = g_sigma[1];
-			m_s[2] = g_sigma[2];
-			m_s[3] = g_sigma[3];
 
-			// IV setup
 			m_s[12] = 0; // Counter
 			m_s[13] = MemUtil.BytesToUInt32(pbIV12, 0);
 			m_s[14] = MemUtil.BytesToUInt32(pbIV12, 4);
 			m_s[15] = MemUtil.BytesToUInt32(pbIV12, 8);
+
+			m_bLargeCounter = bLargeCounter;
 		}
 
 		protected override void Dispose(bool bDisposing)
@@ -116,10 +111,10 @@ namespace KeePassLib.Cryptography.Cipher
 			base.Dispose(bDisposing);
 		}
 
-		protected override void NextBlock(byte[] pBlock)
+		protected override void NextBlock(byte[] pbBlock)
 		{
-			if(pBlock == null) throw new ArgumentNullException("pBlock");
-			if(pBlock.Length != 64) throw new ArgumentOutOfRangeException("pBlock");
+			if(pbBlock == null) throw new ArgumentNullException("pbBlock");
+			if(pbBlock.Length != 64) throw new ArgumentOutOfRangeException("pbBlock");
 
 			// x is a local alias for the working buffer; with this,
 			// the compiler/runtime might remove some checks
@@ -220,10 +215,10 @@ namespace KeePassLib.Cryptography.Cipher
 					int i4 = i << 2;
 					uint xi = x[i];
 
-					pBlock[i4] = (byte)xi;
-					pBlock[i4 + 1] = (byte)(xi >> 8);
-					pBlock[i4 + 2] = (byte)(xi >> 16);
-					pBlock[i4 + 3] = (byte)(xi >> 24);
+					pbBlock[i4] = (byte)xi;
+					pbBlock[i4 + 1] = (byte)(xi >> 8);
+					pbBlock[i4 + 2] = (byte)(xi >> 16);
+					pbBlock[i4 + 3] = (byte)(xi >> 24);
 				}
 
 				++s[12];

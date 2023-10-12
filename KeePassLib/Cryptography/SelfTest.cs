@@ -243,7 +243,7 @@ namespace KeePassLib.Cryptography
 		private static void TestChaCha20(Random r)
 		{
 			// ======================================================
-			// Test vector from RFC 7539, section 2.3.2
+			// Test vector from RFC 8439, section 2.3.2
 
 			byte[] pbKey = new byte[32];
 			for(int i = 0; i < 32; ++i) pbKey[i] = (byte)i;
@@ -276,7 +276,7 @@ namespace KeePassLib.Cryptography
 
 #if DEBUG
 			// ======================================================
-			// Test vector from RFC 7539, section 2.4.2
+			// Test vector from RFC 8439, section 2.4.2
 
 			pbIV[3] = 0;
 
@@ -314,7 +314,7 @@ namespace KeePassLib.Cryptography
 			}
 
 			// ======================================================
-			// Test vector from RFC 7539, appendix A.2 #2
+			// Test vector from RFC 8439, appendix A.2 #2
 
 			Array.Clear(pbKey, 0, pbKey.Length);
 			pbKey[31] = 1;
@@ -395,7 +395,7 @@ namespace KeePassLib.Cryptography
 			};
 
 			// The first 4 bytes are set to zero and a large counter
-			// is used; this makes the RFC 7539 version of ChaCha20
+			// is used; this makes the RFC 8439 version of ChaCha20
 			// compatible with the original specification by
 			// D. J. Bernstein.
 			pbIV = new byte[12] { 0x00, 0x00, 0x00, 0x00,
@@ -1020,6 +1020,16 @@ namespace KeePassLib.Cryptography
 				throw new SecurityException("ProtectedString-15");
 			if(!ps.Equals(new ProtectedString(false, "ABCDEFGHI"), false))
 				throw new SecurityException("ProtectedString-16");
+			if(!object.ReferenceEquals(ps, ps.Trim()))
+				throw new SecurityException("ProtectedString-17");
+
+			str = "\t\t \r\nA\tB C\r\n ";
+			ps = (new ProtectedString(false, str)).Trim();
+			ps2 = (new ProtectedString(true, str)).Trim();
+			if(ps.IsProtected || !ps2.IsProtected)
+				throw new SecurityException("ProtectedString-18");
+			if((ps.ReadString() != str.Trim()) || (ps2.ReadString() != str.Trim()))
+				throw new SecurityException("ProtectedString-19");
 #endif
 		}
 

@@ -41,8 +41,14 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			return new KdfParameters(this.Uuid);
 		}
 
+		public virtual bool AreParametersWeak(KdfParameters p)
+		{
+			Debug.Assert(p != null);
+			return false;
+		}
+
 		/// <summary>
-		/// Generate random seeds and store them in <paramref name="p" />.
+		/// Generate random seeds/salts and store them in <paramref name="p" />.
 		/// </summary>
 		public virtual void Randomize(KdfParameters p)
 		{

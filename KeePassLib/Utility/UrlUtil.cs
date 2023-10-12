@@ -50,8 +50,8 @@ namespace KeePassLib.Utility
 			{
 				if(g_vDirSepChars == null)
 				{
-					List<char> l = new List<char>();
-					l.Add('/'); // For URLs, also on Windows
+					// '/' for URLs, also on Windows
+					List<char> l = new List<char> { '/' };
 
 					// On Unix-like systems, '\\' is not a separator
 					if(!NativeLib.IsUnix()) l.Add('\\');

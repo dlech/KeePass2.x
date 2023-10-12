@@ -48,7 +48,7 @@ namespace KeePass.Util
 		private List<KeyValuePair<string, bool>> m_lDirs =
 			new List<KeyValuePair<string, bool>>();
 
-		private Dictionary<string, bool> m_dContentLoc = new Dictionary<string, bool>();
+		private readonly Dictionary<string, bool> m_dContentLoc = new Dictionary<string, bool>();
 		private readonly object m_oContentLocSync = new object();
 
 		private long m_nThreads = 0;

@@ -48,6 +48,7 @@ namespace KeePass.Resources
 			m_strAllFiles = TryGetEx(dictNew, "AllFiles", m_strAllFiles);
 			m_strAllSupportedFiles = TryGetEx(dictNew, "AllSupportedFiles", m_strAllSupportedFiles);
 			m_strAllUsers = TryGetEx(dictNew, "AllUsers", m_strAllUsers);
+			m_strAlwaysP = TryGetEx(dictNew, "AlwaysP", m_strAlwaysP);
 			m_strApplication = TryGetEx(dictNew, "Application", m_strApplication);
 			m_strApplicationExit = TryGetEx(dictNew, "ApplicationExit", m_strApplicationExit);
 			m_strApplicationInitialized = TryGetEx(dictNew, "ApplicationInitialized", m_strApplicationInitialized);
@@ -528,6 +529,9 @@ namespace KeePass.Resources
 			m_strKeyProvider = TryGetEx(dictNew, "KeyProvider", m_strKeyProvider);
 			m_strKeyProvIncmpWithSD = TryGetEx(dictNew, "KeyProvIncmpWithSD", m_strKeyProvIncmpWithSD);
 			m_strKeyProvIncmpWithSDHint = TryGetEx(dictNew, "KeyProvIncmpWithSDHint", m_strKeyProvIncmpWithSDHint);
+			m_strKeyTransformDefaultsQ = TryGetEx(dictNew, "KeyTransformDefaultsQ", m_strKeyTransformDefaultsQ);
+			m_strKeyTransformWeak = TryGetEx(dictNew, "KeyTransformWeak", m_strKeyTransformWeak);
+			m_strKeyTransformWeakWarning = TryGetEx(dictNew, "KeyTransformWeakWarning", m_strKeyTransformWeakWarning);
 			m_strLanguageSelected = TryGetEx(dictNew, "LanguageSelected", m_strLanguageSelected);
 			m_strLargeEntries = TryGetEx(dictNew, "LargeEntries", m_strLargeEntries);
 			m_strLargeEntriesList = TryGetEx(dictNew, "LargeEntriesList", m_strLargeEntriesList);
@@ -1018,6 +1022,7 @@ namespace KeePass.Resources
 			"AllFiles",
 			"AllSupportedFiles",
 			"AllUsers",
+			"AlwaysP",
 			"Application",
 			"ApplicationExit",
 			"ApplicationInitialized",
@@ -1498,6 +1503,9 @@ namespace KeePass.Resources
 			"KeyProvider",
 			"KeyProvIncmpWithSD",
 			"KeyProvIncmpWithSDHint",
+			"KeyTransformDefaultsQ",
+			"KeyTransformWeak",
+			"KeyTransformWeakWarning",
 			"LanguageSelected",
 			"LargeEntries",
 			"LargeEntriesList",
@@ -2210,6 +2218,17 @@ namespace KeePass.Resources
 		public static string AllUsers
 		{
 			get { return m_strAllUsers; }
+		}
+
+		private static string m_strAlwaysP =
+			@"always '{PARAM}'";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'always &#39;{PARAM}&#39;'.
+		/// </summary>
+		public static string AlwaysP
+		{
+			get { return m_strAlwaysP; }
 		}
 
 		private static string m_strApplication =
@@ -7492,6 +7511,39 @@ namespace KeePass.Resources
 			get { return m_strKeyProvIncmpWithSDHint; }
 		}
 
+		private static string m_strKeyTransformDefaultsQ =
+			@"Do you want to set them to the current default values (recommended)?";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Do you want to set them to the current default values (recommended)?'.
+		/// </summary>
+		public static string KeyTransformDefaultsQ
+		{
+			get { return m_strKeyTransformDefaultsQ; }
+		}
+
+		private static string m_strKeyTransformWeak =
+			@"The key transformation settings of the database are weak.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The key transformation settings of the database are weak.'.
+		/// </summary>
+		public static string KeyTransformWeak
+		{
+			get { return m_strKeyTransformWeak; }
+		}
+
+		private static string m_strKeyTransformWeakWarning =
+			@"Show warning when the key transformation settings are weak";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Show warning when the key transformation settings are weak'.
+		/// </summary>
+		public static string KeyTransformWeakWarning
+		{
+			get { return m_strKeyTransformWeakWarning; }
+		}
+
 		private static string m_strLanguageSelected =
 			@"The selected language has been activated. KeePass must be restarted in order to load the language.";
 		/// <summary>
@@ -7867,10 +7919,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strMasterKeyChangeForce =
-			@"The master key for this database has been used for quite a while and must be changed now.";
+			@"The master key for this database has been used for a while and must be changed now.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The master key for this database has been used for quite a while and must be changed now.'.
+		/// 'The master key for this database has been used for a while and must be changed now.'.
 		/// </summary>
 		public static string MasterKeyChangeForce
 		{
@@ -7900,10 +7952,10 @@ namespace KeePass.Resources
 		}
 
 		private static string m_strMasterKeyChangeRec =
-			@"The master key for this database has been used for quite a while and it is recommended to change it now.";
+			@"The master key for this database has been used for a while and it is recommended to change it now.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The master key for this database has been used for quite a while and it is recommended to change it now.'.
+		/// 'The master key for this database has been used for a while and it is recommended to change it now.'.
 		/// </summary>
 		public static string MasterKeyChangeRec
 		{

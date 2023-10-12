@@ -314,11 +314,8 @@
         </member>
         <member name="M:KeePassLib.PwDefs.IsStandardField(System.String)">
             <summary>
-            Check if a name is a standard field name.
+            Check whether a name is a standard field name.
             </summary>
-            <param name="strFieldName">Input field name.</param>
-            <returns>Returns <c>true</c>, if the field name is a standard
-            field name (title, user name, password, ...), otherwise <c>false</c>.</returns>
         </member>
         <member name="M:KeePassLib.PwDefs.IsTanEntry(KeePassLib.PwEntry)">
             <summary>
@@ -393,6 +390,12 @@
             Construct a new dictionary of protected strings.
             </summary>
         </member>
+        <member name="M:KeePassLib.Collections.ProtectedStringDictionary.CloneDeep">
+            <summary>
+            Deeply clone the object.
+            </summary>
+            <returns>Cloned object.</returns>
+        </member>
         <member name="M:KeePassLib.Collections.ProtectedStringDictionary.Get(System.String)">
             <summary>
             Get one of the protected strings.
@@ -450,26 +453,26 @@
         </member>
         <member name="M:KeePassLib.Collections.ProtectedStringDictionary.Set(System.String,KeePassLib.Security.ProtectedString)">
             <summary>
-            Set a string.
+            Set a protected string.
             </summary>
-            <param name="strField">Identifier of the string field to modify.</param>
+            <param name="strName">Identifier of the string to set.</param>
             <param name="psNewValue">New value. This parameter must not be <c>null</c>.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if one of the input
+            <exception cref="T:System.ArgumentNullException">Thrown if any of the input
             parameters is <c>null</c>.</exception>
         </member>
         <member name="M:KeePassLib.Collections.ProtectedStringDictionary.Remove(System.String)">
             <summary>
-            Delete a string.
+            Remove a protected string.
             </summary>
-            <param name="strField">Name of the string field to delete.</param>
-            <returns>Returns <c>true</c> if the field has been successfully
-            removed, otherwise the return value is <c>false</c>.</returns>
+            <param name="strName">Identifier of the string to remove.</param>
+            <returns>Returns <c>true</c> if the object has been successfully
+            removed, otherwise <c>false</c>.</returns>
             <exception cref="T:System.ArgumentNullException">Thrown if the input
             parameter is <c>null</c>.</exception>
         </member>
         <member name="P:KeePassLib.Collections.ProtectedStringDictionary.UCount">
             <summary>
-            Get the number of strings.
+            Get the number of items.
             </summary>
         </member>
         <member name="T:KeePassLib.Resources.KLRes">
@@ -930,7 +933,7 @@
         </member>
         <member name="M:KeePassLib.Cryptography.KeyDerivation.KdfEngine.Randomize(KeePassLib.Cryptography.KeyDerivation.KdfParameters)">
             <summary>
-            Generate random seeds and store them in <paramref name="p" />.
+            Generate random seeds/salts and store them in <paramref name="p" />.
             </summary>
         </member>
         <member name="M:KeePassLib.Utility.MonoWorkarounds.ExchangeFormShownRaised(System.Windows.Forms.Form,System.Boolean)">
@@ -1764,8 +1767,8 @@
         <member name="T:KeePassLib.Cryptography.Cipher.ChaCha20Cipher">
             <summary>
             Implementation of the ChaCha20 cipher with a 96-bit nonce,
-            as specified in RFC 7539.
-            https://tools.ietf.org/html/rfc7539
+            as specified in RFC 8439 (7539).
+            https://datatracker.ietf.org/doc/html/rfc8439
             </summary>
         </member>
         <member name="M:KeePassLib.Cryptography.Cipher.ChaCha20Cipher.#ctor(System.Byte[],System.Byte[],System.Boolean)">
@@ -1774,7 +1777,7 @@
             </summary>
             <param name="pbKey32">Key (32 bytes).</param>
             <param name="pbIV12">Nonce (12 bytes).</param>
-            <param name="bLargeCounter">If <c>false</c>, the RFC 7539 version
+            <param name="bLargeCounter">If <c>false</c>, the RFC 8439 version
             of ChaCha20 is used. In this case, only 256 GB of data can be
             encrypted securely (because the block counter is a 32-bit variable);
             an attempt to encrypt more data throws an exception.
@@ -1787,7 +1790,7 @@
             and the first 4 bytes must be 0.
             If the IV was generated randomly, a 12-byte IV and a large counter
             can be used to securely encrypt more than 256 GB of data (but note
-            this is incompatible with RFC 7539 and the original specification).</param>
+            this is incompatible with RFC 8439 and the original specification).</param>
         </member>
         <member name="T:KeePassLib.Collections.PwObjectList`1">
             <summary>
@@ -3098,24 +3101,23 @@
         </member>
         <member name="T:KeePassLib.Collections.ProtectedBinaryDictionary">
             <summary>
-            A list of <c>ProtectedBinary</c> objects (dictionary).
+            A dictionary of <c>ProtectedBinary</c> objects.
             </summary>
         </member>
         <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.#ctor">
             <summary>
-            Construct a new list of protected binaries.
+            Construct a new dictionary of protected binaries.
             </summary>
         </member>
         <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.CloneDeep">
             <summary>
-            Clone the current <c>ProtectedBinaryList</c> object, including all
-            stored protected strings.
+            Deeply clone the object.
             </summary>
-            <returns>New <c>ProtectedBinaryList</c> object.</returns>
+            <returns>Cloned object.</returns>
         </member>
         <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.Get(System.String)">
             <summary>
-            Get one of the stored binaries.
+            Get one of the protected binaries.
             </summary>
             <param name="strName">Binary identifier.</param>
             <returns>Protected binary. If the binary identified by
@@ -3126,26 +3128,26 @@
         </member>
         <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.Set(System.String,KeePassLib.Security.ProtectedBinary)">
             <summary>
-            Set a binary object.
+            Set a protected binary.
             </summary>
-            <param name="strField">Identifier of the binary field to modify.</param>
+            <param name="strName">Identifier of the binary to set.</param>
             <param name="pbNewValue">New value. This parameter must not be <c>null</c>.</param>
             <exception cref="T:System.ArgumentNullException">Thrown if any of the input
             parameters is <c>null</c>.</exception>
         </member>
         <member name="M:KeePassLib.Collections.ProtectedBinaryDictionary.Remove(System.String)">
             <summary>
-            Remove a binary object.
+            Remove a protected binary.
             </summary>
-            <param name="strField">Identifier of the binary field to remove.</param>
+            <param name="strName">Identifier of the binary to remove.</param>
             <returns>Returns <c>true</c> if the object has been successfully
             removed, otherwise <c>false</c>.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown if the input parameter
-            is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown if the input
+            parameter is <c>null</c>.</exception>
         </member>
         <member name="P:KeePassLib.Collections.ProtectedBinaryDictionary.UCount">
             <summary>
-            Get the number of binaries in this entry.
+            Get the number of items.
             </summary>
         </member>
     </members>

@@ -28,7 +28,7 @@ namespace KeePassLib.Serialization
 {
 	public sealed class BinaryReaderEx
 	{
-		private Stream m_s;
+		private readonly Stream m_s;
 		// private Encoding m_enc; // See constructor
 
 		private string m_strReadExcp; // May be null
@@ -62,25 +62,24 @@ namespace KeePassLib.Serialization
 
 		public byte[] ReadBytes(int nCount)
 		{
-			try
-			{
-				byte[] pb = MemUtil.Read(m_s, nCount);
-				if((pb == null) || (pb.Length != nCount))
-				{
-					if(!string.IsNullOrEmpty(m_strReadExcp))
-						throw new EndOfStreamException(m_strReadExcp);
-					else throw new EndOfStreamException();
-				}
-
-				if(m_sCopyTo != null) m_sCopyTo.Write(pb, 0, pb.Length);
-				return pb;
-			}
+			byte[] pb;
+			try { pb = MemUtil.Read(m_s, nCount); }
 			catch(Exception)
 			{
 				if(!string.IsNullOrEmpty(m_strReadExcp))
 					throw new IOException(m_strReadExcp);
-				else throw;
+				throw;
 			}
+
+			if((pb == null) || (pb.Length != nCount))
+			{
+				if(!string.IsNullOrEmpty(m_strReadExcp))
+					throw new EndOfStreamException(m_strReadExcp);
+				throw new EndOfStreamException();
+			}
+
+			if(m_sCopyTo != null) m_sCopyTo.Write(pb, 0, pb.Length);
+			return pb;
 		}
 
 		public byte ReadByte()

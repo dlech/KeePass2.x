@@ -56,7 +56,7 @@ namespace KeePass.Forms
 		private CheckedLVItemDXList m_cdxGuiOptions = null;
 		private CheckedLVItemDXList m_cdxAdvanced = null;
 
-		private Dictionary<int, string> m_dTsrUuids = new Dictionary<int, string>();
+		private readonly Dictionary<int, string> m_dTsrUuids = new Dictionary<int, string>();
 
 		private FontControlGroup m_fcgList = null;
 		private FontControlGroup m_fcgPassword = null;
@@ -387,6 +387,8 @@ namespace KeePass.Forms
 				m_cdxSecurityOptions.CreateItem(cfg.Native, "NativeKeyTransformations",
 					lvg, KPRes.NativeLibUse);
 
+			m_cdxSecurityOptions.CreateItem(aceSec, "KeyTransformWeakWarning",
+				lvg, KPRes.KeyTransformWeakWarning);
 			m_cdxSecurityOptions.CreateItem(aceSec, "MasterKeyOnSecureDesktop",
 				lvg, KPRes.MasterKeyOnSecureDesktop, obNoWin);
 			m_cdxSecurityOptions.CreateItem(aceSec, "ClearKeyCommandLineParams",

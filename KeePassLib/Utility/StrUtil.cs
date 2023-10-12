@@ -498,27 +498,27 @@ namespace KeePassLib.Utility
 			if(bEmptyIfTransparent && (color.A != 255))
 				return string.Empty;
 
-			StringBuilder sb = new StringBuilder();
-			byte bt;
+			uint r = color.R, g = color.G, b = color.B, u;
 
-			sb.Append('#');
+			char[] v = new char[7];
+			v[0] = '#';
 
-			bt = (byte)(color.R >> 4);
-			if(bt < 10) sb.Append((char)('0' + bt)); else sb.Append((char)('A' - 10 + bt));
-			bt = (byte)(color.R & 0x0F);
-			if(bt < 10) sb.Append((char)('0' + bt)); else sb.Append((char)('A' - 10 + bt));
+			u = r >> 4;
+			v[1] = (char)((u < 10) ? ('0' + u) : ('A' - 10 + u));
+			u = r & 0x0F;
+			v[2] = (char)((u < 10) ? ('0' + u) : ('A' - 10 + u));
 
-			bt = (byte)(color.G >> 4);
-			if(bt < 10) sb.Append((char)('0' + bt)); else sb.Append((char)('A' - 10 + bt));
-			bt = (byte)(color.G & 0x0F);
-			if(bt < 10) sb.Append((char)('0' + bt)); else sb.Append((char)('A' - 10 + bt));
+			u = g >> 4;
+			v[3] = (char)((u < 10) ? ('0' + u) : ('A' - 10 + u));
+			u = g & 0x0F;
+			v[4] = (char)((u < 10) ? ('0' + u) : ('A' - 10 + u));
 
-			bt = (byte)(color.B >> 4);
-			if(bt < 10) sb.Append((char)('0' + bt)); else sb.Append((char)('A' - 10 + bt));
-			bt = (byte)(color.B & 0x0F);
-			if(bt < 10) sb.Append((char)('0' + bt)); else sb.Append((char)('A' - 10 + bt));
+			u = b >> 4;
+			v[5] = (char)((u < 10) ? ('0' + u) : ('A' - 10 + u));
+			u = b & 0x0F;
+			v[6] = (char)((u < 10) ? ('0' + u) : ('A' - 10 + u));
 
-			return sb.ToString();
+			return new string(v);
 		}
 
 		/// <summary>
@@ -731,9 +731,10 @@ namespace KeePassLib.Utility
 			return (strText.Substring(0, cchMax - 3) + "...");
 		}
 
-		private static readonly char[] g_vDots = new char[] { '.', '\u2026' };
-		private static readonly char[] g_vDotsWS = new char[] { '.', '\u2026',
-			' ', '\t', '\r', '\n' };
+		private static readonly char[] g_vDots = new char[] {
+			'.', '\u2026', '\u3002' };
+		private static readonly char[] g_vDotsWS = new char[] {
+			'.', '\u2026', '\u3002', ' ', '\t', '\r', '\n' };
 		internal static string TrimDots(string strText, bool bTrimWhiteSpace)
 		{
 			if(strText == null) { Debug.Assert(false); return string.Empty; }
@@ -1272,23 +1273,23 @@ namespace KeePassLib.Utility
 			const ulong uGB = uMB * uKB;
 			const ulong uTB = uGB * uKB;
 
-			if(uBytes == 0) return "0 KB";
+			if(uBytes == 0UL) return "0 KB";
 			if(uBytes <= uKB) return "1 KB";
-			if(uBytes <= uMB) return (((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB";
-			if(uBytes <= uGB) return (((uBytes - 1UL) / uMB) + 1UL).ToString() + " MB";
-			if(uBytes <= uTB) return (((uBytes - 1UL) / uGB) + 1UL).ToString() + " GB";
+			if(uBytes < uMB) return ((((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB");
+			if(uBytes < uGB) return ((((uBytes - 1UL) / uMB) + 1UL).ToString() + " MB");
+			if(uBytes < uTB) return ((((uBytes - 1UL) / uGB) + 1UL).ToString() + " GB");
 
-			return (((uBytes - 1UL) / uTB) + 1UL).ToString() + " TB";
+			return ((((uBytes - 1UL) / uTB) + 1UL).ToString() + " TB");
 		}
 
 		public static string FormatDataSizeKB(ulong uBytes)
 		{
 			const ulong uKB = 1024;
 
-			if(uBytes == 0) return "0 KB";
+			if(uBytes == 0UL) return "0 KB";
 			if(uBytes <= uKB) return "1 KB";
 			
-			return (((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB";
+			return ((((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB");
 		}
 
 		private static readonly char[] m_vVersionSep = new char[] { '.', ',' };

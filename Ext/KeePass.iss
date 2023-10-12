@@ -13,11 +13,11 @@
 #define MyAppHelpName "KeePass.chm"
 #define MyAppId "KeePassPasswordSafe2"
 
-#define KeeVersionStr "2.54"
-#define KeeVersionStrWithMinor "2.54"
-#define KeeVersionStrWithMinorPath "2.54"
-#define KeeVersionWin "2.54.0.0"
-#define KeeVersionWinShort "2.54"
+#define KeeVersionStr "2.55"
+#define KeeVersionStrWithMinor "2.55"
+#define KeeVersionStrWithMinorPath "2.55"
+#define KeeVersionWin "2.55.0.0"
+#define KeeVersionWinShort "2.55"
 
 #define KeeDevPeriod "2003-2023"
 
@@ -157,7 +157,7 @@ fr.MyCompNGen=Optimiser les performances de KeePass
 fr.MyCompPreLoad=Optimiser les performances de démarrage de KeePass
 fr.MyStatusNGen=En cours d'optimisation des performances de KeePass...
 fr.MyStatusPreLoad=En cours d'optimisation des performances de démarrage de KeePass...
-fr.MyOptPlgPage=Ouvre la page des greffons (plugins) sur la toile
+fr.MyOptPlgPage=Ouvre la page des greffons (plug-ins) sur la toile
 
 ; hu.MyCompCore=KeePass nélkülözhetetlen fájlok
 ; hu.MyCompHelp=Használati utasítás
