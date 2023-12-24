@@ -50,13 +50,13 @@ namespace KeePass.Forms
 		private bool m_bURtfWithHighChar = false;
 
 		private uint m_uBlockEvents = 0;
-		private Stack<KeyValuePair<int, int>> m_lSelections =
+		private readonly Stack<KeyValuePair<int, int>> m_stSelections =
 			new Stack<KeyValuePair<int, int>>();
 		private BinaryDataClass m_bdc = BinaryDataClass.Unknown;
 		private bool m_bNewLinesWin = true;
 
 		private string m_strInitialFormRect = string.Empty;
-		private RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
+		private readonly RichTextBoxContextMenu m_ctxText = new RichTextBoxContextMenu();
 
 		/// <summary>
 		/// Get the edited, new data. This property is non-<c>null</c> only
@@ -282,13 +282,13 @@ namespace KeePass.Forms
 		{
 			if(bSelect)
 			{
-				m_lSelections.Push(new KeyValuePair<int, int>(m_rtbText.SelectionStart,
-					m_rtbText.SelectionLength));
+				m_stSelections.Push(new KeyValuePair<int, int>(
+					m_rtbText.SelectionStart, m_rtbText.SelectionLength));
 				m_rtbText.SelectAll();
 			}
 			else
 			{
-				KeyValuePair<int, int> kvp = m_lSelections.Pop();
+				KeyValuePair<int, int> kvp = m_stSelections.Pop();
 				m_rtbText.Select(kvp.Key, kvp.Value);
 			}
 		}

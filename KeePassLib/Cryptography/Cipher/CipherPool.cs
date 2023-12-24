@@ -30,7 +30,7 @@ namespace KeePassLib.Cryptography.Cipher
 	/// </summary>
 	public sealed class CipherPool
 	{
-		private List<ICipherEngine> m_lCiphers = new List<ICipherEngine>();
+		private readonly List<ICipherEngine> m_lCiphers = new List<ICipherEngine>();
 
 		private static CipherPool m_poolGlobal = null;
 		public static CipherPool GlobalPool

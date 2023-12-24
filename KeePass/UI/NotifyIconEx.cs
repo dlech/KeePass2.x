@@ -35,7 +35,7 @@ namespace KeePass.UI
 {
 	public sealed class NotifyIconEx
 	{
-		private NotifyIcon m_ntf = null;
+		private readonly NotifyIcon m_ntf;
 
 		private Icon m_ico = null; // Property value
 		private Icon m_icoShell = null; // Private copy

@@ -187,10 +187,11 @@ namespace KeePass.Util.XmlSerialization
 			AppendLine(sb, "' ', '\\t', '\\r', '\\n', '|', ',', ';', ':'", ref t);
 			AppendLine(sb, "};", ref t, -1, 0);
 
-			Dictionary<string, XmlsTypeInfo> d =
-				new Dictionary<string, XmlsTypeInfo>();
-			d[typeof(AppConfigEx).FullName] = new XmlsTypeInfo(typeof(AppConfigEx));
-			d[typeof(KPTranslation).FullName] = new XmlsTypeInfo(typeof(KPTranslation));
+			Dictionary<string, XmlsTypeInfo> d = new Dictionary<string, XmlsTypeInfo>
+			{
+				{ typeof(AppConfigEx).FullName, new XmlsTypeInfo(typeof(AppConfigEx)) },
+				{ typeof(KPTranslation).FullName, new XmlsTypeInfo(typeof(KPTranslation)) }
+			};
 
 			bool bTypeCreated = true;
 			while(bTypeCreated)

@@ -31,7 +31,7 @@ namespace KeePass.UI.ToolStripRendering
 {
 	internal sealed class Win81TsrFactory : TsrFactory
 	{
-		private PwUuid m_uuid = new PwUuid(new byte[] {
+		private readonly PwUuid m_uuid = new PwUuid(new byte[] {
 			0xEF, 0x5B, 0x4B, 0xE8, 0x49, 0xD1, 0x5E, 0x71,
 			0x65, 0xE0, 0x26, 0x3B, 0x03, 0xBD, 0x8C, 0x3B
 		});
@@ -61,17 +61,17 @@ namespace KeePass.UI.ToolStripRendering
 	{
 		private sealed class Win81TsrColorTable : ProfessionalColorTable
 		{
-			private Color m_clrItemActiveBack = Color.FromArgb(184, 216, 249);
-			private Color m_clrItemActiveBorder = Color.FromArgb(98, 163, 229);
-			private Color m_clrItemSelBack = Color.FromArgb(213, 231, 248);
-			private Color m_clrItemSelBorder = Color.FromArgb(122, 177, 232);
+			private readonly Color m_clrItemActiveBack = Color.FromArgb(184, 216, 249);
+			private readonly Color m_clrItemActiveBorder = Color.FromArgb(98, 163, 229);
+			private readonly Color m_clrItemSelBack = Color.FromArgb(213, 231, 248);
+			private readonly Color m_clrItemSelBorder = Color.FromArgb(122, 177, 232);
 
-			private Color m_clrBarBack = Color.FromArgb(245, 246, 247);
-			private Color m_clrMenuBack = Color.FromArgb(240, 240, 240);
-			private Color m_clrImageBack = Color.FromArgb(240, 240, 240);
+			private readonly Color m_clrBarBack = Color.FromArgb(245, 246, 247);
+			private readonly Color m_clrMenuBack = Color.FromArgb(240, 240, 240);
+			private readonly Color m_clrImageBack = Color.FromArgb(240, 240, 240);
 
-			private Color m_clrSubItemSelBack = Color.FromArgb(209, 226, 242);
-			private Color m_clrSubItemSelBorder = Color.FromArgb(120, 174, 229);
+			private readonly Color m_clrSubItemSelBack = Color.FromArgb(209, 226, 242);
+			private readonly Color m_clrSubItemSelBorder = Color.FromArgb(120, 174, 229);
 
 			public override Color ButtonCheckedGradientBegin
 			{

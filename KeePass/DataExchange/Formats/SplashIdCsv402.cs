@@ -46,14 +46,14 @@ namespace KeePass.DataExchange.Formats
 
 		private const string StrHeader = "SplashID Export File";
 
-		private static SplashIdMapping[] m_vMappings = null;
+		private static SplashIdMapping[] g_vMappings = null;
 		private static SplashIdMapping[] SplashIdMappings
 		{
 			get
 			{
-				if(m_vMappings != null) return m_vMappings;
+				if(g_vMappings != null) return g_vMappings;
 
-				m_vMappings = new SplashIdMapping[] {
+				g_vMappings = new SplashIdMapping[] {
 					new SplashIdMapping("Addresses", PwIcon.UserCommunication,
 						new string[] { PwDefs.TitleField, // Name
 							PwDefs.NotesField, // Address
@@ -130,7 +130,7 @@ namespace KeePass.DataExchange.Formats
 						new string[] { PwDefs.TitleField, PwDefs.UserNameField,
 							PwDefs.PasswordField, PwDefs.UrlField })
 				};
-				return m_vMappings;
+				return g_vMappings;
 			}
 		}
 
@@ -198,7 +198,7 @@ namespace KeePass.DataExchange.Formats
 
 			PwIcon pwIcon = ((mp != null) ? mp.Icon : PwIcon.Key);
 
-			PwGroup pg = null;
+			PwGroup pg;
 			if(dictGroups.ContainsKey(strGroupName))
 				pg = dictGroups[strGroupName];
 			else
@@ -270,7 +270,7 @@ namespace KeePass.DataExchange.Formats
 				get { return m_pwIcon; }
 			}
 
-			private string[] m_vFieldNames = new string[9];
+			private readonly string[] m_vFieldNames = new string[9];
 			public string[] FieldNames
 			{
 				get { return m_vFieldNames; }

@@ -388,7 +388,7 @@ namespace KeePass.UI
 
 	public sealed class OpenFileDialogEx : FileDialogEx
 	{
-		private OpenFileDialog m_dlg = new OpenFileDialog();
+		private readonly OpenFileDialog m_dlg = new OpenFileDialog();
 
 		public override FileDialog FileDialog
 		{
@@ -418,7 +418,7 @@ namespace KeePass.UI
 
 	public sealed class SaveFileDialogEx : FileDialogEx
 	{
-		private SaveFileDialog m_dlg = new SaveFileDialog();
+		private readonly SaveFileDialog m_dlg = new SaveFileDialog();
 
 		public override FileDialog FileDialog
 		{

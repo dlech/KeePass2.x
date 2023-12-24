@@ -40,7 +40,6 @@ using KeePassLib.Interfaces;
 using KeePassLib.Native;
 using KeePassLib.Resources;
 using KeePassLib.Security;
-using KeePassLib.Translation;
 using KeePassLib.Utility;
 
 namespace KeePass.Forms
@@ -51,7 +50,7 @@ namespace KeePass.Forms
 		private PwDatabase m_pdContext = null;
 		private ImageList m_ilClientIcons = null;
 		private bool m_bPrintMode = true;
-		private int m_nDefaultSortColumn = -1;
+		// private int m_nDefaultSortColumn = -1;
 
 		private ImageList m_ilTabIcons = null;
 		private FontControlGroup m_fcgMain = null;
@@ -114,13 +113,13 @@ namespace KeePass.Forms
 		public void InitEx(PwGroup pgDataSource, PwDatabase pdContext,
 			ImageList ilClientIcons, bool bPrintMode, int nDefaultSortColumn)
 		{
-			Debug.Assert(pgDataSource != null); if(pgDataSource == null) throw new ArgumentNullException("pgDataSource");
+			if(pgDataSource == null) { Debug.Assert(false); throw new ArgumentNullException("pgDataSource"); }
 
 			m_pgDataSource = pgDataSource;
 			m_pdContext = pdContext;
 			m_ilClientIcons = ilClientIcons;
 			m_bPrintMode = bPrintMode;
-			m_nDefaultSortColumn = nDefaultSortColumn;
+			// m_nDefaultSortColumn = nDefaultSortColumn; // Not used anymore
 		}
 
 		public PrintForm()
@@ -160,10 +159,11 @@ namespace KeePass.Forms
 			this.Icon = AppIcons.Default;
 			CreateDialogBanner();
 
-			List<Image> lTabImg = new List<Image>();
-			lTabImg.Add(Properties.Resources.B16x16_XMag);
-			lTabImg.Add(Properties.Resources.B16x16_Configure);
-
+			List<Image> lTabImg = new List<Image>
+			{
+				Properties.Resources.B16x16_XMag,
+				Properties.Resources.B16x16_Configure
+			};
 			m_ilTabIcons = UIUtil.BuildImageListUnscaled(lTabImg,
 				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
 			m_tabMain.ImageList = m_ilTabIcons;
@@ -174,9 +174,36 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_rbLayTable);
 			FontUtil.AssignDefaultBold(m_rbLayBlocks);
 
-			m_rbLayTable.Checked = true;
+			AcePrint ace = Program.Config.Defaults.Print;
+			if(ace.Layout == AcePrintLayout.Blocks) m_rbLayBlocks.Checked = true;
+			else
+			{
+				Debug.Assert(ace.Layout == AcePrintLayout.Tables);
+				m_rbLayTable.Checked = true;
+			}
 
-			m_cbColorP.Checked = true;
+			FormDataExchange fdx = new FormDataExchange(this, true, true, false);
+			fdx.Add(m_cbTitle, ace, "IncludeTitle");
+			fdx.Add(m_cbUser, ace, "IncludeUserName");
+			fdx.Add(m_cbPassword, ace, "IncludePassword");
+			fdx.Add(m_cbUrl, ace, "IncludeUrl");
+			fdx.Add(m_cbNotes, ace, "IncludeNotes");
+			fdx.Add(m_cbCreation, ace, "IncludeCreationTime");
+			fdx.Add(m_cbLastMod, ace, "IncludeLastModificationTime");
+			fdx.Add(m_cbExpire, ace, "IncludeExpiryTime");
+			fdx.Add(m_cbAutoType, ace, "IncludeAutoType");
+			fdx.Add(m_cbTags, ace, "IncludeTags");
+			fdx.Add(m_cbIcon, ace, "IncludeIcon");
+			fdx.Add(m_cbCustomStrings, ace, "IncludeCustomStrings");
+			fdx.Add(m_cbGroups, ace, "IncludeGroupName");
+			fdx.Add(m_cbUuid, ace, "IncludeUuid");
+
+			fdx.Add(m_cbColorP, ace, "ColorP");
+			fdx.Add(m_btnColorPU, ace, "ColorPU");
+			fdx.Add(m_btnColorPL, ace, "ColorPL");
+			fdx.Add(m_btnColorPD, ace, "ColorPD");
+			fdx.Add(m_btnColorPO, ace, "ColorPO");
+
 			using(RtlAwareResizeScope r = new RtlAwareResizeScope(
 				m_lblColorPU, m_lblColorPL, m_lblColorPD, m_lblColorPO))
 			{
@@ -185,16 +212,13 @@ namespace KeePass.Forms
 				m_lblColorPD.Text = "\u27A5 012...:";
 				m_lblColorPO.Text = "\u27A5 !$%...:";
 			}
-			m_btnColorPU.SelectedColor = Color.FromArgb(0, 0, 255);
-			m_btnColorPL.SelectedColor = Color.FromArgb(0, 0, 0);
-			m_btnColorPD.SelectedColor = Color.FromArgb(0, 128, 0);
-			m_btnColorPO.SelectedColor = Color.FromArgb(192, 0, 0);
 
 			m_fcgMain = new FontControlGroup(m_cbMainFont, m_btnMainFont,
-				null, GetDefaultFont(false));
+				ace.MainFont, GetDefaultFont(false));
 			m_fcgPassword = new FontControlGroup(m_cbPasswordFont, m_btnPasswordFont,
-				null, GetDefaultFont(true));
+				ace.PasswordFont, GetDefaultFont(true));
 
+			Debug.Assert(!m_cmbSortEntries.Sorted);
 			m_cmbSortEntries.Items.Add("(" + KPRes.None + ")");
 			m_cmbSortEntries.Items.Add(KPRes.Title);
 			m_cmbSortEntries.Items.Add(KPRes.UserName);
@@ -202,24 +226,27 @@ namespace KeePass.Forms
 			m_cmbSortEntries.Items.Add(KPRes.Url);
 			m_cmbSortEntries.Items.Add(KPRes.Notes);
 
-			AceColumnType colType = AceColumnType.Count;
-			List<AceColumn> vCols = Program.Config.MainWindow.EntryListColumns;
-			if((m_nDefaultSortColumn >= 0) && (m_nDefaultSortColumn < vCols.Count))
-				colType = vCols[m_nDefaultSortColumn].Type;
+			// AceColumnType colType = AceColumnType.Count;
+			// List<AceColumn> lCols = Program.Config.MainWindow.EntryListColumns;
+			// if((m_nDefaultSortColumn >= 0) && (m_nDefaultSortColumn < lCols.Count))
+			//	colType = lCols[m_nDefaultSortColumn].Type;
 
+			AceColumnType colType = ace.SortEntriesBy;
 			int nSortSel = 0;
-			if(colType == AceColumnType.Title) nSortSel = 1;
+			if(!ace.SortEntries) { }
+			else if(colType == AceColumnType.Title) nSortSel = 1;
 			else if(colType == AceColumnType.UserName) nSortSel = 2;
 			else if(colType == AceColumnType.Password) nSortSel = 3;
 			else if(colType == AceColumnType.Url) nSortSel = 4;
 			else if(colType == AceColumnType.Notes) nSortSel = 5;
+			else { Debug.Assert(false); }
 			m_cmbSortEntries.SelectedIndex = nSortSel;
 
 			Debug.Assert(!m_cmbSpr.Sorted);
 			m_cmbSpr.Items.Add(KPRes.ReplaceNo);
 			m_cmbSpr.Items.Add(KPRes.Replace + " (" + KPRes.Slow + ")");
 			m_cmbSpr.Items.Add(KPRes.BothForms + " (" + KPRes.Slow + ")");
-			m_cmbSpr.SelectedIndex = 0;
+			fdx.Add(m_cmbSpr, ace, "Spr");
 
 			UIUtil.SetButtonImage(m_btnConfigPrinter,
 				Properties.Resources.B16x16_EditCopy, true);
@@ -371,7 +398,8 @@ namespace KeePass.Forms
 			else if(nSortEntries == 5) strSortFieldName = PwDefs.NotesField;
 			else { Debug.Assert(false); }
 			if(strSortFieldName != null)
-				SortGroupEntriesRecursive(pgDataSource, strSortFieldName);
+				SortGroupEntriesRecursive(pgDataSource, new PwEntryComparer(
+					strSortFieldName, true, true));
 
 			bool bTabular = m_rbLayTable.Checked;
 			bool bBlocks = m_rbLayBlocks.Checked;
@@ -1026,15 +1054,12 @@ namespace KeePass.Forms
 			return sb.ToString();
 		}
 
-		private static void SortGroupEntriesRecursive(PwGroup pg, string strFieldName)
+		private static void SortGroupEntriesRecursive(PwGroup pg, IComparer<PwEntry> cmp)
 		{
-			PwEntryComparer cmp = new PwEntryComparer(strFieldName, true, true);
 			pg.Entries.Sort(cmp);
 
 			foreach(PwGroup pgSub in pg.Groups)
-			{
-				SortGroupEntriesRecursive(pgSub, strFieldName);
-			}
+				SortGroupEntriesRecursive(pgSub, cmp);
 		}
 
 		private void OnBtnConfigPage(object sender, EventArgs e)
@@ -1097,6 +1122,29 @@ namespace KeePass.Forms
 		{
 			Debug.Assert(m_uBlockUpdateUIState == 0);
 			Debug.Assert(m_uBlockPreviewRefresh == 0);
+
+			AcePrint ace = Program.Config.Defaults.Print;
+			ace.Layout = (m_rbLayBlocks.Checked ? AcePrintLayout.Blocks :
+				AcePrintLayout.Tables);
+			ace.MainFont = m_fcgMain.SelectedFont;
+			ace.PasswordFont = m_fcgPassword.SelectedFont;
+
+			int i = m_cmbSortEntries.SelectedIndex;
+			if((i >= 1) && (i <= 5))
+			{
+				ace.SortEntries = true;
+				if(i == 1) ace.SortEntriesBy = AceColumnType.Title;
+				else if(i == 2) ace.SortEntriesBy = AceColumnType.UserName;
+				else if(i == 3) ace.SortEntriesBy = AceColumnType.Password;
+				else if(i == 4) ace.SortEntriesBy = AceColumnType.Url;
+				else ace.SortEntriesBy = AceColumnType.Notes;
+			}
+			else
+			{
+				Debug.Assert(i == 0);
+				ace.SortEntries = false;
+				ace.SortEntriesBy = AceColumnType.Title; // Default
+			}
 
 			if(m_ilTabIcons != null)
 			{

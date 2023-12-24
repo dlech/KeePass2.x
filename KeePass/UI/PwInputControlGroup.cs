@@ -428,7 +428,7 @@ namespace KeePass.UI
 			return Convert.ToBase64String(pbHash);
 		}
 
-		private List<string> m_lUqiTasks = new List<string>();
+		private readonly List<string> m_lUqiTasks = new List<string>();
 		private readonly object m_oUqiTasksSync = new object();
 		private void UpdateQualityInfo(char[] v)
 		{

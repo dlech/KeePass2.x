@@ -186,9 +186,9 @@ namespace KeePass.Util
 		private sealed class XmElementCollection : IEnumerable<KeyValuePair<string, XmlElement>>,
 			IEnumerable
 		{
-			private List<KeyValuePair<string, XmlElement>> m_l =
+			private readonly List<KeyValuePair<string, XmlElement>> m_l =
 				new List<KeyValuePair<string, XmlElement>>();
-			private Dictionary<string, XmlElement> m_d =
+			private readonly Dictionary<string, XmlElement> m_d =
 				new Dictionary<string, XmlElement>();
 
 			public IEnumerator<KeyValuePair<string, XmlElement>> GetEnumerator()

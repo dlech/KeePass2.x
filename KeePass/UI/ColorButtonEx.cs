@@ -35,7 +35,7 @@ namespace KeePass.UI
 		private ToolTip m_tt = null;
 
 		private CustomContextMenuEx m_ctx = null;
-		private List<ColorMenuItem> m_lMenuItems = new List<ColorMenuItem>();
+		private readonly List<ColorMenuItem> m_lMenuItems = new List<ColorMenuItem>();
 
 		private Color[] m_vColors = null;
 		[Browsable(false)]

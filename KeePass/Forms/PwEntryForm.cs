@@ -66,7 +66,7 @@ namespace KeePass.Forms
 		private PwIcon m_pwEntryIcon = PwIcon.Key;
 		private PwUuid m_pwCustomIconID = PwUuid.Zero;
 		private ImageList m_ilIcons = null;
-		private List<PwUuid> m_lOrgCustomIconIDs = new List<PwUuid>();
+		private readonly List<PwUuid> m_lOrgCustomIconIDs = new List<PwUuid>();
 
 		private bool m_bTouchedOnce = false;
 
@@ -74,13 +74,13 @@ namespace KeePass.Forms
 		private bool m_bForceClosing = false;
 		private bool m_bUrlOverrideWarning = false;
 
-		private PwInputControlGroup m_icgPassword = new PwInputControlGroup();
+		private readonly PwInputControlGroup m_icgPassword = new PwInputControlGroup();
 		private PwGeneratorMenu m_pgmPassword = null;
-		private RichTextBoxContextMenu m_ctxNotes = new RichTextBoxContextMenu();
-		private ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
+		private readonly RichTextBoxContextMenu m_ctxNotes = new RichTextBoxContextMenu();
+		private readonly ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
 		private Image m_imgTools = null;
 		private Image m_imgStdExpire = null;
-		private List<Image> m_lOverrideUrlIcons = new List<Image>();
+		private readonly List<Image> m_lOverrideUrlIcons = new List<Image>();
 
 		private CustomContextMenuStripEx m_ctxBinOpen = null;
 		private DynamicMenu m_dynBinOpen = null;
@@ -857,9 +857,8 @@ namespace KeePass.Forms
 				m_cbHidePassword.Checked = (Program.Config.UI.Hiding.HideInEntryWindow || bForceHide);
 			else
 			{
-				AceColumn colPw = Program.Config.MainWindow.FindColumn(AceColumnType.Password);
-				m_cbHidePassword.Checked = (((colPw != null) ? colPw.HideWithAsterisks :
-					true) || bForceHide);
+				AceColumn c = Program.Config.MainWindow.FindColumn(AceColumnType.Password);
+				m_cbHidePassword.Checked = (((c == null) || c.HideWithAsterisks) || bForceHide);
 			}
 
 			InitEntryTab();

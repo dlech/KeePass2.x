@@ -30,7 +30,6 @@ using Org.BouncyCastle.Crypto.Parameters;
 using System.Security.Cryptography;
 #endif
 
-using KeePassLib.Cryptography;
 using KeePassLib.Native;
 using KeePassLib.Utility;
 
@@ -66,6 +65,14 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			KdfParameters p = base.GetDefaultParameters();
 			p.SetUInt64(ParamRounds, PwDefs.DefaultKeyEncryptionRounds);
 			return p;
+		}
+
+		public override bool AreParametersWeak(KdfParameters p)
+		{
+			if(p == null) { Debug.Assert(false); return false; }
+
+			ulong uRounds = p.GetUInt64(ParamRounds, ulong.MaxValue);
+			return (uRounds < PwDefs.DefaultKeyEncryptionRounds);
 		}
 
 		public override void Randomize(KdfParameters p)
@@ -105,29 +112,29 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			return TransformKey(pbMsg, pbSeed, uRounds);
 		}
 
-		private static byte[] TransformKey(byte[] pbOriginalKey32, byte[] pbKeySeed32,
+		private static byte[] TransformKey(byte[] pbOriginalKey32, byte[] pbSeed32,
 			ulong uNumRounds)
 		{
 			Debug.Assert((pbOriginalKey32 != null) && (pbOriginalKey32.Length == 32));
 			if(pbOriginalKey32 == null) throw new ArgumentNullException("pbOriginalKey32");
 			if(pbOriginalKey32.Length != 32) throw new ArgumentException();
 
-			Debug.Assert((pbKeySeed32 != null) && (pbKeySeed32.Length == 32));
-			if(pbKeySeed32 == null) throw new ArgumentNullException("pbKeySeed32");
-			if(pbKeySeed32.Length != 32) throw new ArgumentException();
+			Debug.Assert((pbSeed32 != null) && (pbSeed32.Length == 32));
+			if(pbSeed32 == null) throw new ArgumentNullException("pbSeed32");
+			if(pbSeed32.Length != 32) throw new ArgumentException();
 
 			byte[] pbNewKey = new byte[32];
 			Array.Copy(pbOriginalKey32, pbNewKey, pbNewKey.Length);
 
 			try
 			{
-				if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
+				if(NativeLib.TransformKey256(pbNewKey, pbSeed32, uNumRounds))
 					return CryptoUtil.HashSha256(pbNewKey);
 
-				if(TransformKeyGCrypt(pbNewKey, pbKeySeed32, uNumRounds))
+				if(TransformKeyGCrypt(pbNewKey, pbSeed32, uNumRounds))
 					return CryptoUtil.HashSha256(pbNewKey);
 
-				if(TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds))
+				if(TransformKeyManaged(pbNewKey, pbSeed32, uNumRounds))
 					return CryptoUtil.HashSha256(pbNewKey);
 			}
 			finally { MemUtil.ZeroByteArray(pbNewKey); }
@@ -135,11 +142,11 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			return null;
 		}
 
-		internal static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
+		internal static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbSeed32,
 			ulong uNumRounds)
 		{
 #if KeePassUAP
-			KeyParameter kp = new KeyParameter(pbKeySeed32);
+			KeyParameter kp = new KeyParameter(pbSeed32);
 			AesEngine aes = new AesEngine();
 			aes.Init(true, kp);
 
@@ -163,7 +170,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 				a.KeySize = 256;
 				a.Mode = CipherMode.ECB;
 
-				using(ICryptoTransform t = a.CreateEncryptor(pbKeySeed32, pbIV))
+				using(ICryptoTransform t = a.CreateEncryptor(pbSeed32, pbIV))
 				{
 					// !t.CanReuseTransform -- doesn't work with Mono
 					if((t == null) || (t.InputBlockSize != 16) ||

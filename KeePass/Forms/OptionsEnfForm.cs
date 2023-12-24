@@ -136,7 +136,6 @@ namespace KeePass.Forms
 		private void CreateOptionsList()
 		{
 			AppConfigEx cfg = Program.Config;
-			AceApplication aceApp = cfg.Application;
 			AceDefaults aceDef = cfg.Defaults;
 			AceSecurity aceSec = cfg.Security;
 			AceWorkspaceLocking aceWL = aceSec.WorkspaceLocking;
@@ -170,6 +169,7 @@ namespace KeePass.Forms
 			lvg = AddGroup(KPRes.Advanced);
 			AddOption(aceDef, "NewEntryExpiresInDays", lvg, fRA(KPRes.ExpiryDefaultDays));
 			AddOption(cfg.Native, "NativeKeyTransformations", lvg, KPRes.NativeLibUse);
+			AddOption(aceSec, "KeyTransformWeakWarning", lvg, KPRes.KeyTransformWeakWarning);
 			AddOption(aceSec, "MasterKeyOnSecureDesktop", lvg, KPRes.MasterKeyOnSecureDesktop);
 			AddOption(aceSec, "ClearKeyCommandLineParams", lvg, KPRes.ClearKeyCmdLineParams);
 			AddOption(aceSec.MasterPassword, "RememberWhileOpen", lvg, KPRes.MasterPasswordRmbWhileOpen);

@@ -151,6 +151,8 @@ namespace KeePass.Forms
 
 			Debug.Assert(!m_tstFilter.AcceptsReturn); // Ignored by form
 
+			AccessibilityEx.SetName(m_tstFilter.Control, KPRes.Filter);
+
 			AccessKeyManagerEx akTB = new AccessKeyManagerEx();
 			m_tsbPrint.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 			m_tsbPrint.Text = akTB.CreateText(KPRes.Print + "...", true);
@@ -400,6 +402,14 @@ namespace KeePass.Forms
 		protected override bool ProcessDialogKey(Keys keyData)
 		{
 			Keys k = (keyData & Keys.KeyCode);
+			bool bC = ((keyData & Keys.Control) != Keys.None);
+			bool bA = ((keyData & Keys.Alt) != Keys.None);
+
+			if((k == Keys.Escape) && !bC && !bA)
+			{
+				this.DialogResult = DialogResult.Cancel;
+				return true;
+			}
 			if((k == Keys.Return) && m_tstFilter.Focused)
 				return true; // Ignore it
 
@@ -788,8 +798,8 @@ namespace KeePass.Forms
 		{
 			if((m_fl & LvfFlags.Print) == LvfFlags.None) { Debug.Assert(false); return; }
 
-			if(!AppPolicy.TryWithKey(AppPolicyId.Print, ((m_pd != null) ?
-				AppPolicy.Current.PrintNoKey : true), m_pd, KPRes.Print))
+			if(!AppPolicy.TryWithKey(AppPolicyId.Print, ((m_pd == null) ||
+				AppPolicy.Current.PrintNoKey), m_pd, KPRes.Print))
 				return;
 
 			try { PrintUtil.PrintHtml(GetExportHtml(true)); }

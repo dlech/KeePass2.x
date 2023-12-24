@@ -51,7 +51,7 @@ namespace KeePass.Plugins
 {
 	public sealed class PlgxException : Exception
 	{
-		private string m_strMsg;
+		private readonly string m_strMsg;
 
 		public override string Message
 		{

@@ -20,12 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Globalization;
-using System.Resources;
-using System.Drawing;
-using System.Reflection;
 using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
+using System.Reflection;
+using System.Resources;
+using System.Text;
 
 using KeePass.UI;
 using KeePass.Util.Archive;
@@ -68,11 +68,11 @@ namespace KeePass.Util
 
 	public sealed class CustomResourceManager : ResourceManager
 	{
-		private static List<CustomResourceManager> m_lInsts =
+		private static readonly List<CustomResourceManager> g_lInsts =
 			new List<CustomResourceManager>();
 		public static ReadOnlyCollection<CustomResourceManager> Instances
 		{
-			get { return m_lInsts.AsReadOnly(); }
+			get { return g_lInsts.AsReadOnly(); }
 		}
 
 		public event EventHandler<CrmEventArgs> GetObjectPre;
@@ -83,10 +83,10 @@ namespace KeePass.Util
 			get { return m_rm; }
 		}
 
-		private Dictionary<string, object> m_dOverrides =
+		private readonly Dictionary<string, object> m_dOverrides =
 			new Dictionary<string, object>();
 
-		private ImageArchive m_iaAppHighRes = new ImageArchive();
+		private readonly ImageArchive m_iaAppHighRes = new ImageArchive();
 
 		public CustomResourceManager(ResourceManager rmBase)
 		{
@@ -94,7 +94,7 @@ namespace KeePass.Util
 
 			m_rm = rmBase;
 
-			if(m_lInsts.Count < 1000) m_lInsts.Add(this);
+			if(g_lInsts.Count < 1000) g_lInsts.Add(this);
 			else { Debug.Assert(false); }
 
 			try { m_iaAppHighRes.Load(Properties.Resources.Images_App_HighRes); }

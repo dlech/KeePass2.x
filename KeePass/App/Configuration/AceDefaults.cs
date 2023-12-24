@@ -25,7 +25,6 @@ using System.Xml.Serialization;
 
 using KeePass.Util;
 
-using KeePassLib;
 using KeePassLib.Keys;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -174,6 +173,31 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		[DefaultValue(false)]
+		public bool RecycleBinCollapse { get; set; }
+
+		private AceDuplication m_aceDup = new AceDuplication();
+		public AceDuplication Duplication
+		{
+			get { return m_aceDup; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_aceDup = value;
+			}
+		}
+
+		private AcePrint m_acePrint = new AcePrint();
+		public AcePrint Print
+		{
+			get { return m_acePrint; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_acePrint = value;
+			}
+		}
+
 		private bool m_bExportMasterKeySpec = false;
 		[DefaultValue(false)]
 		public bool ExportMasterKeySpec
@@ -240,14 +264,6 @@ namespace KeePass.App.Configuration
 				if(value == null) throw new ArgumentNullException("value");
 				m_strWinFavsFileSuffix = value;
 			}
-		}
-
-		private bool m_bCollapseRecycleBin = false;
-		[DefaultValue(false)]
-		public bool RecycleBinCollapse
-		{
-			get { return m_bCollapseRecycleBin; }
-			set { m_bCollapseRecycleBin = value; }
 		}
 
 		private static string GetKeyAssocID(IOConnectionInfo iocDb)
@@ -331,5 +347,192 @@ namespace KeePass.App.Configuration
 			if(idx >= 0) return m_vKeySources[idx];
 			return null;
 		}
+	}
+
+	public sealed class AceDuplication
+	{
+		private bool m_bExtendTitle = true;
+		[DefaultValue(true)]
+		public bool ExtendTitle
+		{
+			get { return m_bExtendTitle; }
+			set { m_bExtendTitle = value; }
+		}
+
+		[DefaultValue(false)]
+		public bool CreateFieldReferences { get; set; }
+
+		private bool m_bCopyHistory = true;
+		[DefaultValue(true)]
+		public bool CopyHistory
+		{
+			get { return m_bCopyHistory; }
+			set { m_bCopyHistory = value; }
+		}
+	}
+
+	public enum AcePrintLayout
+	{
+		None = 0,
+		Tables,
+		Blocks
+	}
+
+	public sealed class AcePrint
+	{
+		private AcePrintLayout m_lay = AcePrintLayout.Tables;
+		[DefaultValue(AcePrintLayout.Tables)]
+		public AcePrintLayout Layout
+		{
+			get { return m_lay; }
+			set { m_lay = value; }
+		}
+
+		private bool m_bIncTitle = true;
+		[DefaultValue(true)]
+		public bool IncludeTitle
+		{
+			get { return m_bIncTitle; }
+			set { m_bIncTitle = value; }
+		}
+
+		private bool m_bIncUserName = true;
+		[DefaultValue(true)]
+		public bool IncludeUserName
+		{
+			get { return m_bIncUserName; }
+			set { m_bIncUserName = value; }
+		}
+
+		private bool m_bIncPassword = true;
+		[DefaultValue(true)]
+		public bool IncludePassword
+		{
+			get { return m_bIncPassword; }
+			set { m_bIncPassword = value; }
+		}
+
+		[DefaultValue(false)]
+		public bool IncludeUrl { get; set; }
+
+		private bool m_bIncNotes = true;
+		[DefaultValue(true)]
+		public bool IncludeNotes
+		{
+			get { return m_bIncNotes; }
+			set { m_bIncNotes = value; }
+		}
+
+		[DefaultValue(false)]
+		public bool IncludeCreationTime { get; set; }
+		[DefaultValue(false)]
+		public bool IncludeLastModificationTime { get; set; }
+		[DefaultValue(false)]
+		public bool IncludeExpiryTime { get; set; }
+
+		[DefaultValue(false)]
+		public bool IncludeAutoType { get; set; }
+		[DefaultValue(false)]
+		public bool IncludeTags { get; set; }
+		[DefaultValue(false)]
+		public bool IncludeIcon { get; set; }
+		[DefaultValue(false)]
+		public bool IncludeCustomStrings { get; set; }
+		[DefaultValue(false)]
+		public bool IncludeGroupName { get; set; }
+		[DefaultValue(false)]
+		public bool IncludeUuid { get; set; }
+
+		private bool m_bColorP = true;
+		[DefaultValue(true)]
+		public bool ColorP
+		{
+			get { return m_bColorP; }
+			set { m_bColorP = value; }
+		}
+
+		private string m_strColorPU = "#0000FF";
+		[DefaultValue("#0000FF")]
+		public string ColorPU
+		{
+			get { return m_strColorPU; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strColorPU = value;
+			}
+		}
+
+		private string m_strColorPL = "#000000";
+		[DefaultValue("#000000")]
+		public string ColorPL
+		{
+			get { return m_strColorPL; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strColorPL = value;
+			}
+		}
+
+		private string m_strColorPD = "#008000";
+		[DefaultValue("#008000")]
+		public string ColorPD
+		{
+			get { return m_strColorPD; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strColorPD = value;
+			}
+		}
+
+		private string m_strColorPO = "#C00000";
+		[DefaultValue("#C00000")]
+		public string ColorPO
+		{
+			get { return m_strColorPO; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strColorPO = value;
+			}
+		}
+
+		private AceFont m_fontMain = new AceFont();
+		public AceFont MainFont
+		{
+			get { return m_fontMain; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_fontMain = value;
+			}
+		}
+
+		private AceFont m_fontPassword = new AceFont(true);
+		public AceFont PasswordFont
+		{
+			get { return m_fontPassword; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_fontPassword = value;
+			}
+		}
+
+		[DefaultValue(false)]
+		public bool SortEntries { get; set; }
+
+		private AceColumnType m_ctSortEntries = AceColumnType.Title;
+		[DefaultValue(AceColumnType.Title)]
+		public AceColumnType SortEntriesBy
+		{
+			get { return m_ctSortEntries; }
+			set { m_ctSortEntries = value; }
+		}
+
+		[DefaultValue(0)]
+		public int Spr { get; set; }
 	}
 }

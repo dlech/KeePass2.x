@@ -66,7 +66,7 @@ namespace KeePass.UI
 
 		private static Size GetSizeOrSmall(Size? osz)
 		{
-			return (osz.HasValue ? osz.Value : UIUtil.GetSmallIconSize());
+			return (osz ?? UIUtil.GetSmallIconSize());
 		}
 
 		public static Image GetImageForName(string strName, Size? osz)

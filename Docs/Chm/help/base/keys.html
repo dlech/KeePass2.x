@@ -21,7 +21,6 @@
 	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
-	<meta name="flattr:id" content="42rykv" />
 
 	<title>Master Key - KeePass</title>
 	<base target="_self" />
@@ -247,7 +246,8 @@ Details can be found in the MSDN article
 target="_blank">Windows Data Protection</a>' and in the support article
 <!-- https://support.microsoft.com/en-us/kb/309408 -->
 <!-- https://support.microsoft.com/en-us/help/309408 -->
-'<a href="https://web.archive.org/web/20190909161828/https://support.microsoft.com/en-us/help/309408/how-to-troubleshoot-the-data-protection-api-dpapi"
+<!-- https://support.microsoft.com/en-us/help/309408/how-to-troubleshoot-the-data-protection-api-dpapi -->
+'<a href="https://web.archive.org/web/20160322171305/https://support.microsoft.com/en-us/kb/309408"
 target="_blank" rel="nofollow">How to troubleshoot the Data Protection API (DPAPI)</a>'.<br />
 <br />
 If you decide to use this option, it is highly recommended not to rely
@@ -287,14 +287,14 @@ the minimum estimated quality (in bits) that master passwords must have.
 For example, by setting it to <code>80</code>, only master passwords
 with an estimated quality of at least 80 bits will be accepted.<br />
 <br />
-The <code>Security/MasterKeyExpiryRec</code> node can be set to an
-XSD date or an XSD duration (see
+The <code>Security/MasterKeyExpiryRec</code> and <code>Security/MasterKeyExpiryForce</code>
+nodes can be set to an XSD date or an XSD duration (see
 <a href="https://www.w3schools.com/xml/schema_dtypes_date.asp"
 target="_blank">XSD Date and Time Data Types</a>).
 If the master key has not been changed since the specified date or
 if the time span between now and the last master key change exceeds
-the specified duration, KeePass recommends to change it.
-This setting applies to all databases that are opened with this
+the specified duration, KeePass recommends/forces to change it.
+These settings apply to all databases that are opened with this
 KeePass instance; a master key expiry can also be configured for
 each database individually (in 'File' &rarr; 'Database Settings' &rarr;
 tab 'Advanced').<br />

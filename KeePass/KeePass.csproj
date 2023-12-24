@@ -891,6 +891,7 @@
     <Compile Include="UI\FileIcons.cs" />
     <Compile Include="UI\FontControlGroup.cs" />
     <Compile Include="UI\FontUtil.cs" />
+    <Compile Include="UI\FormDataExchange.cs" />
     <Compile Include="UI\GlobalWindowManager.cs" />
     <Compile Include="UI\IconColorizer.cs" />
     <Compile Include="UI\IGwmWindow.cs" />

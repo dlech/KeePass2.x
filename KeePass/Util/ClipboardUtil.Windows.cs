@@ -162,11 +162,10 @@ namespace KeePass.Util
 		{
 			if(strData == null) { Debug.Assert(false); return false; }
 
-			bool bUni = (obForceUni.HasValue ? obForceUni.Value :
-				(Marshal.SystemDefaultCharSize >= 2));
+			bool bUni = (obForceUni ?? (Marshal.SystemDefaultCharSize >= 2));
 
-			uint uFmt = (ouFormat.HasValue ? ouFormat.Value : (bUni ?
-				NativeMethods.CF_UNICODETEXT : NativeMethods.CF_TEXT));
+			uint uFmt = (ouFormat ?? (bUni ? NativeMethods.CF_UNICODETEXT :
+				NativeMethods.CF_TEXT));
 			Encoding enc = (bUni ? (new UnicodeEncoding(false, false)) : Encoding.Default);
 
 			byte[] pb = enc.GetBytes(strData);

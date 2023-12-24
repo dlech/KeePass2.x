@@ -107,7 +107,7 @@ namespace KeePass.DataExchange
 			// an all-or-nothing import
 			PwGroup pgVirt = new PwGroup(true, true);
 
-			try { ImportPriv(pgVirt, s, p, pdContext, sl); }
+			try { ImportPriv(pgVirt, s, p, pdContext); }
 			finally { s.Close(); }
 
 			foreach(PwGroup pg in pgVirt.Groups)
@@ -117,7 +117,7 @@ namespace KeePass.DataExchange
 		}
 
 		private static void ImportPriv(PwGroup pgStorage, Stream s, GxiProfile p,
-			PwDatabase pdContext, IStatusLogger sl)
+			PwDatabase pdContext)
 		{
 			StrEncodingInfo sei = StrUtil.GetEncoding(p.Encoding);
 			StreamReader srRaw;

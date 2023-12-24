@@ -39,21 +39,21 @@ namespace KeePass.Util
 {
 	public static class HotKeyManager
 	{
-		private static Form m_fRecvWnd = null;
-		private static Dictionary<int, Keys> m_vRegKeys = new Dictionary<int, Keys>();
+		private static Form g_fRecvWnd = null;
+		private static readonly Dictionary<int, Keys> g_dRegKeys = new Dictionary<int, Keys>();
 
-		// private static NativeMethods.BindKeyHandler m_hOnHotKey =
+		// private static NativeMethods.BindKeyHandler g_hOnHotKey =
 		//	new NativeMethods.BindKeyHandler(HotKeyManager.OnHotKey);
 
 		// public static Form ReceiverWindow
 		// {
-		//	get { return m_fRecvWnd; }
-		//	set { m_fRecvWnd = value; }
+		//	get { return g_fRecvWnd; }
+		//	set { g_fRecvWnd = value; }
 		// }
 
 		public static bool Initialize(Form fRecvWnd)
 		{
-			m_fRecvWnd = fRecvWnd;
+			g_fRecvWnd = fRecvWnd;
 
 			// if(NativeLib.IsUnix())
 			// {
@@ -80,17 +80,17 @@ namespace KeePass.Util
 			{
 				if(!NativeLib.IsUnix())
 				{
-					if(NativeMethods.RegisterHotKey(m_fRecvWnd.Handle, nId, uMod, vkCode))
+					if(NativeMethods.RegisterHotKey(g_fRecvWnd.Handle, nId, uMod, vkCode))
 					{
-						m_vRegKeys[nId] = kKey;
+						g_dRegKeys[nId] = kKey;
 						return true;
 					}
 				}
 				else // Unix
 				{
 					// NativeMethods.tomboy_keybinder_bind(EggAccKeysToString(kKey),
-					//	m_hOnHotKey);
-					// m_vRegKeys[nId] = kKey;
+					//	g_hOnHotKey);
+					// g_dRegKeys[nId] = kKey;
 					// return true;
 				}
 			}
@@ -101,20 +101,20 @@ namespace KeePass.Util
 
 		public static bool UnregisterHotKey(int nId)
 		{
-			if(m_vRegKeys.ContainsKey(nId))
+			if(g_dRegKeys.ContainsKey(nId))
 			{
-				// Keys k = m_vRegKeys[nId];
-				m_vRegKeys.Remove(nId);
+				// Keys k = g_dRegKeys[nId];
+				g_dRegKeys.Remove(nId);
 
 				try
 				{
 					bool bResult;
 					if(!NativeLib.IsUnix())
-						bResult = NativeMethods.UnregisterHotKey(m_fRecvWnd.Handle, nId);
+						bResult = NativeMethods.UnregisterHotKey(g_fRecvWnd.Handle, nId);
 					else // Unix
 					{
 						// NativeMethods.tomboy_keybinder_unbind(EggAccKeysToString(k),
-						//	m_hOnHotKey);
+						//	g_hOnHotKey);
 						// bResult = true;
 						bResult = false;
 					}
@@ -130,15 +130,15 @@ namespace KeePass.Util
 
 		public static void UnregisterAll()
 		{
-			List<int> vIDs = new List<int>(m_vRegKeys.Keys);
+			List<int> vIDs = new List<int>(g_dRegKeys.Keys);
 			foreach(int nID in vIDs) UnregisterHotKey(nID);
 
-			Debug.Assert(m_vRegKeys.Count == 0);
+			Debug.Assert(g_dRegKeys.Count == 0);
 		}
 
 		public static bool IsHotKeyRegistered(Keys kKey, bool bGlobal)
 		{
-			if(m_vRegKeys.ContainsValue(kKey)) return true;
+			if(g_dRegKeys.ContainsValue(kKey)) return true;
 			if(!bGlobal) return false;
 
 			int nID = AppDefs.GlobalHotKeyId.TempRegTest;
@@ -153,13 +153,13 @@ namespace KeePass.Util
 			if(string.IsNullOrEmpty(strKey)) return;
 			if(strKey.IndexOf(@"<Release>", StrUtil.CaseIgnoreCmp) >= 0) return;
 
-			if(m_fRecvWnd != null)
+			if(g_fRecvWnd != null)
 			{
-				MainForm mf = (m_fRecvWnd as MainForm);
+				MainForm mf = (g_fRecvWnd as MainForm);
 				if(mf == null) { Debug.Assert(false); return; }
 
 				Keys k = EggAccStringToKeys(strKey);
-				foreach(KeyValuePair<int, Keys> kvp in m_vRegKeys)
+				foreach(KeyValuePair<int, Keys> kvp in g_dRegKeys)
 				{
 					if(kvp.Value == k) mf.HandleHotKey(kvp.Key);
 				}
@@ -252,7 +252,7 @@ namespace KeePass.Util
 
 				if(char.IsControl(strUni, 0)) { Debug.Assert(false); strUni = "?"; }
 
-				string str = KPRes.CtrlAltAConflict.Replace(@"{PARAM}", strUni) +
+				string str = KPRes.CtrlAltAConflict.Replace("{PARAM}", strUni) +
 					MessageService.NewParagraph + KPRes.CtrlAltAConflictHint;
 
 				VistaTaskDialog dlg = new VistaTaskDialog();
@@ -263,7 +263,7 @@ namespace KeePass.Util
 				dlg.MainInstruction = KPRes.KeyboardKeyCtrl + "+" +
 					KPRes.KeyboardKeyAlt + "+A - " + KPRes.Warning;
 				dlg.SetIcon(VtdIcon.Warning);
-				dlg.VerificationText = KPRes.DialogNoShowAgain;
+				dlg.VerificationText = UIUtil.GetDialogNoShowAgainText(null);
 				dlg.WindowTitle = PwDefs.ShortProductName;
 
 				if(dlg.ShowDialog(fParent))
@@ -290,7 +290,7 @@ namespace KeePass.Util
 				if(c == null) return false;
 
 				Keys k;
-				if(!m_vRegKeys.TryGetValue(wParam, out k)) return false;
+				if(!g_dRegKeys.TryGetValue(wParam, out k)) return false;
 				if(k == Keys.None) { Debug.Assert(false); return false; }
 
 				c.HotKey = k;

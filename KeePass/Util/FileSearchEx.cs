@@ -50,7 +50,7 @@ namespace KeePass.Util
 
 			public volatile bool End = false;
 
-			private List<FsxResult> m_lResults = new List<FsxResult>();
+			private readonly List<FsxResult> m_lResults = new List<FsxResult>();
 			private readonly object m_oResultsSync = new object();
 
 			public FsxContext(string strRoot, string strVolumeLabel,

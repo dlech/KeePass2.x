@@ -49,7 +49,7 @@ namespace KeePass.Forms
 		private PwUuid m_pwCustomIconID = PwUuid.Zero;
 		private StringDictionaryEx m_sdCustomData = null;
 
-		private ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
+		private readonly ExpiryControlGroup m_cgExpiry = new ExpiryControlGroup();
 
 		private GroupFormTab m_gftInit = GroupFormTab.None;
 		[Browsable(false)]

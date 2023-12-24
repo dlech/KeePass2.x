@@ -54,17 +54,17 @@ namespace KeePass.Forms
 		private bool m_bDialogClosed = false;
 
 #if DEBUG
-		private static Dictionary<string, string> m_dWndTasks =
+		private static readonly Dictionary<string, string> g_dWndTasks =
 			new Dictionary<string, string>();
-		private static readonly object m_oWndTasksSync = new object();
+		private static readonly object g_oWndTasksSync = new object();
 #endif
 
 		// private Color m_clrOriginalForeground = Color.Black;
 		// private Color m_clrOriginalBackground = Color.White;
-		private List<Image> m_vWndImages = new List<Image>();
+		private readonly List<Image> m_lWndImages = new List<Image>();
 
-		private RichTextBoxContextMenu m_ctxKeySeq = new RichTextBoxContextMenu();
-		private RichTextBoxContextMenu m_ctxKeyCodes = new RichTextBoxContextMenu();
+		private readonly RichTextBoxContextMenu m_ctxKeySeq = new RichTextBoxContextMenu();
+		private readonly RichTextBoxContextMenu m_ctxKeyCodes = new RichTextBoxContextMenu();
 		private bool m_bBlockUpdates = false;
 
 		public EditAutoTypeItemForm()
@@ -76,7 +76,7 @@ namespace KeePass.Forms
 		public void InitEx(AutoTypeConfig atConfig, int iAssocIndex, bool bEditSequenceOnly,
 			string strDefaultSeq, ProtectedStringDictionary vStringDict)
 		{
-			Debug.Assert(atConfig != null); if(atConfig == null) throw new ArgumentNullException("atConfig");
+			if(atConfig == null) { Debug.Assert(false); throw new ArgumentNullException("atConfig"); }
 
 			m_atConfig = atConfig;
 			m_iAssocIndex = iAssocIndex;
@@ -87,8 +87,8 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_atConfig != null); if(m_atConfig == null) throw new InvalidOperationException();
-			Debug.Assert(m_vStringDict != null); if(m_vStringDict == null) throw new InvalidOperationException();
+			if(m_atConfig == null) { Debug.Assert(false); throw new InvalidOperationException(); }
+			if(m_vStringDict == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -113,6 +113,8 @@ namespace KeePass.Forms
 			// FontUtil.AssignDefaultBold(m_lblTargetWindow);
 			// FontUtil.AssignDefaultBold(m_rbSeqDefault);
 			// FontUtil.AssignDefaultBold(m_rbSeqCustom);
+
+			AccessibilityEx.SetContext(m_rbKeySeq, m_rbSeqCustom);
 
 			UIUtil.EnableAutoCompletion(m_cmbWindow, false);
 
@@ -167,7 +169,7 @@ namespace KeePass.Forms
 
 		private void InitPlaceholdersBox(bool bRtl)
 		{
-			const string VkcBreak = @"<break />";
+			const string VkcBreak = "<break />";
 
 			string[] vSpecialKeyCodes = new string[] {
 				"TAB", "ENTER", "UP", "DOWN", "LEFT", "RIGHT",
@@ -252,9 +254,9 @@ namespace KeePass.Forms
 			rb.AppendLine();
 			rb.AppendLine();
 			rb.AppendLine(KPRes.KeyboardKeyModifiers, FontStyle.Bold, null, null, strSfx, null);
-			rb.Append(KPRes.KeyboardKeyShift + @": +, ");
-			rb.Append(KPRes.KeyboardKeyCtrl + @": ^, ");
-			rb.Append(KPRes.KeyboardKeyAlt + @": %");
+			rb.Append(KPRes.KeyboardKeyShift + ": +, ");
+			rb.Append(KPRes.KeyboardKeyCtrl + ": ^, ");
+			rb.Append(KPRes.KeyboardKeyAlt + ": %");
 
 			rb.AppendLine();
 			rb.AppendLine();
@@ -322,17 +324,17 @@ namespace KeePass.Forms
 			lock(m_objDialogSync) { m_bDialogClosed = true; }
 
 			m_cmbWindow.OrderedImageList = null;
-			foreach(Image img in m_vWndImages)
+			foreach(Image img in m_lWndImages)
 			{
 				if(img != null) img.Dispose();
 			}
-			m_vWndImages.Clear();
+			m_lWndImages.Clear();
 
 			m_ctxKeyCodes.Detach();
 			m_ctxKeySeq.Detach();
 
 #if DEBUG
-			lock(m_oWndTasksSync) { Debug.Assert(m_dWndTasks.Count == 0); }
+			lock(g_oWndTasksSync) { Debug.Assert(g_dWndTasks.Count == 0); }
 #endif
 
 			GlobalWindowManager.RemoveWindow(this);
@@ -589,14 +591,14 @@ namespace KeePass.Forms
 					EditAutoTypeItemForm.EvalWindowProc),
 					new PwlwInfo(this, kvp.Key));
 
-			m_cmbWindow.OrderedImageList = m_vWndImages;
+			m_cmbWindow.OrderedImageList = m_lWndImages;
 		}
 
 		private static void EvalWindowProc(object objState)
 		{
 #if DEBUG
 			string strTaskID = Guid.NewGuid().ToString();
-			lock(m_oWndTasksSync) { m_dWndTasks[strTaskID] = @"<<<UNDEFINED>>>"; }
+			lock(g_oWndTasksSync) { g_dWndTasks[strTaskID] = "<<<UNDEFINED>>>"; }
 #endif
 
 			try
@@ -618,7 +620,7 @@ namespace KeePass.Forms
 
 #if DEBUG
 				Debug.Assert(strName.Length <= pLen.ToInt64());
-				lock(m_oWndTasksSync) { m_dWndTasks[strTaskID] = strName; }
+				lock(g_oWndTasksSync) { g_dWndTasks[strTaskID] = strName; }
 #endif
 
 				if((NativeMethods.GetWindowStyle(hWnd) &
@@ -637,7 +639,7 @@ namespace KeePass.Forms
 #if DEBUG
 			finally
 			{
-				lock(m_oWndTasksSync) { m_dWndTasks.Remove(strTaskID); }
+				lock(g_oWndTasksSync) { g_dWndTasks.Remove(strTaskID); }
 			}
 #endif
 		}
@@ -658,7 +660,7 @@ namespace KeePass.Forms
 				{
 					if(!f.m_bDialogClosed)
 					{
-						f.m_vWndImages.Add(img);
+						f.m_lWndImages.Add(img);
 						f.m_cmbWindow.Items.Add(strWndName);
 					}
 				}

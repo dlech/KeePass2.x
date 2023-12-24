@@ -58,7 +58,7 @@ namespace KeePassLib.Utility
 #if KeePassUAP
 			xrs.DtdProcessing = DtdProcessing.Prohibit;
 #else
-			// Also see PrepMonoDev.sh script
+			// See also PrepMonoDev.sh script
 			xrs.ProhibitDtd = true; // Obsolete in .NET 4, but still there
 			// xrs.DtdProcessing = DtdProcessing.Prohibit; // .NET 4 only
 #endif

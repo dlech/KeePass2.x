@@ -1,3 +1,67 @@
+2023-10-12: 2.55
+- Added 'Compare Entries' command (in the main menu 'Entry' ->
+  'Compare'), which compares the two entries that are selected
+  in the main entry list
+- Added 'Mark Entry for Comparison' and 'Compare Entry with
+  Marked Entry' commands (in the main menu 'Entry' ->
+  'Compare'); these two commands support comparing two entries
+  that are stored in different databases (opened in tabs)
+- Report dialogs can now be closed by pressing the Esc key
+- Added option 'Show warning when the key transformation
+  settings are weak' (in 'Tools' -> 'Options' -> tab
+  'Security', turned on by default)
+- The options in the entry/group duplication dialog are
+  remembered now
+- The options in the HTML export/print dialog are remembered
+  now
+- In dialogs that have a 'Do not show this dialog again' option
+  and multiple commands, the command that will always be used
+  when turning on the option is now mentioned in the dialog
+- Added 'More information' link in the dialog that is displayed
+  when KeePass automatically disables enforcement-requiring
+  items
+- Added {NEWPASSWORD:/#/P/O/} placeholder, which generates a
+  new password for the current entry using the specified
+  pattern P and the option(s) O
+- Added accessible names for some controls (custom keystroke
+  sequence edit control in the auto-type item dialog, filter
+  edit control in report dialogs, a few controls in the
+  password generator dialog; if the option 'Optimize for screen
+  reader' is turned on)
+- Added 'MasterKeyExpiryForce' configuration setting
+- Enhanced Google Chrome passwords CSV import module to support
+  the new format
+- Enhanced mSecure CSV import module to support the new format
+- Enhanced 1Password 1PUX import module to support the new
+  password field/type
+
+- The toolbar in report dialogs is now a tab stop
+- Increased default number of AES-KDF iterations
+- Improved syntax highlighting for {CLIPBOARD-SET:...}
+  placeholders (in the auto-type item editing dialog)
+- The node mode of the configuration element
+  '/Configuration/Meta/PreferUserConfiguration' is now 'None'
+  by default
+- Improved INI loading performance
+- Improved data size formatting
+- Renamed value columns/commands in the history entry
+  comparison dialog from 'A'/'B' to '1'/'2'
+- Improved process memory protection of history entry
+  comparisons
+- Improved process memory protection of 'CryptoRandomStream'
+  objects
+- Improved thread safety of process memory protection on Unix-
+  like systems
+- The MSI file is now built using Visual Studio 2022
+- Various UI text improvements
+- Various code optimizations
+- Minor other improvements
+
+- Searches using an XPath expression involving history entries
+  now always regard all history entries
+- KeePass now does not crash anymore when a plugin tries to
+  upload a file to a server asynchronously
+
 2023-06-03: 2.54
 - Triggers, global URL overrides, password generator profiles
   and a few more settings are now stored in the enforced

@@ -75,15 +75,16 @@ namespace KeePass.Forms
 			m_lvInfo.Columns.Add(KPRes.Installed);
 			m_lvInfo.Columns.Add(KPRes.Available);
 
-			List<Image> lImages = new List<Image>();
-			lImages.Add(Properties.Resources.B16x16_Help);
-			lImages.Add(Properties.Resources.B16x16_Apply);
-			lImages.Add(Properties.Resources.B16x16_Redo);
-			lImages.Add(Properties.Resources.B16x16_History);
-			lImages.Add(Properties.Resources.B16x16_Error);
+			List<Image> lImages = new List<Image>
+			{
+				Properties.Resources.B16x16_Help,
+				Properties.Resources.B16x16_Apply,
+				Properties.Resources.B16x16_Redo,
+				Properties.Resources.B16x16_History,
+				Properties.Resources.B16x16_Error
+			};
 			m_ilIcons = UIUtil.BuildImageListUnscaled(lImages,
 				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
-
 			m_lvInfo.SmallImageList = m_ilIcons;
 
 			string strCat = string.Empty;

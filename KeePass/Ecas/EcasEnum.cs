@@ -29,7 +29,7 @@ namespace KeePass.Ecas
 {
 	public sealed class EcasEnum
 	{
-		private EcasEnumItem[] m_vItems;
+		private readonly EcasEnumItem[] m_vItems;
 		public EcasEnumItem[] Items
 		{
 			get { return m_vItems; }
@@ -78,13 +78,13 @@ namespace KeePass.Ecas
 
 	public sealed class EcasEnumItem
 	{
-		private uint m_id;
+		private readonly uint m_id;
 		public uint ID
 		{
 			get { return m_id; }
 		}
 
-		private string m_name;
+		private readonly string m_name;
 		public string Name
 		{
 			get { return m_name; }

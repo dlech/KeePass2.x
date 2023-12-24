@@ -1702,8 +1702,7 @@ namespace KeePass.UI
 
 			if(bSetImage)
 			{
-				Image img = null;
-
+				Image img;
 				if(bChecked)
 				{
 					if(g_bmpCheck == null)
@@ -3976,6 +3975,15 @@ namespace KeePass.UI
 			}
 
 			return bmp;
+		}
+
+		internal static string GetDialogNoShowAgainText(string strDefault)
+		{
+			string str = KPRes.DialogNoShowAgain;
+			if(string.IsNullOrEmpty(strDefault)) return str;
+
+			return Program.Translation.CombineToSentence(StrUtil.TrimDots(
+				str, true), KPRes.AlwaysP.Replace("{PARAM}", strDefault));
 		}
 	}
 }

@@ -27,7 +27,7 @@ namespace KeePassLib.Utility
 {
 	public static class TypeOverridePool
 	{
-		private static Dictionary<Type, GFunc<object>> g_d =
+		private static readonly Dictionary<Type, GFunc<object>> g_d =
 			new Dictionary<Type, GFunc<object>>();
 
 		public static void Register(Type t, GFunc<object> f)

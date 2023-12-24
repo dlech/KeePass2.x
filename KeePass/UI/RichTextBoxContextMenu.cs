@@ -32,7 +32,7 @@ namespace KeePass.UI
 		private RichTextBox m_rtb = null;
 		private Form m_form = null;
 		private CustomContextMenuStripEx m_ctx = null;
-		private ToolStripItem[] m_vMenuItems =
+		private readonly ToolStripItem[] m_vMenuItems =
 			new ToolStripItem[(int)RtbCtxCommands.Count];
 		private string m_strCurLink = string.Empty;
 

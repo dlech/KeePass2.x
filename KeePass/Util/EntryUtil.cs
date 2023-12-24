@@ -285,7 +285,7 @@ namespace KeePass.Util
 
 			string str = strText;
 
-			const string strNewPwStart = @"{NEWPASSWORD";
+			const string strNewPwStart = "{NEWPASSWORD";
 			if(str.IndexOf(strNewPwStart, StrUtil.CaseIgnoreCmp) < 0) return str;
 
 			string strGen = null;
@@ -295,15 +295,13 @@ namespace KeePass.Util
 			while(SprEngine.ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
 				strNewPwStart + ":", out iStart, out lParams, true))
 			{
-				if(strGen == null)
-					strGen = GeneratePassword((((lParams != null) &&
-						(lParams.Count > 0)) ? lParams[0] : string.Empty), ctx);
+				if(strGen == null) strGen = GeneratePassword(lParams, ctx);
 
 				string strIns = SprEngine.TransformContent(strGen, ctx);
 				str = str.Insert(iStart, strIns);
 			}
 
-			const string strNewPwPlh = strNewPwStart + @"}";
+			const string strNewPwPlh = strNewPwStart + "}";
 			if(str.IndexOf(strNewPwPlh, StrUtil.CaseIgnoreCmp) >= 0)
 			{
 				if(strGen == null) strGen = GeneratePassword(null, ctx);
@@ -328,8 +326,10 @@ namespace KeePass.Util
 			return str;
 		}
 
-		private static string GeneratePassword(string strProfile, SprContext ctx)
+		private static string GeneratePassword(List<string> lParams, SprContext ctx)
 		{
+			string strProfile = (((lParams != null) && (lParams.Count != 0)) ?
+				lParams[0] : null);
 			PwEntry peCtx = ((ctx != null) ? ctx.Entry : null);
 			PwDatabase pdCtx = ((ctx != null) ? ctx.Database : null);
 
@@ -339,6 +339,21 @@ namespace KeePass.Util
 				if(peCtx != null)
 					prf = PwProfile.DeriveFromPassword(peCtx.Strings.GetSafe(
 						PwDefs.PasswordField));
+			}
+			else if(strProfile == "#")
+			{
+				string strPattern = ((lParams.Count >= 2) ? lParams[1] : null);
+				if(!string.IsNullOrEmpty(strPattern))
+				{
+					Dictionary<string, string> dOptions = SprEngine.SplitParams(
+						(lParams.Count >= 3) ? lParams[2] : string.Empty);
+
+					prf = new PwProfile();
+					prf.GeneratorType = PasswordGeneratorType.Pattern;
+					prf.Pattern = strPattern;
+					prf.PatternPermutePassword = (SprEngine.GetParam(dOptions,
+						"r", "0") == "1");
+				}
 			}
 			else if(Program.Config.PasswordGenerator.ProfilesEnabled)
 			{
@@ -363,11 +378,11 @@ namespace KeePass.Util
 		internal const string OtpSecretBase32 = OtpSecret + "-Base32";
 		internal const string OtpSecretBase64 = OtpSecret + "-Base64";
 
-		internal const string HotpPlh = @"{HMACOTP}";
+		internal const string HotpPlh = "{HMACOTP}";
 		internal const string HotpPrefix = "HmacOtp-";
 		internal const string HotpCounter = HotpPrefix + "Counter";
 
-		internal const string TotpPlh = @"{TIMEOTP}";
+		internal const string TotpPlh = "{TIMEOTP}";
 		internal const string TotpPrefix = "TimeOtp-";
 		internal const string TotpLength = TotpPrefix + "Length";
 		internal const string TotpPeriod = TotpPrefix + "Period";
@@ -537,10 +552,12 @@ namespace KeePass.Util
 			};
 
 			Dictionary<string, string> dAlgMap = new Dictionary<string, string>(
-				StrUtil.CaseIgnoreComparer);
-			dAlgMap["SHA1"] = HmacOtp.AlgHmacSha1;
-			dAlgMap["SHA256"] = HmacOtp.AlgHmacSha256;
-			dAlgMap["SHA512"] = HmacOtp.AlgHmacSha512;
+				StrUtil.CaseIgnoreComparer)
+			{
+				{ "SHA1", HmacOtp.AlgHmacSha1 },
+				{ "SHA256", HmacOtp.AlgHmacSha256 },
+				{ "SHA512", HmacOtp.AlgHmacSha512 }
+			};
 
 			string strType = (uri.Host ?? string.Empty);
 			if(strType.Equals("hotp", StrUtil.CaseIgnoreCmp))
@@ -943,12 +960,7 @@ namespace KeePass.Util
 				{
 					List<PwEntry> l;
 					if(d.TryGetValue(str, out l)) l.Add(pe);
-					else
-					{
-						l = new List<PwEntry>();
-						l.Add(pe);
-						d[str] = l;
-					}
+					else d[str] = new List<PwEntry> { pe };
 				}
 
 				return true;
@@ -1369,8 +1381,10 @@ namespace KeePass.Util
 				int p = lXSums[i].Key;
 				PwEntry pe = lEntries[p];
 
-				List<EuxSimilarPasswords> lSim = new List<EuxSimilarPasswords>();
-				lSim.Add(new EuxSimilarPasswords(pe, pe, float.MaxValue));
+				List<EuxSimilarPasswords> lSim = new List<EuxSimilarPasswords>
+				{
+					new EuxSimilarPasswords(pe, pe, float.MaxValue)
+				};
 
 				for(int j = 0; j < n; ++j)
 				{

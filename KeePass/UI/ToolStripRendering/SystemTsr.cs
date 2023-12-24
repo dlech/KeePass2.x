@@ -33,7 +33,7 @@ namespace KeePass.UI.ToolStripRendering
 {
 	internal sealed class SystemTsrFactory : TsrFactory
 	{
-		private PwUuid m_uuid = new PwUuid(new byte[] {
+		private readonly PwUuid m_uuid = new PwUuid(new byte[] {
 			0x6B, 0xCD, 0x45, 0xFA, 0xA1, 0x3F, 0x71, 0xEC,
 			0x7B, 0x5E, 0x97, 0x38, 0x8D, 0xB1, 0xCB, 0x09
 		});
@@ -57,7 +57,7 @@ namespace KeePass.UI.ToolStripRendering
 	// Checkboxes are rendered incorrectly
 	/* internal sealed class SystemTsrFactory : TsrFactory
 	{
-		private PwUuid m_uuid = new PwUuid(new byte[] {
+		private readonly PwUuid m_uuid = new PwUuid(new byte[] {
 			0x03, 0xF8, 0x67, 0xAB, 0x21, 0x96, 0x43, 0xED,
 			0xA5, 0xFE, 0x9E, 0x43, 0x4A, 0x35, 0x89, 0xAA
 		});
@@ -82,17 +82,17 @@ namespace KeePass.UI.ToolStripRendering
 	{
 		private sealed class SystemTsrColorTable : ProfessionalColorTable
 		{
-			private Color m_clrItemActiveBack = SystemColors.Control;
-			private Color m_clrItemActiveBorder = SystemColors.ControlDarkDark;
-			private Color m_clrItemSelBack = SystemColors.Control;
-			private Color m_clrItemSelBorder = SystemColors.ControlDark;
+			private readonly Color m_clrItemActiveBack = SystemColors.Control;
+			private readonly Color m_clrItemActiveBorder = SystemColors.ControlDarkDark;
+			private readonly Color m_clrItemSelBack = SystemColors.Control;
+			private readonly Color m_clrItemSelBorder = SystemColors.ControlDark;
 
-			private Color m_clrBarBack = SystemColors.MenuBar;
-			private Color m_clrMenuBack = SystemColors.Menu;
-			private Color m_clrImageBack = SystemColors.Menu;
+			private readonly Color m_clrBarBack = SystemColors.MenuBar;
+			private readonly Color m_clrMenuBack = SystemColors.Menu;
+			private readonly Color m_clrImageBack = SystemColors.Menu;
 
-			private Color m_clrSubItemSelBack = SystemColors.MenuHighlight;
-			private Color m_clrSubItemSelBorder = SystemColors.MenuHighlight;
+			private readonly Color m_clrSubItemSelBack = SystemColors.MenuHighlight;
+			private readonly Color m_clrSubItemSelBorder = SystemColors.MenuHighlight;
 
 			public override Color ButtonCheckedGradientBegin
 			{
@@ -441,7 +441,7 @@ namespace KeePass.UI.ToolStripRendering
 		protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
 		{
 			ToolStripItem tsi = ((e != null) ? e.Item : null);
-			bool bCtxItem = ((tsi != null) ? (tsi.Owner is ContextMenuStrip) : false);
+			bool bCtxItem = ((tsi != null) && (tsi.Owner is ContextMenuStrip));
 
 			if((tsi != null) && (bCtxItem || (tsi.OwnerItem != null)) &&
 				tsi.Selected && !tsi.Enabled)

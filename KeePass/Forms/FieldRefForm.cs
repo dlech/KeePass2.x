@@ -41,7 +41,7 @@ namespace KeePass.Forms
 		private ImageList m_ilIcons = null;
 		private string m_strDefaultRef = string.Empty;
 
-		private List<KeyValuePair<string, string>> m_vColumns =
+		private readonly List<KeyValuePair<string, string>> m_lColumns =
 			new List<KeyValuePair<string, string>>();
 
 		private string m_strResultRef = string.Empty;
@@ -75,13 +75,13 @@ namespace KeePass.Forms
 
 			UIUtil.SetExplorerTheme(m_lvEntries, true);
 
-			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.TitleField, KPRes.Title));
-			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UserNameField, KPRes.UserName));
-			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UrlField, KPRes.Url));
-			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.NotesField, KPRes.Notes));
+			m_lColumns.Add(new KeyValuePair<string, string>(PwDefs.TitleField, KPRes.Title));
+			m_lColumns.Add(new KeyValuePair<string, string>(PwDefs.UserNameField, KPRes.UserName));
+			m_lColumns.Add(new KeyValuePair<string, string>(PwDefs.UrlField, KPRes.Url));
+			m_lColumns.Add(new KeyValuePair<string, string>(PwDefs.NotesField, KPRes.Notes));
 
 			PwObjectList<PwEntry> vEntries = m_pgEntrySource.GetEntries(true);
-			UIUtil.CreateEntryList(m_lvEntries, vEntries, m_vColumns, m_ilIcons);
+			UIUtil.CreateEntryList(m_lvEntries, vEntries, m_lColumns, m_ilIcons);
 
 			m_radioIdUuid.Checked = true;
 
@@ -237,7 +237,7 @@ namespace KeePass.Forms
 				PwObjectList<PwEntry> lResults = new PwObjectList<PwEntry>();
 				m_pgEntrySource.SearchEntries(sp, lResults);
 
-				UIUtil.CreateEntryList(m_lvEntries, lResults, m_vColumns, m_ilIcons);
+				UIUtil.CreateEntryList(m_lvEntries, lResults, m_lColumns, m_ilIcons);
 			}
 		}
 

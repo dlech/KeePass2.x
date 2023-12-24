@@ -30,9 +30,9 @@ namespace KeePass.UI
 {
 	public sealed class RtlAwareResizeScope : IDisposable
 	{
-		private List<Control> m_lControls = new List<Control>();
-		private List<int> m_lOrgX = new List<int>();
-		private List<int> m_lOrgW = new List<int>();
+		private readonly List<Control> m_lControls = new List<Control>();
+		private readonly List<int> m_lOrgX = new List<int>();
+		private readonly List<int> m_lOrgW = new List<int>();
 
 		public RtlAwareResizeScope(params Control[] v)
 		{

@@ -64,11 +64,11 @@ namespace KeePass.Util.Spr
 		public static event EventHandler<SprEventArgs> FilterCompilePre;
 		public static event EventHandler<SprEventArgs> FilterCompile;
 
-		private static List<string> m_lFilterPlh = new List<string>();
+		private static readonly List<string> g_lFilterPlh = new List<string>();
 		// See the events above
 		public static List<string> FilterPlaceholderHints
 		{
-			get { return m_lFilterPlh; }
+			get { return g_lFilterPlh; }
 		}
 
 		[Obsolete]
@@ -626,8 +626,8 @@ namespace KeePass.Util.Spr
 			if(strRef[1] != '@') return null;
 			if(strRef[3] != ':') return null;
 
-			chScan = char.ToUpper(strRef[2]);
-			chWanted = char.ToUpper(strRef[0]);
+			chScan = char.ToUpperInvariant(strRef[2]);
+			chWanted = char.ToUpperInvariant(strRef[0]);
 
 			SearchParameters sp = SearchParameters.None;
 			sp.SearchString = strRef.Substring(4);
@@ -788,7 +788,7 @@ namespace KeePass.Util.Spr
 				try
 				{
 					string strNew = lParams[0];
-					string strCmd = lParams[1].ToLower();
+					string strCmd = lParams[1].ToLowerInvariant();
 
 					if((strCmd == "u") || (strCmd == "upper"))
 						strNew = strNew.ToUpper();
@@ -984,7 +984,7 @@ namespace KeePass.Util.Spr
 			return str;
 		}
 
-		private static Dictionary<string, string> SplitParams(string str)
+		internal static Dictionary<string, string> SplitParams(string str)
 		{
 			Dictionary<string, string> d = new Dictionary<string, string>();
 			if(string.IsNullOrEmpty(str)) return d;
@@ -1000,7 +1000,7 @@ namespace KeePass.Util.Spr
 				string[] vKvp = strOption.Split(vSplitKvp);
 				if(vKvp.Length != 2) continue;
 
-				string strKey = (vKvp[0] ?? string.Empty).Trim().ToLower();
+				string strKey = (vKvp[0] ?? string.Empty).Trim().ToLowerInvariant();
 				string strValue = (vKvp[1] ?? string.Empty).Trim();
 
 				d[strKey] = strValue;
@@ -1009,13 +1009,13 @@ namespace KeePass.Util.Spr
 			return d;
 		}
 
-		private static string GetParam(Dictionary<string, string> d,
+		internal static string GetParam(Dictionary<string, string> d,
 			string strName, string strDefaultValue)
 		{
 			if(d == null) { Debug.Assert(false); return strDefaultValue; }
 			if(strName == null) { Debug.Assert(false); return strDefaultValue; }
 
-			Debug.Assert(strName == strName.ToLower());
+			Debug.Assert(strName == strName.ToLowerInvariant());
 
 			string strValue;
 			if(d.TryGetValue(strName, out strValue)) return strValue;

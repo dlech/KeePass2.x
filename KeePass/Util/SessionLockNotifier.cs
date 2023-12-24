@@ -39,7 +39,7 @@ namespace KeePass.Util
 
 	public sealed class SessionLockEventArgs : EventArgs
 	{
-		private SessionLockReason m_r;
+		private readonly SessionLockReason m_r;
 
 		public SessionLockReason Reason { get { return m_r; } }
 

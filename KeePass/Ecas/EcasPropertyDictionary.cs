@@ -35,7 +35,7 @@ namespace KeePass.Ecas
 
 	public sealed class EcasPropertyDictionary
 	{
-		private Dictionary<string, object> m_dict = new Dictionary<string, object>();
+		private readonly Dictionary<string, object> m_dict = new Dictionary<string, object>();
 
 		public EcasPropertyDictionary()
 		{

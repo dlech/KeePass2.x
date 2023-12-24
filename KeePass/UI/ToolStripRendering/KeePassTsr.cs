@@ -34,7 +34,7 @@ namespace KeePass.UI.ToolStripRendering
 {
 	internal sealed class KeePassTsrFactory : TsrFactory
 	{
-		private PwUuid m_uuid = new PwUuid(new byte[] {
+		private readonly PwUuid m_uuid = new PwUuid(new byte[] {
 			0x05, 0x0A, 0x57, 0xF0, 0x7B, 0xBC, 0x34, 0xAF,
 			0x5B, 0x8F, 0xA1, 0x31, 0xDB, 0xBF, 0x2B, 0xEC
 		});

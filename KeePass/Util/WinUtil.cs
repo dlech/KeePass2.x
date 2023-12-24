@@ -87,65 +87,65 @@ namespace KeePass.Util
 
 	public static class WinUtil
 	{
-		private static bool m_bIsWindows9x = false;
-		private static bool m_bIsWindows2000 = false;
-		private static bool m_bIsWindowsXP = false;
-		private static bool m_bIsAtLeastWindows2000 = false;
-		private static bool m_bIsAtLeastWindowsVista = false;
-		private static bool m_bIsAtLeastWindows7 = false;
-		private static bool m_bIsAtLeastWindows8 = false;
-		private static bool m_bIsAtLeastWindows10 = false;
-		private static bool m_bIsAppX = false;
+		private static readonly bool g_bIsWindows9x = false;
+		private static readonly bool g_bIsWindows2000 = false;
+		private static readonly bool g_bIsWindowsXP = false;
+		private static readonly bool g_bIsAtLeastWindows2000 = false;
+		private static readonly bool g_bIsAtLeastWindowsVista = false;
+		private static readonly bool g_bIsAtLeastWindows7 = false;
+		private static readonly bool g_bIsAtLeastWindows8 = false;
+		private static readonly bool g_bIsAtLeastWindows10 = false;
+		private static readonly bool g_bIsAppX = false;
 
-		private static string m_strExePath = null;
+		private static string g_strExePath = null;
 
-		private static ulong m_uFrameworkVersion = 0;
+		private static ulong g_uFrameworkVersion = 0;
 
 		public static event EventHandler<OpenUrlEventArgs> OpenUrlPre;
 
 		public static bool IsWindows9x
 		{
-			get { return m_bIsWindows9x; }
+			get { return g_bIsWindows9x; }
 		}
 
 		public static bool IsWindows2000
 		{
-			get { return m_bIsWindows2000; }
+			get { return g_bIsWindows2000; }
 		}
 
 		public static bool IsWindowsXP
 		{
-			get { return m_bIsWindowsXP; }
+			get { return g_bIsWindowsXP; }
 		}
 
 		public static bool IsAtLeastWindows2000
 		{
-			get { return m_bIsAtLeastWindows2000; }
+			get { return g_bIsAtLeastWindows2000; }
 		}
 
 		public static bool IsAtLeastWindowsVista
 		{
-			get { return m_bIsAtLeastWindowsVista; }
+			get { return g_bIsAtLeastWindowsVista; }
 		}
 
 		public static bool IsAtLeastWindows7
 		{
-			get { return m_bIsAtLeastWindows7; }
+			get { return g_bIsAtLeastWindows7; }
 		}
 
 		public static bool IsAtLeastWindows8
 		{
-			get { return m_bIsAtLeastWindows8; }
+			get { return g_bIsAtLeastWindows8; }
 		}
 
 		public static bool IsAtLeastWindows10
 		{
-			get { return m_bIsAtLeastWindows10; }
+			get { return g_bIsAtLeastWindows10; }
 		}
 
 		public static bool IsAppX
 		{
-			get { return m_bIsAppX; }
+			get { return g_bIsAppX; }
 		}
 
 		static WinUtil()
@@ -155,14 +155,14 @@ namespace KeePass.Util
 			OperatingSystem os = Environment.OSVersion;
 			Version v = os.Version;
 
-			m_bIsWindows9x = (os.Platform == PlatformID.Win32Windows);
-			m_bIsWindows2000 = ((v.Major == 5) && (v.Minor == 0));
-			m_bIsWindowsXP = ((v.Major == 5) && (v.Minor == 1));
+			g_bIsWindows9x = (os.Platform == PlatformID.Win32Windows);
+			g_bIsWindows2000 = ((v.Major == 5) && (v.Minor == 0));
+			g_bIsWindowsXP = ((v.Major == 5) && (v.Minor == 1));
 
-			m_bIsAtLeastWindows2000 = (v.Major >= 5);
-			m_bIsAtLeastWindowsVista = (v.Major >= 6);
-			m_bIsAtLeastWindows7 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 1)));
-			m_bIsAtLeastWindows8 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 2)));
+			g_bIsAtLeastWindows2000 = (v.Major >= 5);
+			g_bIsAtLeastWindowsVista = (v.Major >= 6);
+			g_bIsAtLeastWindows7 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 1)));
+			g_bIsAtLeastWindows8 = ((v.Major >= 7) || ((v.Major == 6) && (v.Minor >= 2)));
 
 			// Environment.OSVersion is reliable only up to version 6.2;
 			// https://msdn.microsoft.com/library/windows/desktop/ms724832.aspx
@@ -177,7 +177,7 @@ namespace KeePass.Util
 						string.Empty).ToString();
 					uint u;
 					if(uint.TryParse(str, out u))
-						m_bIsAtLeastWindows10 = (u >= 10);
+						g_bIsAtLeastWindows10 = (u >= 10);
 					else { Debug.Assert(string.IsNullOrEmpty(str)); }
 				}
 				else { Debug.Assert(false); }
@@ -192,9 +192,9 @@ namespace KeePass.Util
 				{
 					Regex rx = new Regex("\\\\WindowsApps\\\\.*?_\\d+(\\.\\d+)*_",
 						RegexOptions.IgnoreCase);
-					m_bIsAppX = rx.IsMatch(strDir);
+					g_bIsAppX = rx.IsMatch(strDir);
 				}
-				else { Debug.Assert(!m_bIsAppX); } // No AppX by default
+				else { Debug.Assert(!g_bIsAppX); } // No AppX by default
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -336,8 +336,7 @@ namespace KeePass.Util
 			string strUrlFlt = strUrlToOpen;
 			strUrlFlt = strUrlFlt.TrimStart(new char[] { ' ', '\t', '\r', '\n' });
 
-			bool bEncCmd = (obForceEncCmd.HasValue ? obForceEncCmd.Value :
-				WinUtil.IsCommandLineUrl(strUrlFlt));
+			bool bEncCmd = (obForceEncCmd ?? WinUtil.IsCommandLineUrl(strUrlFlt));
 
 			SprContext ctx = new SprContext(pe, pd, SprCompileFlags.All, false, bEncCmd);
 			ctx.Base = strBaseRaw;
@@ -420,7 +419,7 @@ namespace KeePass.Util
 
 		public static string GetExecutable()
 		{
-			string str = m_strExePath;
+			string str = g_strExePath;
 			if(str != null) return str;
 
 			try { str = Assembly.GetExecutingAssembly().Location; }
@@ -432,7 +431,7 @@ namespace KeePass.Util
 				str = UrlUtil.FileUrlToPath(str);
 			}
 
-			m_strExePath = str;
+			g_strExePath = str;
 			return str;
 		}
 
@@ -576,7 +575,7 @@ namespace KeePass.Util
 			return string.Empty;
 		}
 
-		private static readonly string[] m_vIE7Windows = new string[] {
+		private static readonly string[] g_vIE7Windows = new string[] {
 			"Windows Internet Explorer", "Maxthon"
 		};
 
@@ -585,7 +584,7 @@ namespace KeePass.Util
 			if(strWindowTitle == null) return false; // No assert or throw
 			if(strWindowTitle.Length == 0) return false; // No assert or throw
 
-			foreach(string str in m_vIE7Windows)
+			foreach(string str in g_vIE7Windows)
 			{
 				if(strWindowTitle.IndexOf(str) >= 0) return true;
 			}
@@ -706,7 +705,7 @@ namespace KeePass.Util
 
 		public static ulong GetMaxNetFrameworkVersion()
 		{
-			ulong u = m_uFrameworkVersion;
+			ulong u = g_uFrameworkVersion;
 			if(u != 0) return u;
 
 			// https://www.mono-project.com/docs/about-mono/releases/
@@ -738,7 +737,7 @@ namespace KeePass.Util
 				if(v.Revision > 0) u |= (uint)v.Revision;
 			}
 
-			m_uFrameworkVersion = u;
+			g_uFrameworkVersion = u;
 			return u;
 		}
 

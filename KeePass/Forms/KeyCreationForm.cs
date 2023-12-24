@@ -48,7 +48,7 @@ namespace KeePass.Forms
 
 		private uint m_uUIAutoBlocked = 0;
 
-		private PwInputControlGroup m_icgPassword = new PwInputControlGroup();
+		private readonly PwInputControlGroup m_icgPassword = new PwInputControlGroup();
 		private Image m_imgKeyFileWarning = null;
 		private Image m_imgAccWarning = null;
 

@@ -45,7 +45,7 @@ namespace KeePass.Plugins
 {
 	internal sealed class PluginManager : IEnumerable<PluginInfo>
 	{
-		private List<PluginInfo> m_vPlugins = new List<PluginInfo>();
+		private readonly List<PluginInfo> m_lPlugins = new List<PluginInfo>();
 		private IPluginHost m_host = null;
 
 		private static string g_strUserDir = string.Empty;
@@ -62,12 +62,12 @@ namespace KeePass.Plugins
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_vPlugins.GetEnumerator();
+			return m_lPlugins.GetEnumerator();
 		}
 		
 		public IEnumerator<PluginInfo> GetEnumerator()
 		{
-			return m_vPlugins.GetEnumerator();
+			return m_lPlugins.GetEnumerator();
 		}
 
 		internal void LoadAllPlugins()
@@ -166,10 +166,8 @@ namespace KeePass.Plugins
 		{
 			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			List<string> l = new List<string>();
-			l.Add(strFilePath);
-
-			LoadPlugins(l, strTypeName, strDisplayFilePath, bSkipCacheFile);
+			LoadPlugins(new List<string> { strFilePath }, strTypeName,
+				strDisplayFilePath, bSkipCacheFile);
 		}
 
 		private void LoadPlugins(List<string> lFiles, string strTypeName,
@@ -184,7 +182,7 @@ namespace KeePass.Plugins
 					StrUtil.CaseIgnoreCmp))
 					continue;
 
-				FileVersionInfo fvi = null;
+				FileVersionInfo fvi;
 				try
 				{
 					fvi = FileVersionInfo.GetVersionInfo(strFile);
@@ -212,7 +210,7 @@ namespace KeePass.Plugins
 					if(!pi.Interface.Initialize(m_host))
 						continue; // Fail without error
 
-					m_vPlugins.Add(pi);
+					m_lPlugins.Add(pi);
 				}
 				catch(BadImageFormatException exBif)
 				{
@@ -267,7 +265,7 @@ namespace KeePass.Plugins
 
 		public void UnloadAllPlugins()
 		{
-			foreach(PluginInfo plugin in m_vPlugins)
+			foreach(PluginInfo plugin in m_lPlugins)
 			{
 				Debug.Assert(plugin.Interface != null);
 				if(plugin.Interface != null)
@@ -277,7 +275,7 @@ namespace KeePass.Plugins
 				}
 			}
 
-			m_vPlugins.Clear();
+			m_lPlugins.Clear();
 		}
 
 		private static Plugin CreatePluginInstance(string strFilePath,
@@ -527,7 +525,7 @@ namespace KeePass.Plugins
 			if(c == null) { Debug.Assert(false); return; }
 
 			List<ToolStripItem> l = new List<ToolStripItem>();
-			foreach(PluginInfo pi in m_vPlugins)
+			foreach(PluginInfo pi in m_lPlugins)
 			{
 				if(pi == null) { Debug.Assert(false); continue; }
 

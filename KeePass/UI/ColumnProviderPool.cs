@@ -20,9 +20,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePassLib;
 
@@ -30,42 +30,42 @@ namespace KeePass.UI
 {
 	public sealed class ColumnProviderPool : IEnumerable<ColumnProvider>
 	{
-		private List<ColumnProvider> m_vProviders = new List<ColumnProvider>();
+		private readonly List<ColumnProvider> m_lProviders = new List<ColumnProvider>();
 
 		public int Count
 		{
-			get { return m_vProviders.Count; }
+			get { return m_lProviders.Count; }
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_vProviders.GetEnumerator();
+			return m_lProviders.GetEnumerator();
 		}
 
 		public IEnumerator<ColumnProvider> GetEnumerator()
 		{
-			return m_vProviders.GetEnumerator();
+			return m_lProviders.GetEnumerator();
 		}
 
 		public void Add(ColumnProvider prov)
 		{
 			Debug.Assert(prov != null); if(prov == null) throw new ArgumentNullException("prov");
 
-			m_vProviders.Add(prov);
+			m_lProviders.Add(prov);
 		}
 
 		public bool Remove(ColumnProvider prov)
 		{
 			Debug.Assert(prov != null); if(prov == null) throw new ArgumentNullException("prov");
 
-			return m_vProviders.Remove(prov);
+			return m_lProviders.Remove(prov);
 		}
 
 		public string[] GetColumnNames()
 		{
 			List<string> v = new List<string>();
 
-			foreach(ColumnProvider prov in m_vProviders)
+			foreach(ColumnProvider prov in m_lProviders)
 			{
 				foreach(string strColumn in prov.ColumnNames)
 				{
@@ -80,7 +80,7 @@ namespace KeePass.UI
 		{
 			if(strColumnName == null) throw new ArgumentNullException("strColumnName");
 
-			foreach(ColumnProvider prov in m_vProviders)
+			foreach(ColumnProvider prov in m_lProviders)
 			{
 				if(Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
 					return prov.TextAlign;
@@ -94,7 +94,7 @@ namespace KeePass.UI
 			if(strColumnName == null) throw new ArgumentNullException("strColumnName");
 			if(pe == null) throw new ArgumentNullException("pe");
 
-			foreach(ColumnProvider prov in m_vProviders)
+			foreach(ColumnProvider prov in m_lProviders)
 			{
 				if(Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
 					return prov.GetCellData(strColumnName, pe);
@@ -107,7 +107,7 @@ namespace KeePass.UI
 		{
 			if(strColumnName == null) throw new ArgumentNullException("strColumnName");
 
-			foreach(ColumnProvider prov in m_vProviders)
+			foreach(ColumnProvider prov in m_lProviders)
 			{
 				if(Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
 					return prov.SupportsCellAction(strColumnName);
@@ -120,7 +120,7 @@ namespace KeePass.UI
 		{
 			if(strColumnName == null) throw new ArgumentNullException("strColumnName");
 
-			foreach(ColumnProvider prov in m_vProviders)
+			foreach(ColumnProvider prov in m_lProviders)
 			{
 				if(Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
 				{

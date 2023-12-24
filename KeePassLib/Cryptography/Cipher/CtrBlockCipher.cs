@@ -28,10 +28,10 @@ namespace KeePassLib.Cryptography.Cipher
 {
 	public abstract class CtrBlockCipher : IDisposable
 	{
-		private bool m_bDisposed = false;
-
-		private byte[] m_pBlock;
+		private readonly byte[] m_pbBlock;
 		private int m_iBlockPos;
+
+		private bool m_bDisposed = false;
 
 		public abstract int BlockSize
 		{
@@ -43,7 +43,7 @@ namespace KeePassLib.Cryptography.Cipher
 			int cb = this.BlockSize;
 			if(cb <= 0) throw new InvalidOperationException("this.BlockSize");
 
-			m_pBlock = new byte[cb];
+			m_pbBlock = new byte[cb];
 			m_iBlockPos = cb;
 		}
 
@@ -57,8 +57,8 @@ namespace KeePassLib.Cryptography.Cipher
 		{
 			if(bDisposing)
 			{
-				MemUtil.ZeroByteArray(m_pBlock);
-				m_iBlockPos = m_pBlock.Length;
+				MemUtil.ZeroByteArray(m_pbBlock);
+				m_iBlockPos = m_pbBlock.Length;
 
 				m_bDisposed = true;
 			}
@@ -66,10 +66,10 @@ namespace KeePassLib.Cryptography.Cipher
 
 		protected void InvalidateBlock()
 		{
-			m_iBlockPos = m_pBlock.Length;
+			m_iBlockPos = m_pbBlock.Length;
 		}
 
-		protected abstract void NextBlock(byte[] pBlock);
+		protected abstract void NextBlock(byte[] pbBlock);
 
 		public void Encrypt(byte[] m, int iOffset, int cb)
 		{
@@ -79,21 +79,21 @@ namespace KeePassLib.Cryptography.Cipher
 			if(cb < 0) throw new ArgumentOutOfRangeException("cb");
 			if(iOffset > (m.Length - cb)) throw new ArgumentOutOfRangeException("cb");
 
-			int cbBlock = m_pBlock.Length;
+			int cbBlock = m_pbBlock.Length;
 
 			while(cb > 0)
 			{
 				Debug.Assert(m_iBlockPos <= cbBlock);
 				if(m_iBlockPos == cbBlock)
 				{
-					NextBlock(m_pBlock);
+					NextBlock(m_pbBlock);
 					m_iBlockPos = 0;
 				}
 
 				int cbCopy = Math.Min(cbBlock - m_iBlockPos, cb);
 				Debug.Assert(cbCopy > 0);
 
-				MemUtil.XorArray(m_pBlock, m_iBlockPos, m, iOffset, cbCopy);
+				MemUtil.XorArray(m_pbBlock, m_iBlockPos, m, iOffset, cbCopy);
 
 				m_iBlockPos += cbCopy;
 				iOffset += cbCopy;

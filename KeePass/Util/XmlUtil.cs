@@ -87,7 +87,7 @@ namespace KeePass.Util
 			return strValue;
 		}
 
-		private static Dictionary<string, char> m_dHtmlEntities = null;
+		private static Dictionary<string, char> g_dHtmlEntities = null;
 		/// <summary>
 		/// Decode common HTML entities except the XML ones (&lt;, &gt;, etc.).
 		/// </summary>
@@ -97,64 +97,65 @@ namespace KeePass.Util
 		{
 			if(strXml == null) { Debug.Assert(false); return string.Empty; }
 
-			if(m_dHtmlEntities == null)
+			if(g_dHtmlEntities == null)
 			{
-				Dictionary<string, char> d = new Dictionary<string, char>();
-
-				d["nbsp"] = '\u00A0'; d["iexcl"] = '\u00A1';
-				d["cent"] = '\u00A2'; d["pound"] = '\u00A3';
-				d["curren"] = '\u00A4'; d["yen"] = '\u00A5';
-				d["brvbar"] = '\u00A6'; d["sect"] = '\u00A7';
-				d["uml"] = '\u00A8'; d["copy"] = '\u00A9';
-				d["ordf"] = '\u00AA'; d["laquo"] = '\u00AB';
-				d["not"] = '\u00AC'; d["shy"] = '\u00AD';
-				d["reg"] = '\u00AE'; d["macr"] = '\u00AF';
-				d["deg"] = '\u00B0'; d["plusmn"] = '\u00B1';
-				d["sup2"] = '\u00B2'; d["sup3"] = '\u00B3';
-				d["acute"] = '\u00B4'; d["micro"] = '\u00B5';
-				d["para"] = '\u00B6'; d["middot"] = '\u00B7';
-				d["cedil"] = '\u00B8'; d["sup1"] = '\u00B9';
-				d["ordm"] = '\u00BA'; d["raquo"] = '\u00BB';
-				d["frac14"] = '\u00BC'; d["frac12"] = '\u00BD';
-				d["frac34"] = '\u00BE'; d["iquest"] = '\u00BF';
-				d["Agrave"] = '\u00C0'; d["Aacute"] = '\u00C1';
-				d["Acirc"] = '\u00C2'; d["Atilde"] = '\u00C3';
-				d["Auml"] = '\u00C4'; d["Aring"] = '\u00C5';
-				d["AElig"] = '\u00C6'; d["Ccedil"] = '\u00C7';
-				d["Egrave"] = '\u00C8'; d["Eacute"] = '\u00C9';
-				d["Ecirc"] = '\u00CA'; d["Euml"] = '\u00CB';
-				d["Igrave"] = '\u00CC'; d["Iacute"] = '\u00CD';
-				d["Icirc"] = '\u00CE'; d["Iuml"] = '\u00CF';
-				d["ETH"] = '\u00D0'; d["Ntilde"] = '\u00D1';
-				d["Ograve"] = '\u00D2'; d["Oacute"] = '\u00D3';
-				d["Ocirc"] = '\u00D4'; d["Otilde"] = '\u00D5';
-				d["Ouml"] = '\u00D6'; d["times"] = '\u00D7';
-				d["Oslash"] = '\u00D8'; d["Ugrave"] = '\u00D9';
-				d["Uacute"] = '\u00DA'; d["Ucirc"] = '\u00DB';
-				d["Uuml"] = '\u00DC'; d["Yacute"] = '\u00DD';
-				d["THORN"] = '\u00DE'; d["szlig"] = '\u00DF';
-				d["agrave"] = '\u00E0'; d["aacute"] = '\u00E1';
-				d["acirc"] = '\u00E2'; d["atilde"] = '\u00E3';
-				d["auml"] = '\u00E4'; d["aring"] = '\u00E5';
-				d["aelig"] = '\u00E6'; d["ccedil"] = '\u00E7';
-				d["egrave"] = '\u00E8'; d["eacute"] = '\u00E9';
-				d["ecirc"] = '\u00EA'; d["euml"] = '\u00EB';
-				d["igrave"] = '\u00EC'; d["iacute"] = '\u00ED';
-				d["icirc"] = '\u00EE'; d["iuml"] = '\u00EF';
-				d["eth"] = '\u00F0'; d["ntilde"] = '\u00F1';
-				d["ograve"] = '\u00F2'; d["oacute"] = '\u00F3';
-				d["ocirc"] = '\u00F4'; d["otilde"] = '\u00F5';
-				d["ouml"] = '\u00F6'; d["divide"] = '\u00F7';
-				d["oslash"] = '\u00F8'; d["ugrave"] = '\u00F9';
-				d["uacute"] = '\u00FA'; d["ucirc"] = '\u00FB';
-				d["uuml"] = '\u00FC'; d["yacute"] = '\u00FD';
-				d["thorn"] = '\u00FE'; d["yuml"] = '\u00FF';
+				Dictionary<string, char> d = new Dictionary<string, char>
+				{
+					{ "nbsp", '\u00A0' }, { "iexcl", '\u00A1' },
+					{ "cent", '\u00A2' }, { "pound", '\u00A3' },
+					{ "curren", '\u00A4' }, { "yen", '\u00A5' },
+					{ "brvbar", '\u00A6' }, { "sect", '\u00A7' },
+					{ "uml", '\u00A8' }, { "copy", '\u00A9' },
+					{ "ordf", '\u00AA' }, { "laquo", '\u00AB' },
+					{ "not", '\u00AC' }, { "shy", '\u00AD' },
+					{ "reg", '\u00AE' }, { "macr", '\u00AF' },
+					{ "deg", '\u00B0' }, { "plusmn", '\u00B1' },
+					{ "sup2", '\u00B2' }, { "sup3", '\u00B3' },
+					{ "acute", '\u00B4' }, { "micro", '\u00B5' },
+					{ "para", '\u00B6' }, { "middot", '\u00B7' },
+					{ "cedil", '\u00B8' }, { "sup1", '\u00B9' },
+					{ "ordm", '\u00BA' }, { "raquo", '\u00BB' },
+					{ "frac14", '\u00BC' }, { "frac12", '\u00BD' },
+					{ "frac34", '\u00BE' }, { "iquest", '\u00BF' },
+					{ "Agrave", '\u00C0' }, { "Aacute", '\u00C1' },
+					{ "Acirc", '\u00C2' }, { "Atilde", '\u00C3' },
+					{ "Auml", '\u00C4' }, { "Aring", '\u00C5' },
+					{ "AElig", '\u00C6' }, { "Ccedil", '\u00C7' },
+					{ "Egrave", '\u00C8' }, { "Eacute", '\u00C9' },
+					{ "Ecirc", '\u00CA' }, { "Euml", '\u00CB' },
+					{ "Igrave", '\u00CC' }, { "Iacute", '\u00CD' },
+					{ "Icirc", '\u00CE' }, { "Iuml", '\u00CF' },
+					{ "ETH", '\u00D0' }, { "Ntilde", '\u00D1' },
+					{ "Ograve", '\u00D2' }, { "Oacute", '\u00D3' },
+					{ "Ocirc", '\u00D4' }, { "Otilde", '\u00D5' },
+					{ "Ouml", '\u00D6' }, { "times", '\u00D7' },
+					{ "Oslash", '\u00D8' }, { "Ugrave", '\u00D9' },
+					{ "Uacute", '\u00DA' }, { "Ucirc", '\u00DB' },
+					{ "Uuml", '\u00DC' }, { "Yacute", '\u00DD' },
+					{ "THORN", '\u00DE' }, { "szlig", '\u00DF' },
+					{ "agrave", '\u00E0' }, { "aacute", '\u00E1' },
+					{ "acirc", '\u00E2' }, { "atilde", '\u00E3' },
+					{ "auml", '\u00E4' }, { "aring", '\u00E5' },
+					{ "aelig", '\u00E6' }, { "ccedil", '\u00E7' },
+					{ "egrave", '\u00E8' }, { "eacute", '\u00E9' },
+					{ "ecirc", '\u00EA' }, { "euml", '\u00EB' },
+					{ "igrave", '\u00EC' }, { "iacute", '\u00ED' },
+					{ "icirc", '\u00EE' }, { "iuml", '\u00EF' },
+					{ "eth", '\u00F0' }, { "ntilde", '\u00F1' },
+					{ "ograve", '\u00F2' }, { "oacute", '\u00F3' },
+					{ "ocirc", '\u00F4' }, { "otilde", '\u00F5' },
+					{ "ouml", '\u00F6' }, { "divide", '\u00F7' },
+					{ "oslash", '\u00F8' }, { "ugrave", '\u00F9' },
+					{ "uacute", '\u00FA' }, { "ucirc", '\u00FB' },
+					{ "uuml", '\u00FC' }, { "yacute", '\u00FD' },
+					{ "thorn", '\u00FE' }, { "yuml", '\u00FF' }
+				};
 				Debug.Assert(d.Count == (0xFF - 0xA0 + 1));
 				d["circ"] = '\u02C6';
 				d["tilde"] = '\u02DC';
 				d["euro"] = '\u20AC';
 
-				m_dHtmlEntities = d;
+				g_dHtmlEntities = d;
 
 #if DEBUG
 				Dictionary<char, bool> dChars = new Dictionary<char, bool>();
@@ -210,7 +211,7 @@ namespace KeePass.Util
 
 					string strEntity = str.Substring(pAmp + 1, pTerm - pAmp - 1);
 					char ch;
-					if(m_dHtmlEntities.TryGetValue(strEntity, out ch))
+					if(g_dHtmlEntities.TryGetValue(strEntity, out ch))
 						sb.Append(ch);
 					else sb.Append(str, pAmp, pTerm - pAmp + 1);
 
@@ -295,7 +296,7 @@ namespace KeePass.Util
 
 		private sealed class XuopContainer
 		{
-			private object m_o;
+			private readonly object m_o;
 			public object Object { get { return m_o; } }
 
 			public XuopContainer(object o)

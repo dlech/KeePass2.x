@@ -34,7 +34,7 @@ namespace KeePass.DataExchange
 	{
 		private const int MaxTreeHeight = 50000;
 
-		private Dictionary<string, object> m_dItems = new Dictionary<string, object>();
+		private readonly Dictionary<string, object> m_dItems = new Dictionary<string, object>();
 		public IDictionary<string, object> Items
 		{
 			get { return m_dItems; }

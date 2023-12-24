@@ -25,25 +25,25 @@ namespace KeePass.Ecas
 {
 	public sealed class EcasContext
 	{
-		private EcasTriggerSystem m_coll;
+		private readonly EcasTriggerSystem m_coll;
 		public EcasTriggerSystem TriggerSystem
 		{
 			get { return m_coll; }
 		}
 
-		private EcasTrigger m_trigger;
+		private readonly EcasTrigger m_trigger;
 		public EcasTrigger Trigger
 		{
 			get { return m_trigger; }
 		}
 
-		private EcasEvent m_eOccured;
+		private readonly EcasEvent m_eOccured;
 		public EcasEvent Event
 		{
 			get { return m_eOccured; }
 		}
 
-		private EcasPropertyDictionary m_props;
+		private readonly EcasPropertyDictionary m_props;
 		public EcasPropertyDictionary Properties
 		{
 			get { return m_props; }

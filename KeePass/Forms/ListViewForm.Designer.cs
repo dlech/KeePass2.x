@@ -74,6 +74,7 @@
 			this.m_tsMain.Name = "m_tsMain";
 			this.m_tsMain.Size = new System.Drawing.Size(694, 25);
 			this.m_tsMain.TabIndex = 1;
+			this.m_tsMain.TabStop = true;
 			// 
 			// m_tsbPrint
 			// 

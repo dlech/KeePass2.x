@@ -28,8 +28,8 @@ namespace KeePassLib.Serialization
 {
 	public sealed class OldFormatException : Exception
 	{
-		private string m_strFormat = string.Empty;
-		private OldFormatType m_type = OldFormatType.Unknown;
+		private readonly string m_strFormat;
+		private readonly OldFormatType m_type;
 
 		public enum OldFormatType
 		{
@@ -41,8 +41,8 @@ namespace KeePassLib.Serialization
 		{
 			get
 			{
-				string str = KLRes.OldFormat + ((m_strFormat.Length > 0) ?
-					(@" (" + m_strFormat + @")") : string.Empty) + ".";
+				string str = KLRes.OldFormat + ((m_strFormat.Length != 0) ?
+					(" (" + m_strFormat + ")") : string.Empty) + ".";
 
 				if(m_type == OldFormatType.KeePass1x)
 					str += MessageService.NewParagraph + KLRes.KeePass1xHint;
@@ -51,15 +51,14 @@ namespace KeePassLib.Serialization
 			}
 		}
 
-		public OldFormatException(string strFormatName)
+		public OldFormatException(string strFormatName) :
+			this(strFormatName, OldFormatType.Unknown)
 		{
-			if(strFormatName != null) m_strFormat = strFormatName;
 		}
 
 		public OldFormatException(string strFormatName, OldFormatType t)
 		{
-			if(strFormatName != null) m_strFormat = strFormatName;
-
+			m_strFormat = (strFormatName ?? string.Empty);
 			m_type = t;
 		}
 	}

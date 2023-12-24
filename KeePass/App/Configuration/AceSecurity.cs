@@ -91,6 +91,26 @@ namespace KeePass.App.Configuration
 			}
 		}
 
+		private string m_strMasterKeyExpiryForce = string.Empty;
+		[DefaultValue("")]
+		public string MasterKeyExpiryForce
+		{
+			get { return m_strMasterKeyExpiryForce; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_strMasterKeyExpiryForce = value;
+			}
+		}
+
+		private bool m_bKeyTrfWeakWarning = true;
+		[DefaultValue(true)]
+		public bool KeyTransformWeakWarning
+		{
+			get { return m_bKeyTrfWeakWarning; }
+			set { m_bKeyTrfWeakWarning = value; }
+		}
+
 		private bool m_bClipClearOnExit = true;
 		[DefaultValue(true)]
 		public bool ClipboardClearOnExit

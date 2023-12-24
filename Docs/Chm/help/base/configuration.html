@@ -21,7 +21,6 @@
 	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
-	<meta name="flattr:id" content="42rykv" />
 
 	<title>Configuration - KeePass</title>
 	<base target="_self" />
@@ -142,6 +141,58 @@ KeePass installation.</p>
 <p>For details, please see the
 <a href="https://keepass.info/help/kb/config_enf.html" target="_blank">Enforced Configuration</a>
 help page.</p>
+
+<br />
+
+<a name="enableenf"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="" />
+Enabling Enforcement-Requiring Items Again (KeePass 2.x)</h2>
+
+<p>Certain feature items are saved to the
+<a href="https://keepass.info/help/kb/config_enf.html" target="_blank">enforced configuration</a>
+file.
+Under certain circumstances, there may be such items in the regular
+configuration file only (e.g. when you copy the regular configuration
+file to a new PC, but not the enforced one).
+If you want to continue using the items, you have to enable them again.
+This may require administrator permission; KeePass shows a User Account Control
+dialog, if necessary.</p>
+
+<p>If you are using an installed KeePass version (setup EXE or MSI) and
+one or more of the following features, please note:</p>
+
+<ul class="withspc">
+<li><a href="https://keepass.info/help/v2/triggers.html" target="_blank">Triggers</a>:<br />
+If your triggers are not stored in the enforced configuration file,
+KeePass disables the trigger system.
+If you want to continue using your triggers, open the 'Triggers' dialog
+(via the main menu item 'Tools' &rarr; 'Triggers'),
+activate the 'Enable trigger system' option, check all triggers
+(with regard to security, privacy, functionality, compatibility, etc.)
+and click the 'OK' button.</li>
+
+<li><a href="autourl.html#override">Global URL overrides</a>:<br />
+If your global URL overrides are not stored in the enforced configuration file,
+KeePass disables them
+(individually; therefore, it is recommended that you remember the overrides that
+you have enabled, e.g. by taking a screenshot).
+If you want to continue using your overrides, open the 'URL Overrides' dialog
+(via the main menu item 'Tools' &rarr; 'Options' &rarr; tab 'Integration' &rarr;
+button 'URL Overrides'), check all desired overrides
+(with regard to security, privacy, functionality, compatibility, etc.),
+enable them and click the 'OK' button.</li>
+
+<li><a href="pwgenerator.html#profiles">Password generator profiles</a>:<br />
+If your password generator profiles are not stored in the enforced configuration file,
+KeePass disables them.
+If you want to continue using your profiles, open the 'Password Generator' dialog
+(via the main menu item 'Tools' &rarr; 'Generate Password'), click the
+shield button (top right) and check all profiles
+(with regard to security, privacy, functionality, compatibility, etc.).</li>
+</ul>
+
+<p>If you are using the portable ZIP package, KeePass tries to migrate
+triggers, URL overrides and password generator profiles automatically.</p>
 
 <br />
 

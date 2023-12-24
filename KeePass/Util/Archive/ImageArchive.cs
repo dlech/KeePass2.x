@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
+using System.Text;
 
 using KeePass.UI;
 
@@ -32,7 +32,7 @@ namespace KeePass.Util.Archive
 {
 	internal sealed class ImageArchive
 	{
-		private Dictionary<string, ImageArchiveItem> m_dItems =
+		private readonly Dictionary<string, ImageArchiveItem> m_dItems =
 			new Dictionary<string, ImageArchiveItem>();
 
 		private sealed class ImageArchiveItem
@@ -43,7 +43,7 @@ namespace KeePass.Util.Archive
 				get { return m_strName; }
 			}
 
-			private byte[] m_pbData;
+			private readonly byte[] m_pbData;
 			public byte[] Data
 			{
 				get { return m_pbData; }

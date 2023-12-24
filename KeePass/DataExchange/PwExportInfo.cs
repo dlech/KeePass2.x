@@ -38,7 +38,7 @@ namespace KeePass.DataExchange
 			internal set { m_pg = value; }
 		}
 
-		private PwDatabase m_pd;
+		private readonly PwDatabase m_pd;
 		/// <summary>
 		/// Optional context database reference. May be <c>null</c>.
 		/// </summary>
@@ -47,7 +47,7 @@ namespace KeePass.DataExchange
 			get { return m_pd; }
 		}
 
-		private bool m_bExpDel = true;
+		private readonly bool m_bExpDel;
 		/// <summary>
 		/// Indicates whether deleted objects should be exported, if
 		/// the data format supports it.
@@ -85,34 +85,27 @@ namespace KeePass.DataExchange
 			set { m_bExportPostShow = value; }
 		}
 
-		private Dictionary<string, string> m_dictParams =
+		private readonly Dictionary<string, string> m_dictParams =
 			new Dictionary<string, string>();
 		public Dictionary<string, string> Parameters
 		{
 			get { return m_dictParams; }
 		}
 
-		public PwExportInfo(PwGroup pgDataSource, PwDatabase pwContextInfo)
+		public PwExportInfo(PwGroup pgDataSource, PwDatabase pwContextInfo) :
+			this(pgDataSource, pwContextInfo, true)
 		{
-			ConstructEx(pgDataSource, pwContextInfo, null);
 		}
 
 		public PwExportInfo(PwGroup pgDataSource, PwDatabase pwContextInfo,
 			bool bExportDeleted)
-		{
-			ConstructEx(pgDataSource, pwContextInfo, bExportDeleted);
-		}
-
-		private void ConstructEx(PwGroup pgDataSource, PwDatabase pwContextInfo,
-			bool? bExportDeleted)
 		{
 			if(pgDataSource == null) throw new ArgumentNullException("pgDataSource");
 			// pwContextInfo may be null
 
 			m_pg = pgDataSource;
 			m_pd = pwContextInfo;
-
-			if(bExportDeleted.HasValue) m_bExpDel = bExportDeleted.Value;
+			m_bExpDel = bExportDeleted;
 		}
 	}
 }

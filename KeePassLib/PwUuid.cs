@@ -193,7 +193,7 @@ namespace KeePassLib
 	[Obsolete]
 	public sealed class PwUuidComparable : IComparable<PwUuidComparable>
 	{
-		private byte[] m_pbUuid = new byte[PwUuid.UuidSize];
+		private readonly byte[] m_pbUuid = new byte[PwUuid.UuidSize];
 
 		public PwUuidComparable(PwUuid pwUuid)
 		{

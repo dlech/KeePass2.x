@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using KeePass.App.Configuration;
 
@@ -33,15 +33,14 @@ namespace KeePass.UI
 {
 	public sealed class DocumentManagerEx
 	{
-		private List<PwDocument> m_vDocs = new List<PwDocument>();
+		private readonly List<PwDocument> m_lDocs = new List<PwDocument>();
 		private PwDocument m_dsActive = new PwDocument();
 
 		public event EventHandler ActiveDocumentSelected;
 
 		public DocumentManagerEx()
 		{
-			Debug.Assert((m_vDocs != null) && (m_dsActive != null));
-			m_vDocs.Add(m_dsActive);
+			m_lDocs.Add(m_dsActive);
 		}
 
 		public PwDocument ActiveDocument
@@ -51,9 +50,9 @@ namespace KeePass.UI
 			{
 				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 
-				for(int i = 0; i < m_vDocs.Count; ++i)
+				for(int i = 0; i < m_lDocs.Count; ++i)
 				{
-					if(m_vDocs[i] == value)
+					if(m_lDocs[i] == value)
 					{
 						m_dsActive = value;
 
@@ -73,11 +72,11 @@ namespace KeePass.UI
 			{
 				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 
-				for(int i = 0; i < m_vDocs.Count; ++i)
+				for(int i = 0; i < m_lDocs.Count; ++i)
 				{
-					if(m_vDocs[i].Database == value)
+					if(m_lDocs[i].Database == value)
 					{
-						m_dsActive = m_vDocs[i];
+						m_dsActive = m_lDocs[i];
 
 						NotifyActiveDocumentSelected();
 						return;
@@ -90,26 +89,26 @@ namespace KeePass.UI
 
 		public uint DocumentCount
 		{
-			get { return (uint)m_vDocs.Count; }
+			get { return (uint)m_lDocs.Count; }
 		}
 
 		public List<PwDocument> Documents
 		{
-			get { return m_vDocs; }
+			get { return m_lDocs; }
 		}
 
 		public PwDocument CreateNewDocument(bool bMakeActive)
 		{
 			PwDocument ds = new PwDocument();
 
-			if((m_vDocs.Count == 1) && (!m_vDocs[0].Database.IsOpen) &&
-				(m_vDocs[0].LockedIoc.Path.Length == 0))
+			if((m_lDocs.Count == 1) && (!m_lDocs[0].Database.IsOpen) &&
+				(m_lDocs[0].LockedIoc.Path.Length == 0))
 			{
-				m_vDocs.RemoveAt(0);
+				m_lDocs.RemoveAt(0);
 				m_dsActive = ds;
 			}
 
-			m_vDocs.Add(ds);
+			m_lDocs.Add(ds);
 			if(bMakeActive) m_dsActive = ds;
 
 			NotifyActiveDocumentSelected();
@@ -119,9 +118,9 @@ namespace KeePass.UI
 		public void CloseDatabase(PwDatabase pwDatabase)
 		{
 			int iFoundPos = -1;
-			for(int i = 0; i < m_vDocs.Count; ++i)
+			for(int i = 0; i < m_lDocs.Count; ++i)
 			{
-				if(m_vDocs[i].Database == pwDatabase)
+				if(m_lDocs[i].Database == pwDatabase)
 				{
 					iFoundPos = i;
 					break;
@@ -129,26 +128,26 @@ namespace KeePass.UI
 			}
 			if(iFoundPos < 0) { Debug.Assert(false); return; }
 
-			bool bClosingActive = (m_vDocs[iFoundPos] == m_dsActive);
+			bool bClosingActive = (m_lDocs[iFoundPos] == m_dsActive);
 
-			m_vDocs.RemoveAt(iFoundPos);
-			if(m_vDocs.Count == 0)
-				m_vDocs.Add(new PwDocument());
+			m_lDocs.RemoveAt(iFoundPos);
+			if(m_lDocs.Count == 0)
+				m_lDocs.Add(new PwDocument());
 
 			if(bClosingActive)
 			{
-				int iNewActive = Math.Min(iFoundPos, m_vDocs.Count - 1);
-				m_dsActive = m_vDocs[iNewActive];
+				int iNewActive = Math.Min(iFoundPos, m_lDocs.Count - 1);
+				m_dsActive = m_lDocs[iNewActive];
 				NotifyActiveDocumentSelected();
 			}
-			else { Debug.Assert(m_vDocs.Contains(m_dsActive)); }
+			else { Debug.Assert(m_lDocs.Contains(m_dsActive)); }
 		}
 
 		public List<PwDatabase> GetOpenDatabases()
 		{
 			List<PwDatabase> list = new List<PwDatabase>();
 
-			foreach(PwDocument ds in m_vDocs)
+			foreach(PwDocument ds in m_lDocs)
 			{
 				if(ds.Database.IsOpen)
 					list.Add(ds.Database);
@@ -159,7 +158,7 @@ namespace KeePass.UI
 
 		internal List<PwDocument> GetDocuments(int iMoveActive)
 		{
-			List<PwDocument> lDocs = new List<PwDocument>(m_vDocs);
+			List<PwDocument> lDocs = new List<PwDocument>(m_lDocs);
 
 			if(iMoveActive != 0)
 			{
@@ -213,7 +212,7 @@ namespace KeePass.UI
 		{
 			if(pwDatabase == null) throw new ArgumentNullException("pwDatabase");
 
-			foreach(PwDocument ds in m_vDocs)
+			foreach(PwDocument ds in m_lDocs)
 			{
 				if(ds.Database == pwDatabase) return ds;
 			}
@@ -236,7 +235,7 @@ namespace KeePass.UI
 			{
 				while(pg.ParentGroup != null) { pg = pg.ParentGroup; }
 
-				foreach(PwDocument ds in m_vDocs)
+				foreach(PwDocument ds in m_lDocs)
 				{
 					PwDatabase pd = ds.Database;
 					if((pd == null) || !pd.IsOpen) continue;
@@ -244,8 +243,6 @@ namespace KeePass.UI
 					if(object.ReferenceEquals(pd.RootGroup, pg))
 						return pd;
 				}
-
-				Debug.Assert(false);
 			}
 
 			return SlowFindContainerOf(peObj);
@@ -254,7 +251,7 @@ namespace KeePass.UI
 		private PwDatabase SlowFindContainerOf(PwEntry peObj)
 		{
 			PwDatabase pdRet = null;
-			foreach(PwDocument ds in m_vDocs)
+			foreach(PwDocument ds in m_lDocs)
 			{
 				PwDatabase pd = ds.Database;
 				if((pd == null) || !pd.IsOpen) continue;
@@ -286,12 +283,12 @@ namespace KeePass.UI
 
 	public sealed class PwDocument
 	{
-		private PwDatabase m_pwDb = new PwDatabase();
+		private readonly PwDatabase m_pd = new PwDatabase();
 		private IOConnectionInfo m_ioLockedIoc = new IOConnectionInfo();
 
 		public PwDatabase Database
 		{
-			get { return m_pwDb; }
+			get { return m_pd; }
 		}
 
 		public IOConnectionInfo LockedIoc

@@ -92,10 +92,7 @@ namespace KeePassLib
 			if(sp.SearchMode == PwSearchMode.Simple)
 				lTerms = StrUtil.SplitSearchTerms(sp.SearchString);
 			else
-			{
-				lTerms = new List<string>();
-				lTerms.Add(sp.SearchString);
-			}
+				lTerms = new List<string> { sp.SearchString };
 
 			// Search longer strings first (for improved performance)
 			lTerms.Sort(StrUtil.CompareLengthGt);
@@ -285,6 +282,13 @@ namespace KeePassLib
 			IStatusLogger sl)
 		{
 			PwDatabase pd = new PwDatabase();
+
+			// Prevent removal of history entries (by database maintenance
+			// with *default* settings when saving);
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/fc60c1a2b3/
+			pd.HistoryMaxItems = -1;
+			pd.HistoryMaxSize = -1;
+
 			pd.RootGroup = SrxpFilterCloneSelf(sp);
 
 			Dictionary<PwUuid, bool> dResults = new Dictionary<PwUuid, bool>();

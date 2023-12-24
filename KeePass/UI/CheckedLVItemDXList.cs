@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
-using System.Diagnostics;
+using System.Text;
+using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.App.Configuration;
@@ -45,24 +45,23 @@ namespace KeePass.UI
 	public sealed class CheckedLVItemDXList
 	{
 		private ListView m_lv;
+		private readonly bool m_bUseEnforcedConfig;
 
-		private List<ClviInfo> m_lItems = new List<ClviInfo>();
-		private List<CheckItemLink> m_lLinks = new List<CheckItemLink>();
-
-		private bool m_bUseEnforcedConfig;
+		private readonly List<ClviInfo> m_lItems = new List<ClviInfo>();
+		private readonly List<CheckItemLink> m_lLinks = new List<CheckItemLink>();
 
 		private sealed class ClviInfo
 		{
-			private object m_o; // Never null
+			private readonly object m_o; // Never null
 			public object Object { get { return m_o; } }
 
 			// private string m_strPropName; // Never null
 			// public string PropertyName { get { return m_strPropName; } }
 
-			private PropertyInfo m_pi; // Never null
+			private readonly PropertyInfo m_pi; // Never null
 			public PropertyInfo PropertyInfo { get { return m_pi; } }
 
-			private ListViewItem m_lvi; // Never null
+			private readonly ListViewItem m_lvi; // Never null
 			public ListViewItem ListViewItem { get { return m_lvi; } }
 
 			public bool PropertyValue
@@ -94,42 +93,37 @@ namespace KeePass.UI
 				m_pi = t.GetProperty(strPropertyName);
 				if((m_pi == null) || (m_pi.PropertyType != typeof(bool)) ||
 					!m_pi.CanRead || !m_pi.CanWrite)
-					throw new ArgumentException("strPropertyName");
+					throw new MethodAccessException();
 			}
 		}
 
 		private sealed class CheckItemLink
 		{
-			private ListViewItem m_lvSource;
-			public ListViewItem Source { get { return m_lvSource; } }
+			private readonly ListViewItem m_lviSource;
+			public ListViewItem Source { get { return m_lviSource; } }
 
-			private ListViewItem m_lvTarget;
-			public ListViewItem Target { get { return m_lvTarget; } }
+			private readonly ListViewItem m_lviTarget;
+			public ListViewItem Target { get { return m_lviTarget; } }
 
-			private CheckItemLinkType m_t;
+			private readonly CheckItemLinkType m_t;
 			public CheckItemLinkType Type { get { return m_t; } }
 
 			public CheckItemLink(ListViewItem lviSource, ListViewItem lviTarget,
 				CheckItemLinkType cilType)
 			{
-				m_lvSource = lviSource;
-				m_lvTarget = lviTarget;
+				m_lviSource = lviSource;
+				m_lviTarget = lviTarget;
 				m_t = cilType;
 			}
 		}
 
 		[Obsolete]
-		public CheckedLVItemDXList(ListView lv)
+		public CheckedLVItemDXList(ListView lv) :
+			this(lv, false)
 		{
-			Construct(lv, false);
 		}
 
 		public CheckedLVItemDXList(ListView lv, bool bUseEnforcedConfig)
-		{
-			Construct(lv, bUseEnforcedConfig);
-		}
-
-		private void Construct(ListView lv, bool bUseEnforcedConfig)
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
 

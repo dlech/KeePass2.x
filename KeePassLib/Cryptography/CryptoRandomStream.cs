@@ -66,15 +66,18 @@ namespace KeePassLib.Cryptography
 	/// </summary>
 	public sealed class CryptoRandomStream : IDisposable
 	{
-		private readonly CrsAlgorithm m_crsAlgorithm;
+		private readonly CrsAlgorithm m_alg;
 		private bool m_bDisposed = false;
 
-		private byte[] m_pbState = null;
+		private readonly byte[] m_pbKey = null;
+		private readonly byte[] m_pbIV = null;
+
+		private readonly ChaCha20Cipher m_chacha20 = null;
+		private readonly Salsa20Cipher m_salsa20 = null;
+
+		private readonly byte[] m_pbState = null;
 		private byte m_i = 0;
 		private byte m_j = 0;
-
-		private Salsa20Cipher m_salsa20 = null;
-		private ChaCha20Cipher m_chacha20 = null;
 
 		/// <summary>
 		/// Construct a new cryptographically secure random stream object.
@@ -93,30 +96,30 @@ namespace KeePassLib.Cryptography
 				throw new ArgumentOutOfRangeException("pbKey");
 			}
 
-			m_crsAlgorithm = a;
+			m_alg = a;
 
 			if(a == CrsAlgorithm.ChaCha20)
 			{
-				byte[] pbKey32 = new byte[32];
-				byte[] pbIV12 = new byte[12];
+				m_pbKey = new byte[32];
+				m_pbIV = new byte[12];
 
 				using(SHA512Managed h = new SHA512Managed())
 				{
 					byte[] pbHash = h.ComputeHash(pbKey);
-					Array.Copy(pbHash, pbKey32, 32);
-					Array.Copy(pbHash, 32, pbIV12, 0, 12);
+					Array.Copy(pbHash, m_pbKey, 32);
+					Array.Copy(pbHash, 32, m_pbIV, 0, 12);
 					MemUtil.ZeroByteArray(pbHash);
 				}
 
-				m_chacha20 = new ChaCha20Cipher(pbKey32, pbIV12, true);
+				m_chacha20 = new ChaCha20Cipher(m_pbKey, m_pbIV, true);
 			}
 			else if(a == CrsAlgorithm.Salsa20)
 			{
-				byte[] pbKey32 = CryptoUtil.HashSha256(pbKey);
-				byte[] pbIV8 = new byte[8] { 0xE8, 0x30, 0x09, 0x4B,
+				m_pbKey = CryptoUtil.HashSha256(pbKey);
+				m_pbIV = new byte[8] { 0xE8, 0x30, 0x09, 0x4B,
 					0x97, 0x20, 0x5D, 0x2A }; // Unique constant
 
-				m_salsa20 = new Salsa20Cipher(pbKey32, pbIV8);
+				m_salsa20 = new Salsa20Cipher(m_pbKey, m_pbIV);
 			}
 			else if(a == CrsAlgorithm.ArcFourVariant)
 			{
@@ -160,17 +163,20 @@ namespace KeePassLib.Cryptography
 		{
 			if(disposing)
 			{
-				if(m_crsAlgorithm == CrsAlgorithm.ChaCha20)
+				if(m_alg == CrsAlgorithm.ChaCha20)
 					m_chacha20.Dispose();
-				else if(m_crsAlgorithm == CrsAlgorithm.Salsa20)
+				else if(m_alg == CrsAlgorithm.Salsa20)
 					m_salsa20.Dispose();
-				else if(m_crsAlgorithm == CrsAlgorithm.ArcFourVariant)
+				else if(m_alg == CrsAlgorithm.ArcFourVariant)
 				{
 					MemUtil.ZeroByteArray(m_pbState);
 					m_i = 0;
 					m_j = 0;
 				}
 				else { Debug.Assert(false); }
+
+				if(m_pbKey != null) MemUtil.ZeroByteArray(m_pbKey);
+				if(m_pbIV != null) MemUtil.ZeroByteArray(m_pbIV);
 
 				m_bDisposed = true;
 			}
@@ -192,11 +198,11 @@ namespace KeePassLib.Cryptography
 
 			byte[] pbRet = new byte[cb];
 
-			if(m_crsAlgorithm == CrsAlgorithm.ChaCha20)
+			if(m_alg == CrsAlgorithm.ChaCha20)
 				m_chacha20.Encrypt(pbRet, 0, cb);
-			else if(m_crsAlgorithm == CrsAlgorithm.Salsa20)
+			else if(m_alg == CrsAlgorithm.Salsa20)
 				m_salsa20.Encrypt(pbRet, 0, cb);
-			else if(m_crsAlgorithm == CrsAlgorithm.ArcFourVariant)
+			else if(m_alg == CrsAlgorithm.ArcFourVariant)
 			{
 				unchecked
 				{
@@ -260,21 +266,20 @@ namespace KeePassLib.Cryptography
 			return str;
 		}
 
-		private static int BenchTime(CrsAlgorithm cra, int nRounds, int nDataSize)
+		private static int BenchTime(CrsAlgorithm a, int nRounds, int cbData)
 		{
 			byte[] pbKey = new byte[4] { 0x00, 0x01, 0x02, 0x03 };
 
-			int nStart = Environment.TickCount;
+			int tStart = Environment.TickCount;
 			for(int i = 0; i < nRounds; ++i)
 			{
-				using(CryptoRandomStream c = new CryptoRandomStream(cra, pbKey))
+				using(CryptoRandomStream crs = new CryptoRandomStream(a, pbKey))
 				{
-					c.GetRandomBytes((uint)nDataSize);
+					crs.GetRandomBytes((uint)cbData);
 				}
 			}
-			int nEnd = Environment.TickCount;
 
-			return (nEnd - nStart);
+			return (Environment.TickCount - tStart);
 		}
 #endif
 	}

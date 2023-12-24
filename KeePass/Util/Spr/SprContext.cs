@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
@@ -187,7 +187,7 @@ namespace KeePass.Util.Spr
 
 	public sealed class SprEventArgs : EventArgs
 	{
-		private string m_str = string.Empty;
+		private string m_str;
 		public string Text
 		{
 			get { return m_str; }
@@ -198,13 +198,16 @@ namespace KeePass.Util.Spr
 			}
 		}
 
-		private SprContext m_ctx = null;
+		private readonly SprContext m_ctx;
 		public SprContext Context
 		{
 			get { return m_ctx; }
 		}
 
-		public SprEventArgs() { }
+		public SprEventArgs() :
+			this(string.Empty, null)
+		{
+		}
 
 		public SprEventArgs(string strText, SprContext ctx)
 		{

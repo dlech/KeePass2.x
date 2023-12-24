@@ -21,7 +21,6 @@
 	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
-	<meta name="flattr:id" content="42rykv" />
 
 	<title>Placeholders - KeePass</title>
 	<base target="_self" />
@@ -340,7 +339,7 @@ See <a href="#pickchars">below</a>.</td></tr>
 <tr><td><code>{PICKFIELD}</code></td><td>Shows a dialog to pick a field
 whose value will be inserted.</td></tr>
 <tr><td><code>{NEWPASSWORD}</code><br />
-<code>{NEWPASSWORD:/<em>Profile</em>/}</code></td><td>Generates a new password.
+<code>{NEWPASSWORD:/<em>Profile</em>/.../}</code></td><td>Generates a new password.
 See <a href="#newpassword">below</a>.</td></tr>
 <tr><td><code>{PASSWORD_ENC}</code></td><td>Password in encrypted form.
 See <a href="#passwordenc">below</a>.</td></tr>
@@ -495,15 +494,16 @@ or slowing down the whole sequence, e.g. by prepending <code>{DELAY=150}</code>.
 
 <a name="newpassword"></a>
 
-<b><code>{NEWPASSWORD}</code> and <code>{NEWPASSWORD:/<em>Profile</em>/}</code>
+<b><code>{NEWPASSWORD}</code> and <code>{NEWPASSWORD:/<em>Profile</em>/.../}</code>
 &#8211; Generating New Passwords:</b><br />
-The <code>{NEWPASSWORD}</code> placeholder
-generates a new password for the current entry, based on the 'Automatically
-generated passwords for new entries' generator profile.<br />
+The <code>{NEWPASSWORD}</code> placeholder generates a new password
+for the current entry, based on the
+'<a href="pwgenerator.html#configauto">Automatically generated passwords for new entries</a>'
+generator profile.<br />
 <br />
 This placeholder is evaluated only once in an auto-type process, i.e.
 for a typical 'Old Password' - 'New Password' - 'Repeat New Password'
-dialog you can use
+dialog, you can use
 <code>{PASSWORD}{TAB}{NEWPASSWORD}{TAB}{NEWPASSWORD}{ENTER}</code>
 as auto-type sequence.<br />
 <br />
@@ -513,10 +513,46 @@ is the name of the profile.
 If the specified profile cannot be found, the
 'Automatically generated passwords for new entries' profile is used.<br />
 <br />
+A few profile names are special:
+<ul class="withspc">
+<li><strong><code>~</code></strong>:
 When specifying '<code>~</code>' as name of the profile
-(i.e. when using the placeholder <code>{NEWPASSWORD:/~/}</code>), KeePass derives
+(i.e. when using the placeholder <code>{NEWPASSWORD:/~/}</code>), KeePass
+<a href="pwgenerator.html#derive">derives</a>
 a profile from the current entry password.
-Not recommended, as the quality can decay.
+Not recommended, as the quality can degrade.</li>
+
+<li><strong><code>#</code></strong>:
+When specifying '<code>#</code>' as name of the profile,
+you can specify two additional parameters: a
+<a href="pwgenerator.html#pattern">pattern</a> and an option.
+<ul>
+<li><strong><code>R</code></strong>:
+Specifies whether to rearrange/permute the characters of the generated
+password randomly.<br />
+The default value is <code>0</code>.
+<ul>
+<li><strong><code>0</code></strong>:
+Do not rearrange.</li>
+<li><strong><code>1</code></strong>:
+Rearrange.</li>
+</ul>
+</li>
+</ul>
+Examples:
+<ul>
+<li><code>{NEWPASSWORD:/#/HH\-HH\-HH\-HH\-HH\-HH/}</code><br />
+generates a MAC address.</li>
+<li><code>{NEWPASSWORD:/#/uldA{17}/R=1/}</code><br />
+generates an alphanumeric password of length 20 that contains at least
+one upper-case letter, at least one lower-case letter and at least one
+digit (at random positions).</li>
+</ul>
+</li>
+</ul>
+As with the <code>{NEWPASSWORD}</code> placeholder,
+<code>{NEWPASSWORD:/.../}</code> placeholders are evaluated only once
+(even when different profiles/parameters are specified).
 
 
 <br /><br />

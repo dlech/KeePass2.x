@@ -30,8 +30,8 @@ namespace KeePass.Util
 {
 	public sealed class CommandLineArgs
 	{
-		private List<string> m_vFileNames = new List<string>();
-		private SortedDictionary<string, string> m_vParams =
+		private readonly List<string> m_lFileNames = new List<string>();
+		private readonly SortedDictionary<string, string> m_dParams =
 			new SortedDictionary<string, string>(StrUtil.CaseIgnoreComparer);
 
 		/// <summary>
@@ -41,8 +41,8 @@ namespace KeePass.Util
 		{
 			get
 			{
-				if(m_vFileNames.Count < 1) return null;
-				return m_vFileNames[0];
+				if(m_lFileNames.Count < 1) return null;
+				return m_lFileNames[0];
 			}
 		}
 
@@ -51,12 +51,12 @@ namespace KeePass.Util
 		/// </summary>
 		public IEnumerable<string> FileNames
 		{
-			get { return m_vFileNames; }
+			get { return m_lFileNames; }
 		}
 
 		public IEnumerable<KeyValuePair<string, string>> Parameters
 		{
-			get { return m_vParams; }
+			get { return m_dParams; }
 		}
 
 		public CommandLineArgs(string[] vArgs)
@@ -69,8 +69,8 @@ namespace KeePass.Util
 
 				KeyValuePair<string, string> kvp = GetParameter(str);
 
-				if(kvp.Key.Length == 0) m_vFileNames.Add(kvp.Value);
-				else m_vParams[kvp.Key] = kvp.Value;
+				if(kvp.Key.Length == 0) m_lFileNames.Add(kvp.Value);
+				else m_dParams[kvp.Key] = kvp.Value;
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace KeePass.Util
 				else
 				{
 					string strValue;
-					if(m_vParams.TryGetValue(strKey, out strValue))
+					if(m_dParams.TryGetValue(strKey, out strValue))
 						return strValue;
 				}
 
@@ -126,7 +126,7 @@ namespace KeePass.Util
 		{
 			if(strParamName == null) { Debug.Assert(false); return false; }
 
-			return m_vParams.Remove(strParamName);
+			return m_dParams.Remove(strParamName);
 		}
 
 		public static string SafeSerialize(string[] args)
@@ -168,17 +168,17 @@ namespace KeePass.Util
 		{
 			if(args == null) throw new ArgumentNullException("args");
 
-			m_vFileNames.Clear();
+			m_lFileNames.Clear();
 			foreach(string strFile in args.FileNames)
 			{
-				m_vFileNames.Add(strFile);
+				m_lFileNames.Add(strFile);
 			}
 
-			m_vParams.Clear();
+			m_dParams.Clear();
 			foreach(KeyValuePair<string, string> kvp in args.Parameters)
 			{
 				if(!string.IsNullOrEmpty(kvp.Key))
-					m_vParams[kvp.Key] = kvp.Value;
+					m_dParams[kvp.Key] = kvp.Value;
 				else { Debug.Assert(false); }
 			}
 		}

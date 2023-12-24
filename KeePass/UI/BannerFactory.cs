@@ -77,7 +77,7 @@ namespace KeePass.UI
 		private const int StdHeight = 60; // Standard height for 96 DPI
 		private const int StdIconDim = 48;
 
-		private static Dictionary<string, Image> g_dCache =
+		private static readonly Dictionary<string, Image> g_dCache =
 			new Dictionary<string, Image>();
 		private const int MaxCachedImages = 32;
 
@@ -224,13 +224,12 @@ namespace KeePass.UI
 
 				int xIcon = DpiScaleInt(10, nHeight);
 				int wIconScaled = StdIconDim;
-				int hIconScaled = StdIconDim;
 				if(imgIcon != null)
 				{
 					float fIconRel = (float)imgIcon.Width / (float)imgIcon.Height;
 					wIconScaled = (int)Math.Round(DpiScaleFloat(fIconRel *
 						(float)StdIconDim, nHeight));
-					hIconScaled = DpiScaleInt(StdIconDim, nHeight);
+					int hIconScaled = DpiScaleInt(StdIconDim, nHeight);
 
 					int xIconR = (bRtl ? (nWidth - xIcon - wIconScaled) : xIcon);
 					int yIconR = (nHeight - hIconScaled) / 2;

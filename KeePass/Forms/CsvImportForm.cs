@@ -449,7 +449,7 @@ namespace KeePass.Forms
 		{
 			CsvFieldType t = GetCsvFieldType();
 
-			string strUrl = null;
+			string strUrl;
 			if(IsTimeField(t))
 				strUrl = "https://msdn.microsoft.com/en-us/library/8kb3ddd4.aspx";
 			// else if(t == CsvFieldType.Group)

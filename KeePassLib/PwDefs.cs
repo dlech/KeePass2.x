@@ -56,18 +56,18 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public static readonly uint Version32 = 0x02360000;
+		public static readonly uint Version32 = 0x02370000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public static readonly ulong FileVersion64 = 0x0002003600000000UL;
+		public static readonly ulong FileVersion64 = 0x0002003700000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public static readonly string VersionString = "2.54";
+		public static readonly string VersionString = "2.55";
 
 		public static readonly string Copyright = @"Copyright © 2003-2023 Dominik Reichl";
 
@@ -113,7 +113,7 @@ namespace KeePassLib
 		/// Default number of master key encryption/transformation rounds
 		/// (making dictionary attacks harder).
 		/// </summary>
-		public static readonly ulong DefaultKeyEncryptionRounds = 60000;
+		public static readonly ulong DefaultKeyEncryptionRounds = 600000;
 
 		/// <summary>
 		/// Default identifier string for the title field.
@@ -193,35 +193,25 @@ namespace KeePassLib
 		internal const string FavoriteTag = "Favorite";
 
 		/// <summary>
-		/// Check if a name is a standard field name.
+		/// Check whether a name is a standard field name.
 		/// </summary>
-		/// <param name="strFieldName">Input field name.</param>
-		/// <returns>Returns <c>true</c>, if the field name is a standard
-		/// field name (title, user name, password, ...), otherwise <c>false</c>.</returns>
 		public static bool IsStandardField(string strFieldName)
 		{
-			Debug.Assert(strFieldName != null); if(strFieldName == null) return false;
+			if(strFieldName == null) { Debug.Assert(false); return false; }
 
-			if(strFieldName.Equals(TitleField)) return true;
-			if(strFieldName.Equals(UserNameField)) return true;
-			if(strFieldName.Equals(PasswordField)) return true;
-			if(strFieldName.Equals(UrlField)) return true;
-			if(strFieldName.Equals(NotesField)) return true;
-
-			return false;
+			return ((strFieldName == TitleField) ||
+				(strFieldName == UserNameField) ||
+				(strFieldName == PasswordField) ||
+				(strFieldName == UrlField) ||
+				(strFieldName == NotesField));
 		}
 
 		public static List<string> GetStandardFields()
 		{
-			List<string> l = new List<string>();
-
-			l.Add(TitleField);
-			l.Add(UserNameField);
-			l.Add(PasswordField);
-			l.Add(UrlField);
-			l.Add(NotesField);
-
-			return l;
+			return new List<string>
+			{
+				TitleField, UserNameField, PasswordField, UrlField, NotesField
+			};
 		}
 
 		/// <summary>

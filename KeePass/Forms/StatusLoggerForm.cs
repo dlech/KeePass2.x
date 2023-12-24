@@ -134,12 +134,13 @@ namespace KeePass.Forms
 			m_pbProgress.Minimum = 0;
 			m_pbProgress.Maximum = 100;
 
-			List<Image> lImages = new List<Image>();
-			lImages.Add(Properties.Resources.B16x16_MessageBox_Info);
-			lImages.Add(Properties.Resources.B16x16_MessageBox_Warning);
-			lImages.Add(Properties.Resources.B16x16_MessageBox_Critical);
-			lImages.Add(Properties.Resources.B16x16_Transparent);
-
+			List<Image> lImages = new List<Image>
+			{
+				Properties.Resources.B16x16_MessageBox_Info,
+				Properties.Resources.B16x16_MessageBox_Warning,
+				Properties.Resources.B16x16_MessageBox_Critical,
+				Properties.Resources.B16x16_Transparent
+			};
 			m_ilIcons = UIUtil.BuildImageListUnscaled(lImages,
 				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
 			m_lvMessages.SmallImageList = m_ilIcons;

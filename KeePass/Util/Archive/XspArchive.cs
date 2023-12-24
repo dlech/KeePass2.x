@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 using KeePassLib.Utility;
 
@@ -32,7 +32,7 @@ namespace KeePass.Util.Archive
 		private const ulong g_uSig = 0x562CBA7C4F9AF297UL;
 		private const ushort g_uVer = 1;
 
-		private Dictionary<string, byte[]> m_dItems =
+		private readonly Dictionary<string, byte[]> m_dItems =
 			new Dictionary<string, byte[]>();
 		public IDictionary<string, byte[]> Items
 		{

@@ -35,13 +35,13 @@ namespace KeePass.UI
 {
 	public sealed class GwmWindowEventArgs : EventArgs
 	{
-		private Form m_form;
+		private readonly Form m_form;
 		public Form Form
 		{
 			get { return m_form; }
 		}
 
-		private IGwmWindow m_gwmWindow;
+		private readonly IGwmWindow m_gwmWindow;
 		public IGwmWindow GwmWindow
 		{
 			get { return m_gwmWindow; }
@@ -56,9 +56,9 @@ namespace KeePass.UI
 
 	public static class GlobalWindowManager
 	{
-		private static List<KeyValuePair<Form, IGwmWindow>> g_vWindows =
+		private static readonly List<KeyValuePair<Form, IGwmWindow>> g_lWindows =
 			new List<KeyValuePair<Form, IGwmWindow>>();
-		private static List<CommonDialog> g_vDialogs = new List<CommonDialog>();
+		private static readonly List<CommonDialog> g_lDialogs = new List<CommonDialog>();
 
 		private static readonly object g_oSyncRoot = new object();
 
@@ -69,7 +69,7 @@ namespace KeePass.UI
 				uint u;
 				lock(g_oSyncRoot)
 				{
-					u = ((uint)(g_vWindows.Count + g_vDialogs.Count) +
+					u = ((uint)(g_lWindows.Count + g_lDialogs.Count) +
 						MessageService.CurrentMessageCount);
 				}
 				return u;
@@ -82,10 +82,10 @@ namespace KeePass.UI
 			{
 				lock(g_oSyncRoot)
 				{
-					if(g_vDialogs.Count > 0) return false;
+					if(g_lDialogs.Count > 0) return false;
 					if(MessageService.CurrentMessageCount > 0) return false;
 
-					foreach(KeyValuePair<Form, IGwmWindow> kvp in g_vWindows)
+					foreach(KeyValuePair<Form, IGwmWindow> kvp in g_lWindows)
 					{
 						if(kvp.Value == null) return false;
 						else if(!kvp.Value.CanCloseWithoutDataLoss)
@@ -103,8 +103,8 @@ namespace KeePass.UI
 			{
 				lock(g_oSyncRoot)
 				{
-					int n = g_vWindows.Count;
-					if(n > 0) return g_vWindows[n - 1].Key;
+					int n = g_lWindows.Count;
+					if(n > 0) return g_lWindows[n - 1].Key;
 				}
 
 				return null;
@@ -128,8 +128,8 @@ namespace KeePass.UI
 
 			lock(g_oSyncRoot)
 			{
-				Debug.Assert(g_vWindows.IndexOf(kvp) < 0);
-				g_vWindows.Add(kvp);
+				Debug.Assert(g_lWindows.IndexOf(kvp) < 0);
+				g_lWindows.Add(kvp);
 			}
 
 			// The control box must be enabled, otherwise DPI scaling
@@ -162,7 +162,7 @@ namespace KeePass.UI
 			Debug.Assert(dlg != null);
 			if(dlg == null) throw new ArgumentNullException("dlg");
 
-			lock(g_oSyncRoot) { g_vDialogs.Add(dlg); }
+			lock(g_oSyncRoot) { g_lDialogs.Add(dlg); }
 		}
 
 		public static void RemoveWindow(Form form)
@@ -171,13 +171,13 @@ namespace KeePass.UI
 
 			lock(g_oSyncRoot)
 			{
-				for(int i = 0; i < g_vWindows.Count; ++i)
+				for(int i = 0; i < g_lWindows.Count; ++i)
 				{
-					if(g_vWindows[i].Key == form)
+					if(g_lWindows[i].Key == form)
 					{
 						if(GlobalWindowManager.WindowRemoved != null)
 							GlobalWindowManager.WindowRemoved(null, new GwmWindowEventArgs(
-								form, g_vWindows[i].Value));
+								form, g_lWindows[i].Value));
 
 						MonoWorkarounds.Release(form);
 
@@ -188,7 +188,7 @@ namespace KeePass.UI
 						DebugClose(form);
 #endif
 
-						g_vWindows.RemoveAt(i);
+						g_lWindows.RemoveAt(i);
 						return;
 					}
 				}
@@ -204,8 +204,8 @@ namespace KeePass.UI
 
 			lock(g_oSyncRoot)
 			{
-				Debug.Assert(g_vDialogs.IndexOf(dlg) >= 0);
-				g_vDialogs.Remove(dlg);
+				Debug.Assert(g_lDialogs.IndexOf(dlg) >= 0);
+				g_lDialogs.Remove(dlg);
 			}
 		}
 
@@ -214,7 +214,7 @@ namespace KeePass.UI
 			Debug.Assert(GlobalWindowManager.CanCloseAllWindows);
 
 			KeyValuePair<Form, IGwmWindow>[] vWindows;
-			lock(g_oSyncRoot) { vWindows = g_vWindows.ToArray(); }
+			lock(g_oSyncRoot) { vWindows = g_lWindows.ToArray(); }
 			Array.Reverse(vWindows); // Close windows in reverse order
 
 			foreach(KeyValuePair<Form, IGwmWindow> kvp in vWindows)
@@ -250,7 +250,7 @@ namespace KeePass.UI
 
 			lock(g_oSyncRoot)
 			{
-				foreach(KeyValuePair<Form, IGwmWindow> kvp in g_vWindows)
+				foreach(KeyValuePair<Form, IGwmWindow> kvp in g_lWindows)
 				{
 					if(kvp.Key.Handle == hWnd) return true;
 				}
@@ -369,8 +369,7 @@ namespace KeePass.UI
 		{
 			if(c == null) { Debug.Assert(false); return; }
 
-			List<ImageList> lInv = new List<ImageList>();
-			lInv.Add(Program.MainForm.ClientIcons);
+			List<ImageList> lInv = new List<ImageList> { Program.MainForm.ClientIcons };
 
 			ListView lv = (c as ListView);
 			if(lv != null)

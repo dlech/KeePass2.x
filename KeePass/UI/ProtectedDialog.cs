@@ -45,8 +45,8 @@ namespace KeePass.UI
 
 	public sealed class ProtectedDialog
 	{
-		private UIFormConstructor m_fnConstruct;
-		private UIFormResultBuilder m_fnResultBuilder;
+		private readonly UIFormConstructor m_fnConstruct;
+		private readonly UIFormResultBuilder m_fnResultBuilder;
 
 		private enum SecureThreadState
 		{

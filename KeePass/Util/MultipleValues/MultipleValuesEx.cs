@@ -80,7 +80,7 @@ namespace KeePass.Util.MultipleValues
 
 		internal static Image CreateMultiImage(Size? osz)
 		{
-			Size sz = (osz.HasValue ? osz.Value : UIUtil.GetSmallIconSize());
+			Size sz = (osz ?? UIUtil.GetSmallIconSize());
 			int w = sz.Width, h = sz.Height;
 
 			Color clrGray = Color.FromArgb(255, 128, 128, 128);

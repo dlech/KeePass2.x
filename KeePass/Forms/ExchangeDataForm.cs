@@ -22,11 +22,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
+using KeePass.App.Configuration;
 using KeePass.DataExchange;
 using KeePass.Resources;
 using KeePass.UI;
@@ -67,10 +67,10 @@ namespace KeePass.Forms
 
 		private sealed class FormatGroupEx
 		{
-			private ListViewGroup m_lvg;
+			private readonly ListViewGroup m_lvg;
 			public ListViewGroup Group { get { return m_lvg; } }
 
-			private List<ListViewItem> m_lItems = new List<ListViewItem>();
+			private readonly List<ListViewItem> m_lItems = new List<ListViewItem>();
 			public List<ListViewItem> Items { get { return m_lItems; } }
 
 			public FormatGroupEx(string strGroupName)
@@ -196,21 +196,18 @@ namespace KeePass.Forms
 				m_grpExportPost.Enabled = false;
 			}
 
-			m_cbExportMasterKeySpec.Checked = Program.Config.Defaults.ExportMasterKeySpec;
-			m_cbExportParentGroups.Checked = Program.Config.Defaults.ExportParentGroups;
-			m_cbExportPostOpen.Checked = Program.Config.Defaults.ExportPostOpen;
-			m_cbExportPostShow.Checked = Program.Config.Defaults.ExportPostShow;
+			FormDataExchange fdx = new FormDataExchange(this, true, true, false);
+			AceDefaults aceDef = Program.Config.Defaults;
+			fdx.Add(m_cbExportMasterKeySpec, aceDef, "ExportMasterKeySpec");
+			fdx.Add(m_cbExportParentGroups, aceDef, "ExportParentGroups");
+			fdx.Add(m_cbExportPostOpen, aceDef, "ExportPostOpen");
+			fdx.Add(m_cbExportPostShow, aceDef, "ExportPostShow");
 
 			UpdateUIState();
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
-			Program.Config.Defaults.ExportMasterKeySpec = m_cbExportMasterKeySpec.Checked;
-			Program.Config.Defaults.ExportParentGroups = m_cbExportParentGroups.Checked;
-			Program.Config.Defaults.ExportPostOpen = m_cbExportPostOpen.Checked;
-			Program.Config.Defaults.ExportPostShow = m_cbExportPostShow.Checked;
-
 			if(m_ilFormats != null)
 			{
 				m_lvFormats.SmallImageList = null; // Detach event handlers

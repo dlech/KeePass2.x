@@ -109,32 +109,30 @@ namespace KeePass.Util
 			{
 				if(m_lImages != null) return;
 
-				List<Image> l = new List<Image>((int)DfxIcon.Count);
-
-				l.Add(Properties.Resources.B16x16_MessageBox_Info);
-				l.Add(Properties.Resources.B16x16_Folder_Home);
-				l.Add(Properties.Resources.B16x16_Folder);
-				l.Add(Properties.Resources.B16x16_Identity);
-				l.Add(Properties.Resources.B16x16_Personal);
-				l.Add(Properties.Resources.B16x16_KGPG_Info);
-				l.Add(Properties.Resources.B16x16_FTP);
-				l.Add(Properties.Resources.B16x16_EditPaste);
-				l.Add(Properties.Resources.B16x16_Spreadsheet);
-				l.Add(Properties.Resources.B16x16_History_Clear);
-				l.Add(Properties.Resources.B16x16_History);
-				l.Add(Properties.Resources.B16x16_ASCII);
-				l.Add(Properties.Resources.B16x16_Attach);
-				l.Add(Properties.Resources.B16x16_Colorize);
-				l.Add(Properties.Resources.B16x16_Color_Fill);
-				l.Add(Properties.Resources.B16x16_KNotes);
-				l.Add(Properties.Resources.B16x16_EditCopyLink);
-				l.Add(Properties.Resources.B16x16_BlockDevice);
-				l.Add(Properties.Resources.B16x16_KTouch);
-				l.Add(Properties.Resources.B16x16_Binary);
-
-				Debug.Assert(l.Count == (int)DfxIcon.Count);
-
-				m_lImages = l;
+				m_lImages = new List<Image>((int)DfxIcon.Count)
+				{
+					Properties.Resources.B16x16_MessageBox_Info,
+					Properties.Resources.B16x16_Folder_Home,
+					Properties.Resources.B16x16_Folder,
+					Properties.Resources.B16x16_Identity,
+					Properties.Resources.B16x16_Personal,
+					Properties.Resources.B16x16_KGPG_Info,
+					Properties.Resources.B16x16_FTP,
+					Properties.Resources.B16x16_EditPaste,
+					Properties.Resources.B16x16_Spreadsheet,
+					Properties.Resources.B16x16_History_Clear,
+					Properties.Resources.B16x16_History,
+					Properties.Resources.B16x16_ASCII,
+					Properties.Resources.B16x16_Attach,
+					Properties.Resources.B16x16_Colorize,
+					Properties.Resources.B16x16_Color_Fill,
+					Properties.Resources.B16x16_KNotes,
+					Properties.Resources.B16x16_EditCopyLink,
+					Properties.Resources.B16x16_BlockDevice,
+					Properties.Resources.B16x16_KTouch,
+					Properties.Resources.B16x16_Binary
+				};
+				Debug.Assert(m_lImages.Count == (int)DfxIcon.Count);
 			}
 
 			private void EnsureColors()
@@ -239,9 +237,9 @@ namespace KeePass.Util
 				else { Debug.Assert(false); }
 
 				lv.Columns.Add(KPRes.Field, wName);
-				lv.Columns.Add(KPRes.Value + " A" + strSfxA, wValue);
+				lv.Columns.Add(KPRes.Value + " 1" + strSfxA, wValue);
 				lv.Columns.Add("~", wStatus, HorizontalAlignment.Center);
-				lv.Columns.Add(KPRes.Value + " B" + strSfxB, wValue);
+				lv.Columns.Add(KPRes.Value + " 2" + strSfxB, wValue);
 
 				lv.ContextMenuStrip = ConstructContextMenu(lv);
 			};
@@ -587,22 +585,35 @@ namespace KeePass.Util
 		}
 
 		private static void Report(DfxContext ctx, DfxIcon ic, string strName,
-			ProtectedString psValueA, ProtectedString psValueB, bool bCheckProt)
+			ProtectedString psValueA, bool bSensitiveA, ProtectedString psValueB,
+			bool bSensitiveB, bool bCheckProt)
 		{
+			bool bOutLvo = (ctx.OutLvo != null);
 			bool bA = (psValueA != null), bB = (psValueB != null);
 
 			string strA = null, strB = null;
 			if(ctx.ReportValues)
 			{
-				if(bA) strA = psValueA.ReadString().Trim();
-				if(bB) strB = psValueB.ReadString().Trim();
-
-				if(bCheckProt)
+				if(bA)
 				{
-					if(bA && psValueA.IsProtected)
-						strA += ((strA.Length != 0) ? " (***)" : "(***)");
-					if(bB && psValueB.IsProtected)
-						strB += ((strB.Length != 0) ? " (***)" : "(***)");
+					if(bOutLvo && bSensitiveA) strA = string.Empty; // Set below
+					else
+					{
+						strA = psValueA.ReadString().Trim();
+						if(bCheckProt && psValueA.IsProtected)
+							strA += ((strA.Length == 0) ? "(***)" : " (***)");
+					}
+				}
+
+				if(bB)
+				{
+					if(bOutLvo && bSensitiveB) strB = string.Empty; // Set below
+					else
+					{
+						strB = psValueB.ReadString().Trim();
+						if(bCheckProt && psValueB.IsProtected)
+							strB += ((strB.Length == 0) ? "(***)" : " (***)");
+					}
 				}
 			}
 
@@ -638,6 +649,46 @@ namespace KeePass.Util
 			}
 
 			Report(ctx, ic, strName, strA, psValueA, strB, psValueB, c);
+
+			if(bOutLvo && (bSensitiveA || bSensitiveB))
+			{
+				int i = ctx.OutLvo.Count - 1;
+				ListViewItem lvi = ((i >= 0) ? (ctx.OutLvo[i] as ListViewItem) : null);
+				if((lvi != null) && (lvi.Text == strName))
+				{
+					LvfItem lvfi = new LvfItem(lvi);
+
+					if(bSensitiveA)
+					{
+						LvfSubItem si = lvfi.SubItems[LvsiValueA];
+						if(bA)
+						{
+							ProtectedString ps = psValueA.Trim();
+							if(bCheckProt && ps.IsProtected)
+								ps += (ps.IsEmpty ? "(***)" : " (***)");
+							Debug.Assert(si.Text.Length == 0);
+							si.SetText(ps);
+						}
+						si.Flags |= LvfiFlags.Sensitive;
+					}
+					if(bSensitiveB)
+					{
+						LvfSubItem si = lvfi.SubItems[LvsiValueB];
+						if(bB)
+						{
+							ProtectedString ps = psValueB.Trim();
+							if(bCheckProt && ps.IsProtected)
+								ps += (ps.IsEmpty ? "(***)" : " (***)");
+							Debug.Assert(si.Text.Length == 0);
+							si.SetText(ps);
+						}
+						si.Flags |= LvfiFlags.Sensitive;
+					}
+
+					ctx.OutLvo[i] = lvfi;
+				}
+				else { Debug.Assert(false); }
+			}
 		}
 
 		private static void ReportString(DfxContext ctx, DfxIcon ic, string strName,
@@ -658,29 +709,11 @@ namespace KeePass.Util
 			//	((psB == null) && (psA != null) && psA.IsProtected)))
 			//	ic = DfxIcon.Password;
 
-			Report(ctx, ic, strName, psA, psB, !bStd);
+			bool bSensA = ((psA != null) && psA.IsProtected);
+			bool bSensB = ((psB != null) && psB.IsProtected);
+			if(strKey == PwDefs.PasswordField) { bSensA = true; bSensB = true; }
 
-			if(ctx.OutLvo != null)
-			{
-				bool bProtA = ((psA != null) && psA.IsProtected);
-				bool bProtB = ((psB != null) && psB.IsProtected);
-				if(strKey == PwDefs.PasswordField) { bProtA = true; bProtB = true; }
-
-				if(bProtA || bProtB)
-				{
-					int i = ctx.OutLvo.Count - 1;
-					ListViewItem lvi = ((i >= 0) ? (ctx.OutLvo[i] as ListViewItem) : null);
-					if((lvi != null) && (lvi.Text == strName))
-					{
-						LvfItem lvfi = new LvfItem(lvi);
-						if(bProtA) lvfi.SubItems[LvsiValueA].Flags |= LvfiFlags.Sensitive;
-						if(bProtB) lvfi.SubItems[LvsiValueB].Flags |= LvfiFlags.Sensitive;
-
-						ctx.OutLvo[i] = lvfi;
-					}
-					else { Debug.Assert(false); }
-				}
-			}
+			Report(ctx, ic, strName, psA, bSensA, psB, bSensB, !bStd);
 		}
 
 		private static void Report(DfxContext ctx, DfxIcon ic, string strName,
@@ -830,7 +863,7 @@ namespace KeePass.Util
 			AccessKeyManagerEx ak = new AccessKeyManagerEx();
 
 			ToolStripMenuItem tsmiCopyA = new ToolStripMenuItem(
-				ak.CreateText(KPRes.CopyObject, true, null, "A"),
+				ak.CreateText(KPRes.CopyObject, true, null, "1"),
 				Properties.Resources.B16x16_EditCopy);
 			tsmiCopyA.Click += delegate(object sender, EventArgs e)
 			{
@@ -839,7 +872,7 @@ namespace KeePass.Util
 			l.Add(tsmiCopyA);
 
 			ToolStripMenuItem tsmiCopyB = new ToolStripMenuItem(
-				ak.CreateText(KPRes.CopyObject, true, null, "B"),
+				ak.CreateText(KPRes.CopyObject, true, null, "2"),
 				Properties.Resources.B16x16_EditCopy);
 			tsmiCopyB.Click += delegate(object sender, EventArgs e)
 			{
@@ -850,7 +883,7 @@ namespace KeePass.Util
 			l.Add(new ToolStripSeparator());
 
 			ToolStripMenuItem tsmiSaveA = new ToolStripMenuItem(
-				ak.CreateText(KPRes.SaveObjectAs + "...", true, null, "A"),
+				ak.CreateText(KPRes.SaveObjectAs + "...", true, null, "1"),
 				Properties.Resources.B16x16_FileSaveAs);
 			tsmiSaveA.Click += delegate(object sender, EventArgs e)
 			{
@@ -859,7 +892,7 @@ namespace KeePass.Util
 			l.Add(tsmiSaveA);
 
 			ToolStripMenuItem tsmiSaveB = new ToolStripMenuItem(
-				ak.CreateText(KPRes.SaveObjectAs + "...", true, null, "B"),
+				ak.CreateText(KPRes.SaveObjectAs + "...", true, null, "2"),
 				Properties.Resources.B16x16_FileSaveAs);
 			tsmiSaveB.Click += delegate(object sender, EventArgs e)
 			{

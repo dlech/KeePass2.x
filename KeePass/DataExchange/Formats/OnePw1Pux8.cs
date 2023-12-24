@@ -141,7 +141,11 @@ namespace KeePass.DataExchange.Formats
 			JsonObject joDetails = jo.GetValue<JsonObject>("details");
 			if(joDetails != null)
 			{
-				string str = joDetails.GetValue<string>("notesPlain");
+				string str = joDetails.GetValue<string>("password");
+				if(!string.IsNullOrEmpty(str))
+					ImportUtil.AppendToField(pe, PwDefs.PasswordField, str, pd);
+
+				str = joDetails.GetValue<string>("notesPlain");
 				if(!string.IsNullOrEmpty(str))
 					ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pd);
 
@@ -149,7 +153,7 @@ namespace KeePass.DataExchange.Formats
 				if(joFile != null) ImportAttachment(joFile, za, pe);
 
 				foreach(JsonObject joLF in joDetails.GetValueArray<JsonObject>("loginFields", true))
-					ImportLoginField(joLF, za, pe, pd);
+					ImportLoginField(joLF, pe, pd);
 
 				foreach(JsonObject joSection in joDetails.GetValueArray<JsonObject>("sections", true))
 				{
@@ -162,8 +166,7 @@ namespace KeePass.DataExchange.Formats
 			else { Debug.Assert(false); }
 		}
 
-		private static void ImportLoginField(JsonObject jo, ZipArchiveEx za,
-			PwEntry pe, PwDatabase pd)
+		private static void ImportLoginField(JsonObject jo, PwEntry pe, PwDatabase pd)
 		{
 			string strName;
 			string strDsg = jo.GetValue<string>("designation");

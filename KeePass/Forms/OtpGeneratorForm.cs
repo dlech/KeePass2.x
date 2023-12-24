@@ -335,7 +335,7 @@ namespace KeePass.Forms
 			PwEntry pe = new PwEntry(true, true);
 			SaveSettings(pe.Strings);
 
-			bool bDbModPre = ((m_pd != null) ? m_pd.Modified : false);
+			bool bDbModPre = ((m_pd != null) && m_pd.Modified);
 			SprContext ctx = new SprContext(pe, m_pd, SprCompileFlags.HmacOtp);
 
 			Predicate<Control> fValid = delegate(Control c)

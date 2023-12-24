@@ -44,9 +44,8 @@ namespace KeePassLib.Cryptography
 	/// </summary>
 	public sealed class CryptoRandom
 	{
-		private ProtectedBinary m_pbEntropyPool = new ProtectedBinary(
-			true, new byte[64]);
-		private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
+		private readonly RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
+		private ProtectedBinary m_pbEntropyPool;
 		private ulong m_uCounter;
 		private ulong m_uGeneratedBytesCount = 0;
 
@@ -96,11 +95,12 @@ namespace KeePassLib.Cryptography
 
 		private CryptoRandom()
 		{
-			m_uCounter = (ulong)DateTime.UtcNow.ToBinary();
-
 			byte[] pb = GetSystemEntropy();
-			AddEntropy(pb);
+			Debug.Assert(pb.Length == 64);
+			m_pbEntropyPool = new ProtectedBinary(true, pb);
 			MemUtil.ZeroByteArray(pb);
+
+			m_uCounter = (ulong)DateTime.UtcNow.ToBinary();
 		}
 
 		/// <summary>
@@ -118,12 +118,12 @@ namespace KeePassLib.Cryptography
 			if(pbEntropy.Length > 64)
 			{
 #if KeePassLibSD
-				using(SHA256Managed shaNew = new SHA256Managed())
+				using(SHA256Managed hNew = new SHA256Managed())
 #else
-				using(SHA512Managed shaNew = new SHA512Managed())
+				using(SHA512Managed hNew = new SHA512Managed())
 #endif
 				{
-					pbNewData = shaNew.ComputeHash(pbEntropy);
+					pbNewData = hNew.ComputeHash(pbEntropy);
 				}
 			}
 
@@ -138,12 +138,12 @@ namespace KeePassLib.Cryptography
 				Array.Copy(pbNewData, 0, pbCmp, cbPool, cbNew);
 
 #if KeePassLibSD
-				using(SHA256Managed shaPool = new SHA256Managed())
+				using(SHA256Managed hPool = new SHA256Managed())
 #else
-				using(SHA512Managed shaPool = new SHA512Managed())
+				using(SHA512Managed hPool = new SHA512Managed())
 #endif
 				{
-					byte[] pbNewPool = shaPool.ComputeHash(pbCmp);
+					byte[] pbNewPool = hPool.ComputeHash(pbCmp);
 					m_pbEntropyPool = new ProtectedBinary(true, pbNewPool);
 					MemUtil.ZeroByteArray(pbNewPool);
 				}
@@ -297,23 +297,24 @@ namespace KeePassLib.Cryptography
 			byte[] pbCmp;
 			lock(m_oSyncRoot)
 			{
-				m_uCounter += 0x74D8B29E4D38E161UL; // Prime number
-				byte[] pbCounter = MemUtil.UInt64ToBytes(m_uCounter);
-
-				byte[] pbCsp = GetCspRandom();
+				m_uCounter += 0x74D8B29E4D38E161UL;
 
 				byte[] pbPool = m_pbEntropyPool.ReadData();
+				byte[] pbCtr = MemUtil.UInt64ToBytes(m_uCounter);
+				byte[] pbCsp = GetCspRandom();
+
 				int cbPool = pbPool.Length;
-				int cbCtr = pbCounter.Length;
+				int cbCtr = pbCtr.Length;
 				int cbCsp = pbCsp.Length;
 
 				pbCmp = new byte[cbPool + cbCtr + cbCsp];
 				Array.Copy(pbPool, pbCmp, cbPool);
-				Array.Copy(pbCounter, 0, pbCmp, cbPool, cbCtr);
+				Array.Copy(pbCtr, 0, pbCmp, cbPool, cbCtr);
 				Array.Copy(pbCsp, 0, pbCmp, cbPool + cbCtr, cbCsp);
 
-				MemUtil.ZeroByteArray(pbCsp);
 				MemUtil.ZeroByteArray(pbPool);
+				MemUtil.ZeroByteArray(pbCtr);
+				MemUtil.ZeroByteArray(pbCsp);
 
 				m_uGeneratedBytesCount += 32;
 			}
@@ -371,7 +372,7 @@ namespace KeePassLib.Cryptography
 			{
 				unchecked
 				{
-					g_iWeakSeed += 0x78A8C4B7; // Prime number
+					g_iWeakSeed += 0x78A8C4B7;
 					s32 ^= g_iWeakSeed;
 				}
 			}

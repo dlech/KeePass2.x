@@ -34,7 +34,7 @@ namespace KeePassLib.Collections
 		private const ushort VdmCritical = 0xFF00;
 		private const ushort VdmInfo = 0x00FF;
 
-		private Dictionary<string, object> m_d = new Dictionary<string, object>();
+		private readonly Dictionary<string, object> m_d = new Dictionary<string, object>();
 
 		private enum VdType : byte
 		{

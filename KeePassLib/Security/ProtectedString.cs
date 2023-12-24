@@ -444,5 +444,43 @@ namespace KeePassLib.Security
 			ProtectedString psB = new ProtectedString(false, b);
 			return (a + psB);
 		}
+
+		public ProtectedString Trim()
+		{
+			if(!m_bIsProtected)
+			{
+				string str = ReadString();
+				string strT = str.Trim();
+				if(strT.Length == 0) return ProtectedString.Empty;
+				if(strT.Length == str.Length) { Debug.Assert(strT == str); return this; }
+				return new ProtectedString(false, strT);
+			}
+
+			char[] v = ReadChars();
+			try
+			{
+				int iR = v.Length - 1;
+				while(iR >= 0)
+				{
+					if(!char.IsWhiteSpace(v[iR])) break;
+					--iR;
+				}
+				if(iR < 0) return ProtectedString.EmptyEx;
+
+				int iL = 0;
+				while(true)
+				{
+					if(!char.IsWhiteSpace(v[iL])) break;
+					++iL;
+				}
+
+				if((iL == 0) && (iR == (v.Length - 1))) return this;
+
+				byte[] pb = StrUtil.Utf8.GetBytes(v, iL, iR - iL + 1);
+				try { return new ProtectedString(true, pb); }
+				finally { MemUtil.ZeroByteArray(pb); }
+			}
+			finally { MemUtil.ZeroArray<char>(v); }
+		}
 	}
 }

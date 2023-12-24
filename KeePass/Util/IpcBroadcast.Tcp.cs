@@ -43,7 +43,7 @@ namespace KeePass.Util
 		private static volatile TcpListener g_tl = null;
 		private static volatile string g_strLockFile = null;
 
-		private static List<KeyValuePair<PwUuid, DateTime>> g_lOldMsgs =
+		private static readonly List<KeyValuePair<PwUuid, DateTime>> g_lOldMsgs =
 			new List<KeyValuePair<PwUuid, DateTime>>();
 
 		private const string IpcTcpSuffix = ".act";

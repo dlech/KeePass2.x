@@ -24,6 +24,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 
 using KeePass.App;
 using KeePass.Forms;
@@ -443,6 +444,91 @@ namespace KeePass.Util
 			}
 			catch(Exception) { Debug.Assert(false); }
 			return true;
+		}
+
+		internal static bool KdfAdjustWeakParameters(ref KdfParameters p,
+			IOConnectionInfo iocDatabase)
+		{
+			if(p == null) { Debug.Assert(false); return false; }
+
+			if(!Program.Config.Security.KeyTransformWeakWarning) return false;
+
+			KdfEngine kdf = KdfPool.Get(p.KdfUuid);
+			if(kdf == null) { Debug.Assert(false); return false; }
+			if(!kdf.AreParametersWeak(p)) return false;
+
+			string strMsg = KPRes.KeyTransformWeak + MessageService.NewParagraph +
+				KPRes.KeyTransformDefaultsQ;
+			string strPath = ((iocDatabase != null) ? iocDatabase.GetDisplayName() : null);
+			if(!string.IsNullOrEmpty(strPath))
+				strMsg = strPath + MessageService.NewParagraph + strMsg;
+
+			VistaTaskDialog dlg = new VistaTaskDialog();
+			dlg.Content = strMsg;
+			dlg.DefaultButtonID = (int)DialogResult.OK;
+			dlg.EnableHyperlinks = true;
+			dlg.FooterText = VistaTaskDialog.CreateLink("h", KPRes.MoreInfo);
+			dlg.VerificationText = UIUtil.GetDialogNoShowAgainText(KPRes.No);
+			dlg.WindowTitle = PwDefs.ShortProductName;
+			dlg.SetIcon(VtdCustomIcon.Question);
+			dlg.SetFooterIcon(VtdIcon.Information);
+			dlg.AddButton((int)DialogResult.OK, KPRes.YesCmd, null);
+			dlg.AddButton((int)DialogResult.Cancel, KPRes.NoCmd, null);
+
+			dlg.LinkClicked += delegate(object sender, LinkClickedEventArgs e)
+			{
+				string str = ((e != null) ? e.LinkText : null);
+				if(string.Equals(str, "h", StrUtil.CaseIgnoreCmp))
+					AppHelp.ShowHelp(AppDefs.HelpTopics.Security,
+						AppDefs.HelpTopics.SecurityDictProt);
+				else { Debug.Assert(false); }
+			};
+
+			int dr;
+			if(dlg.ShowDialog())
+			{
+				dr = dlg.Result;
+				if(dlg.ResultVerificationChecked)
+					Program.Config.Security.KeyTransformWeakWarning = false;
+			}
+			else
+				dr = (MessageService.AskYesNo(strMsg) ? (int)DialogResult.OK :
+					(int)DialogResult.Cancel);
+
+			if(dr == (int)DialogResult.OK)
+			{
+				p = kdf.GetDefaultParameters();
+				return true;
+			}
+			return false;
+		}
+
+		internal static bool HasKeyExpired(PwDatabase pd, string strExpiry,
+			string strDesc)
+		{
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return false; }
+
+			strExpiry = (strExpiry ?? string.Empty).Trim();
+			if(strExpiry.Length == 0) return false;
+
+			try
+			{
+				DateTime dtChanged = pd.MasterKeyChanged;
+
+				if(strExpiry.StartsWith("P", StrUtil.CaseIgnoreCmp) ||
+					strExpiry.StartsWith("-P", StrUtil.CaseIgnoreCmp))
+				{
+					TimeSpan ts = XmlConvert.ToTimeSpan(strExpiry);
+					return ((dtChanged + ts) < DateTime.UtcNow);
+				}
+
+				DateTime dt = XmlConvert.ToDateTime(strExpiry,
+					XmlDateTimeSerializationMode.Utc);
+				return (dtChanged < dt);
+			}
+			catch(Exception ex) { MessageService.ShowWarning(strDesc, ex); }
+
+			return false;
 		}
 	}
 }

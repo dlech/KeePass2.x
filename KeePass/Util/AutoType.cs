@@ -567,7 +567,7 @@ namespace KeePass.Util
 			if(!pe.GetAutoTypeEnabled()) return false;
 			if(!AppPolicy.Try(AppPolicyId.AutoTypeWithoutContext)) return false;
 
-			bool bTopMost = ((fCurrent != null) ? fCurrent.TopMost : false);
+			bool bTopMost = ((fCurrent != null) && fCurrent.TopMost);
 			if(bTopMost) fCurrent.TopMost = false;
 
 			try
