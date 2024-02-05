@@ -142,6 +142,7 @@
 			this.m_ctxAutoTypeSep1 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_ctxAutoTypeSelectAll = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_tabHistory = new System.Windows.Forms.TabPage();
+			this.m_btnHistoryMore = new System.Windows.Forms.Button();
 			this.m_btnHistoryCompare = new System.Windows.Forms.Button();
 			this.m_lblPasswordModifiedData = new System.Windows.Forms.Label();
 			this.m_lblPasswordModified = new System.Windows.Forms.Label();
@@ -154,6 +155,9 @@
 			this.m_btnHistoryView = new System.Windows.Forms.Button();
 			this.m_btnHistoryRestore = new System.Windows.Forms.Button();
 			this.m_lvHistory = new KeePass.UI.CustomListViewEx();
+			this.m_ctxHst = new KeePass.UI.CustomContextMenuStripEx(this.components);
+			this.m_ctxHstSelectAll = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_ctxHstDeleteAll = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_btnTools = new System.Windows.Forms.Button();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_ctxTools = new KeePass.UI.CustomContextMenuStripEx(this.components);
@@ -188,6 +192,7 @@
 			this.m_tabAutoType.SuspendLayout();
 			this.m_ctxAutoType.SuspendLayout();
 			this.m_tabHistory.SuspendLayout();
+			this.m_ctxHst.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_ctxTools.SuspendLayout();
 			this.m_ctxBinAttach.SuspendLayout();
@@ -1265,6 +1270,7 @@
 			// 
 			// m_tabHistory
 			// 
+			this.m_tabHistory.Controls.Add(this.m_btnHistoryMore);
 			this.m_tabHistory.Controls.Add(this.m_btnHistoryCompare);
 			this.m_tabHistory.Controls.Add(this.m_lblPasswordModifiedData);
 			this.m_tabHistory.Controls.Add(this.m_lblPasswordModified);
@@ -1283,6 +1289,16 @@
 			this.m_tabHistory.TabIndex = 3;
 			this.m_tabHistory.Text = "History";
 			this.m_tabHistory.UseVisualStyleBackColor = true;
+			// 
+			// m_btnHistoryMore
+			// 
+			this.m_btnHistoryMore.Location = new System.Drawing.Point(251, 307);
+			this.m_btnHistoryMore.Name = "m_btnHistoryMore";
+			this.m_btnHistoryMore.Size = new System.Drawing.Size(75, 23);
+			this.m_btnHistoryMore.TabIndex = 11;
+			this.m_btnHistoryMore.Text = "&More";
+			this.m_btnHistoryMore.UseVisualStyleBackColor = true;
+			this.m_btnHistoryMore.Click += new System.EventHandler(this.OnBtnHistoryMore);
 			// 
 			// m_btnHistoryCompare
 			// 
@@ -1383,13 +1399,14 @@
 			this.m_btnHistoryRestore.Location = new System.Drawing.Point(382, 307);
 			this.m_btnHistoryRestore.Name = "m_btnHistoryRestore";
 			this.m_btnHistoryRestore.Size = new System.Drawing.Size(75, 23);
-			this.m_btnHistoryRestore.TabIndex = 11;
+			this.m_btnHistoryRestore.TabIndex = 12;
 			this.m_btnHistoryRestore.Text = "&Restore";
 			this.m_btnHistoryRestore.UseVisualStyleBackColor = true;
 			this.m_btnHistoryRestore.Click += new System.EventHandler(this.OnBtnHistoryRestore);
 			// 
 			// m_lvHistory
 			// 
+			this.m_lvHistory.ContextMenuStrip = this.m_ctxHst;
 			this.m_lvHistory.FullRowSelect = true;
 			this.m_lvHistory.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvHistory.HideSelection = false;
@@ -1402,6 +1419,30 @@
 			this.m_lvHistory.View = System.Windows.Forms.View.Details;
 			this.m_lvHistory.ItemActivate += new System.EventHandler(this.OnHistoryItemActivate);
 			this.m_lvHistory.SelectedIndexChanged += new System.EventHandler(this.OnHistorySelectedIndexChanged);
+			// 
+			// m_ctxHst
+			// 
+			this.m_ctxHst.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.m_ctxHstSelectAll,
+            this.m_ctxHstDeleteAll});
+			this.m_ctxHst.Name = "m_ctxHst";
+			this.m_ctxHst.Size = new System.Drawing.Size(207, 70);
+			// 
+			// m_ctxHstSelectAll
+			// 
+			this.m_ctxHstSelectAll.Image = global::KeePass.Properties.Resources.B16x16_Edit;
+			this.m_ctxHstSelectAll.Name = "m_ctxHstSelectAll";
+			this.m_ctxHstSelectAll.Size = new System.Drawing.Size(206, 22);
+			this.m_ctxHstSelectAll.Text = "&Select All Historic Entries";
+			this.m_ctxHstSelectAll.Click += new System.EventHandler(this.OnCtxHstSelectAll);
+			// 
+			// m_ctxHstDeleteAll
+			// 
+			this.m_ctxHstDeleteAll.Image = global::KeePass.Properties.Resources.B16x16_EditShred;
+			this.m_ctxHstDeleteAll.Name = "m_ctxHstDeleteAll";
+			this.m_ctxHstDeleteAll.Size = new System.Drawing.Size(206, 22);
+			this.m_ctxHstDeleteAll.Text = "&Delete All Historic Entries";
+			this.m_ctxHstDeleteAll.Click += new System.EventHandler(this.OnCtxHstDeleteAll);
 			// 
 			// m_btnTools
 			// 
@@ -1623,6 +1664,7 @@
 			this.m_ctxAutoType.ResumeLayout(false);
 			this.m_tabHistory.ResumeLayout(false);
 			this.m_tabHistory.PerformLayout();
+			this.m_ctxHst.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).EndInit();
 			this.m_ctxTools.ResumeLayout(false);
 			this.m_ctxBinAttach.ResumeLayout(false);
@@ -1780,5 +1822,9 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxToolsCopyInitialPassword;
 		private System.Windows.Forms.ToolStripSeparator m_ctxToolsSep3;
 		private System.Windows.Forms.Button m_btnHistoryCompare;
+		private System.Windows.Forms.Button m_btnHistoryMore;
+		private KeePass.UI.CustomContextMenuStripEx m_ctxHst;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxHstSelectAll;
+		private System.Windows.Forms.ToolStripMenuItem m_ctxHstDeleteAll;
 	}
 }

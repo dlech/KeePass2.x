@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -233,7 +233,6 @@ namespace KeePassLib.Utility
 			if(MemUtil.BytesToUInt16(pb, 2) != 1) return null; // ICO type, 1
 
 			int n = MemUtil.BytesToUInt16(pb, 4);
-			if(n < 0) { Debug.Assert(false); return null; }
 
 			int cbDir = SizeICONDIR + (n * SizeICONDIRENTRY);
 			if(pb.Length < cbDir) return null;
@@ -244,7 +243,6 @@ namespace KeePassLib.Utility
 			{
 				int w = pb[iOffset];
 				int h = pb[iOffset + 1];
-				if((w < 0) || (h < 0)) { Debug.Assert(false); return null; }
 
 				int cb = MemUtil.BytesToInt32(pb, iOffset + 8);
 				if(cb <= 0) return null; // Data must have header (even BMP)

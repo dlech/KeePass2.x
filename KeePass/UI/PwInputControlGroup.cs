@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -245,7 +245,7 @@ namespace KeePass.UI
 
 			if(m_bSprVar && bQuality)
 			{
-				if(SprEngine.MightChange(v)) // Perf. opt.
+				if(SprEngine.MightChange(v, null)) // Perf. opt.
 				{
 					// {S:...} and {REF:...} may reference the entry that
 					// is currently being edited and SprEngine will not see
@@ -470,12 +470,11 @@ namespace KeePass.UI
 			char[] vNew = null;
 			try
 			{
-				Debug.Assert(m_tbPassword.InvokeRequired);
-
 				uint uBits = QualityEstimation.EstimatePasswordBits(v);
 
 				SecureTextBoxEx tb = m_tbPassword;
 				if(tb == null) return; // Control disposed in the meanwhile
+				Debug.Assert(tb.InvokeRequired);
 
 				// Test whether the password has changed in the meanwhile
 				vNew = (tb.Invoke(new UqiGetPasswordDelegate(

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -204,15 +204,15 @@ namespace KeePass.Util
 
 				if(bAcceptAlways) break;
 
-				string str = ps.ReadString();
-				string strCmp = SprEngine.Compile(str, ctx);
+				char[] v = ps.ReadChars();
+				char[] vCmp = SprEngine.Compile(v, ctx);
 
-				if(str != strCmp)
+				if(!MemUtil.ArrayHelperExOfChar.Equals(v, vCmp))
 				{
 					if(prf.GeneratorType == PasswordGeneratorType.CharSet)
 						continue; // Silently try again
 
-					string strText = str + MessageService.NewParagraph +
+					string strText = (new string(v)) + MessageService.NewParagraph +
 						KPRes.GenPwSprVariant + MessageService.NewParagraph +
 						KPRes.GenPwAccept;
 
@@ -221,6 +221,8 @@ namespace KeePass.Util
 					bAcceptAlways = true;
 				}
 
+				MemUtil.ZeroArray<char>(v);
+				MemUtil.ZeroArray<char>(vCmp);
 				break;
 			}
 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.App.Configuration;
-using KeePass.Plugins;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -306,10 +305,7 @@ namespace KeePass.Plugins
 			{
 				byte[] pbFile = File.ReadAllBytes(strFile);
 				byte[] pbSig = StrUtil.Utf8.GetBytes("KpCreateInstance");
-				string strData = MemUtil.ByteArrayToHexString(pbFile);
-				string strSig = MemUtil.ByteArrayToHexString(pbSig);
-
-				return (strData.IndexOf(strSig) >= 0);
+				return (MemUtil.IndexOf(pbFile, pbSig) >= 0);
 			}
 			catch(Exception) { Debug.Assert(false); }
 

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -106,10 +106,8 @@ namespace KeePass.UI
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string Text;
 
-		public VtdButton(bool bConstruct)
+		public VtdButton(bool _)
 		{
-			Debug.Assert(bConstruct);
-
 			this.ID = (int)DialogResult.Cancel;
 			this.Text = string.Empty;
 		}
@@ -168,10 +166,8 @@ namespace KeePass.UI
 		public IntPtr lpCallbackData;
 		public uint cxWidth;
 
-		public VtdConfig(bool bConstruct)
+		public VtdConfig(bool _)
 		{
-			Debug.Assert(bConstruct);
-
 			cbSize = (uint)Marshal.SizeOf(typeof(VtdConfig));
 			hwndParent = IntPtr.Zero;
 			hInstance = IntPtr.Zero;

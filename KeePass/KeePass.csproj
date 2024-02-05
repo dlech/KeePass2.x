@@ -915,6 +915,9 @@
     <Compile Include="UI\ToolStripRendering\VisualStyleTsr.cs" />
     <Compile Include="UI\ToolStripRendering\Win10Tsr.cs" />
     <Compile Include="UI\ToolStripRendering\Win81Tsr.cs" />
+    <Compile Include="UI\UIElementSearchBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\UISystemFonts.cs" />
     <Compile Include="UI\VistaTaskDialog.cs">
     </Compile>

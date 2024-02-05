@@ -55,6 +55,10 @@
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Accessibility">
+			<param name="Local" value="help\base\accessibility.html">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Application Policy">
 			<param name="Local" value="help\v2\policy.html">
 			</OBJECT>

@@ -792,7 +792,7 @@
         </member>
         <member name="F:KeePassLib.Cryptography.CrsAlgorithm.ArcFourVariant">
             <summary>
-            A variant of the ARCFour algorithm (RC4 incompatible).
+            A variant of the ArcFour algorithm (RC4 incompatible).
             Insecure; for backward compatibility only.
             </summary>
         </member>
@@ -1712,8 +1712,7 @@
         <member name="P:KeePassLib.Collections.AutoTypeConfig.DefaultSequence">
             <summary>
             The default keystroke sequence that is auto-typed if
-            no matching window is found in the <c>Associations</c>
-            container.
+            no matching window is found in <c>Associations</c>.
             </summary>
         </member>
         <member name="P:KeePassLib.Collections.AutoTypeConfig.Associations">
@@ -2467,13 +2466,13 @@
         </member>
         <member name="T:KeePassLib.PwUuid">
             <summary>
-            Represents an UUID of a password entry or group. Once created,
-            <c>PwUuid</c> objects aren't modifyable anymore (immutable).
+            Represents a UUID of an object. Once created, a <c>PwUuid</c> object
+            cannot be modified anymore (immutable).
             </summary>
         </member>
         <member name="F:KeePassLib.PwUuid.UuidSize">
             <summary>
-            Standard size in bytes of a UUID.
+            Size of a UUID in bytes.
             </summary>
         </member>
         <member name="F:KeePassLib.PwUuid.Zero">
@@ -2483,24 +2482,16 @@
         </member>
         <member name="M:KeePassLib.PwUuid.#ctor(System.Boolean)">
             <summary>
-            Construct a new UUID object.
+            Construct a UUID object.
             </summary>
             <param name="bCreateNew">If this parameter is <c>true</c>, a new
-            UUID is generated. If it is <c>false</c>, the UUID is initialized
-            to zero.</param>
+            UUID is generated. If it is <c>false</c>, the UUID is zero.</param>
         </member>
         <member name="M:KeePassLib.PwUuid.#ctor(System.Byte[])">
             <summary>
-            Construct a new UUID object.
+            Construct a UUID object.
             </summary>
             <param name="uuidBytes">Initial value of the <c>PwUuid</c> object.</param>
-        </member>
-        <member name="M:KeePassLib.PwUuid.CreateNew">
-            <summary>
-            Create a new, random UUID.
-            </summary>
-            <returns>Returns <c>true</c> if a random UUID has been generated,
-            otherwise it returns <c>false</c>.</returns>
         </member>
         <member name="M:KeePassLib.PwUuid.ToHexString">
             <summary>
@@ -2510,7 +2501,7 @@
         </member>
         <member name="P:KeePassLib.PwUuid.UuidBytes">
             <summary>
-            Get the 16 UUID bytes.
+            Get the UUID bytes. Must not be modified.
             </summary>
         </member>
         <member name="P:KeePassLib.Keys.KcpCustomKey.Name">

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -783,6 +783,8 @@ namespace KeePass
 				f("Switch.UseLegacyAccessibilityFeatures.4", false); // 4.8 upd.
 
 #if DEBUG
+				if(NativeLib.IsUnix()) return;
+
 				// Check that the internal classes do not cache other values already
 
 				const BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
