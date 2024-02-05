@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2003-2023 Dominik Reichl.
+	Copyright (C) 2003-2024 Dominik Reichl.
 */
 
 body, kbd kbd {
@@ -10,12 +10,13 @@ body, kbd kbd {
 body {
 	color: #000000;
 	background-color: #FFFFFF;
+	background-image: url("images/back.png");
+	background-repeat: repeat;
+	background-attachment: fixed;
 }
-@media not all and (forced-colors: active) {
+@media (forced-colors: active), (prefers-color-scheme: dark) {
 	body {
-		background-image: url("images/back.gif");
-		background-repeat: repeat;
-		background-attachment: fixed;
+		background-image: none;
 	}
 }
 
@@ -442,83 +443,3 @@ div.tipdiv {
 .spr-m-feed-s     { background-position:  -19px -158px; width: 16px; height: 16px; }
 .spr-m-w3valid-b  { background-position:   -1px -176px; width: 80px; height: 15px; }
 .spr-m-kp-b       { background-position:  -83px -176px; width: 80px; height: 15px; }
-
-/* --------------------------------------------------------------------- */
-
-#consent_c {
-	display: none;
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 0px;
-	border: 0px none;
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	z-index: 254;
-	overflow: auto;
-	background-color: rgba(0, 0, 0, 0.85);
-	transition: background 1.5s; /* Cf. JavaScript timeout */
-}
-
-#consent_dlg {
-	border: 1px solid #808080;
-	position: relative;
-	width: 33%;
-	margin: 96px auto 0px auto;
-	padding: 16px 16px 16px 16px;
-	background-color: #EEEEEE;
-}
-@media (max-height: 600px) {
-	#consent_dlg {
-		margin-top: 4px;
-	}
-}
-
-#consent_dlg button {
-	display: block;
-	width: 50%;
-	margin: 8px auto 8px auto;
-	padding: 8px 2px 8px 2px;
-	cursor: pointer;
-	color: #000000;
-	background-color: #E0E0E0;
-	background-image: -webkit-linear-gradient(top, #F0F0F0, #D0D0D0);
-	background-image: -moz-linear-gradient(top, #F0F0F0, #D0D0D0);
-	background-image: -ms-linear-gradient(top, #F0F0F0, #D0D0D0);
-	background-image: linear-gradient(to bottom, #F0F0F0, #D0D0D0);
-	border: 1px solid #A0A0A0;
-	border-radius: 5px;
-}
-
-#consent_dlg button:first-of-type {
-	margin-top: 1em;
-}
-#consent_dlg button:last-of-type {
-	margin-bottom: 1em;
-}
-
-#consent_dlg button:hover {
-	background-color: #E0F0FF;
-	background-image: -webkit-linear-gradient(top, #E8F8FF, #D8E8F8);
-	background-image: -moz-linear-gradient(top, #E8F8FF, #D8E8F8);
-	background-image: -ms-linear-gradient(top, #E8F8FF, #D8E8F8);
-	background-image: linear-gradient(to bottom, #E8F8FF, #D8E8F8);
-	border-color: #0080FF;
-}
-
-#consent_dlg button:active {
-	background-color: #C8E0F0;
-	background-image: -webkit-linear-gradient(top, #D0E8F8, #C0D8E8);
-	background-image: -moz-linear-gradient(top, #D0E8F8, #C0D8E8);
-	background-image: -ms-linear-gradient(top, #D0E8F8, #C0D8E8);
-	background-image: linear-gradient(to bottom, #D0E8F8, #C0D8E8);
-	border-color: #004080;
-}
-
-#consent_dlg button:focus {
-	outline: none;
-}
-#consent_dlg button[data-focusvisible="true"]:focus { /* Focus with keyboard, see JS */
-	outline: 2px dotted #000080;
-}

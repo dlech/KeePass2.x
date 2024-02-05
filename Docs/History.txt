@@ -1,3 +1,52 @@
+2024-02-04: 2.56
+- Added search box in the options dialog (keyboard shortcut
+  Ctrl+F)
+- When pressing the Enter key in the group tree of the main
+  window, the entries of the group are displayed now (this can
+  be useful for instance when the entry list is displaying
+  search results)
+- Added 'More' button on the 'History' tab page of the entry
+  dialog, which shows a menu that provides the following two
+  new commands: 'Select All Historic Entries' and 'Delete All
+  Historic Entries'; the menu is also shown as context menu of
+  the history entries list
+- Added Ctrl+A keyboard shortcut for the 'Select All Historic
+  Entries' command in the entry dialog (the history entries
+  list must have the input focus)
+- Added workaround for Mono window size bug
+- Added accessibility help page
+
+- In the main window, the entry list is now updated when right-
+  clicking onto a group in the group tree
+- Expanding/collapsing a group in the group tree of the main
+  window does not select it anymore
+- The option 'Remember password hiding setting in the main
+  window' is now turned off by default
+- In the auto-type entry selection dialog, comments ({C:...}
+  placeholders) are now removed from the values in the
+  'Sequence' column if the 'Sequence - Comments' column is
+  displayed
+- The view is now restored after syntax highlighting in the
+  sequence box of the auto-type association dialog
+- Reduced flickering in the sequence box of the auto-type
+  association dialog
+- Improved performance of Spr compilations of certain texts
+- Minor process memory protection improvement for the password
+  generator
+- Minor process memory protection improvements for some report
+  dialogs
+- Improved thread safety of message box management
+- Improved UUID object implementation
+- Collection equality testing improvements (for plugins)
+- Various code optimizations
+- Minor other improvements
+
+- In the main window, the entry list is now updated correctly
+  when performing overlapping keypresses into the group tree
+- When cancelling a group drag&drop operation, the group
+  selection is now restored correctly
+- Fixed background of CHM help pages
+
 2023-10-12: 2.55
 - Added 'Compare Entries' command (in the main menu 'Entry' ->
   'Compare'), which compares the two entries that are selected

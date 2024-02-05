@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,18 +18,19 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
-using System.Windows.Forms;
 
 namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
+		private static readonly IntPtr FALSE_PTR = IntPtr.Zero;
+		private static readonly IntPtr TRUE_PTR = new IntPtr(1);
+
 		internal const int WM_SETFOCUS = 0x0007;
 		internal const int WM_KILLFOCUS = 0x0008;
+		private const int WM_SETREDRAW = 0x000B;
 		internal const int WM_SETTINGCHANGE = 0x001A;
 		internal const int WM_WINDOWPOSCHANGING = 0x0046;
 		internal const int WM_CONTEXTMENU = 0x007B;
@@ -130,8 +131,13 @@ namespace KeePass.Native
 		internal const int ICON_BIG = 1;
 		internal const int ICON_SMALL2 = 2;
 
+		internal const int ECM_FIRST = 0x1500;
+		internal const int EM_SETCUEBANNER = ECM_FIRST + 1;
+
 		internal const int EM_GETCHARFORMAT = WM_USER + 58;
 		internal const int EM_SETCHARFORMAT = WM_USER + 68;
+		private const int EM_GETSCROLLPOS = WM_USER + 221;
+		private const int EM_SETSCROLLPOS = WM_USER + 222;
 
 		internal const int ES_WANTRETURN = 0x1000;
 
@@ -157,9 +163,6 @@ namespace KeePass.Native
 
 		internal const int PBT_APMQUERYSUSPEND = 0x0000;
 		internal const int PBT_APMSUSPEND = 0x0004;
-
-		internal const int ECM_FIRST = 0x1500;
-		internal const int EM_SETCUEBANNER = ECM_FIRST + 1;
 
 		internal const uint INVALID_FILE_ATTRIBUTES = 0xFFFFFFFFU;
 
@@ -308,6 +311,7 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
+		// Not [Flags]
 		internal enum ComboBoxButtonState : uint
 		{
 			STATE_SYSTEM_NONE = 0,
@@ -356,7 +360,7 @@ namespace KeePass.Native
 			TruncateExisting = 5
 		}
 
-		private enum ScrollBarDirection : int
+		internal enum ScrollBarDirection : int
 		{
 			SB_HORZ = 0,
 			SB_VERT = 1,
@@ -372,6 +376,23 @@ namespace KeePass.Native
 			SIF_DISABLENOSCROLL = 0x8,
 			SIF_TRACKPOS = 0x10,
 			SIF_ALL = (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS)
+		}
+
+		[Flags]
+		private enum RedrawWindowFlags : uint
+		{
+			RDW_INVALIDATE = 0x0001,
+			RDW_INTERNALPAINT = 0x0002,
+			RDW_ERASE = 0x0004,
+			RDW_VALIDATE = 0x0008,
+			RDW_NOINTERNALPAINT = 0x0010,
+			RDW_NOERASE = 0x0020,
+			RDW_NOCHILDREN = 0x0040,
+			RDW_ALLCHILDREN = 0x0080,
+			RDW_UPDATENOW = 0x0100,
+			RDW_ERASENOW = 0x0200,
+			RDW_FRAME = 0x0400,
+			RDW_NOFRAME = 0x0800
 		}
 
 		[Flags]

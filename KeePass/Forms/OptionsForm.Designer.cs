@@ -97,6 +97,7 @@
 			this.m_btnProxy = new System.Windows.Forms.Button();
 			this.m_lvAdvanced = new KeePass.UI.CustomListViewEx();
 			this.m_ttRect = new System.Windows.Forms.ToolTip(this.components);
+			this.m_tbSearch = new KeePass.UI.UIElementSearchBoxEx();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabSecurity.SuspendLayout();
@@ -844,6 +845,13 @@
 			this.m_lvAdvanced.UseCompatibleStateImageBehavior = false;
 			this.m_lvAdvanced.View = System.Windows.Forms.View.Details;
 			// 
+			// m_tbSearch
+			// 
+			this.m_tbSearch.Location = new System.Drawing.Point(12, 439);
+			this.m_tbSearch.Name = "m_tbSearch";
+			this.m_tbSearch.Size = new System.Drawing.Size(182, 20);
+			this.m_tbSearch.TabIndex = 3;
+			// 
 			// OptionsForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -851,6 +859,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
 			this.ClientSize = new System.Drawing.Size(586, 471);
+			this.Controls.Add(this.m_tbSearch);
 			this.Controls.Add(this.m_tabMain);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
@@ -890,6 +899,7 @@
 			this.m_grpHotKeys.PerformLayout();
 			this.m_tabAdvanced.ResumeLayout(false);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -963,5 +973,6 @@
 		private System.Windows.Forms.LinkLabel m_linkMainFont;
 		private System.Windows.Forms.ComboBox m_cmbAltColor;
 		private System.Windows.Forms.Label m_lblAltColor;
+		private KeePass.UI.UIElementSearchBoxEx m_tbSearch;
 	}
 }

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+
+	<meta name="author" content="Dominik Reichl" />
+
+	
+	
+
+	<meta name="DC.title" content="Accessibility - KeePass" />
+	<meta name="DC.creator" content="Dominik Reichl" />
+	<meta name="DC.type" content="Text" />
+	<meta name="DC.format" content="text/html" />
+	<meta name="DC.language" content="en" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+
+	<meta name="robots" content="index, follow" />
+
+	<title>Accessibility - KeePass</title>
+	<base target="_self" />
+	<link rel="stylesheet" type="text/css" href="../../default.css" />
+
+	
+</head>
+<body>
+
+
+
+<!-- Org Pub: 2023-10-29 -->
+
+<table class="sectionheader"><tr>
+<td><img src="../images/b64x64_access.png" alt="" /></td>
+<td><h1>Accessibility</h1>
+<p>Information on features for people with disabilities.</p></td>
+</tr></table>
+
+<ul>
+<li><a href="#info">Information</a></li>
+<li><a href="#docs">Documents</a></li>
+</ul>
+
+<br />
+
+<a name="info"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
+Information</h2>
+
+<p>KeePass is developed with accessibility in mind.
+We strive for a good usability for people with disabilities.</p>
+
+<p>Examples:</p>
+
+<ul class="withspc">
+
+<li><b>Keyboard</b>:
+<ul>
+<li>All input can be performed using a keyboard (without a mouse or other
+input device).</li>
+<li>The main window supports many <a href="https://keepass.info/help/kb/keyb_shortcuts.html"
+target="_blank">keyboard shortcuts</a>.</li>
+<li>Menu commands and dialog controls have access keys (indicated by
+an underlined character when pressing the <kbd><kbd>Alt</kbd></kbd> key).</li>
+<li>Standard keys and key combinations are supported
+(<kbd><kbd>Enter</kbd></kbd>/<kbd><kbd>Esc</kbd></kbd> for closing a dialog,
+<kbd><kbd>Ctrl</kbd>+<kbd>C</kbd></kbd> for copying data into the clipboard,
+<kbd><kbd>Ctrl</kbd>+<kbd>F</kbd></kbd> for finding data, etc.).</li>
+<li>Windows/dialogs have a reasonable tab order.</li>
+</ul></li>
+
+<li><b>Color</b>:
+<ul>
+<li>KeePass uses the theme (color scheme, fonts, ...) of the operating system.
+All themes (including dark ones and ones with high contrast) are supported.<br />
+See also: '<a href="faq_tech.html#guidark">Does the GUI support dark themes?</a>'.</li>
+<li>Different menu and toolbar styles are supported (selectable
+in the KeePass 2.x options dialog; main menu 'Tools' &rarr; 'Options' &rarr; tab 'Interface (2)').<br />
+See also: '<a href="https://keepass.info/help/kb/tsrstyles_survey.html"
+target="_blank">Menu/Toolbar Style Survey</a>'.</li>
+<li>Different <a href="https://keepass.info/help/v2/guioptions.html#bannerstyles"
+target="_blank">dialog banner styles</a> are supported (selectable
+in the KeePass 2.x options dialog).</li>
+<li>The alternating item background color can be customized
+(in the KeePass options dialog).</li>
+</ul></li>
+
+<li><b>Font</b>:
+<ul>
+<li>KeePass uses the theme (color scheme, fonts, ...) of the operating system.
+All major operating systems support changing the default user interface font.<br />
+See also: '<a href="faq_tech.html#guifont">How to change the GUI font (size)?</a>'.</li>
+<li>The font that is used in list controls can be customized
+(in the KeePass options dialog).
+By default, the default font of the framework/system is used.</li>
+<li>The font that is used in password edit controls can be customized
+(in the KeePass options dialog).
+By default, the default monospace font of the framework/system is used.</li>
+</ul></li>
+
+<li><b>Scaling (high DPI)</b>:
+<ul>
+<li>Scaling the user interface via the DPI setting of the operating system
+is supported.</li>
+<li>When a dialog or menu does not fit onto the current screen (e.g. due to
+a high DPI value or a large font), KeePass 2.x provides scrollbars or
+buttons for scrolling.</li>
+</ul></li>
+
+<li><b>Assistive technology</b>:
+<ul>
+<li>KeePass can be controlled via assistive technology applications.
+Standard accessibility APIs are supported.</li>
+<li>Most controls in KeePass are standard controls that are provided
+by the framework/system.</li>
+<li>KeePass 2.x features an option 'Optimize for screen reader'
+(in the main menu 'Tools' &rarr; 'Options' &rarr; tab 'Advanced').
+If this option is activated or if KeePass detects a screen reader
+automatically (via
+'<a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfow"
+target="_blank"><code>SystemParametersInfo</code></a>' with
+'<code>SPI_GETSCREENREADER</code>'), various optimizations for screen
+readers are performed, including but not limited to:
+<ul>
+<li>Assignment of an accessible name for more controls.
+Enhancement of certain accessible names.</li>
+<li>Assignment of an accessible role for certain controls.</li>
+<li>Improved control tree (e.g. for assistive technology applications
+based on UI Automation).</li>
+</ul>
+The option is deactivated by default and should be activated only
+by users who are using a screen reader, because it decreases the
+performance of the application and provides no benefits for users
+without a screen reader.</li>
+</ul></li>
+
+<li><b>Documentation and website</b>:
+<ul>
+<li>Each page has a meaningful title.</li>
+<li>Semantic HTML tags ('<code>nav</code>', '<code>footer</code>',
+'<code>h1</code>', '<code>ul</code>', etc.) are used.</li>
+<li>Images that convey information have an alternative text ('<code>alt</code>'
+attribute). Decorative images have an empty alternative text.</li>
+</ul></li>
+
+</ul>
+
+<br />
+
+<a name="docs"></a>
+<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="" />
+Documents</h2>
+
+<p>We value accessibility.
+However, we do not provide any documents (certifications, reports, completed
+questionnaires, conformance statements, etc., except this help page)
+related to accessibility, because there typically are legal and conceptual
+uncertainties/ambiguities with such documents.</p>
+
+</body></html>
+

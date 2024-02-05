@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,8 +45,6 @@ namespace KeePass.Util.Spr
 		private const uint MaxRecursionDepth = 12;
 		private const StringComparison ScMethod = StringComparison.OrdinalIgnoreCase;
 
-		// private static readonly char[] m_vPlhEscapes = new char[] { '{', '}', '%' };
-
 		// Important notes for plugin developers subscribing to the following events:
 		// * If possible, prefer subscribing to FilterCompile instead of
 		//   FilterCompilePre.
@@ -84,17 +82,25 @@ namespace KeePass.Util.Spr
 		public static string Compile(string strText, SprContext ctx)
 		{
 			if(strText == null) { Debug.Assert(false); return string.Empty; }
-			if(strText.Length == 0) return string.Empty;
+			if(!MightChange(strText, ctx)) return strText;
 
 			if(ctx == null) ctx = new SprContext();
 			ctx.RefCache.Clear();
 
-			string str = SprEngine.CompileInternal(strText, ctx, 0);
+			string str = CompileInternal(strText, ctx, 0);
 
 			// if(bEscapeForAutoType && !bIsAutoTypeSequence)
 			//	str = SprEncoding.MakeAutoTypeSequence(str);
 
 			return str;
+		}
+
+		internal static char[] Compile(char[] vText, SprContext ctx)
+		{
+			if(vText == null) { Debug.Assert(false); return MemUtil.EmptyArray<char>(); }
+			if(!MightChange(vText, ctx)) return vText;
+
+			return Compile(new string(vText), ctx).ToCharArray();
 		}
 
 		private static string CompileInternal(string strText, SprContext ctx,
@@ -648,50 +654,36 @@ namespace KeePass.Util.Spr
 			return ((lFound.UCount > 0) ? lFound.GetAt(0) : null);
 		}
 
-		// internal static bool MightChange(string strText)
-		// {
-		//	if(string.IsNullOrEmpty(strText)) return false;
-		//	return (strText.IndexOfAny(m_vPlhEscapes) >= 0);
-		// }
-
-		/* internal static bool MightChange(string str)
+		// Cf. char[] overload
+		internal static bool MightChange(string str, SprContext ctx)
 		{
 			if(str == null) { Debug.Assert(false); return false; }
+			if(str.Length == 0) return false;
 
-			int iBStart = str.IndexOf('{');
-			if(iBStart >= 0)
-			{
-				int iBEnd = str.LastIndexOf('}');
-				if(iBStart < iBEnd) return true;
-			}
+			int i = str.IndexOf('{');
+			if((i >= 0) && (i < str.LastIndexOf('}'))) return true;
 
-			int iPFirst = str.IndexOf('%');
-			if(iPFirst >= 0)
-			{
-				int iPLast = str.LastIndexOf('%');
-				if(iPFirst < iPLast) return true;
-			}
+			i = str.IndexOf('%');
+			if((i >= 0) && (i < str.LastIndexOf('%'))) return true;
+
+			if((ctx != null) && ctx.EncodeAsAutoTypeSequence) return true;
 
 			return false;
-		} */
+		}
 
-		internal static bool MightChange(char[] v)
+		// Cf. string overload
+		internal static bool MightChange(char[] v, SprContext ctx)
 		{
 			if(v == null) { Debug.Assert(false); return false; }
+			if(v.Length == 0) return false;
 
-			int iBStart = Array.IndexOf<char>(v, '{');
-			if(iBStart >= 0)
-			{
-				int iBEnd = Array.LastIndexOf<char>(v, '}');
-				if(iBStart < iBEnd) return true;
-			}
+			int i = Array.IndexOf<char>(v, '{');
+			if((i >= 0) && (i < Array.LastIndexOf<char>(v, '}'))) return true;
 
-			int iPFirst = Array.IndexOf<char>(v, '%');
-			if(iPFirst >= 0)
-			{
-				int iPLast = Array.LastIndexOf<char>(v, '%');
-				if(iPFirst < iPLast) return true;
-			}
+			i = Array.IndexOf<char>(v, '%');
+			if((i >= 0) && (i < Array.LastIndexOf<char>(v, '%'))) return true;
+
+			if((ctx != null) && ctx.EncodeAsAutoTypeSequence) return true;
 
 			return false;
 		}
@@ -702,8 +694,11 @@ namespace KeePass.Util.Spr
 		/// </summary>
 		internal static bool MightDeref(string strText)
 		{
-			if(strText == null) return false;
-			return (strText.IndexOf('{') >= 0);
+			if(strText == null) { Debug.Assert(false); return false; }
+			if(strText.Length == 0) return false;
+
+			int i = strText.IndexOf('{');
+			return ((i >= 0) && (i < strText.LastIndexOf('}')));
 		}
 
 		internal static string DerefFn(string str, PwEntry pe)

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 #if !KeePassUAP
 using System.Windows.Forms;
@@ -58,7 +59,7 @@ namespace KeePassLib.Utility
 
 	public static class MessageService
 	{
-		private static volatile uint m_uCurrentMessageCount = 0;
+		private static int m_nCurrentMessageCount = 0;
 
 #if !KeePassLibSD
 		private const MessageBoxIcon m_mbiInfo = MessageBoxIcon.Information;
@@ -94,7 +95,7 @@ namespace KeePassLib.Utility
 
 		public static uint CurrentMessageCount
 		{
-			get { return m_uCurrentMessageCount; }
+			get { return (uint)m_nCurrentMessageCount; }
 		}
 
 #if !KeePassUAP
@@ -236,7 +237,7 @@ namespace KeePassLib.Utility
 
 		public static void ShowInfoEx(string strTitle, params object[] vLines)
 		{
-			++m_uCurrentMessageCount;
+			Interlocked.Increment(ref m_nCurrentMessageCount);
 
 			strTitle = (strTitle ?? PwDefs.ShortProductName);
 			string strText = ObjectsToMessage(vLines);
@@ -248,7 +249,7 @@ namespace KeePassLib.Utility
 			SafeShowMessageBox(strText, strTitle, MessageBoxButtons.OK, m_mbiInfo,
 				MessageBoxDefaultButton.Button1);
 
-			--m_uCurrentMessageCount;
+			Interlocked.Decrement(ref m_nCurrentMessageCount);
 		}
 
 		public static void ShowWarning(params object[] vLines)
@@ -263,7 +264,7 @@ namespace KeePassLib.Utility
 
 		private static void ShowWarningPriv(object[] vLines, bool bFullExceptions)
 		{
-			++m_uCurrentMessageCount;
+			Interlocked.Increment(ref m_nCurrentMessageCount);
 
 			string strTitle = PwDefs.ShortProductName;
 			string strText = ObjectsToMessage(vLines, bFullExceptions);
@@ -275,12 +276,12 @@ namespace KeePassLib.Utility
 			SafeShowMessageBox(strText, strTitle, MessageBoxButtons.OK, m_mbiWarning,
 				MessageBoxDefaultButton.Button1);
 
-			--m_uCurrentMessageCount;
+			Interlocked.Decrement(ref m_nCurrentMessageCount);
 		}
 
 		public static void ShowFatal(params object[] vLines)
 		{
-			++m_uCurrentMessageCount;
+			Interlocked.Increment(ref m_nCurrentMessageCount);
 
 			string strTitle = PwDefs.ShortProductName + " - " + KLRes.FatalError;
 			string strText = KLRes.FatalErrorText + MessageService.NewParagraph +
@@ -309,13 +310,13 @@ namespace KeePassLib.Utility
 			SafeShowMessageBox(strText, strTitle, MessageBoxButtons.OK, m_mbiFatal,
 				MessageBoxDefaultButton.Button1);
 
-			--m_uCurrentMessageCount;
+			Interlocked.Decrement(ref m_nCurrentMessageCount);
 		}
 
 		public static DialogResult Ask(string strText, string strTitle,
 			MessageBoxButtons mbb)
 		{
-			++m_uCurrentMessageCount;
+			Interlocked.Increment(ref m_nCurrentMessageCount);
 
 			string strTextEx = (strText ?? string.Empty);
 			string strTitleEx = (strTitle ?? PwDefs.ShortProductName);
@@ -327,14 +328,14 @@ namespace KeePassLib.Utility
 			DialogResult dr = SafeShowMessageBox(strTextEx, strTitleEx, mbb,
 				m_mbiQuestion, MessageBoxDefaultButton.Button1);
 
-			--m_uCurrentMessageCount;
+			Interlocked.Decrement(ref m_nCurrentMessageCount);
 			return dr;
 		}
 
 		public static bool AskYesNo(string strText, string strTitle, bool bDefaultToYes,
 			MessageBoxIcon mbi)
 		{
-			++m_uCurrentMessageCount;
+			Interlocked.Increment(ref m_nCurrentMessageCount);
 
 			string strTextEx = (strText ?? string.Empty);
 			string strTitleEx = (strTitle ?? PwDefs.ShortProductName);
@@ -347,7 +348,7 @@ namespace KeePassLib.Utility
 				MessageBoxButtons.YesNo, mbi, bDefaultToYes ?
 				MessageBoxDefaultButton.Button1 : MessageBoxDefaultButton.Button2);
 
-			--m_uCurrentMessageCount;
+			Interlocked.Decrement(ref m_nCurrentMessageCount);
 			return (dr == DialogResult.Yes);
 		}
 
@@ -447,12 +448,12 @@ namespace KeePassLib.Utility
 
 		public static void ExternalIncrementMessageCount()
 		{
-			++m_uCurrentMessageCount;
+			Interlocked.Increment(ref m_nCurrentMessageCount);
 		}
 
 		public static void ExternalDecrementMessageCount()
 		{
-			--m_uCurrentMessageCount;
+			Interlocked.Decrement(ref m_nCurrentMessageCount);
 		}
 	}
 }
