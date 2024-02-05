@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -400,14 +400,11 @@ target="_blank">ProtectedMemory</a>).
 With DPAPI, the key for the memory encryption is stored in a
 secure, non-swappable memory area managed by Windows.
 DPAPI is available on Windows 2000 and higher.
-KeePass 2.x always uses DPAPI when it is available;
-in KeePass 1.x, this can be disabled (in the advanced options; by default
-using DPAPI is enabled; if it is disabled, KeePass 1.x uses the ARC4 encryption
-algorithm with a random key; note that this is less secure than DPAPI, mainly <i>not</i>
-because ARC4 cryptographically is not that strong, but because the key for
-the memory encryption is also stored in swappable process memory;
-similarly, KeePass 2.x falls back to encrypting the process memory using
-ChaCha20, if DPAPI is unavailable).
+KeePass 2.x always uses DPAPI if it is available; in KeePass 1.x, it can be
+disabled (in the advanced options; DPAPI usage is enabled by default).
+If DPAPI is unavailable or disabled, KeePass falls back to encrypting the
+process memory using ChaCha20 with a random key; note that this is less secure
+than DPAPI, because the key is also stored in swappable process memory.
 On Unix-like systems, KeePass 2.x uses ChaCha20, because Mono does not provide
 any effective memory protection method.</p>
 

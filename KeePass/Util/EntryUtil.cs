@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -914,14 +913,17 @@ namespace KeePass.Util
 					ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
 						PwDefs.TitleField));
 					lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-					lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
+					lvi.SubItems.Add(string.Empty); // Set below
 					lvi.SubItems.Add(strGroup);
 
 					lvi.ImageIndex = UIUtil.GetEntryIconIndex(pd, pe, dtNow);
 					lvi.Tag = pe;
 
 					LvfItem lvfi = new LvfItem(lvi);
-					lvfi.SubItems[2].Flags |= LvfiFlags.Sensitive;
+
+					LvfSubItem siP = lvfi.SubItems[2];
+					siP.SetText(pe.Strings.GetSafe(PwDefs.PasswordField));
+					siP.Flags |= LvfiFlags.Sensitive;
 
 					lResults.Add(lvfi);
 				}
@@ -954,14 +956,20 @@ namespace KeePass.Util
 				if(!pe.GetSearchingEnabled()) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
-				string str = SprEngine.Compile(pe.Strings.ReadSafe(
-					PwDefs.PasswordField), ctx);
-				if(str.Length != 0)
+				char[] v = pe.Strings.GetSafe(PwDefs.PasswordField).ReadChars();
+				char[] vCmp = SprEngine.Compile(v, ctx);
+				if(vCmp.Length != 0)
 				{
+					byte[] pb = StrUtil.Utf8.GetBytes(vCmp);
+					string strHash = Convert.ToBase64String(CryptoUtil.HashSha256(pb));
+					MemUtil.ZeroByteArray(pb);
+
 					List<PwEntry> l;
-					if(d.TryGetValue(str, out l)) l.Add(pe);
-					else d[str] = new List<PwEntry> { pe };
+					if(d.TryGetValue(strHash, out l)) l.Add(pe);
+					else d[strHash] = new List<PwEntry> { pe };
 				}
+				MemUtil.ZeroArray<char>(v);
+				MemUtil.ZeroArray<char>(vCmp);
 
 				return true;
 			};
@@ -972,8 +980,7 @@ namespace KeePass.Util
 			List<List<PwEntry>> lRes = new List<List<PwEntry>>();
 			foreach(List<PwEntry> l in d.Values)
 			{
-				if(l.Count <= 1) continue;
-				lRes.Add(l);
+				if(l.Count >= 2) lRes.Add(l);
 			}
 			lRes.Sort(EntryUtil.CompareListSizeDesc);
 
@@ -1027,7 +1034,7 @@ namespace KeePass.Util
 
 				float fSim = sp.Similarity * 100.0f;
 				string strLvg = KPRes.SimilarPasswordsGroup.Replace(
-					@"{PARAM}", fSim.ToString("F02") + @"%");
+					"{PARAM}", fSim.ToString("F02") + "%");
 				ListViewGroup lvg = new ListViewGroup(strLvg);
 				lvg.Tag = pg;
 				lResults.Add(lvg);
@@ -1044,14 +1051,17 @@ namespace KeePass.Util
 					ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
 						PwDefs.TitleField));
 					lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-					lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
+					lvi.SubItems.Add(string.Empty); // Set below
 					lvi.SubItems.Add(strGroup);
 
 					lvi.ImageIndex = UIUtil.GetEntryIconIndex(pd, pe, dtNow);
 					lvi.Tag = pe;
 
 					LvfItem lvfi = new LvfItem(lvi);
-					lvfi.SubItems[2].Flags |= LvfiFlags.Sensitive;
+
+					LvfSubItem siP = lvfi.SubItems[2];
+					siP.SetText(pe.Strings.GetSafe(PwDefs.PasswordField));
+					siP.Flags |= LvfiFlags.Sensitive;
 
 					lResults.Add(lvfi);
 				}
@@ -1062,7 +1072,7 @@ namespace KeePass.Util
 
 		private static bool GetEntryPasswords(PwGroup pg, PwDatabase pd,
 			IStatusLogger sl, uint uPrePct, List<PwEntry> lEntries,
-			List<string> lPasswords, bool bExclTans)
+			List<char[]> lPasswords, bool bExclTans)
 		{
 			ulong cEntries = pg.GetEntriesCount(true);
 			ulong cEntriesDone = 0;
@@ -1080,13 +1090,14 @@ namespace KeePass.Util
 				if(bExclTans && PwDefs.IsTanEntry(pe)) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
-				string str = SprEngine.Compile(pe.Strings.ReadSafe(
-					PwDefs.PasswordField), ctx);
-				if(str.Length != 0)
+				char[] v = pe.Strings.GetSafe(PwDefs.PasswordField).ReadChars();
+				char[] vCmp = SprEngine.Compile(v, ctx);
+				if(vCmp.Length != 0)
 				{
 					lEntries.Add(pe);
-					lPasswords.Add(str);
+					lPasswords.Add(vCmp);
 				}
+				if(!object.ReferenceEquals(v, vCmp)) MemUtil.ZeroArray<char>(v);
 
 				return true;
 			};
@@ -1105,42 +1116,48 @@ namespace KeePass.Util
 			const long cPostPct = 67;
 
 			List<PwEntry> lEntries = new List<PwEntry>();
-			List<string> lPasswords = new List<string>();
-			if(!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords, true))
-				return null;
+			List<char[]> lPasswords = new List<char[]>();
+			List<EuxSimilarPasswords> l = new List<EuxSimilarPasswords>();
+			int n;
 
 			Debug.Assert(TextSimilarity.LevenshteinDistance("Columns", "Comments") == 4);
 			Debug.Assert(TextSimilarity.LevenshteinDistance("File/URL", "Field Value") == 8);
 
-			int n = lEntries.Count;
-			long cTotal = ((long)n * (long)(n - 1)) / 2L;
-			long cDone = 0;
-
-			List<EuxSimilarPasswords> l = new List<EuxSimilarPasswords>();
-			for(int i = 0; i < (n - 1); ++i)
+			try
 			{
-				string strA = lPasswords[i];
-				Debug.Assert(strA.Length != 0);
+				if(!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords, true))
+					return null;
 
-				for(int j = i + 1; j < n; ++j)
+				n = lEntries.Count;
+				long cTotal = ((long)n * (long)(n - 1)) / 2L;
+				long cDone = 0;
+
+				for(int i = 0; i < (n - 1); ++i)
 				{
-					string strB = lPasswords[j];
+					char[] vA = lPasswords[i];
+					Debug.Assert(vA.Length != 0);
 
-					if(strA != strB)
-						l.Add(new EuxSimilarPasswords(lEntries[i], lEntries[j], 1.0f -
-							((float)TextSimilarity.LevenshteinDistance(strA, strB) /
-							(float)Math.Max(strA.Length, strB.Length))));
-
-					if(sl != null)
+					for(int j = i + 1; j < n; ++j)
 					{
-						++cDone;
+						char[] vB = lPasswords[j];
 
-						uint u = uPrePct + (uint)((cDone * cPostPct) / cTotal);
-						if(!sl.SetProgress(u)) return null;
+						if(!MemUtil.ArrayHelperExOfChar.Equals(vA, vB))
+							l.Add(new EuxSimilarPasswords(lEntries[i], lEntries[j], 1.0f -
+								((float)TextSimilarity.LevenshteinDistance(vA, vB) /
+								(float)Math.Max(vA.Length, vB.Length))));
+
+						if(sl != null)
+						{
+							++cDone;
+
+							uint u = uPrePct + (uint)((cDone * cPostPct) / cTotal);
+							if(!sl.SetProgress(u)) return null;
+						}
 					}
 				}
+				Debug.Assert((cDone == cTotal) || (sl == null));
 			}
-			Debug.Assert((cDone == cTotal) || (sl == null));
+			finally { foreach(char[] v in lPasswords) MemUtil.ZeroArray<char>(v); }
 
 			Comparison<EuxSimilarPasswords> fCmp = delegate(EuxSimilarPasswords x,
 				EuxSimilarPasswords y)
@@ -1264,7 +1281,7 @@ namespace KeePass.Util
 				ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
 					PwDefs.TitleField));
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
+				lvi.SubItems.Add(string.Empty); // Set below
 
 				Array.Clear(vSimCounts, 0, vSimCounts.Length);
 				for(int i = 1; i < lSp.Count; ++i)
@@ -1285,7 +1302,10 @@ namespace KeePass.Util
 				lvi.Tag = pg;
 
 				LvfItem lvfi = new LvfItem(lvi);
-				lvfi.SubItems[2].Flags |= LvfiFlags.Sensitive;
+
+				LvfSubItem siP = lvfi.SubItems[2];
+				siP.SetText(pe.Strings.GetSafe(PwDefs.PasswordField));
+				siP.Flags |= LvfiFlags.Sensitive;
 
 				lResults.Add(lvfi);
 			}
@@ -1304,41 +1324,48 @@ namespace KeePass.Util
 			const long cPostPct = 67;
 
 			List<PwEntry> lEntries = new List<PwEntry>();
-			List<string> lPasswords = new List<string>();
-			if(!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords, true))
-				return null;
+			List<char[]> lPasswords = new List<char[]>();
+			int n;
+			float[,] mxSim;
 
-			int n = lEntries.Count;
-			long cTotal = ((long)n * (long)(n - 1)) / 2L;
-			long cDone = 0;
-			float[,] mxSim = new float[n, n];
-
-			for(int i = 0; i < (n - 1); ++i)
+			try
 			{
-				string strA = lPasswords[i];
-				Debug.Assert(strA.Length != 0);
+				if(!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords, true))
+					return null;
 
-				for(int j = i + 1; j < n; ++j)
+				n = lEntries.Count;
+				mxSim = new float[n, n];
+				long cTotal = ((long)n * (long)(n - 1)) / 2L;
+				long cDone = 0;
+
+				for(int i = 0; i < (n - 1); ++i)
 				{
-					string strB = lPasswords[j];
+					char[] vA = lPasswords[i];
+					Debug.Assert(vA.Length != 0);
 
-					float s = 0.0f;
-					if(strA != strB)
-						s = 1.0f - ((float)TextSimilarity.LevenshteinDistance(strA,
-							strB) / (float)Math.Max(strA.Length, strB.Length));
-					mxSim[i, j] = s;
-					mxSim[j, i] = s;
-
-					if(sl != null)
+					for(int j = i + 1; j < n; ++j)
 					{
-						++cDone;
+						char[] vB = lPasswords[j];
 
-						uint u = uPrePct + (uint)((cDone * cPostPct) / cTotal);
-						if(!sl.SetProgress(u)) return null;
+						float s = 0.0f;
+						if(!MemUtil.ArrayHelperExOfChar.Equals(vA, vB))
+							s = 1.0f - ((float)TextSimilarity.LevenshteinDistance(
+								vA, vB) / (float)Math.Max(vA.Length, vB.Length));
+						mxSim[i, j] = s;
+						mxSim[j, i] = s;
+
+						if(sl != null)
+						{
+							++cDone;
+
+							uint u = uPrePct + (uint)((cDone * cPostPct) / cTotal);
+							if(!sl.SetProgress(u)) return null;
+						}
 					}
 				}
+				Debug.Assert((cDone == cTotal) || (sl == null));
 			}
-			Debug.Assert((cDone == cTotal) || (sl == null));
+			finally { foreach(char[] v in lPasswords) MemUtil.ZeroArray<char>(v); }
 
 			float[] vXSums = new float[n];
 			for(int i = 0; i < (n - 1); ++i)
@@ -1445,7 +1472,7 @@ namespace KeePass.Util
 				lvi.UseItemStyleForSubItems = false;
 
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UserNameField));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.PasswordField));
+				lvi.SubItems.Add(string.Empty); // Set below
 				lvi.SubItems.Add(strGroup);
 
 				ulong q = (kvp.Value >> 32);
@@ -1463,7 +1490,10 @@ namespace KeePass.Util
 				lvi.Tag = pe;
 
 				LvfItem lvfi = new LvfItem(lvi);
-				lvfi.SubItems[2].Flags |= LvfiFlags.Sensitive;
+
+				LvfSubItem siP = lvfi.SubItems[2];
+				siP.SetText(pe.Strings.GetSafe(PwDefs.PasswordField));
+				siP.Flags |= LvfiFlags.Sensitive;
 
 				lResults.Add(lvfi);
 			}
@@ -1496,13 +1526,15 @@ namespace KeePass.Util
 				if(PwDefs.IsTanEntry(pe)) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
-				string str = SprEngine.Compile(pe.Strings.ReadSafe(
-					PwDefs.PasswordField), ctx);
-				if(str.Length != 0)
+				char[] v = pe.Strings.GetSafe(PwDefs.PasswordField).ReadChars();
+				char[] vCmp = SprEngine.Compile(v, ctx);
+				if(vCmp.Length != 0)
 				{
-					ulong q = QualityEstimation.EstimatePasswordBits(str.ToCharArray());
+					ulong q = QualityEstimation.EstimatePasswordBits(vCmp);
 					l.Add(new KeyValuePair<PwEntry, ulong>(pe, (q << 32) | cEntriesDone));
 				}
+				MemUtil.ZeroArray<char>(v);
+				MemUtil.ZeroArray<char>(vCmp);
 
 				return true;
 			};

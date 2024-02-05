@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,12 +24,10 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
 using Microsoft.Win32;
 
@@ -852,10 +850,12 @@ namespace KeePass.UI
 				if((f & AceAutoTypeCtxFlags.ColNotes) != AceAutoTypeCtxFlags.None)
 					lvi.SubItems.Add(StrUtil.MultiToSingleLine(SprEngine.Compile(
 						pe.Strings.ReadSafe(PwDefs.NotesField), sprCtx)));
+
+				string strSeqFlt = null;
 				if((f & AceAutoTypeCtxFlags.ColSequenceComments) != AceAutoTypeCtxFlags.None)
 				{
 					List<string> lCmt = new List<string>();
-					SprEngine.RemoveComments(ctx.Sequence, lCmt, sprCtx);
+					strSeqFlt = SprEngine.RemoveComments(ctx.Sequence, lCmt, sprCtx);
 
 					string str = string.Empty;
 					if(lCmt.Count != 0)
@@ -872,7 +872,8 @@ namespace KeePass.UI
 					lvi.SubItems.Add(str);
 				}
 				if((f & AceAutoTypeCtxFlags.ColSequence) != AceAutoTypeCtxFlags.None)
-					lvi.SubItems.Add(ctx.Sequence);
+					lvi.SubItems.Add(strSeqFlt ?? ctx.Sequence);
+
 				Debug.Assert(lvi.SubItems.Count == lv.Columns.Count);
 
 				if(!UIUtil.ColorsEqual(pe.ForegroundColor, Color.Empty))
@@ -2346,7 +2347,8 @@ namespace KeePass.UI
 		{
 			if(lv == null) { Debug.Assert(false); return null; }
 
-			int scrY = NativeMethods.GetScrollPosY(lv.Handle);
+			int scrY = NativeMethods.GetScrollPos(lv.Handle,
+				NativeMethods.ScrollBarDirection.SB_VERT);
 			int idxTop = GetTopVisibleItem(lv);
 
 			// Fix index-based scroll position

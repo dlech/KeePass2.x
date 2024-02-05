@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -450,7 +450,7 @@ namespace KeePass.DataExchange
 				else e.ExpirationTime.Set(dtNeverExpire);
 
 				IntPtr hBinaryData = IntPtr.Zero;
-				if(pe.Binaries.UCount >= 1)
+				if(pe.Binaries.UCount != 0)
 				{
 					foreach(KeyValuePair<string, ProtectedBinary> kvp in pe.Binaries)
 					{
@@ -467,7 +467,7 @@ namespace KeePass.DataExchange
 							e.BinaryData = hBinaryData;
 						}
 
-						break;
+						break; // In KDB, an entry may have at most one attachment
 					}
 
 					if((pe.Binaries.UCount > 1) && (m_slLogger != null))

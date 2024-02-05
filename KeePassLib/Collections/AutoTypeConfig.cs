@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ namespace KeePassLib.Collections
 			get { return m_strWindow; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_strWindow = value;
 			}
 		}
@@ -52,7 +52,7 @@ namespace KeePassLib.Collections
 			get { return m_strSequence; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_strSequence = value;
 			}
 		}
@@ -68,9 +68,20 @@ namespace KeePassLib.Collections
 			m_strSequence = strSeq;
 		}
 
+		public override int GetHashCode()
+		{
+			return (m_strWindow.GetHashCode() + m_strSequence.GetHashCode());
+		}
+
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as AutoTypeAssociation);
+		}
+
 		public bool Equals(AutoTypeAssociation other)
 		{
-			if(other == null) return false;
+			if(object.ReferenceEquals(other, this)) return true;
+			if(object.ReferenceEquals(other, null)) { Debug.Assert(false); return false; }
 
 			if(m_strWindow != other.m_strWindow) return false;
 			if(m_strSequence != other.m_strSequence) return false;
@@ -80,7 +91,7 @@ namespace KeePassLib.Collections
 
 		public AutoTypeAssociation CloneDeep()
 		{
-			return (AutoTypeAssociation)this.MemberwiseClone();
+			return (AutoTypeAssociation)MemberwiseClone();
 		}
 	}
 
@@ -117,15 +128,14 @@ namespace KeePassLib.Collections
 
 		/// <summary>
 		/// The default keystroke sequence that is auto-typed if
-		/// no matching window is found in the <c>Associations</c>
-		/// container.
+		/// no matching window is found in <c>Associations</c>.
 		/// </summary>
 		public string DefaultSequence
 		{
 			get { return m_strDefaultSequence; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_strDefaultSequence = value;
 			}
 		}
@@ -176,9 +186,24 @@ namespace KeePassLib.Collections
 			return newCfg;
 		}
 
+		public override int GetHashCode()
+		{
+			int h = ((m_bEnabled ? 0x208F391C : 0) + (int)m_atooObfuscation +
+				m_strDefaultSequence.GetHashCode());
+			foreach(AutoTypeAssociation a in m_lWindowAssocs)
+				h = h * 0x5C8ACDB3 + a.GetHashCode();
+			return h;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as AutoTypeConfig);
+		}
+
 		public bool Equals(AutoTypeConfig other)
 		{
-			if(other == null) { Debug.Assert(false); return false; }
+			if(object.ReferenceEquals(other, this)) return true;
+			if(object.ReferenceEquals(other, null)) { Debug.Assert(false); return false; }
 
 			if(m_bEnabled != other.m_bEnabled) return false;
 			if(m_atooObfuscation != other.m_atooObfuscation) return false;

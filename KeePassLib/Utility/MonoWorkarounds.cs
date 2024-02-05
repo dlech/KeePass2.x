@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -130,6 +130,9 @@ namespace KeePassLib.Utility
 		// 2140:
 		//   Explicit control focusing is ignored.
 		//   https://sourceforge.net/p/keepass/feature-requests/2140/
+		// 2247:
+		//   Form size increases when calling ResumeLayout.
+		//   https://sourceforge.net/p/keepass/bugs/2247/
 		// 5795:
 		//   Text in input field is incomplete.
 		//   https://bugzilla.xamarin.com/show_bug.cgi?id=5795
@@ -354,7 +357,8 @@ namespace KeePassLib.Utility
 				if(strHandle.Length == 0) { Debug.Assert(false); return false; }
 
 				// IntPtr h = new IntPtr(long.Parse(strHandle));
-				long.Parse(strHandle); // Validate
+				long l; // Validate
+				if(!long.TryParse(strHandle, out l)) { Debug.Assert(false); return false; }
 
 				// Detection of own windows based on Form.Handle
 				// comparisons doesn't work reliably (Mono's handles

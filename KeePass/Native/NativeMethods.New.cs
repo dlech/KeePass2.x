@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
 using System.Windows.Forms;
 
@@ -414,8 +413,9 @@ namespace KeePass.Native
 			catch(Exception) { Debug.Assert(false); }
 		} */
 
-		public static int GetScrollPosY(IntPtr hWnd)
+		internal static int GetScrollPos(IntPtr hWnd, ScrollBarDirection d)
 		{
+			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return 0; }
 			if(NativeLib.IsUnix()) return 0;
 
 			try
@@ -424,14 +424,62 @@ namespace KeePass.Native
 				si.cbSize = (uint)Marshal.SizeOf(typeof(SCROLLINFO));
 				si.fMask = (uint)ScrollInfoMask.SIF_POS;
 
-				if(GetScrollInfo(hWnd, (int)ScrollBarDirection.SB_VERT, ref si))
-					return si.nPos;
-
+				if(GetScrollInfo(hWnd, (int)d, ref si)) return si.nPos;
 				Debug.Assert(false);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
 			return 0;
+		}
+
+		/* internal static void SetScrollPos(IntPtr hWnd, ScrollBarDirection d, int nPos)
+		{
+			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
+			if(NativeLib.IsUnix()) return;
+
+			try
+			{
+				SCROLLINFO si = new SCROLLINFO();
+				si.cbSize = (uint)Marshal.SizeOf(typeof(SCROLLINFO));
+				si.fMask = (uint)ScrollInfoMask.SIF_POS;
+				si.nPos = nPos;
+
+				SetScrollInfo(hWnd, (int)d, ref si, true);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		} */
+
+		internal static POINT GetScrollPos(RichTextBox rtb)
+		{
+			POINT pt = new POINT();
+			if(rtb == null) { Debug.Assert(false); return pt; }
+			if(NativeLib.IsUnix()) return pt;
+
+			try
+			{
+				IntPtr hWnd = rtb.Handle;
+				if(hWnd != IntPtr.Zero)
+					SendMessagePoint(hWnd, EM_GETSCROLLPOS, IntPtr.Zero, ref pt);
+				else { Debug.Assert(false); }
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return pt;
+		}
+
+		internal static void SetScrollPos(RichTextBox rtb, POINT pt)
+		{
+			if(rtb == null) { Debug.Assert(false); return; }
+			if(NativeLib.IsUnix()) return;
+
+			try
+			{
+				IntPtr hWnd = rtb.Handle;
+				if(hWnd != IntPtr.Zero)
+					SendMessagePoint(hWnd, EM_SETSCROLLPOS, IntPtr.Zero, ref pt);
+				else { Debug.Assert(false); }
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 
 		public static void Scroll(ListView lv, int dx, int dy)
@@ -442,20 +490,6 @@ namespace KeePass.Native
 			try { SendMessage(lv.Handle, LVM_SCROLL, (IntPtr)dx, (IntPtr)dy); }
 			catch(Exception) { Debug.Assert(false); }
 		}
-
-		/* public static void ScrollAbsY(IntPtr hWnd, int y)
-		{
-			try
-			{
-				SCROLLINFO si = new SCROLLINFO();
-				si.cbSize = (uint)Marshal.SizeOf(typeof(SCROLLINFO));
-				si.fMask = (uint)ScrollInfoMask.SIF_POS;
-				si.nPos = y;
-
-				SetScrollInfo(hWnd, (int)ScrollBarDirection.SB_VERT, ref si, true);
-			}
-			catch(Exception) { Debug.Assert(false); }
-		} */
 
 		/* public static void Scroll(IntPtr h, int dx, int dy)
 		{
@@ -477,6 +511,24 @@ namespace KeePass.Native
 			try { DwmInvalidateIconicBitmaps(hWnd); }
 			catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows7); }
 		} */
+
+		internal static void SetRedraw(IntPtr hWnd, bool bEnable, bool bRedrawNow)
+		{
+			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
+			if(NativeLib.IsUnix()) return;
+
+			try
+			{
+				SendMessage(hWnd, WM_SETREDRAW, (bEnable ? TRUE_PTR : FALSE_PTR), IntPtr.Zero);
+
+				// https://learn.microsoft.com/en-us/windows/win32/gdi/wm-setredraw
+				if(bRedrawNow)
+					RedrawWindow(hWnd, IntPtr.Zero, IntPtr.Zero,
+						RedrawWindowFlags.RDW_ERASE | RedrawWindowFlags.RDW_FRAME |
+						RedrawWindowFlags.RDW_INVALIDATE | RedrawWindowFlags.RDW_ALLCHILDREN);
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
 
 		internal static uint? GetLastInputTime()
 		{

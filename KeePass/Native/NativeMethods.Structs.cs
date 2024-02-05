@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,12 +18,9 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
-using System.Windows.Forms;
 
 namespace KeePass.Native
 {
@@ -121,6 +118,13 @@ namespace KeePass.Native
 			public Int32 cx;
 			public Int32 cy;
 			public UInt32 flags;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct POINT
+		{
+			public Int32 x;
+			public Int32 y;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]

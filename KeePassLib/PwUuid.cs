@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,13 +27,13 @@ namespace KeePassLib
 {
 	// [ImmutableObject(true)]
 	/// <summary>
-	/// Represents an UUID of a password entry or group. Once created,
-	/// <c>PwUuid</c> objects aren't modifyable anymore (immutable).
+	/// Represents a UUID of an object. Once created, a <c>PwUuid</c> object
+	/// cannot be modified anymore (immutable).
 	/// </summary>
 	public sealed class PwUuid : IComparable<PwUuid>, IEquatable<PwUuid>
 	{
 		/// <summary>
-		/// Standard size in bytes of a UUID.
+		/// Size of a UUID in bytes.
 		/// </summary>
 		public const uint UuidSize = 16;
 
@@ -42,10 +42,10 @@ namespace KeePassLib
 		/// </summary>
 		public static readonly PwUuid Zero = new PwUuid(false);
 
-		private byte[] m_pbUuid = null; // Never null after constructor
+		private readonly byte[] m_pbUuid; // Never null
 
 		/// <summary>
-		/// Get the 16 UUID bytes.
+		/// Get the UUID bytes. Must not be modified.
 		/// </summary>
 		public byte[] UuidBytes
 		{
@@ -53,72 +53,43 @@ namespace KeePassLib
 		}
 
 		/// <summary>
-		/// Construct a new UUID object.
+		/// Construct a UUID object.
 		/// </summary>
 		/// <param name="bCreateNew">If this parameter is <c>true</c>, a new
-		/// UUID is generated. If it is <c>false</c>, the UUID is initialized
-		/// to zero.</param>
+		/// UUID is generated. If it is <c>false</c>, the UUID is zero.</param>
 		public PwUuid(bool bCreateNew)
 		{
-			if(bCreateNew) CreateNew();
-			else SetZero();
+			if(bCreateNew)
+			{
+				while(true)
+				{
+					byte[] pb = Guid.NewGuid().ToByteArray();
+					if((pb == null) || (pb.Length != (int)UuidSize))
+						throw new InvalidOperationException();
+
+					// Zero is reserved; do not generate Zero
+					if(!MemUtil.ArraysEqual(pb, PwUuid.Zero.m_pbUuid))
+					{
+						m_pbUuid = pb;
+						break;
+					}
+					Debug.Assert(false);
+				}
+			}
+			else m_pbUuid = new byte[UuidSize];
 		}
 
 		/// <summary>
-		/// Construct a new UUID object.
+		/// Construct a UUID object.
 		/// </summary>
 		/// <param name="uuidBytes">Initial value of the <c>PwUuid</c> object.</param>
 		public PwUuid(byte[] uuidBytes)
 		{
-			SetValue(uuidBytes);
-		}
+			if(uuidBytes == null) { Debug.Assert(false); throw new ArgumentNullException("uuidBytes"); }
+			if(uuidBytes.Length != (int)UuidSize) { Debug.Assert(false); throw new ArgumentOutOfRangeException("uuidBytes"); }
 
-		/// <summary>
-		/// Create a new, random UUID.
-		/// </summary>
-		/// <returns>Returns <c>true</c> if a random UUID has been generated,
-		/// otherwise it returns <c>false</c>.</returns>
-		private void CreateNew()
-		{
-			Debug.Assert(m_pbUuid == null); // Only call from constructor
-			while(true)
-			{
-				m_pbUuid = Guid.NewGuid().ToByteArray();
-
-				if((m_pbUuid == null) || (m_pbUuid.Length != (int)UuidSize))
-				{
-					Debug.Assert(false);
-					throw new InvalidOperationException();
-				}
-
-				// Zero is a reserved value -- do not generate Zero
-				if(!Equals(PwUuid.Zero)) break;
-				Debug.Assert(false);
-			}
-		}
-
-		private void SetValue(byte[] uuidBytes)
-		{
-			Debug.Assert((uuidBytes != null) && (uuidBytes.Length == (int)UuidSize));
-			if(uuidBytes == null) throw new ArgumentNullException("uuidBytes");
-			if(uuidBytes.Length != (int)UuidSize) throw new ArgumentException();
-
-			Debug.Assert(m_pbUuid == null); // Only call from constructor
 			m_pbUuid = new byte[UuidSize];
-
 			Array.Copy(uuidBytes, m_pbUuid, (int)UuidSize);
-		}
-
-		private void SetZero()
-		{
-			Debug.Assert(m_pbUuid == null); // Only call from constructor
-			m_pbUuid = new byte[UuidSize];
-
-			// Array.Clear(m_pbUuid, 0, (int)UuidSize);
-#if DEBUG
-			List<byte> l = new List<byte>(m_pbUuid);
-			Debug.Assert(l.TrueForAll(bt => (bt == 0)));
-#endif
 		}
 
 		[Obsolete]
@@ -134,17 +105,19 @@ namespace KeePassLib
 
 		public bool Equals(PwUuid other)
 		{
-			if(other == null) { Debug.Assert(false); return false; }
+			if(object.ReferenceEquals(other, this)) return true;
+			if(object.ReferenceEquals(other, null)) { Debug.Assert(false); return false; }
 
+			byte[] pbX = m_pbUuid, pbY = other.m_pbUuid;
 			for(int i = 0; i < (int)UuidSize; ++i)
 			{
-				if(m_pbUuid[i] != other.m_pbUuid[i]) return false;
+				if(pbX[i] != pbY[i]) return false;
 			}
 
 			return true;
 		}
 
-		private volatile int m_iHash = 0x693C4762;
+		private int m_iHash = 0x693C4762;
 		public override int GetHashCode()
 		{
 			int h = m_iHash;
@@ -158,16 +131,14 @@ namespace KeePassLib
 
 		public int CompareTo(PwUuid other)
 		{
-			if(other == null)
-			{
-				Debug.Assert(false);
-				throw new ArgumentNullException("other");
-			}
+			if(object.ReferenceEquals(other, this)) return 0;
+			if(object.ReferenceEquals(other, null)) { Debug.Assert(false); throw new ArgumentNullException("other"); }
 
+			byte[] pbX = m_pbUuid, pbY = other.m_pbUuid;
 			for(int i = 0; i < (int)UuidSize; ++i)
 			{
-				if(m_pbUuid[i] < other.m_pbUuid[i]) return -1;
-				if(m_pbUuid[i] > other.m_pbUuid[i]) return 1;
+				byte x = pbX[i], y = pbY[i];
+				if(x != y) return ((x < y) ? -1 : 1);
 			}
 
 			return 0;
@@ -204,12 +175,14 @@ namespace KeePassLib
 
 		public int CompareTo(PwUuidComparable other)
 		{
-			if(other == null) throw new ArgumentNullException("other");
+			if(object.ReferenceEquals(other, this)) return 0;
+			if(object.ReferenceEquals(other, null)) { Debug.Assert(false); throw new ArgumentNullException("other"); }
 
+			byte[] pbX = m_pbUuid, pbY = other.m_pbUuid;
 			for(int i = 0; i < (int)PwUuid.UuidSize; ++i)
 			{
-				if(m_pbUuid[i] < other.m_pbUuid[i]) return -1;
-				if(m_pbUuid[i] > other.m_pbUuid[i]) return 1;
+				byte x = pbX[i], y = pbY[i];
+				if(x != y) return ((x < y) ? -1 : 1);
 			}
 
 			return 0;
