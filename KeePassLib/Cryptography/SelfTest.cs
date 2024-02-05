@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,9 +37,7 @@ using System.Security.Cryptography;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Cryptography.Hash;
 using KeePassLib.Cryptography.KeyDerivation;
-using KeePassLib.Keys;
 using KeePassLib.Native;
-using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
@@ -209,13 +207,18 @@ namespace KeePassLib.Cryptography
 			if(!MemUtil.ArraysEqual(pb, pbExpected3))
 				throw new SecurityException("Salsa20-3");
 
+			c.Dispose();
+
 			Dictionary<string, bool> d = new Dictionary<string, bool>();
+			byte[] z = new byte[32];
 			const int nRounds = 100;
 			for(int i = 0; i < nRounds; ++i)
 			{
-				byte[] z = new byte[32];
-				c = new Salsa20Cipher(z, MemUtil.Int64ToBytes(i));
-				c.Encrypt(z, 0, z.Length);
+				Array.Clear(z, 0, z.Length);
+				using(Salsa20Cipher cI = new Salsa20Cipher(z, MemUtil.Int64ToBytes(i)))
+				{
+					cI.Encrypt(z, 0, z.Length);
+				}
 				d[MemUtil.ByteArrayToHexString(z)] = true;
 			}
 			if(d.Count != nRounds) throw new SecurityException("Salsa20-4");

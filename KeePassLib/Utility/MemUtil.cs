@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -369,15 +369,7 @@ namespace KeePassLib.Utility
 		/// </summary>
 		public static byte[] UInt16ToBytes(ushort uValue)
 		{
-			byte[] pb = new byte[2];
-
-			unchecked
-			{
-				pb[0] = (byte)uValue;
-				pb[1] = (byte)(uValue >> 8);
-			}
-
-			return pb;
+			return new byte[2] { (byte)uValue, (byte)(uValue >> 8) };
 		}
 
 		/// <summary>
@@ -385,17 +377,8 @@ namespace KeePassLib.Utility
 		/// </summary>
 		public static byte[] UInt32ToBytes(uint uValue)
 		{
-			byte[] pb = new byte[4];
-
-			unchecked
-			{
-				pb[0] = (byte)uValue;
-				pb[1] = (byte)(uValue >> 8);
-				pb[2] = (byte)(uValue >> 16);
-				pb[3] = (byte)(uValue >> 24);
-			}
-
-			return pb;
+			return new byte[4] { (byte)uValue, (byte)(uValue >> 8),
+				(byte)(uValue >> 16), (byte)(uValue >> 24) };
 		}
 
 		/// <summary>
@@ -404,19 +387,16 @@ namespace KeePassLib.Utility
 		public static void UInt32ToBytesEx(uint uValue, byte[] pb, int iOffset)
 		{
 			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
-			if((iOffset < 0) || ((iOffset + 3) >= pb.Length))
+			if((iOffset < 0) || (iOffset >= (pb.Length - 3)))
 			{
 				Debug.Assert(false);
 				throw new ArgumentOutOfRangeException("iOffset");
 			}
 
-			unchecked
-			{
-				pb[iOffset] = (byte)uValue;
-				pb[iOffset + 1] = (byte)(uValue >> 8);
-				pb[iOffset + 2] = (byte)(uValue >> 16);
-				pb[iOffset + 3] = (byte)(uValue >> 24);
-			}
+			pb[iOffset] = (byte)uValue;
+			pb[iOffset + 1] = (byte)(uValue >> 8);
+			pb[iOffset + 2] = (byte)(uValue >> 16);
+			pb[iOffset + 3] = (byte)(uValue >> 24);
 		}
 
 		/// <summary>
@@ -424,21 +404,10 @@ namespace KeePassLib.Utility
 		/// </summary>
 		public static byte[] UInt64ToBytes(ulong uValue)
 		{
-			byte[] pb = new byte[8];
-
-			unchecked
-			{
-				pb[0] = (byte)uValue;
-				pb[1] = (byte)(uValue >> 8);
-				pb[2] = (byte)(uValue >> 16);
-				pb[3] = (byte)(uValue >> 24);
-				pb[4] = (byte)(uValue >> 32);
-				pb[5] = (byte)(uValue >> 40);
-				pb[6] = (byte)(uValue >> 48);
-				pb[7] = (byte)(uValue >> 56);
-			}
-
-			return pb;
+			return new byte[8] { (byte)uValue, (byte)(uValue >> 8),
+				(byte)(uValue >> 16), (byte)(uValue >> 24),
+				(byte)(uValue >> 32), (byte)(uValue >> 40),
+				(byte)(uValue >> 48), (byte)(uValue >> 56) };
 		}
 
 		/// <summary>
@@ -447,23 +416,20 @@ namespace KeePassLib.Utility
 		public static void UInt64ToBytesEx(ulong uValue, byte[] pb, int iOffset)
 		{
 			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
-			if((iOffset < 0) || ((iOffset + 7) >= pb.Length))
+			if((iOffset < 0) || (iOffset >= (pb.Length - 7)))
 			{
 				Debug.Assert(false);
 				throw new ArgumentOutOfRangeException("iOffset");
 			}
 
-			unchecked
-			{
-				pb[iOffset] = (byte)uValue;
-				pb[iOffset + 1] = (byte)(uValue >> 8);
-				pb[iOffset + 2] = (byte)(uValue >> 16);
-				pb[iOffset + 3] = (byte)(uValue >> 24);
-				pb[iOffset + 4] = (byte)(uValue >> 32);
-				pb[iOffset + 5] = (byte)(uValue >> 40);
-				pb[iOffset + 6] = (byte)(uValue >> 48);
-				pb[iOffset + 7] = (byte)(uValue >> 56);
-			}
+			pb[iOffset] = (byte)uValue;
+			pb[iOffset + 1] = (byte)(uValue >> 8);
+			pb[iOffset + 2] = (byte)(uValue >> 16);
+			pb[iOffset + 3] = (byte)(uValue >> 24);
+			pb[iOffset + 4] = (byte)(uValue >> 32);
+			pb[iOffset + 5] = (byte)(uValue >> 40);
+			pb[iOffset + 6] = (byte)(uValue >> 48);
+			pb[iOffset + 7] = (byte)(uValue >> 56);
 		}
 
 		public static byte[] Int32ToBytes(int iValue)
@@ -511,9 +477,10 @@ namespace KeePassLib.Utility
 			// Return false if one of them is null (not comparable)!
 			if((x == null) || (y == null)) { Debug.Assert(false); return false; }
 
-			if(x.Length != y.Length) return false;
+			int cb = x.Length;
+			if(cb != y.Length) return false;
 
-			for(int i = 0; i < x.Length; ++i)
+			for(int i = 0; i < cb; ++i)
 			{
 				if(x[i] != y[i]) return false;
 			}
@@ -747,10 +714,13 @@ namespace KeePassLib.Utility
 			if(vNeedle == null) throw new ArgumentNullException("vNeedle");
 			if(vNeedle.Length == 0) return 0;
 
-			for(int i = 0; i <= (vHaystack.Length - vNeedle.Length); ++i)
+			int cN = vNeedle.Length;
+			int iMax = vHaystack.Length - cN;
+
+			for(int i = 0; i <= iMax; ++i)
 			{
 				bool bFound = true;
-				for(int m = 0; m < vNeedle.Length; ++m)
+				for(int m = 0; m < cN; ++m)
 				{
 					if(!vHaystack[i + m].Equals(vNeedle[m]))
 					{

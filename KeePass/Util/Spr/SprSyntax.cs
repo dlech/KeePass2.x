@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+
+using KeePass.Native;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -49,7 +51,7 @@ namespace KeePass.Util.Spr
 			Color.FromArgb(224, 0, 0));
 			// AppDefs.ColorEditError);
 
-		private sealed class SprStyle : IEquatable<SprStyle> // Immutable
+		private sealed class SprStyle // : IEquatable<SprStyle> // Immutable
 		{
 			private readonly Color? m_clr;
 			public Color? Color { get { return m_clr; } }
@@ -119,9 +121,10 @@ namespace KeePass.Util.Spr
 			string strText = rtb.Text;
 			int iSelStart = rtb.SelectionStart;
 			int iSelLen = rtb.SelectionLength;
-			// bool bHideSel = rtb.HideSelection;
+			NativeMethods.POINT ptScroll = NativeMethods.GetScrollPos(rtb);
 
-			// rtb.HideSelection = true;
+			NativeMethods.SetRedraw(rtb.Handle, false, false);
+
 			rtb.SelectAll();
 			// rtb.SelectionBackColor = SystemColors.Window;
 			rtb.SelectionColor = SystemColors.ControlText;
@@ -157,8 +160,10 @@ namespace KeePass.Util.Spr
 				}
 			}
 
+			NativeMethods.SetScrollPos(rtb, ptScroll);
 			rtb.Select(iSelStart, iSelLen);
-			// rtb.HideSelection = bHideSel;
+
+			NativeMethods.SetRedraw(rtb.Handle, true, true);
 		}
 
 		private static List<SprStyle> GetHighlight(string str, SprContext ctx)

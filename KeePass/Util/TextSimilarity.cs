@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,14 @@ namespace KeePass.Util
 	public static class TextSimilarity
 	{
 		public static int LevenshteinDistance(string s, string t)
+		{
+			if(s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
+			if(t == null) { Debug.Assert(false); throw new ArgumentNullException("t"); }
+
+			return LevenshteinDistance(s.ToCharArray(), t.ToCharArray());
+		}
+
+		internal static int LevenshteinDistance(char[] s, char[] t)
 		{
 			if(s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
 			if(t == null) { Debug.Assert(false); throw new ArgumentNullException("t"); }

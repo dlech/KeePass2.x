@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -173,7 +173,6 @@ namespace KeePass.Forms
 		private FormWindowState m_fwsLast = FormWindowState.Normal;
 		private Control m_cLastActive = null;
 		private PwGroup m_pgActiveAtDragStart = null;
-		private Keys m_kLastUnhandledGroupsKey = Keys.None;
 		private readonly Stack<ShowWarningsLogger> m_sCancellable = new Stack<ShowWarningsLogger>();
 		private PwEntry m_peMarkedForComparison = null;
 
@@ -399,6 +398,9 @@ namespace KeePass.Forms
 			Debug.Assert(m_uUIBlocked == 0);
 			Debug.Assert(m_uUnlockAutoBlocked == 0);
 			Debug.Assert(m_sCancellable.Count == 0);
+			Debug.Assert(!m_bBlockColumnUpdates);
+			Debug.Assert(m_uBlockGroupSelectionEvent == 0);
+			Debug.Assert(m_uBlockEntrySelectionEvent == 0);
 			this.Visible = false;
 
 			// if(m_fontBoldUI != null) { m_fontBoldUI.Dispose(); m_fontBoldUI = null; }
@@ -511,7 +513,7 @@ namespace KeePass.Forms
 				PwGroup pgInitial = GetSelectedGroup();
 				PwGroup pgToSel = pe.ParentGroup;
 				if((pgToSel != null) && (pgToSel != pgInitial))
-					SetSelectedGroup(pgToSel, true);
+					SelectGroup(pgToSel, false);
 			}
 
 			m_lvEntries.Enabled = s.DatabaseOpened;
@@ -1203,31 +1205,42 @@ namespace KeePass.Forms
 		}
 
 		/// <summary>
-		/// Get the currently selected group. The selected <c>TreeNode</c> is
-		/// automatically translated to a <c>PwGroup</c>.
+		/// Get the currently selected group (in the group tree).
 		/// </summary>
-		/// <returns>Selected <c>PwGroup</c>.</returns>
 		public PwGroup GetSelectedGroup()
 		{
 			if(!m_docMgr.ActiveDatabase.IsOpen) return null;
 
 			TreeNode tn = m_tvGroups.SelectedNode;
-			if(tn == null) return null;
-			return (tn.Tag as PwGroup);
+			Debug.Assert((tn == null) || (tn.Tag is PwGroup));
+			return ((tn != null) ? (tn.Tag as PwGroup) : null);
 		}
 
-		internal void SetSelectedGroup(PwGroup pg, bool bEnsureVisible)
+		private void SelectGroup(PwGroup pg, bool bUpdateUI)
 		{
 			if(pg == null) { Debug.Assert(false); return; }
 
-			TreeNode tn = GuiFindGroup(pg.Uuid, null);
-			if(tn != null)
-			{
-				m_tvGroups.SelectedNode = tn;
+			SelectGroup(GuiFindGroup(pg.Uuid, null), bUpdateUI);
+		}
 
-				if(bEnsureVisible) tn.EnsureVisible();
+		private void SelectGroup(TreeNode tn, bool bUpdateUI)
+		{
+			if(tn == null) { Debug.Assert(false); return; }
+
+			Debug.Assert(tn.Tag is PwGroup);
+			if(bUpdateUI)
+			{
+				PwGroup pg = (tn.Tag as PwGroup);
+				if(pg != null) pg.Touch(false);
 			}
-			else { Debug.Assert(false); }
+
+			++m_uBlockGroupSelectionEvent;
+
+			if(tn != m_tvGroups.SelectedNode) m_tvGroups.SelectedNode = tn;
+			tn.EnsureVisible();
+			if(bUpdateUI) UpdateUI(false, null, false, null, true, null, false);
+
+			--m_uBlockGroupSelectionEvent;
 		}
 
 		/// <summary>
@@ -1418,6 +1431,7 @@ namespace KeePass.Forms
 			if(tnTop != null) pgTop = (tnTop.Tag as PwGroup);
 			tnTop = null;
 
+			++m_uBlockGroupSelectionEvent;
 			m_tvGroups.BeginUpdate();
 			m_tvGroups.Nodes.Clear();
 
@@ -1452,6 +1466,7 @@ namespace KeePass.Forms
 			if(tnTop != null) m_tvGroups.TopNode = tnTop;
 
 			m_tvGroups.EndUpdate();
+			--m_uBlockGroupSelectionEvent;
 		}
 
 		private TreeNode GuiAddGroupRec(TreeNodeCollection tncContainer,
@@ -1521,7 +1536,8 @@ namespace KeePass.Forms
 
 			PwEntry peTop = GetTopEntry(), peFocused = GetSelectedEntry(false);
 			PwEntry[] vSelected = GetSelectedEntries();
-			int iScrollY = NativeMethods.GetScrollPosY(m_lvEntries.Handle);
+			int iScrollY = NativeMethods.GetScrollPos(m_lvEntries.Handle,
+				NativeMethods.ScrollBarDirection.SB_VERT);
 
 			bool bSubEntries = Program.Config.MainWindow.ShowEntriesOfSubGroups;
 
@@ -3880,22 +3896,20 @@ namespace KeePass.Forms
 		{
 			PwDatabase pd = m_docMgr.ActiveDatabase;
 
-			PwGroup pgSelected = GetSelectedGroup();
-			if(pgSelected != null)
-				pd.LastSelectedGroup = new PwUuid(pgSelected.Uuid.UuidBytes);
+			PwGroup pgSel = GetSelectedGroup();
+			if(pgSel != null) pd.LastSelectedGroup = pgSel.Uuid;
 
 			TreeNode tnTop = m_tvGroups.TopNode;
 			if(tnTop != null)
 			{
 				PwGroup pgTop = (tnTop.Tag as PwGroup);
-				if(pgTop != null)
-					pd.LastTopVisibleGroup = new PwUuid(pgTop.Uuid.UuidBytes);
+				if(pgTop != null) pd.LastTopVisibleGroup = pgTop.Uuid;
 				else { Debug.Assert(false); }
 			}
 
 			PwEntry peTop = GetTopEntry();
-			if((peTop != null) && (pgSelected != null))
-				pgSelected.LastTopVisibleEntry = new PwUuid(peTop.Uuid.UuidBytes);
+			if((peTop != null) && (pgSel != null))
+				pgSel.LastTopVisibleEntry = peTop.Uuid;
 		}
 
 		private void RestoreWindowState(PwDatabase pd)
@@ -4451,7 +4465,7 @@ namespace KeePass.Forms
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
-			finally { --m_uBlockEntrySelectionEvent; }
+			--m_uBlockEntrySelectionEvent;
 
 			if(bEnsureVisible) EnsureVisibleSelected(null);
 			if(bUpdateUIState) UpdateUIState(false);
@@ -6326,8 +6340,8 @@ namespace KeePass.Forms
 
 			UpdateUI(false, null, true, pg, true, null, false);
 
-			TreeNode tnSel = m_tvGroups.SelectedNode;
-			if(tnSel != null) tnSel.EnsureVisible();
+			TreeNode tn = m_tvGroups.SelectedNode;
+			if(tn != null) tn.EnsureVisible();
 
 			EnsureVisibleSelected(false);
 		}

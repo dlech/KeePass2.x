@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -172,6 +172,7 @@ namespace TrlUtil
 			KPStringTable kpstES = fAddST("KeePass.Forms.PwEntryForm.m_ctxStr");
 			KPStringTable kpstEB = fAddST("KeePass.Forms.PwEntryForm.m_ctxBinAttach");
 			KPStringTable kpstEA = fAddST("KeePass.Forms.PwEntryForm.m_ctxAutoType");
+			KPStringTable kpstEH = fAddST("KeePass.Forms.PwEntryForm.m_ctxHst");
 			KPStringTable kpstDM = fAddST("KeePass.Forms.DataEditorForm.m_menuMain");
 			KPStringTable kpstTT = fAddST("KeePass.Forms.EcasTriggersForm.m_ctxTools");
 			KPStringTable kpstS = fAddST("KeePassLib.Resources.KSRes");
@@ -188,6 +189,7 @@ namespace TrlUtil
 			fAddMI(kpstES, ef.StringsContextMenu, "Strings Context Menu Commands");
 			fAddMI(kpstEB, ef.AttachmentsContextMenu, "Entry Attachments Context Menu Commands");
 			fAddMI(kpstEA, ef.AutoTypeContextMenu, "Auto-Type Context Menu Commands");
+			fAddMI(kpstEH, ef.HistoryContextMenu, "History Context Menu Commands");
 			fAddMI(kpstDM, df.MainMenuEx, "Data Editor Menu Commands");
 			fAddMI(kpstTT, tf.ToolsContextMenu, "Ecas Trigger Tools Context Menu Commands");
 

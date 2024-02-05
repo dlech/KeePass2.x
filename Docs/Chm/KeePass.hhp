@@ -11,6 +11,7 @@ Title=KeePass Help
 
 [FILES]
 help\index.html
+help\base\accessibility.html
 help\base\autotype.html
 help\base\autourl.html
 help\base\cmdline.html
@@ -54,7 +55,7 @@ help\v2_dev\plg_index.html
 help\v2_dev\scr_index.html
 help\v2_dev\scr_kps_index.html
 help\v2_dev\scr_sc_index.html
-images\back.gif
+images\back.png
 
 [INFOTYPES]
 

@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2023 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -86,7 +86,9 @@ This list is generated dynamically: when opening the entry dialog,
 KeePass collects the user names of all entries stored in the currently
 active database.
 If you see an incorrect user name in the list, you need to search this
-user name in your entries (using the search function) and fix it there.</p>
+user name in your entries (using the search function) and fix it there.
+If user names are not displayed in the main window (hidden by asterisks or
+column disabled), no suggestions are displayed in the entry dialog.</p>
 
 <p>In the <a href="dbsettings.html">database settings</a> (menu 'File' &rarr;
 'Database Settings'), you can define a default user name for new entries.</p>
@@ -189,6 +191,11 @@ displayed that allows to add tags found in other entries.</p>
 <p>Tags can also be added/removed in the main window: right-click onto
 one or more entries &rarr; 'Edit Entry (Quick)' &rarr; 'Add Tag' or
 'Remove Tag'.</p>
+
+<p>A tag can also be assigned to a group (in the main window, right-click
+onto the group &rarr; 'Edit Group' &rarr; tab 'Properties' &rarr;
+enter the tag in the 'Tags' field).
+All entries in this group or in any of its subgroups inherit the tag.</p>
 
 <p>A common use case is to mark frequently used entries (tag 'Favorite').</p>
 

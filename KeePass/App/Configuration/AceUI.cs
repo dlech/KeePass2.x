@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2023 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -165,13 +165,8 @@ namespace KeePass.App.Configuration
 			set { m_bannerStyle = value; }
 		}
 
-		private bool m_bShowImportStatusDlg = false;
 		[DefaultValue(false)]
-		public bool ShowImportStatusDialog
-		{
-			get { return m_bShowImportStatusDlg; }
-			set { m_bShowImportStatusDlg = value; }
-		}
+		public bool ShowImportStatusDialog { get; set; }
 
 		private bool m_bShowRecycleDlg = true;
 		[DefaultValue(true)]
@@ -225,21 +220,11 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private bool m_bTreeViewShowLines = false;
 		[DefaultValue(false)]
-		public bool TreeViewShowLines
-		{
-			get { return m_bTreeViewShowLines; }
-			set { m_bTreeViewShowLines = value; }
-		}
+		public bool TreeViewShowLines { get; set; }
 
-		private bool m_bOptScreenReader = false;
 		[DefaultValue(false)]
-		public bool OptimizeForScreenReader
-		{
-			get { return m_bOptScreenReader; }
-			set { m_bOptScreenReader = value; }
-		}
+		public bool OptimizeForScreenReader { get; set; }
 
 		private string m_strDataViewerRect = string.Empty;
 		[DefaultValue("")]
@@ -356,13 +341,8 @@ namespace KeePass.App.Configuration
 		//	set { m_bEditCancelConfirmation = value; }
 		// }
 
-		private bool m_bAdvATCmds = false;
 		[DefaultValue(false)]
-		public bool ShowAdvAutoTypeCommands
-		{
-			get { return m_bAdvATCmds; }
-			set { m_bAdvATCmds = value; }
-		}
+		public bool ShowAdvAutoTypeCommands { get; set; }
 
 		private bool m_bSecDeskSound = true;
 		[DefaultValue(true)]
@@ -379,21 +359,11 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private bool m_bRememberHidePwsMain = true;
-		[DefaultValue(true)]
-		public bool RememberHidingPasswordsMain
-		{
-			get { return m_bRememberHidePwsMain; }
-			set { m_bRememberHidePwsMain = value; }
-		}
-
-		private bool m_bSepHiding = false;
 		[DefaultValue(false)]
-		public bool SeparateHidingSettings
-		{
-			get { return m_bSepHiding; }
-			set { m_bSepHiding = value; }
-		}
+		public bool RememberHidingPasswordsMain { get; set; }
+
+		[DefaultValue(false)]
+		public bool SeparateHidingSettings { get; set; }
 
 		private bool m_bHideInEntryDialog = true;
 		[DefaultValue(true)]
@@ -403,13 +373,8 @@ namespace KeePass.App.Configuration
 			set { m_bHideInEntryDialog = value; }
 		}
 
-		private bool m_bUnhideBtnAlsoUnhidesSec = false;
 		[DefaultValue(false)]
-		public bool UnhideButtonAlsoUnhidesSource
-		{
-			get { return m_bUnhideBtnAlsoUnhidesSec; }
-			set { m_bUnhideBtnAlsoUnhidesSec = value; }
-		}
+		public bool UnhideButtonAlsoUnhidesSource { get; set; }
 	}
 
 	public sealed class AceFont
