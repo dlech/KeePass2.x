@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1139,8 +1139,8 @@ namespace KeePass
 				{
 					ulong u = StrUtil.ParseVersion(typeof(
 						Program).Assembly.GetName().Version.ToString());
-					string strOld = "2.0.9.0-" + StrUtil.VersionToString(
-						u & 0xFFFFFFFFFFFF0000UL, 4);
+					// string strOld = "2.0.9.0-" + StrUtil.VersionToString(
+					//	u & 0xFFFFFFFFFFFF0000UL, 4);
 					string strNew = StrUtil.VersionToString(u, 4);
 
 					XmlNode xn = xd.SelectSingleNode("/configuration/runtime/" +
@@ -1150,10 +1150,10 @@ namespace KeePass
 						strAsm1P + ":bindingRedirect", nm);
 					fAssertEx(xn);
 
-					XmlAttribute xa = xn.Attributes["oldVersion"];
-					fAssert(((xa != null) && (xa.Value == strOld)), true);
+					// XmlAttribute xa = xn.Attributes["oldVersion"];
+					// fAssert(((xa != null) && (xa.Value == strOld)), true);
 
-					xa = xn.Attributes["newVersion"];
+					XmlAttribute xa = xn.Attributes["newVersion"];
 					fAssert(((xa != null) && (xa.Value == strNew)), true);
 				}
 			}

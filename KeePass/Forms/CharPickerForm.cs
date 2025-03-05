@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -62,29 +62,17 @@ namespace KeePass.Forms
 		internal static string ShowAndRestore(ProtectedString psWord,
 			bool bCenterScreen, bool bSetForeground, uint uCharCount, bool? bInitHide)
 		{
-			IntPtr h = IntPtr.Zero;
-			try { h = NativeMethods.GetForegroundWindowHandle(); }
-			catch(Exception) { Debug.Assert(false); }
-
-			CharPickerForm dlg = new CharPickerForm();
-			dlg.InitEx(psWord, bCenterScreen, bSetForeground, uCharCount, bInitHide);
-
-			DialogResult dr = dlg.ShowDialog();
-
-			ProtectedString ps = dlg.SelectedCharacters;
-			string strRet = null;
-			if((dr == DialogResult.OK) && (ps != null)) strRet = ps.ReadString();
-
-			UIUtil.DestroyForm(dlg);
-
-			try
+			using(FocusRestoreScope frs = new FocusRestoreScope())
 			{
-				if(h != IntPtr.Zero)
-					NativeMethods.EnsureForegroundWindow(h);
-			}
-			catch(Exception) { Debug.Assert(false); }
+				CharPickerForm dlg = new CharPickerForm();
+				dlg.InitEx(psWord, bCenterScreen, bSetForeground, uCharCount, bInitHide);
 
-			return strRet;
+				DialogResult dr = UIUtil.ShowDialogAndDestroy(dlg);
+				ProtectedString ps = dlg.SelectedCharacters;
+
+				return (((dr == DialogResult.OK) && (ps != null)) ?
+					ps.ReadString() : null);
+			}
 		}
 
 		public CharPickerForm()

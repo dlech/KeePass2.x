@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -57,9 +57,8 @@ different from 1.x plugins. 1.x plugins cannot be loaded by KeePass 2.x.</p>
 
 <br />
 
-<a name="req"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Requirements</h2>
+<h2 class="sectiontitle" id="req"><img src="../images/b16x16_help.png"
+alt="" /> Requirements</h2>
 
 <p>Before you can start developing a KeePass plugin, you need the following
 prerequisites:</p>
@@ -76,9 +75,8 @@ Visual Studio</a> or
 
 <br />
 
-<a name="tutorial"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Step-by-Step Tutorial</h2>
+<h2 class="sectiontitle" id="tutorial"><img src="../images/b16x16_help.png"
+alt="" /> Step-by-Step Tutorial</h2>
 
 <p>Start your favorite IDE and create a new <em>C# Class Library</em> project
 (for the .NET Framework, not .NET Standard/Core).
@@ -178,9 +176,8 @@ dialog, you should see your plugin in the list of loaded plugins.</p>
 
 <br />
 
-<a name="co_menuitem"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Providing Menu Items</h2>
+<h2 class="sectiontitle" id="co_menuitem"><img src="../images/b16x16_help.png"
+alt="" /> Providing Menu Items</h2>
 
 <p>Many plugins provide menu items (with subitems, if necessary)
 in prominent locations like the 'Tools' menu, the entry context menu, etc.
@@ -266,9 +263,8 @@ example plugin.</p>
 
 <br />
 
-<a name="conventions"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Plugin Conventions</h2>
+<h2 class="sectiontitle" id="conventions"><img src="../images/b16x16_help.png"
+alt="" /> Plugin Conventions</h2>
 
 <p><b>File version information block:</b></p>
 
@@ -308,9 +304,8 @@ For the SecretImporter plugin, this would be <code>SecretImporterExt</code>.</p>
 
 <br />
 
-<a name="upd"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_dataexchange.png" alt="" />
-Update Checking</h2>
+<h2 class="sectiontitle" id="upd"><img src="../images/b16x16_dataexchange.png"
+alt="" /> Update Checking</h2>
 
 <p>The update check of KeePass &ge; 2.18 can also check for plugin updates.
 Update check support is optional; plugins don't have to support update
@@ -421,9 +416,8 @@ version information file.</li>
 
 <br />
 
-<a name="unmanagedcpp"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Can KeePass 2.x Plugins be Written in Unmanaged C++?</h2>
+<h2 class="sectiontitle" id="unmanagedcpp"><img src="../images/b16x16_help.png"
+alt="" /> Can KeePass 2.x Plugins be Written in Unmanaged C++?</h2>
 
 <p>Yes and no. You can write the logic of your plugin in unmanaged C++ (native
 Win32 APIs can be used). However, you must provide a managed interface to your plugin,
@@ -444,9 +438,8 @@ systems; etc.).</p>
 
 <br />
 
-<a name="plgx"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_tar.png" alt="" />
-PLGX Files</h2>
+<h2 class="sectiontitle" id="plgx"><img src="../images/b16x16_tar.png"
+alt="" /> PLGX Files</h2>
 
 <p>PLGX is an <em>optional</em> plugin file format for KeePass &ge; 2.09.
 Instead of compiling your plugin to a DLL file, the plugin source code

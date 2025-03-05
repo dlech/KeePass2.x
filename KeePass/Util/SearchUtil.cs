@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -67,20 +67,30 @@ namespace KeePass.Util
 			else spOut.DataTransformationFn = null;
 		}
 
+		internal static PwGroup CreateResultsGroup(string strNotes)
+		{
+			PwGroup pg = new PwGroup(true, true, "(" + KPRes.SearchGroupName + ")",
+				PwIcon.EMailSearch);
+			pg.IsVirtual = true;
+
+			if(!string.IsNullOrEmpty(strNotes)) pg.Notes = strNotes;
+
+			return pg;
+		}
+
 		internal static PwGroup Find(SearchParameters sp, PwGroup pgRoot,
 			IStatusLogger sl)
 		{
 			if(sp == null) { Debug.Assert(false); throw new ArgumentNullException("sp"); }
 			if(pgRoot == null) { Debug.Assert(false); throw new ArgumentNullException("pgRoot"); }
 
-			string strName = KPRes.SearchGroupName + " (\"" + sp.SearchString +
-				"\" " + KPRes.SearchResultsInSeparator + " \"" + pgRoot.Name + "\")";
+			string strN = null;
+			if(!string.IsNullOrEmpty(sp.SearchString))
+				strN = "'" + sp.SearchString + "' " + KPRes.SearchResultsInSeparator +
+					" " + pgRoot.GetFullPath(true, true) + ".";
 
-			PwGroup pgResults = new PwGroup(true, true, strName, PwIcon.EMailSearch);
-			pgResults.IsVirtual = true;
-
+			PwGroup pgResults = CreateResultsGroup(strN);
 			pgRoot.SearchEntries(sp, pgResults.Entries, sl);
-
 			return pgResults;
 		}
 	}

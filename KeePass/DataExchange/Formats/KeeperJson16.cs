@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -69,16 +69,11 @@ namespace KeePass.DataExchange.Formats
 
 				PwEntry pe = new PwEntry(true, true);
 
-				ImportUtil.AppendToField(pe, PwDefs.TitleField,
-					jo.GetValue<string>("title"), pd);
-				ImportUtil.AppendToField(pe, PwDefs.UserNameField,
-					jo.GetValue<string>("login"), pd);
-				ImportUtil.AppendToField(pe, PwDefs.PasswordField,
-					jo.GetValue<string>("password"), pd);
-				ImportUtil.AppendToField(pe, PwDefs.UrlField,
-					jo.GetValue<string>("login_url"), pd);
-				ImportUtil.AppendToField(pe, PwDefs.NotesField,
-					jo.GetValue<string>("notes"), pd);
+				ImportUtil.Add(pe, PwDefs.TitleField, jo.GetValue<string>("title"), pd);
+				ImportUtil.Add(pe, PwDefs.UserNameField, jo.GetValue<string>("login"), pd);
+				ImportUtil.Add(pe, PwDefs.PasswordField, jo.GetValue<string>("password"), pd);
+				ImportUtil.Add(pe, PwDefs.UrlField, jo.GetValue<string>("login_url"), pd);
+				ImportUtil.Add(pe, PwDefs.NotesField, jo.GetValue<string>("notes"), pd);
 
 				JsonObject joCustom = jo.GetValue<JsonObject>("custom_fields");
 				if(joCustom != null)
@@ -93,7 +88,7 @@ namespace KeePass.DataExchange.Formats
 							try { EntryUtil.ImportOtpAuth(pe, strValue, pd); }
 							catch(Exception) { Debug.Assert(false); }
 						}
-						else ImportUtil.AppendToField(pe, kvp.Key, strValue, pd);
+						else ImportUtil.Add(pe, kvp.Key, strValue, pd);
 					}
 				}
 

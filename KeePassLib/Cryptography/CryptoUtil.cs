@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -107,18 +107,14 @@ namespace KeePassLib.Cryptography
 
 		internal static byte[] HashSha256(string strFilePath)
 		{
-			byte[] pbHash = null;
-
 			using(FileStream fs = new FileStream(strFilePath, FileMode.Open,
 				FileAccess.Read, FileShare.Read))
 			{
 				using(SHA256Managed h = new SHA256Managed())
 				{
-					pbHash = h.ComputeHash(fs);
+					return h.ComputeHash(fs);
 				}
 			}
-
-			return pbHash;
 		}
 
 		/// <summary>

@@ -872,6 +872,7 @@
     <Compile Include="UI\ExpiryControlGroup.cs" />
     <Compile Include="UI\FileDialogsEx.cs" />
     <Compile Include="UI\FileIcons.cs" />
+    <Compile Include="UI\FocusRestoreScope.cs" />
     <Compile Include="UI\FontControlGroup.cs" />
     <Compile Include="UI\FontUtil.cs" />
     <Compile Include="UI\FormDataExchange.cs" />

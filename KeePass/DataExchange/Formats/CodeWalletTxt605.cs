@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
-using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
@@ -35,7 +35,7 @@ namespace KeePass.DataExchange.Formats
 	// 6.05-6.62+
 	internal sealed class CodeWalletTxt605 : FileFormatProvider
 	{
-		private const string FieldSeparator = "*---------------------------------------------------";
+		private const string CwtSeparator = "*---------------------------------------------------";
 
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }
@@ -51,60 +51,57 @@ namespace KeePass.DataExchange.Formats
 		{
 			string strData = MemUtil.ReadString(sInput, Encoding.Unicode);
 
-			string[] vLines = strData.Split(new char[] { '\r', '\n' });
+			strData = StrUtil.NormalizeNewLines(strData, false);
 
-			bool bDoImport = false;
-			PwEntry pe = new PwEntry(true, true);
-			bool bInnerSep = false;
-			bool bEmptyEntry = true;
-			string strLastIndexedItem = string.Empty;
-			string strLastLine = string.Empty;
+			Debug.Assert(CwtSeparator.IndexOf('$') < 0);
+			strData = Regex.Replace(strData, "\\n+" + Regex.Escape(CwtSeparator),
+				"\n" + CwtSeparator, RegexOptions.Singleline);
+
+			string[] vLines = strData.Split('\n');
+
+			PwEntry pe = null;
+			bool bInTitle = false;
+			string strFieldName = null;
 
 			foreach(string strLine in vLines)
 			{
-				if(strLine.Length == 0) continue;
-
-				if(strLine == FieldSeparator)
+				if(strLine == CwtSeparator)
 				{
-					bInnerSep = !bInnerSep;
-					if(bInnerSep && !bEmptyEntry)
+					if(!bInTitle)
 					{
+						pe = new PwEntry(true, true);
 						pdStorage.RootGroup.AddEntry(pe, true);
 
-						pe = new PwEntry(true, true);
-						bEmptyEntry = true;
+						strFieldName = null;
 					}
-					else if(!bInnerSep)
-						pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-							pdStorage.MemoryProtection.ProtectTitle, strLastLine));
 
-					bDoImport = true;
+					bInTitle = !bInTitle;
 				}
-				else if(bDoImport)
+				else if(bInTitle)
+					ImportUtil.Add(pe, PwDefs.TitleField, strLine, pdStorage);
+				else if(pe != null)
 				{
-					int nIDLen = strLine.IndexOf(": ");
-					if(nIDLen > 0)
-					{
-						string strIndex = strLine.Substring(0, nIDLen);
-						if(PwDefs.IsStandardField(strIndex))
-							strIndex = Guid.NewGuid().ToString();
+					string strFieldValue = strLine;
 
-						pe.Strings.Set(strIndex, new ProtectedString(
-							false, strLine.Remove(0, nIDLen + 2)));
-
-						strLastIndexedItem = strIndex;
-					}
-					else if(!bEmptyEntry)
+					int cchName = strLine.IndexOf(": ");
+					if(cchName > 0)
 					{
-						pe.Strings.Set(strLastIndexedItem, new ProtectedString(
-							false, pe.Strings.ReadSafe(strLastIndexedItem) +
-							MessageService.NewParagraph + strLine));
+						strFieldName = ImportUtil.MapName(strLine.Substring(0,
+							cchName), false);
+						strFieldValue = strLine.Remove(0, cchName + 2);
 					}
 
-					bEmptyEntry = false;
+					if(!string.IsNullOrEmpty(strFieldName))
+					{
+						if((strFieldValue.Length == 0) && PwDefs.IsMultiLineField(
+							strFieldName))
+							ImportUtil.AppendToField(pe, strFieldName,
+								MessageService.NewLine, pdStorage, string.Empty, false);
+						else
+							ImportUtil.AppendToField(pe, strFieldName,
+								strFieldValue, pdStorage);
+					}
 				}
-
-				strLastLine = strLine;
 			}
 		}
 	}

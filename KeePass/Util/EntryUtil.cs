@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -645,9 +645,8 @@ namespace KeePass.Util
 					strGroup = KPRes.Entry + " - " + KPRes.CustomFields;
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
-						if(PwDefs.IsStandardField(kvp.Key)) continue;
-
-						l.Add(new FpField(kvp.Key, kvp.Value, strGroup));
+						if(!PwDefs.IsStandardField(kvp.Key))
+							l.Add(new FpField(kvp.Key, kvp.Value, strGroup));
 					}
 
 					PwGroup pg = pe.ParentGroup;
@@ -764,6 +763,40 @@ namespace KeePass.Util
 			}
 
 			return false;
+		}
+
+		internal static string GetHiddenString(PwEntry pe, string strName, bool bHide)
+		{
+			Debug.Assert(pe != null);
+			if(strName == null) { Debug.Assert(false); strName = string.Empty; }
+
+			return GetHiddenString(((pe != null) ? pe.Strings.Get(strName) : null), bHide);
+		}
+
+		// Cf. other overload
+		internal static string GetHiddenString(ProtectedString ps, bool bHide)
+		{
+			if(bHide)
+			{
+				if(((ps == null) || ps.IsEmpty) && Program.Config.UI.Hiding.UnhideEmptyData)
+					return string.Empty;
+				return PwDefs.HiddenPassword;
+			}
+
+			return ((ps == null) ? string.Empty : ps.ReadString());
+		}
+
+		// Cf. other overload
+		internal static string GetHiddenString(string str, bool bHide)
+		{
+			if(bHide)
+			{
+				if(string.IsNullOrEmpty(str) && Program.Config.UI.Hiding.UnhideEmptyData)
+					return string.Empty;
+				return PwDefs.HiddenPassword;
+			}
+
+			return (str ?? string.Empty);
 		}
 
 		public static string CreateSummaryList(PwGroup pgItems, bool bStartWithNewPar)
@@ -926,8 +959,7 @@ namespace KeePass.Util
 
 			foreach(List<PwEntry> l in lDups)
 			{
-				PwGroup pg = new PwGroup(true, true);
-				pg.IsVirtual = true;
+				PwGroup pg = SearchUtil.CreateResultsGroup(KPRes.DuplicatePasswords + ".");
 
 				ListViewGroup lvg = new ListViewGroup(KPRes.DuplicatePasswordsGroup);
 				lvg.Tag = pg;
@@ -1060,8 +1092,7 @@ namespace KeePass.Util
 
 			foreach(EuxSimilarPasswords sp in l)
 			{
-				PwGroup pg = new PwGroup(true, true);
-				pg.IsVirtual = true;
+				PwGroup pg = SearchUtil.CreateResultsGroup(KPRes.SimilarPasswords + ".");
 
 				float fSim = sp.Similarity * 100.0f;
 				string strLvg = KPRes.SimilarPasswordsGroup.Replace(
@@ -1230,8 +1261,7 @@ namespace KeePass.Util
 
 			foreach(List<EuxSimilarPasswords> lSp in l)
 			{
-				PwGroup pg = new PwGroup(true, true);
-				pg.IsVirtual = true;
+				PwGroup pg = SearchUtil.CreateResultsGroup(KPRes.SimilarPasswords + ".");
 
 				ListViewGroup lvg = new ListViewGroup(KPRes.SimilarPasswordsGroupSh);
 				lvg.Tag = pg;
@@ -1303,8 +1333,7 @@ namespace KeePass.Util
 
 			foreach(List<EuxSimilarPasswords> lSp in l)
 			{
-				PwGroup pg = new PwGroup(true, true);
-				pg.IsVirtual = true;
+				PwGroup pg = SearchUtil.CreateResultsGroup(KPRes.SimilarPasswords + ".");
 
 				PwEntry pe = lSp[0].EntryA; // Cluster center
 				pg.AddEntry(pe, false, false);

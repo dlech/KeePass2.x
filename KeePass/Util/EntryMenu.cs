@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -97,19 +97,16 @@ namespace KeePass.Util
 			return tsmi;
 		}
 
-		private static int MenuGetImageIndex(PwDocument ds, PwIcon pwID,
-			PwUuid pwCustomID)
+		private static int MenuGetImageIndex(PwDocument ds, PwIcon pi, PwUuid puCustom)
 		{
-			if(!pwCustomID.Equals(PwUuid.Zero) && (ds ==
-				Program.MainForm.DocumentManager.ActiveDocument))
-			{
-				return (int)PwIcon.Count +
-					Program.MainForm.DocumentManager.ActiveDatabase.GetCustomIconIndex(
-					pwCustomID);
-			}
+			DocumentManagerEx dm = Program.MainForm.DocumentManager;
+			if(!puCustom.IsZero && (ds == dm.ActiveDocument))
+				return ((int)PwIcon.Count + dm.ActiveDatabase.GetCustomIconIndex(
+					puCustom));
 
-			if((int)pwID < (int)PwIcon.Count) return (int)pwID;
+			if((int)pi < (int)PwIcon.Count) return (int)pi;
 
+			Debug.Assert(false);
 			return (int)PwIcon.Key;
 		}
 

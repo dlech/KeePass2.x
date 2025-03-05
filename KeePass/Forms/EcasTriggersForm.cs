@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -80,8 +80,10 @@ namespace KeePass.Forms
 			this.Text = KPRes.Triggers;
 			this.Icon = AppIcons.Default;
 
-			int w = (m_lvTriggers.ClientSize.Width - UIUtil.GetVScrollBarWidth() - 1);
-			m_lvTriggers.Columns.Add(KPRes.Triggers, w);
+			int w = m_lvTriggers.ClientSize.Width - UIUtil.GetVScrollBarWidth() - 1;
+			int wStatus = w / 3;
+			m_lvTriggers.Columns.Add(KPRes.Name, w - wStatus);
+			m_lvTriggers.Columns.Add(KPRes.Status, wStatus);
 
 			m_lvTriggers.SmallImageList = m_ilIcons;
 
@@ -147,10 +149,17 @@ namespace KeePass.Forms
 			m_lvTriggers.Items.Clear();
 			foreach(EcasTrigger t in m_ets.TriggerCollection)
 			{
-				ListViewItem lvi = m_lvTriggers.Items.Add(t.Name);
-				lvi.SubItems.Add(t.Comments);
+				ListViewItem lvi = new ListViewItem(t.Name);
+				lvi.ImageIndex = (t.Enabled ? (int)PwIcon.Checked : (int)PwIcon.Expired);
 				lvi.Tag = t;
-				lvi.ImageIndex = (t.Enabled ? (int)PwIcon.Run : (int)PwIcon.Expired);
+
+				string str = KPRes.Disabled;
+				if(t.Enabled)
+					str = KPRes.Enabled + " / " + (t.On ? KPRes.On : KPRes.Off) +
+						" / " + (t.InitiallyOn ? KPRes.InitiallyOn : KPRes.InitiallyOff);
+				lvi.SubItems.Add(str);
+
+				m_lvTriggers.Items.Add(lvi);
 			}
 
 			if(vSelected != null) UIUtil.SelectItems(m_lvTriggers, vSelected);

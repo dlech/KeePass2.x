@@ -205,7 +205,7 @@
 			this.m_menuChangeLanguage = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewSep0 = new System.Windows.Forms.ToolStripSeparator();
 			this.m_menuViewShowToolBar = new System.Windows.Forms.ToolStripMenuItem();
-			this.m_menuViewShowEntryView = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_menuViewShowDetailsView = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewWindowLayout = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewWindowsStacked = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_menuViewWindowsSideBySide = new System.Windows.Forms.ToolStripMenuItem();
@@ -1712,7 +1712,7 @@
             this.m_menuChangeLanguage,
             this.m_menuViewSep0,
             this.m_menuViewShowToolBar,
-            this.m_menuViewShowEntryView,
+            this.m_menuViewShowDetailsView,
             this.m_menuViewWindowLayout,
             this.m_menuViewSep1,
             this.m_menuViewAlwaysOnTop,
@@ -1747,12 +1747,12 @@
 			this.m_menuViewShowToolBar.Text = "Show &Toolbar";
 			this.m_menuViewShowToolBar.Click += new System.EventHandler(this.OnViewShowToolBar);
 			// 
-			// m_menuViewShowEntryView
+			// m_menuViewShowDetailsView
 			// 
-			this.m_menuViewShowEntryView.Name = "m_menuViewShowEntryView";
-			this.m_menuViewShowEntryView.Size = new System.Drawing.Size(215, 22);
-			this.m_menuViewShowEntryView.Text = "Show &Entry View";
-			this.m_menuViewShowEntryView.Click += new System.EventHandler(this.OnViewShowEntryView);
+			this.m_menuViewShowDetailsView.Name = "m_menuViewShowDetailsView";
+			this.m_menuViewShowDetailsView.Size = new System.Drawing.Size(215, 22);
+			this.m_menuViewShowDetailsView.Text = "Show &Details View";
+			this.m_menuViewShowDetailsView.Click += new System.EventHandler(this.OnViewShowDetailsView);
 			// 
 			// m_menuViewWindowLayout
 			// 
@@ -1848,7 +1848,7 @@
 			// 
 			this.m_menuViewShowEntriesOfSubGroups.Name = "m_menuViewShowEntriesOfSubGroups";
 			this.m_menuViewShowEntriesOfSubGroups.Size = new System.Drawing.Size(215, 22);
-			this.m_menuViewShowEntriesOfSubGroups.Text = "Show Entries of Su&bgroups";
+			this.m_menuViewShowEntriesOfSubGroups.Text = "Show &Entries of Subgroups";
 			this.m_menuViewShowEntriesOfSubGroups.Click += new System.EventHandler(this.OnViewShowEntriesOfSubGroups);
 			// 
 			// m_menuTools
@@ -2657,7 +2657,7 @@
 		private System.Windows.Forms.ToolStripSeparator m_tbSep0;
 		private System.Windows.Forms.ToolStripSeparator m_menuViewSep0;
 		private System.Windows.Forms.ToolStripMenuItem m_menuViewShowToolBar;
-		private System.Windows.Forms.ToolStripMenuItem m_menuViewShowEntryView;
+		private System.Windows.Forms.ToolStripMenuItem m_menuViewShowDetailsView;
 		private System.Windows.Forms.ToolStripSeparator m_tbSep1;
 		private System.Windows.Forms.ToolStripButton m_tbFind;
 		private System.Windows.Forms.ToolStripSeparator m_tbSep2;

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -323,9 +323,7 @@ namespace KeePass.DataExchange.Formats
 			string strValue = vLine[iIndex];
 			if(string.IsNullOrEmpty(strValue)) return;
 
-			bool bAllowNewLine = ((strFieldName == PwDefs.NotesField) ||
-				!PwDefs.IsStandardField(strFieldName));
-			strValue = Unescape(strValue, bAllowNewLine);
+			strValue = Unescape(strValue, PwDefs.IsMultiLineField(strFieldName));
 
 			ImportUtil.AppendToField(pe, strFieldName, strValue, pdContext);
 		}
@@ -339,11 +337,11 @@ namespace KeePass.DataExchange.Formats
 
 			string[] v = Split(vLine[0]);
 			Debug.Assert(v.Length == 2);
-			ImportUtil.AppendToField(pe, PwDefs.TitleField, Unescape(v[0], false), pd);
+			ImportUtil.Add(pe, PwDefs.TitleField, Unescape(v[0], false), pd);
 
 			pe.Tags = StrUtil.StringToTags(Unescape(vLine[2], false));
 
-			ImportUtil.AppendToField(pe, PwDefs.NotesField, Unescape(vLine[3], true), pd);
+			ImportUtil.Add(pe, PwDefs.NotesField, Unescape(vLine[3], true), pd);
 
 			for(int i = 4; i < vLine.Length; ++i)
 			{
@@ -386,9 +384,7 @@ namespace KeePass.DataExchange.Formats
 					}
 					else { Debug.Assert(false); }
 
-					bool bAllowNewLine = ((strName == PwDefs.NotesField) ||
-						!PwDefs.IsStandardField(strName));
-					string strValue = Unescape(v[2], bAllowNewLine);
+					string strValue = Unescape(v[2], PwDefs.IsMultiLineField(strName));
 
 					ImportUtil.Add(pe, strName, strValue, pd);
 				}

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -572,27 +572,28 @@ namespace KeePass.Forms
 
 		private void OnViewFont(object sender, EventArgs e)
 		{
-			FontDialog dlg = UIUtil.CreateFontDialog(true);
-			dlg.Font = Program.Config.UI.DataEditorFont.ToFont();
-			dlg.ShowColor = false;
-
-			if(dlg.ShowDialog() == DialogResult.OK)
+			using(FontDialog dlg = UIUtil.CreateFontDialog(true))
 			{
-				Program.Config.UI.DataEditorFont = new AceFont(dlg.Font, true);
+				dlg.Font = Program.Config.UI.DataEditorFont.ToFont();
+				dlg.ShowColor = false;
 
-				if(m_bdc == BinaryDataClass.Text)
+				if(dlg.ShowDialog() == DialogResult.OK)
 				{
-					bool bModified = m_bModified; // Save modified state
+					Program.Config.UI.DataEditorFont = new AceFont(dlg.Font, true);
 
-					UISelectAllText(true);
-					m_rtbText.SelectionFont = dlg.Font;
-					UISelectAllText(false);
+					if(m_bdc == BinaryDataClass.Text)
+					{
+						bool bModified = m_bModified; // Save modified state
 
-					m_bModified = bModified;
-					UpdateUIState(false, false);
+						UISelectAllText(true);
+						m_rtbText.SelectionFont = dlg.Font;
+						UISelectAllText(false);
+
+						m_bModified = bModified;
+						UpdateUIState(false, false);
+					}
 				}
 			}
-			dlg.Dispose();
 		}
 
 		private void OnViewWordWrap(object sender, EventArgs e)

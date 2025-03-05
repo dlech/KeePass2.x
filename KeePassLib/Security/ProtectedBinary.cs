@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -172,13 +172,11 @@ namespace KeePassLib.Security
 		/// <summary>
 		/// Construct a new protected binary data object.
 		/// </summary>
-		/// <param name="bEnableProtection">If this paremeter is <c>true</c>,
-		/// the data will be encrypted in memory. If it is <c>false</c>, the
-		/// data is stored in plain-text in the process memory.</param>
+		/// <param name="bEnableProtection">Specifies whether to encrypt the
+		/// data in the process memory.</param>
 		/// <param name="pbData">Value of the protected object.
-		/// The input parameter is not modified and
-		/// <c>ProtectedBinary</c> doesn't take ownership of the data,
-		/// i.e. the caller is responsible for clearing it.</param>
+		/// The <c>ProtectedBinary</c> object does not modify or take ownership
+		/// of the data, i.e. the caller is responsible for clearing it.</param>
 		public ProtectedBinary(bool bEnableProtection, byte[] pbData)
 		{
 			if(pbData == null) throw new ArgumentNullException("pbData"); // For .Length
@@ -189,13 +187,11 @@ namespace KeePassLib.Security
 		/// <summary>
 		/// Construct a new protected binary data object.
 		/// </summary>
-		/// <param name="bEnableProtection">If this paremeter is <c>true</c>,
-		/// the data will be encrypted in memory. If it is <c>false</c>, the
-		/// data is stored in plain-text in the process memory.</param>
+		/// <param name="bEnableProtection">Specifies whether to encrypt the
+		/// data in the process memory.</param>
 		/// <param name="pbData">Value of the protected object.
-		/// The input parameter is not modified and
-		/// <c>ProtectedBinary</c> doesn't take ownership of the data,
-		/// i.e. the caller is responsible for clearing it.</param>
+		/// The <c>ProtectedBinary</c> object does not modify or take ownership
+		/// of the data, i.e. the caller is responsible for clearing it.</param>
 		/// <param name="iOffset">Offset for <paramref name="pbData" />.</param>
 		/// <param name="cbSize">Size for <paramref name="pbData" />.</param>
 		public ProtectedBinary(bool bEnableProtection, byte[] pbData,
@@ -206,10 +202,10 @@ namespace KeePassLib.Security
 
 		/// <summary>
 		/// Construct a new protected binary data object.
-		/// Copy the data from a <c>XorredBuffer</c> object.
 		/// </summary>
-		/// <param name="bEnableProtection">Enable protection or not.</param>
-		/// <param name="xb"><c>XorredBuffer</c> object containing the data.</param>
+		/// <param name="bEnableProtection">Specifies whether to encrypt the
+		/// data in the process memory.</param>
+		/// <param name="xb"><c>XorredBuffer</c> object to copy the data from.</param>
 		public ProtectedBinary(bool bEnableProtection, XorredBuffer xb)
 		{
 			if(xb == null) { Debug.Assert(false); throw new ArgumentNullException("xb"); }

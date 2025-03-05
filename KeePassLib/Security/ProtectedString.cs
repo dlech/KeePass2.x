@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -115,8 +115,7 @@ namespace KeePassLib.Security
 		}
 
 		/// <summary>
-		/// Construct a new protected string object. Protection is
-		/// disabled.
+		/// Construct a new protected string. Protection is disabled.
 		/// </summary>
 		public ProtectedString()
 		{
@@ -124,41 +123,36 @@ namespace KeePassLib.Security
 		}
 
 		/// <summary>
-		/// Construct a new protected string. The string is initialized
-		/// to the value supplied in the parameters.
+		/// Construct a new protected string.
 		/// </summary>
-		/// <param name="bEnableProtection">If this parameter is <c>true</c>,
-		/// the string will be protected in memory (encrypted). If it
-		/// is <c>false</c>, the string will be stored as plain-text.</param>
-		/// <param name="strValue">The initial string value.</param>
+		/// <param name="bEnableProtection">Specifies whether to encrypt the
+		/// data in the process memory.</param>
+		/// <param name="strValue">The string value.</param>
 		public ProtectedString(bool bEnableProtection, string strValue)
 		{
 			Init(bEnableProtection, strValue);
 		}
 
 		/// <summary>
-		/// Construct a new protected string. The string is initialized
-		/// to the value supplied in the parameters (UTF-8 encoded string).
+		/// Construct a new protected string.
 		/// </summary>
-		/// <param name="bEnableProtection">If this parameter is <c>true</c>,
-		/// the string will be protected in memory (encrypted). If it
-		/// is <c>false</c>, the string will be stored as plain-text.</param>
-		/// <param name="vUtf8Value">The initial string value, encoded as
-		/// UTF-8 byte array. This parameter won't be modified; the caller
-		/// is responsible for clearing it.</param>
+		/// <param name="bEnableProtection">Specifies whether to encrypt the
+		/// data in the process memory.</param>
+		/// <param name="vUtf8Value">The string value, encoded as UTF-8 byte
+		/// array. The <c>ProtectedString</c> object does not modify or take
+		/// ownership of the data, i.e. the caller is responsible for clearing it.</param>
 		public ProtectedString(bool bEnableProtection, byte[] vUtf8Value)
 		{
 			Init(bEnableProtection, vUtf8Value);
 		}
 
 		/// <summary>
-		/// Construct a new protected string. The string is initialized
-		/// to the value passed in the <c>XorredBuffer</c> object.
+		/// Construct a new protected string.
 		/// </summary>
-		/// <param name="bEnableProtection">Enable protection or not.</param>
-		/// <param name="xb"><c>XorredBuffer</c> object containing the
-		/// string in UTF-8 representation. The UTF-8 string must not
-		/// be <c>null</c>-terminated.</param>
+		/// <param name="bEnableProtection">Specifies whether to encrypt the
+		/// data in the process memory.</param>
+		/// <param name="xb"><c>XorredBuffer</c> object containing the string
+		/// in UTF-8 representation. The UTF-8 string must not be null-terminated.</param>
 		public ProtectedString(bool bEnableProtection, XorredBuffer xb)
 		{
 			if(xb == null) { Debug.Assert(false); throw new ArgumentNullException("xb"); }
@@ -227,10 +221,8 @@ namespace KeePassLib.Security
 			if(m_strPlainText != null) return m_strPlainText.ToCharArray();
 
 			byte[] pb = ReadUtf8();
-			char[] v;
-			try { v = StrUtil.Utf8.GetChars(pb); }
+			try { return StrUtil.Utf8.GetChars(pb); }
 			finally { MemUtil.ZeroByteArray(pb); }
-			return v;
 		}
 
 		/// <summary>

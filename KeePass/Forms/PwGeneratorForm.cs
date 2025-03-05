@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,8 +30,10 @@ using KeePass.App.Configuration;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
+using KeePass.Util.Spr;
 
 using KeePassLib;
+using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Security;
 using KeePassLib.Utility;
@@ -40,7 +42,7 @@ namespace KeePass.Forms
 {
 	public partial class PwGeneratorForm : Form
 	{
-		private const int MaxPreviewPasswords = 30;
+		private const int MaxPreviewPasswords = 50;
 
 		private readonly string CustomMeta = "(" + KPRes.Custom + ")";
 		private readonly string DeriveFromPrevious = "(" + KPRes.GenPwBasedOnPrevious + ")";
@@ -54,6 +56,7 @@ namespace KeePass.Forms
 		private uint m_uBlockUIUpdate = 0;
 		private bool m_bCanAccept = true;
 		// private bool m_bForceInTaskbar = false;
+		private uint m_uPreviewID = 0;
 
 		private string m_strAdvControlText = string.Empty;
 
@@ -282,6 +285,7 @@ namespace KeePass.Forms
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			Debug.Assert(m_uBlockUIUpdate == 0);
+			++m_uPreviewID; // Abort preview computation
 
 			// Program.Config.PasswordGenerator.LastUsedProfile = GetGenerationOptions();
 
@@ -565,59 +569,102 @@ namespace KeePass.Forms
 		{
 			if(m_uBlockUIUpdate != 0) return;
 
+			++m_uPreviewID; // Abort preview computation
+
 			if(m_tabMain.SelectedTab == m_tabPreview)
 				GeneratePreviewPasswords();
 		}
 
 		private void GeneratePreviewPasswords()
 		{
-			this.UseWaitCursor = true;
+			uint uPreviewID = ++m_uPreviewID;
 
-			m_pbPreview.Value = 0;
-			m_tbPreview.Text = string.Empty;
+			m_tbPreview.Text = KPRes.WaitPlease + "...";
+			SetEstimatedQuality(0, 0, false);
 
 			PwProfile prf = GetGenerationOptions();
 
-			int n = MaxPreviewPasswords;
-			if((prf.GeneratorType == PasswordGeneratorType.Custom) &&
-				string.IsNullOrEmpty(prf.CustomAlgorithmUuid))
-				n = 0;
+			byte[] pbUserEntropy = (m_bCanAccept ? null :
+				EntropyForm.CollectEntropyIfEnabled(prf));
 
-			byte[] pbUserEntropy = null;
-			if(!m_bCanAccept && (n != 0))
-				pbUserEntropy = EntropyForm.CollectEntropyIfEnabled(prf);
-
-			PwEntry peContext = new PwEntry(true, true);
 			MainForm mf = Program.MainForm;
-			PwDatabase pdContext = ((mf != null) ? mf.ActiveDatabase : null);
+			PwEntry pe = new PwEntry(true, true);
+			PwDatabase pd = ((mf != null) ? mf.ActiveDatabase : null);
+			SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
 
 			StringBuilder sbList = new StringBuilder();
 			bool bAcceptAlways = false;
+			long lQualitySum = 0;
+			int n = int.MaxValue, tStart = Environment.TickCount;
+			int tUI = tStart;
 
 			for(int i = 0; i < n; ++i)
 			{
+				Debug.Assert(m_uPreviewID == uPreviewID);
 				Application.DoEvents();
+				if(m_uPreviewID != uPreviewID) return; // No update
 
+				int t = Environment.TickCount;
+				if(((t - tStart) >= 1500) && (i >= 2))
+				{
+					n = i;
+					break;
+				}
+				if((t - tUI) >= 300)
+				{
+					SetEstimatedQuality(lQualitySum, i, false);
+					tUI = t;
+				}
+
+				bool bAcceptAlwaysPre = bAcceptAlways;
 				string strError;
-				ProtectedString psNew = PwGeneratorUtil.GenerateAcceptable(
-					prf, pbUserEntropy, peContext, pdContext, false,
-					ref bAcceptAlways, out strError);
+				ProtectedString ps = PwGeneratorUtil.GenerateAcceptable(prf,
+					pbUserEntropy, pe, pd, false, ref bAcceptAlways, out strError);
+
+				if(bAcceptAlways && !bAcceptAlwaysPre)
+					tStart = Environment.TickCount; // UI interaction => reset start
 
 				if(!string.IsNullOrEmpty(strError))
 				{
 					sbList.Remove(0, sbList.Length);
 					sbList.AppendLine(strError);
+					lQualitySum = -1;
 					break;
 				}
 
-				sbList.AppendLine(psNew.ReadString());
-				m_pbPreview.Value = (100 * (i + 1)) / n;
+				string str = ps.ReadString();
+
+				if(lQualitySum < 0) { }
+				else if(SprEngine.Compile(str, ctx) != str) lQualitySum = -1;
+				else lQualitySum += QualityEstimation.EstimatePasswordBits(str.ToCharArray());
+
+				if(i < MaxPreviewPasswords)
+				{
+					sbList.AppendLine(str);
+
+					if(i == (MaxPreviewPasswords - 1))
+					{
+						UIUtil.SetMultilineText(m_tbPreview, sbList.ToString());
+						sbList.Remove(0, sbList.Length);
+						SetEstimatedQuality(lQualitySum, i + 1, false);
+					}
+				}
 			}
 
-			m_pbPreview.Value = 100; // In case of error or n = 0
-			UIUtil.SetMultilineText(m_tbPreview, sbList.ToString());
+			if(sbList.Length != 0)
+				UIUtil.SetMultilineText(m_tbPreview, sbList.ToString());
+			SetEstimatedQuality(lQualitySum, n, true);
+		}
 
-			this.UseWaitCursor = false;
+		private void SetEstimatedQuality(long lQualitySum, int n, bool bFinal)
+		{
+			bool bSum = (lQualitySum >= 0);
+			bool bQ = (bSum && (n != 0));
+
+			m_lblQuality.Text = KPRes.QualityEstAvg + ": " + KPRes.BitsEx.Replace(
+				"{PARAM}", (bQ ? ((long)Math.Round((double)lQualitySum / n)).ToString() :
+				"?")) + (bFinal ? "." : ("... " + KPRes.WaitPlease + "..."));
+			m_lblQuality.Enabled = bSum;
 		}
 
 		private CustomPwGenerator GetCustomGenerator()

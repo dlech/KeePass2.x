@@ -296,7 +296,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.57.1.16889, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.58.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                 }
@@ -382,7 +382,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.57.1.16889, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.58.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -533,7 +533,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.57.1.16889, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.58.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -682,16 +682,16 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:KeePass 2.57.1"
-        "ProductCode" = "8:{186B0CAA-57B9-4AB4-AC4E-87990861E7C5}"
-        "PackageCode" = "8:{55FDD218-5759-4E84-BC38-1C68138A8AF1}"
+        "ProductName" = "8:KeePass 2.58"
+        "ProductCode" = "8:{695A895D-DD4C-4E12-9A47-EECEC1AEFB28}"
+        "PackageCode" = "8:{E2BD210D-3692-4905-8FB7-13CBAA5E74EE}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.57.1"
+        "ProductVersion" = "8:2.58.0"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://keepass.info/"
@@ -926,7 +926,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass: Copyright © 2003-2024 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright © 2003-2025 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1049,7 +1049,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass: Copyright © 2003-2024 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright © 2003-2025 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }

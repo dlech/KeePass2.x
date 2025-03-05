@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1825,7 +1825,7 @@ namespace KeePassLib
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				PwUuid pu = pg.CustomIconUuid;
-				if(pu.Equals(PwUuid.Zero)) return true;
+				if(pu.IsZero) return true;
 				if(!d.ContainsKey(pu)) pg.CustomIconUuid = PwUuid.Zero;
 				return true;
 			};
@@ -1843,7 +1843,7 @@ namespace KeePassLib
 		private void FixCustomIconRefs(PwEntry pe, Dictionary<PwUuid, bool> d)
 		{
 			PwUuid pu = pe.CustomIconUuid;
-			if(pu.Equals(PwUuid.Zero)) return;
+			if(pu.IsZero) return;
 			if(!d.ContainsKey(pu)) pe.CustomIconUuid = PwUuid.Zero;
 
 			foreach(PwEntry peH in pe.History) FixCustomIconRefs(peH, d);
@@ -2143,7 +2143,7 @@ namespace KeePassLib
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				PwUuid pu = pg.CustomIconUuid;
-				if(!pu.Equals(PwUuid.Zero)) dToDel.Remove(pu);
+				if(!pu.IsZero) dToDel.Remove(pu);
 				return true;
 			};
 
@@ -2170,7 +2170,7 @@ namespace KeePassLib
 			PwEntry pe)
 		{
 			PwUuid pu = pe.CustomIconUuid;
-			if(!pu.Equals(PwUuid.Zero)) d.Remove(pu);
+			if(!pu.IsZero) d.Remove(pu);
 
 			foreach(PwEntry peH in pe.History) RemoveCustomIconsFromDict(d, peH);
 		}
@@ -2196,7 +2196,7 @@ namespace KeePassLib
 
 			GFunc<PwUuid, bool> fEnsureIcon = delegate(PwUuid puIcon)
 			{
-				if(puIcon.Equals(PwUuid.Zero)) return true;
+				if(puIcon.IsZero) return true;
 				if(pdTo == null) { Debug.Assert(false); return false; }
 
 				PwCustomIcon ciFrom;

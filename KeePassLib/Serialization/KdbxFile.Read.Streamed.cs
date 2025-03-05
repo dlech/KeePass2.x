@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -612,8 +612,7 @@ namespace KeePassLib.Serialization
 				return KdbContext.Meta;
 			if((ctx == KdbContext.CustomIcon) && (xr.Name == ElemCustomIconItem))
 			{
-				if(!m_uuidCustomIconID.Equals(PwUuid.Zero) &&
-					(m_pbCustomIconData != null))
+				if(!m_uuidCustomIconID.IsZero && (m_pbCustomIconData != null))
 				{
 					PwCustomIcon ci = new PwCustomIcon(m_uuidCustomIconID,
 						m_pbCustomIconData);
@@ -649,7 +648,7 @@ namespace KeePassLib.Serialization
 			}
 			if((ctx == KdbContext.Group) && (xr.Name == ElemGroup))
 			{
-				if(PwUuid.Zero.Equals(m_ctxGroup.Uuid))
+				if(m_ctxGroup.Uuid.IsZero)
 					m_ctxGroup.Uuid = new PwUuid(true); // No assert (import)
 
 				m_ctxGroups.Pop();
@@ -680,8 +679,7 @@ namespace KeePassLib.Serialization
 			}
 			if((ctx == KdbContext.Entry) && (xr.Name == ElemEntry))
 			{
-				// Create new UUID if absent
-				if(PwUuid.Zero.Equals(m_ctxEntry.Uuid))
+				if(m_ctxEntry.Uuid.IsZero)
 					m_ctxEntry.Uuid = new PwUuid(true); // No assert (import)
 
 				if(m_bEntryInHistory)

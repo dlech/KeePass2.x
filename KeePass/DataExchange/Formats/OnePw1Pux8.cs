@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -115,18 +115,16 @@ namespace KeePass.DataExchange.Formats
 			JsonObject joOverview = jo.GetValue<JsonObject>("overview");
 			if(joOverview != null)
 			{
-				ImportUtil.AppendToField(pe, PwDefs.TitleField,
+				ImportUtil.Add(pe, PwDefs.TitleField,
 					joOverview.GetValue<string>("title"), pd);
 
 				string strUrl = joOverview.GetValue<string>("url");
-				ImportUtil.AppendToField(pe, PwDefs.UrlField, strUrl, pd);
+				ImportUtil.Add(pe, PwDefs.UrlField, strUrl, pd);
 
 				foreach(JsonObject joUrl in joOverview.GetValueArray<JsonObject>("urls", true))
 				{
 					string str = joUrl.GetValue<string>("url");
-					if(str != strUrl)
-						ImportUtil.CreateFieldWithIndex(pe.Strings, PwDefs.UrlField,
-							str, pd, false);
+					if(str != strUrl) ImportUtil.Add(pe, PwDefs.UrlField, str, pd);
 				}
 
 				foreach(string strTag in joOverview.GetValueArray<string>("tags", true))
@@ -139,11 +137,11 @@ namespace KeePass.DataExchange.Formats
 			{
 				string str = joDetails.GetValue<string>("password");
 				if(!string.IsNullOrEmpty(str))
-					ImportUtil.AppendToField(pe, PwDefs.PasswordField, str, pd);
+					ImportUtil.Add(pe, PwDefs.PasswordField, str, pd);
 
 				str = joDetails.GetValue<string>("notesPlain");
 				if(!string.IsNullOrEmpty(str))
-					ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pd);
+					ImportUtil.Add(pe, PwDefs.NotesField, str, pd);
 
 				JsonObject joFile = joDetails.GetValue<JsonObject>("documentAttributes");
 				if(joFile != null) ImportAttachment(joFile, za, pe);
@@ -178,15 +176,11 @@ namespace KeePass.DataExchange.Formats
 					Debug.Assert(false);
 					strName = PwDefs.NotesField;
 				}
-				else
-				{
-					string strM = ImportUtil.MapNameToStandardField(strName, true);
-					if(!string.IsNullOrEmpty(strM)) strName = strM;
-				}
+				else strName = ImportUtil.MapName(strName, true);
 			}
 
 			string strValue = jo.GetValue<string>("value");
-			ImportUtil.AppendToField(pe, strName, strValue, pd);
+			ImportUtil.Add(pe, strName, strValue, pd);
 		}
 
 		private static void ImportSectionField(JsonObject jo, ZipArchiveEx za,
@@ -211,11 +205,7 @@ namespace KeePass.DataExchange.Formats
 				else strName = strSection + " - " + strName;
 			}
 			else if(strName.Length == 0) { Debug.Assert(false); return; }
-			else
-			{
-				string strM = ImportUtil.MapNameToStandardField(strName, false);
-				if(!string.IsNullOrEmpty(strM)) strName = strM;
-			}
+			else strName = ImportUtil.MapName(strName, false);
 
 			JsonObject joAddr = joValue.GetValue<JsonObject>("address");
 			if(joAddr != null)
@@ -233,7 +223,7 @@ namespace KeePass.DataExchange.Formats
 				fAppend("state");
 				fAppend("country");
 
-				ImportUtil.AppendToField(pe, strName, sb.ToString(), pd);
+				ImportUtil.Add(pe, strName, sb.ToString(), pd);
 				return;
 			}
 
@@ -250,15 +240,14 @@ namespace KeePass.DataExchange.Formats
 			{
 				DateTime dt = TimeUtil.ConvertUnixTime(u);
 				str = TimeUtil.ToDisplayString(dt);
-				ImportUtil.AppendToField(pe, strName, str, pd);
+				ImportUtil.Add(pe, strName, str, pd);
 				return;
 			}
 
 			JsonObject joEMail = joValue.GetValue<JsonObject>("email");
 			if(joEMail != null)
 			{
-				ImportUtil.AppendToField(pe, strName, joEMail.GetValue<string>(
-					"email_address"), pd);
+				ImportUtil.Add(pe, strName, joEMail.GetValue<string>("email_address"), pd);
 				return;
 			}
 
@@ -267,7 +256,7 @@ namespace KeePass.DataExchange.Formats
 			{
 				str = (u / 100).ToString() + "-" +
 					(u % 100).ToString().PadLeft(2, '0');
-				ImportUtil.AppendToField(pe, strName, str, pd);
+				ImportUtil.Add(pe, strName, str, pd);
 				return;
 			}
 
@@ -278,7 +267,7 @@ namespace KeePass.DataExchange.Formats
 				catch(Exception)
 				{
 					Debug.Assert(false);
-					ImportUtil.AppendToField(pe, strName, str, pd);
+					ImportUtil.Add(pe, strName, str, pd);
 				}
 				return;
 			}
@@ -287,7 +276,7 @@ namespace KeePass.DataExchange.Formats
 			{
 				if(kvp.Value == null) continue; // E.g. null 'date'
 				if(kvp.Value is JsonObject) { Debug.Assert(false); continue; }
-				ImportUtil.AppendToField(pe, strName, kvp.Value.ToString(), pd);
+				ImportUtil.Add(pe, strName, kvp.Value.ToString(), pd);
 			}
 		}
 

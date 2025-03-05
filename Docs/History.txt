@@ -1,3 +1,72 @@
+2025-03-04: 2.58
+- When no entry is selected in the entry list of the main
+  window, the details view now displays information of the
+  current group (name, expiry time, tags, notes)
+- Added option 'Unhide empty data' (in 'Tools' -> 'Options' ->
+  tab 'Advanced', turned off by default)
+- On the 'Preview'/'Generate' tab page of the password
+  generator dialog, the average estimated quality of the
+  generated passwords is now displayed
+- Added Ctrl+H keyboard shortcut for the 'Show/hide password
+  using asterisks' option in report dialogs
+- Added 'User-Agent' header for HTTP/HTTPS/WebDAV web requests
+- If Microsoft Edge has been uninstalled, it now no longer
+  appears in the 'URL(s)' menu
+- Added 'More Commands' item in the group and entry context
+  menus (it shows the corresponding full menu)
+- Added 'Status' column in the triggers dialog
+- Added support for comments in INI files
+- Enhanced CodeWallet TXT import module
+- Fatal error messages are now more detailed when running
+  KeePass with the '-debug' command line option
+- Added filter for duplicate MRU items (caused by an MRU item
+  with an unsuitable database file path in an enforced
+  configuration file)
+- Added filter for duplicate key source associations (caused by
+  a key source association with an unsuitable database file
+  path in an enforced configuration file)
+- Added solution and project files for Visual Studio 2022
+- Added workaround for Mono's tree view right-click and context
+  menu handling
+
+- When clicking on a group in the group tree of the main
+  window, all entries are deselected now
+- If the currently selected entry does not have parameters for
+  generating time-based one-time passwords, the Ctrl+T and
+  Ctrl+Shift+T keyboard shortcuts are now ignored
+- Improved icon handling in certain entry lists (significantly
+  faster creation of such a list when there are many entries
+  with custom icons, reduced memory usage, reduced number of
+  GDI objects, ...)
+- In the master key prompt dialog, toggling the hiding of the
+  password now does not change the state of the password check
+  box anymore
+- When generating passwords for the 'Preview'/'Generate' tab
+  page of the password generator dialog takes too long, it is
+  now aborted
+- Replaced status indicators on the 'Preview'/'Generate' tab
+  page of the password generator dialog
+- Increased the number of preview passwords to 50
+- UI improvements in the trigger editing dialog
+- After showing a command/placeholder confirmation dialog
+  (cmd:// URI, {CMD:...} placeholder, {REF:P@...} placeholder),
+  KeePass now focuses the previously focused window
+- Renamed 'entry view' to 'details view' (because it can now
+  also display details of a group)
+- Removed the group/entry duplication commands from the context
+  menus (they continue to be available in the main menu)
+- Various improvements in some import modules
+- Improved UUID zero tests
+- The revision component of the assembly version is now
+  invariant
+- Improved PLGX cache item identifiers
+- Improved project cleanup script
+- Upgraded installer
+- Various code optimizations
+- Minor other improvements
+
+- Fixed two image list handling bugs
+
 2024-10-08: 2.57.1
 - Added options 'Show confirmation dialog when running/opening
   a cmd:// URI', 'Show confirmation dialog when evaluating/

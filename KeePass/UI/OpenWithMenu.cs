@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -474,9 +474,15 @@ namespace KeePass.UI
 					AddAppVariant(it, KPRes.Private, "--private");
 			}
 
-			if(!bFoundEdge) // Add the legacy Edge (EdgeHTML), if available
+			// Add the legacy Edge (EdgeHTML), if available
+			if(!bFoundEdge && AppLocator.EdgeProtocolSupported)
 			{
-				if(AppLocator.EdgeProtocolSupported)
+				// Do not add Edge if it has been uninstalled;
+				// https://sourceforge.net/p/keepass/bugs/2347/
+				string str = (RegUtil.GetValue<string>(
+					"HKEY_CLASSES_ROOT\\microsoft-edge\\shell\\open\\command",
+					string.Empty) ?? string.Empty).TrimEnd(' ', '\t', '\"');
+				if(!str.EndsWith("launch-edge-store-page", StrUtil.CaseIgnoreCmp))
 					AddAppByShellExpand("microsoft-edge:" + PlhTargetUri,
 						"Microsoft Edge", AppLocator.EdgePath);
 			}

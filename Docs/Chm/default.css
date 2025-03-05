@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2003-2024 Dominik Reichl.
+	Copyright (C) 2003-2025 Dominik Reichl.
 */
 
 body, kbd kbd {
@@ -13,11 +13,6 @@ body {
 	background-image: url("images/back.png");
 	background-repeat: repeat;
 	background-attachment: fixed;
-}
-@media (forced-colors: active), (prefers-color-scheme: dark) {
-	body {
-		background-image: none;
-	}
 }
 
 p {
@@ -448,3 +443,27 @@ div.tipdiv75 {
 .spr-m-feed-s     { background-position:  -19px -158px; width: 16px; height: 16px; }
 .spr-m-w3valid-b  { background-position:   -1px -176px; width: 80px; height: 15px; }
 .spr-m-kp-b       { background-position:  -83px -176px; width: 80px; height: 15px; }
+
+/* --------------------------------------------------------------------- */
+
+@media (forced-colors: active) {
+	body {
+		background-image: none;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	html {
+		filter: invert(100%) hue-rotate(180deg);
+	}
+	img, video, input[type="image"] {
+		filter: hue-rotate(180deg) invert(100%);
+	}
+
+	.spr-m-osi-h {
+		background-color: #EEEEEE; /* Otherwise the text is hard to read */
+	}
+	a {
+		color: #2244FF; /* For Firefox */
+	}
+}

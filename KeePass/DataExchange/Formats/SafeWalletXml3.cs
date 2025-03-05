@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -96,8 +96,8 @@ namespace KeePass.DataExchange.Formats
 			pg.AddEntry(pe, true);
 
 			XmlNode xnTitle = xnEntry.Attributes.GetNamedItem(AttribCaption);
-			string strTitle = ((xnTitle != null) ? xnTitle.Value : string.Empty);
-			ImportUtil.AppendToField(pe, PwDefs.TitleField, strTitle ?? string.Empty, pd);
+			string strTitle = ((xnTitle != null) ? xnTitle.Value : null);
+			ImportUtil.Add(pe, PwDefs.TitleField, (strTitle ?? string.Empty), pd);
 
 			foreach(XmlNode xn in xnEntry.ChildNodes)
 			{
@@ -105,13 +105,12 @@ namespace KeePass.DataExchange.Formats
 				{
 					XmlNode xnField = xn.Attributes.GetNamedItem(AttribCaption);
 					string strField = ((xnField != null) ? xnField.Value : null);
+
 					if(string.IsNullOrEmpty(strField)) { Debug.Assert(false); }
 					else
 					{
-						string strMap = ImportUtil.MapNameToStandardField(strField, false);
-						if(string.IsNullOrEmpty(strMap)) strMap = strField;
-
-						ImportUtil.Add(pe, strMap, xn, pd);
+						strField = ImportUtil.MapName(strField, false);
+						ImportUtil.Add(pe, strField, xn, pd);
 					}
 				}
 				else { Debug.Assert(false); } // Unknown node
@@ -124,20 +123,20 @@ namespace KeePass.DataExchange.Formats
 			pg.AddEntry(pe, true);
 
 			XmlNode xn = xnEntry.Attributes.GetNamedItem(AttribCaption);
-			string str = ((xn != null) ? xn.Value : string.Empty);
-			ImportUtil.AppendToField(pe, PwDefs.TitleField, str ?? string.Empty, pd);
+			string str = ((xn != null) ? xn.Value : null);
+			ImportUtil.Add(pe, PwDefs.TitleField, (str ?? string.Empty), pd);
 
 			xn = xnEntry.Attributes.GetNamedItem(AttribWebUrl);
-			str = ((xn != null) ? xn.Value : string.Empty);
-			ImportUtil.AppendToField(pe, PwDefs.UrlField, str ?? string.Empty, pd);
+			str = ((xn != null) ? xn.Value : null);
+			ImportUtil.Add(pe, PwDefs.UrlField, (str ?? string.Empty), pd);
 
 			xn = xnEntry.Attributes.GetNamedItem(AttribWebUserName);
-			str = ((xn != null) ? xn.Value : string.Empty);
-			ImportUtil.AppendToField(pe, PwDefs.UserNameField, str ?? string.Empty, pd);
+			str = ((xn != null) ? xn.Value : null);
+			ImportUtil.Add(pe, PwDefs.UserNameField, (str ?? string.Empty), pd);
 
 			xn = xnEntry.Attributes.GetNamedItem(AttribWebPassword);
-			str = ((xn != null) ? xn.Value : string.Empty);
-			ImportUtil.AppendToField(pe, PwDefs.PasswordField, str ?? string.Empty, pd);
+			str = ((xn != null) ? xn.Value : null);
+			ImportUtil.Add(pe, PwDefs.PasswordField, (str ?? string.Empty), pd);
 		}
 
 		private static void ImportVault(XmlNode xnVault, PwDatabase pd)

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -206,6 +206,30 @@ namespace KeePassLib.Collections
 			if(strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
 
 			return m_d.ContainsKey(strName);
+		}
+
+		internal bool Exists(string strName, bool? obEndsWith)
+		{
+			if(strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
+
+			const StringComparison sc = StringComparison.Ordinal;
+			foreach(string str in m_d.Keys)
+			{
+				if(!obEndsWith.HasValue)
+				{
+					if(str.IndexOf(strName, sc) >= 0) return true;
+				}
+				else if(obEndsWith.Value)
+				{
+					if(str.EndsWith(strName, sc)) return true;
+				}
+				else
+				{
+					if(str.StartsWith(strName, sc)) return true;
+				}
+			}
+
+			return false;
 		}
 
 		/// <summary>

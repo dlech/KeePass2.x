@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -452,6 +452,52 @@ namespace KeePass.UI
 			return il;
 		}
 
+		private static ImageList BuildImageList(ImageList ilStandard,
+			List<PwDatabase> lDatabases, out GFunc<PwDatabase, PwUuid, int> fGetIndex)
+		{
+			fGetIndex = null;
+			if(ilStandard == null) { Debug.Assert(false); return null; }
+			if(ilStandard.Images.Count < (int)PwIcon.Count) { Debug.Assert(false); return null; }
+
+			List<Image> lImages = new List<Image>();
+			for(int i = 0; i < (int)PwIcon.Count; ++i)
+				lImages.Add(ilStandard.Images[i]);
+
+			Size sz = ilStandard.ImageSize;
+
+			Dictionary<PwDatabase, Dictionary<PwUuid, int>> dAll =
+				new Dictionary<PwDatabase, Dictionary<PwUuid, int>>();
+			foreach(PwDatabase pd in (lDatabases ?? new List<PwDatabase>()))
+			{
+				if(pd == null) { Debug.Assert(false); continue; }
+				if(dAll.ContainsKey(pd)) { Debug.Assert(false); continue; }
+
+				Dictionary<PwUuid, int> d = new Dictionary<PwUuid, int>();
+				dAll[pd] = d;
+
+				foreach(PwCustomIcon pci in pd.CustomIcons)
+				{
+					d[pci.Uuid] = lImages.Count;
+					lImages.Add(pci.GetImage(sz.Width, sz.Height));
+				}
+			}
+
+			fGetIndex = delegate(PwDatabase pd, PwUuid pu)
+			{
+				Dictionary<PwUuid, int> d;
+				if(dAll.TryGetValue(pd, out d))
+				{
+					int i;
+					if(d.TryGetValue(pu, out i)) return i;
+				}
+
+				Debug.Assert(false);
+				return -1;
+			};
+
+			return BuildImageListUnscaled(lImages, sz.Width, sz.Height);
+		}
+
 		public static List<Image> BuildImageListEx(List<PwCustomIcon> lIcons,
 			int nWidth, int nHeight)
 		{
@@ -525,6 +571,18 @@ namespace KeePass.UI
 			}
 
 			return ilNew;
+		}
+
+		internal static void DisposeImageList(ListView lv, ImageList ilNoDispose)
+		{
+			if(lv == null) { Debug.Assert(false); return; }
+
+			ImageList il = lv.SmallImageList;
+			if(il == null) return;
+
+			lv.SmallImageList = null; // Detach event handlers
+
+			if(il != ilNoDispose) il.Dispose();
 		}
 
 		public static bool DrawAnimatedRects(Rectangle rectFrom, Rectangle rectTo)
@@ -670,31 +728,43 @@ namespace KeePass.UI
 		/// </summary>
 		/// <param name="lv"><c>ListView</c> to fill.</param>
 		/// <param name="vEntries">Entries.</param>
-		/// <param name="vColumns">Columns of the <c>ListView</c>. The first
+		/// <param name="lColumns">Columns of the <c>ListView</c>. The first
 		/// parameter of the key-value pair is the internal string field name,
 		/// and the second one the text displayed in the column header.</param>
 		public static void CreateEntryList(ListView lv, IEnumerable<PwEntry> vEntries,
-			List<KeyValuePair<string, string>> vColumns, ImageList ilIcons)
+			List<KeyValuePair<string, string>> lColumns, ImageList ilStandard)
+		{
+			CreateEntryList(lv, vEntries, lColumns, ilStandard, false);
+		}
+
+		internal static void CreateEntryList(ListView lv, IEnumerable<PwEntry> vEntries,
+			List<KeyValuePair<string, string>> lColumns, ImageList ilStandard,
+			bool bDisposeNonStandardImageList)
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
 			if(vEntries == null) throw new ArgumentNullException("vEntries");
-			if(vColumns == null) throw new ArgumentNullException("vColumns");
-			if(vColumns.Count == 0) throw new ArgumentException();
-			// ilIcons may be null
+			if(lColumns == null) throw new ArgumentNullException("lColumns");
+			if(lColumns.Count == 0) throw new ArgumentException();
+			// ilStandard may be null
+
+			DocumentManagerEx dm = Program.MainForm.DocumentManager;
+			GFunc<PwDatabase, PwUuid, int> fGetImageIndex;
+			ImageList ilAll = BuildImageList(ilStandard, dm.GetOpenDatabases(),
+				out fGetImageIndex);
 
 			lv.BeginUpdate();
 
 			lv.Items.Clear();
 			lv.Columns.Clear();
 			lv.ShowGroups = true;
-			lv.SmallImageList = ilIcons;
 
-			foreach(KeyValuePair<string, string> kvp in vColumns)
-			{
+			ImageList ilD = (bDisposeNonStandardImageList ? lv.SmallImageList : null);
+			lv.SmallImageList = ilAll;
+			if((ilD != null) && (ilD != ilAll) && (ilD != ilStandard)) ilD.Dispose();
+
+			foreach(KeyValuePair<string, string> kvp in lColumns)
 				lv.Columns.Add(kvp.Value);
-			}
 
-			DocumentManagerEx dm = Program.MainForm.DocumentManager;
 			ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
 			DateTime dtNow = DateTime.UtcNow;
 			bool bFirstEntry = true;
@@ -713,34 +783,21 @@ namespace KeePass.UI
 					}
 				}
 
-				ListViewItem lvi = new ListViewItem(AppDefs.GetEntryField(pe, vColumns[0].Key));
+				ListViewItem lvi = new ListViewItem(AppDefs.GetEntryField(pe, lColumns[0].Key));
 
-				if(ilIcons != null)
+				if(ilAll != null)
 				{
 					if(pe.Expires && (pe.ExpiryTime <= dtNow))
 						lvi.ImageIndex = (int)PwIcon.Expired;
-					else if(pe.CustomIconUuid == PwUuid.Zero)
+					else if(pe.CustomIconUuid.IsZero)
 						lvi.ImageIndex = (int)pe.IconId;
 					else
-					{
-						lvi.ImageIndex = (int)pe.IconId;
-
-						foreach(PwDocument ds in dm.Documents)
-						{
-							int nInx = ds.Database.GetCustomIconIndex(pe.CustomIconUuid);
-							if(nInx >= 0)
-							{
-								ilIcons.Images.Add(new Bitmap(DpiUtil.GetIcon(
-									ds.Database, pe.CustomIconUuid)));
-								lvi.ImageIndex = ilIcons.Images.Count - 1;
-								break;
-							}
-						}
-					}
+						lvi.ImageIndex = fGetImageIndex(dm.FindContainerOf(pe),
+							pe.CustomIconUuid);
 				}
 
-				for(int iCol = 1; iCol < vColumns.Count; ++iCol)
-					lvi.SubItems.Add(AppDefs.GetEntryField(pe, vColumns[iCol].Key));
+				for(int iCol = 1; iCol < lColumns.Count; ++iCol)
+					lvi.SubItems.Add(AppDefs.GetEntryField(pe, lColumns[iCol].Key));
 
 				if(!UIUtil.ColorsEqual(pe.ForegroundColor, Color.Empty))
 					lvi.ForeColor = pe.ForegroundColor;
@@ -760,11 +817,8 @@ namespace KeePass.UI
 			}
 
 			int nColWidth = (lv.ClientRectangle.Width - GetVScrollBarWidth()) /
-				vColumns.Count;
-			foreach(ColumnHeader ch in lv.Columns)
-			{
-				ch.Width = nColWidth;
-			}
+				lColumns.Count;
+			foreach(ColumnHeader ch in lv.Columns) ch.Width = nColWidth;
 
 			lv.EndUpdate();
 		}
@@ -773,17 +827,30 @@ namespace KeePass.UI
 		/// Fill a <c>ListView</c> with password entries.
 		/// </summary>
 		public static void CreateEntryList(ListView lv, List<AutoTypeCtx> lCtxs,
-			AceAutoTypeCtxFlags f, ImageList ilIcons)
+			AceAutoTypeCtxFlags f, ImageList ilStandard)
+		{
+			CreateEntryList(lv, lCtxs, f, ilStandard, false);
+		}
+
+		internal static void CreateEntryList(ListView lv, List<AutoTypeCtx> lCtxs,
+			AceAutoTypeCtxFlags f, ImageList ilStandard, bool bDisposeNonStandardImageList)
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
 			if(lCtxs == null) throw new ArgumentNullException("lCtxs");
+
+			GFunc<PwDatabase, PwUuid, int> fGetImageIndex;
+			ImageList ilAll = BuildImageList(ilStandard,
+				Program.MainForm.DocumentManager.GetOpenDatabases(), out fGetImageIndex);
 
 			lv.BeginUpdate();
 
 			lv.Items.Clear();
 			lv.Columns.Clear();
 			lv.ShowGroups = true;
-			lv.SmallImageList = ilIcons;
+
+			ImageList ilD = (bDisposeNonStandardImageList ? lv.SmallImageList : null);
+			lv.SmallImageList = ilAll;
+			if((ilD != null) && (ilD != ilAll) && (ilD != ilStandard)) ilD.Dispose();
 
 			Debug.Assert((f & AceAutoTypeCtxFlags.ColTitle) != AceAutoTypeCtxFlags.None);
 			f |= AceAutoTypeCtxFlags.ColTitle; // Enforce title
@@ -830,20 +897,14 @@ namespace KeePass.UI
 				ListViewItem lvi = new ListViewItem(SprEngine.Compile(
 					pe.Strings.ReadSafe(PwDefs.TitleField), sprCtx));
 
-				if(pe.Expires && (pe.ExpiryTime <= dtNow))
-					lvi.ImageIndex = (int)PwIcon.Expired;
-				else if(pe.CustomIconUuid == PwUuid.Zero)
-					lvi.ImageIndex = (int)pe.IconId;
-				else
+				if(ilAll != null)
 				{
-					int nInx = pd.GetCustomIconIndex(pe.CustomIconUuid);
-					if(nInx > -1)
-					{
-						ilIcons.Images.Add(new Bitmap(DpiUtil.GetIcon(
-							pd, pe.CustomIconUuid)));
-						lvi.ImageIndex = ilIcons.Images.Count - 1;
-					}
-					else { Debug.Assert(false); lvi.ImageIndex = (int)pe.IconId; }
+					if(pe.Expires && (pe.ExpiryTime <= dtNow))
+						lvi.ImageIndex = (int)PwIcon.Expired;
+					else if(pe.CustomIconUuid.IsZero)
+						lvi.ImageIndex = (int)pe.IconId;
+					else
+						lvi.ImageIndex = fGetImageIndex(pd, pe.CustomIconUuid);
 				}
 
 				if((f & AceAutoTypeCtxFlags.ColUserName) != AceAutoTypeCtxFlags.None)
@@ -1119,19 +1180,17 @@ namespace KeePass.UI
 
 		public static Color? ShowColorDialog(Color clrDefault)
 		{
-			ColorDialog dlg = CreateColorDialog(clrDefault);
+			using(ColorDialog dlg = CreateColorDialog(clrDefault))
+			{
+				GlobalWindowManager.AddDialog(dlg);
+				DialogResult dr = dlg.ShowDialog();
+				GlobalWindowManager.RemoveDialog(dlg);
 
-			GlobalWindowManager.AddDialog(dlg);
-			DialogResult dr = dlg.ShowDialog();
-			GlobalWindowManager.RemoveDialog(dlg);
+				SaveCustomColors(dlg);
 
-			SaveCustomColors(dlg);
-
-			Color? clrResult = null;
-			if(dr == DialogResult.OK) clrResult = dlg.Color;
-
-			dlg.Dispose();
-			return clrResult;
+				if(dr == DialogResult.OK) return dlg.Color;
+				return null;
+			}
 		}
 
 		public static FontDialog CreateFontDialog(bool bEffects)
@@ -3771,7 +3830,7 @@ namespace KeePass.UI
 			if(pe.Expires && (pe.ExpiryTime <= dtNow))
 				return (int)PwIcon.Expired;
 
-			if(pe.CustomIconUuid.Equals(PwUuid.Zero))
+			if(pe.CustomIconUuid.IsZero)
 				return (int)pe.IconId;
 
 			int i = -1;

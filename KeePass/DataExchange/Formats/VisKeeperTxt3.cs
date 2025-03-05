@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ namespace KeePass.DataExchange.Formats
 			string[] v = strData.Split('\n');
 
 			if(v.Length == 0) { Debug.Assert(false); return; }
-			ImportUtil.AppendToField(pe, PwDefs.TitleField, v[0].Trim(), pd);
+			ImportUtil.Add(pe, PwDefs.TitleField, v[0].Trim(), pd);
 
 			int n = v.Length;
 			for(int j = n - 1; j >= 0; --j)
@@ -112,17 +112,16 @@ namespace KeePass.DataExchange.Formats
 						ImportUtil.AppendToField(pe, PwDefs.NotesField,
 							MessageService.NewLine, pd, string.Empty, false);
 					else
-						ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pd);
+						ImportUtil.Add(pe, PwDefs.NotesField, str, pd);
 				}
 				else
 				{
-					string strRawKey = str.Substring(0, iSep);
+					string strKey = str.Substring(0, iSep);
 					string strValue = str.Substring(iSep + 1).Trim();
 
-					string strKey = ImportUtil.MapNameToStandardField(strRawKey, false);
-					if(string.IsNullOrEmpty(strKey)) strKey = strRawKey;
+					strKey = ImportUtil.MapName(strKey, false);
 
-					ImportUtil.AppendToField(pe, strKey, strValue, pd);
+					ImportUtil.Add(pe, strKey, strValue, pd);
 				}
 			}
 		}

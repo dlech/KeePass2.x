@@ -91,6 +91,7 @@
 			this.m_lvTriggers.HideSelection = false;
 			this.m_lvTriggers.Location = new System.Drawing.Point(12, 96);
 			this.m_lvTriggers.Name = "m_lvTriggers";
+			this.m_lvTriggers.ShowItemToolTips = true;
 			this.m_lvTriggers.Size = new System.Drawing.Size(521, 268);
 			this.m_lvTriggers.TabIndex = 0;
 			this.m_lvTriggers.UseCompatibleStateImageBehavior = false;

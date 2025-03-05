@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.Forms;
 using KeePass.Resources;
@@ -307,7 +306,7 @@ namespace KeePass.Util
 				strA = GetIconText(peA, pdA, pdB);
 				strB = GetIconText(peB, pdB, pdA);
 			}
-			bool bStdIconA = peA.CustomIconUuid.Equals(PwUuid.Zero);
+			bool bStdIconA = peA.CustomIconUuid.IsZero;
 			bEqual = (peA.CustomIconUuid.Equals(peB.CustomIconUuid) &&
 				(!bStdIconA || (peA.IconId == peB.IconId)));
 			Report(ctx, DfxIcon.Icon, KPRes.Icon, strA, strB, bEqual);
@@ -658,37 +657,32 @@ namespace KeePass.Util
 				{
 					LvfItem lvfi = new LvfItem(lvi);
 
-					if(bSensitiveA)
-					{
-						LvfSubItem si = lvfi.SubItems[LvsiValueA];
-						if(bA)
-						{
-							ProtectedString ps = psValueA.Trim();
-							if(bCheckProt && ps.IsProtected)
-								ps += (ps.IsEmpty ? "(***)" : " (***)");
-							Debug.Assert(si.Text.Length == 0);
-							si.SetText(ps);
-						}
-						si.Flags |= LvfiFlags.Sensitive;
-					}
-					if(bSensitiveB)
-					{
-						LvfSubItem si = lvfi.SubItems[LvsiValueB];
-						if(bB)
-						{
-							ProtectedString ps = psValueB.Trim();
-							if(bCheckProt && ps.IsProtected)
-								ps += (ps.IsEmpty ? "(***)" : " (***)");
-							Debug.Assert(si.Text.Length == 0);
-							si.SetText(ps);
-						}
-						si.Flags |= LvfiFlags.Sensitive;
-					}
+					if(bSensitiveA) SetSensitive(lvfi, LvsiValueA, psValueA, bCheckProt);
+					if(bSensitiveB) SetSensitive(lvfi, LvsiValueB, psValueB, bCheckProt);
 
 					ctx.OutLvo[i] = lvfi;
 				}
 				else { Debug.Assert(false); }
 			}
+		}
+
+		private static void SetSensitive(LvfItem lvfi, int iSubItem,
+			ProtectedString psValue, bool bCheckProt)
+		{
+			LvfSubItem si = lvfi.SubItems[iSubItem];
+
+			if(psValue != null)
+			{
+				ProtectedString ps = psValue.Trim();
+				if(bCheckProt && ps.IsProtected)
+					ps += (ps.IsEmpty ? "(***)" : " (***)");
+				Debug.Assert(si.Text.Length == 0);
+				si.SetText(ps);
+			}
+
+			if(((psValue != null) && !psValue.IsEmpty) ||
+				!Program.Config.UI.Hiding.UnhideEmptyData)
+				si.Flags |= LvfiFlags.Sensitive;
 		}
 
 		private static void ReportString(DfxContext ctx, DfxIcon ic, string strName,
@@ -787,7 +781,7 @@ namespace KeePass.Util
 		private static string GetIconText(PwEntry pe, PwDatabase pd,
 			PwDatabase pdOther)
 		{
-			if(pe.CustomIconUuid.Equals(PwUuid.Zero))
+			if(pe.CustomIconUuid.IsZero)
 				return (KPRes.BuiltInU + ": " + ((long)pe.IconId).ToString());
 
 			StringBuilder sb = new StringBuilder();

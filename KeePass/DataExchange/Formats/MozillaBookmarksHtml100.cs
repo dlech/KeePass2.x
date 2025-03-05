@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@ using KeePass.Util;
 using KeePassLib;
 using KeePassLib.Cryptography;
 using KeePassLib.Interfaces;
-using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
@@ -201,44 +200,35 @@ namespace KeePass.DataExchange.Formats
 				byte[] pbImage = StrUtil.DataUriToData(strIcon);
 				if((pbImage == null) || (pbImage.Length == 0)) { Debug.Assert(false); return; }
 
-				Image img = GfxUtil.LoadImage(pbImage);
-				if(img == null) { Debug.Assert(false); return; }
-
 				byte[] pbPng;
-				int wMax = PwCustomIcon.MaxWidth;
-				int hMax = PwCustomIcon.MaxHeight;
-				if((img.Width <= wMax) && (img.Height <= hMax))
+				using(Image img = GfxUtil.LoadImage(pbImage))
 				{
-					using(MemoryStream msPng = new MemoryStream())
+					if(img == null) { Debug.Assert(false); return; }
+
+					const int wMax = PwCustomIcon.MaxWidth;
+					const int hMax = PwCustomIcon.MaxHeight;
+					using(Image imgSc = (((img.Width > wMax) || (img.Height > hMax)) ?
+						GfxUtil.ScaleImage(img, wMax, hMax) : null))
 					{
-						img.Save(msPng, ImageFormat.Png);
-						pbPng = msPng.ToArray();
-					}
-				}
-				else
-				{
-					using(Image imgSc = GfxUtil.ScaleImage(img, wMax, hMax))
-					{
-						using(MemoryStream msPng = new MemoryStream())
+						using(MemoryStream ms = new MemoryStream())
 						{
-							imgSc.Save(msPng, ImageFormat.Png);
-							pbPng = msPng.ToArray();
+							(imgSc ?? img).Save(ms, ImageFormat.Png);
+							pbPng = ms.ToArray();
 						}
 					}
 				}
-				img.Dispose();
 
-				PwUuid pwUuid = null;
+				PwUuid pu;
 				int iEx = pd.GetCustomIconIndex(pbPng);
-				if(iEx >= 0) pwUuid = pd.CustomIcons[iEx].Uuid;
+				if(iEx >= 0) pu = pd.CustomIcons[iEx].Uuid;
 				else
 				{
-					pwUuid = new PwUuid(true);
-					pd.CustomIcons.Add(new PwCustomIcon(pwUuid, pbPng));
+					pu = new PwUuid(true);
+					pd.CustomIcons.Add(new PwCustomIcon(pu, pbPng));
 					pd.UINeedsIconUpdate = true;
 					pd.Modified = true;
 				}
-				pe.CustomIconUuid = pwUuid;
+				pe.CustomIconUuid = pu;
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
@@ -306,7 +296,7 @@ namespace KeePass.DataExchange.Formats
 
 				ExportTimes(sb, pe);
 
-				if(!pe.CustomIconUuid.Equals(PwUuid.Zero) && (pd != null))
+				if(!pe.CustomIconUuid.IsZero && (pd != null))
 				{
 					try
 					{

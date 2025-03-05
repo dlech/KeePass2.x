@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ namespace KeePass.Util.MultipleValues
 			m_peM.IconId = m_v[0].IconId;
 			m_peM.CustomIconUuid = m_v[0].CustomIconUuid;
 
-			bool bCustomZ = m_peM.CustomIconUuid.Equals(PwUuid.Zero);
+			bool bCustomZ = m_peM.CustomIconUuid.IsZero;
 
 			for(int i = 1; i < m_v.Length; ++i)
 			{
@@ -293,7 +293,7 @@ namespace KeePass.Util.MultipleValues
 		{
 			if(m_peM.CustomIconUuid.Equals(m_puCueIcon)) return;
 
-			bool bCustomZ = m_peM.CustomIconUuid.Equals(PwUuid.Zero);
+			bool bCustomZ = m_peM.CustomIconUuid.IsZero;
 
 			for(int i = 0; i < m_v.Length; ++i)
 			{

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -90,13 +90,13 @@ namespace KeePass.UI.ToolStripRendering
 			g_nStdFac = l.Count;
 		}
 
-		private static TsrFactory GetFactory(PwUuid u)
+		private static TsrFactory GetFactory(PwUuid pu)
 		{
-			if(u == null) { Debug.Assert(false); return null; }
+			if(pu == null) { Debug.Assert(false); return null; }
 
 			foreach(TsrFactory f in TsrPool.Factories)
 			{
-				if(u.Equals(f.Uuid)) return f;
+				if(pu.Equals(f.Uuid)) return f;
 			}
 
 			return null;
@@ -113,16 +113,16 @@ namespace KeePass.UI.ToolStripRendering
 			return true;
 		}
 
-		public static bool RemoveFactory(PwUuid u)
+		public static bool RemoveFactory(PwUuid pu)
 		{
-			if(u == null) { Debug.Assert(false); return false; }
+			if(pu == null) { Debug.Assert(false); return false; }
 
 			List<TsrFactory> l = TsrPool.Factories;
 			int cInitial = l.Count;
 
 			for(int i = l.Count - 1; i >= g_nStdFac; --i)
 			{
-				if(u.Equals(l[i].Uuid)) l.RemoveAt(i);
+				if(pu.Equals(l[i].Uuid)) l.RemoveAt(i);
 			}
 
 			return (l.Count != cInitial);
@@ -130,22 +130,20 @@ namespace KeePass.UI.ToolStripRendering
 
 		internal static ToolStripRenderer GetBestRenderer(string strUuid)
 		{
-			PwUuid u = PwUuid.Zero;
+			PwUuid pu = PwUuid.Zero;
 			try
 			{
 				if(!string.IsNullOrEmpty(strUuid))
-					u = new PwUuid(Convert.FromBase64String(strUuid));
+					pu = new PwUuid(Convert.FromBase64String(strUuid));
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			return GetBestRenderer(u);
+			return GetBestRenderer(pu);
 		}
 
-		internal static ToolStripRenderer GetBestRenderer(PwUuid u)
+		internal static ToolStripRenderer GetBestRenderer(PwUuid pu)
 		{
-			TsrFactory fPref = null;
-			if((u == null) || PwUuid.Zero.Equals(u)) { }
-			else fPref = GetFactory(u);
+			TsrFactory fPref = (((pu != null) && !pu.IsZero) ? GetFactory(pu) : null);
 
 			List<TsrFactory> lPref = new List<TsrFactory>();
 			if(fPref != null) lPref.Add(fPref);

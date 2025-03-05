@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,12 +45,11 @@ namespace KeePass.DataExchange.Formats
 
 		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		private const string m_strStartTd = "<td class=\"c0\" nowrap>";
-		private const string m_strEndTd = "</td>";
+		private const string g_strTdStart = "<td class=\"c0\" nowrap>";
+		private const string g_strTdEnd = "</td>";
 
-		private const string m_strModifiedField = @"{0530D298-F983-454C-B5A3-BFB0775844D1}";
-
-		private const string m_strModifiedHdrStart = "Modified";
+		private const string g_strModifiedField = "{0530D298-F983-454C-B5A3-BFB0775844D1}";
+		private const string g_strModifiedHdrStart = "Modified";
 
 		public override void Import(PwDatabase pdStorage, Stream sInput,
 			IStatusLogger slLogger)
@@ -58,12 +57,12 @@ namespace KeePass.DataExchange.Formats
 			string strData = MemUtil.ReadString(sInput, Encoding.Default);
 
 			// Normalize 2.70 files
-			strData = strData.Replace("<td class=\"c1\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c2\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c3\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c4\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c5\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c6\" nowrap>", m_strStartTd);
+			strData = strData.Replace("<td class=\"c1\" nowrap>", g_strTdStart);
+			strData = strData.Replace("<td class=\"c2\" nowrap>", g_strTdStart);
+			strData = strData.Replace("<td class=\"c3\" nowrap>", g_strTdStart);
+			strData = strData.Replace("<td class=\"c4\" nowrap>", g_strTdStart);
+			strData = strData.Replace("<td class=\"c5\" nowrap>", g_strTdStart);
+			strData = strData.Replace("<td class=\"c6\" nowrap>", g_strTdStart);
 
 			// Additionally support old versions
 			string[] vRepl = new string[5] {
@@ -77,10 +76,8 @@ namespace KeePass.DataExchange.Formats
 				"<td nowrap bgcolor=\"#[0-9a-fA-F]{6}\"><b>"
 			};
 			foreach(string strRepl in vRepl)
-			{
-				strData = Regex.Replace(strData, strRepl, m_strStartTd);
-			}
-			strData = strData.Replace("</font></td>\r\n", m_strEndTd + "\r\n");
+				strData = Regex.Replace(strData, strRepl, g_strTdStart);
+			strData = strData.Replace("</font></td>\r\n", g_strTdEnd + "\r\n");
 
 			int nOffset = 0;
 
@@ -108,30 +105,26 @@ namespace KeePass.DataExchange.Formats
 		private static bool ReadEntry(out PwEntry pe, string strData,
 			ref int nOffset, PwDatabase pd)
 		{
+			const string sS = g_strTdStart, sE = g_strTdEnd;
+
 			pe = new PwEntry(true, true);
 
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe, null, false))
+			if(!ReadString(strData, ref nOffset, sS, sE, pe, null, pd))
 			{
 				pe = null;
 				return true;
 			}
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.TitleField, pd.MemoryProtection.ProtectTitle))
+			if(!ReadString(strData, ref nOffset, sS, sE, pe, PwDefs.TitleField, pd))
 				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.UserNameField, pd.MemoryProtection.ProtectUserName))
+			if(!ReadString(strData, ref nOffset, sS, sE, pe, PwDefs.UserNameField, pd))
 				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.PasswordField, pd.MemoryProtection.ProtectPassword))
+			if(!ReadString(strData, ref nOffset, sS, sE, pe, PwDefs.PasswordField, pd))
 				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.UrlField, pd.MemoryProtection.ProtectUrl))
+			if(!ReadString(strData, ref nOffset, sS, sE, pe, PwDefs.UrlField, pd))
 				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.NotesField, pd.MemoryProtection.ProtectNotes))
+			if(!ReadString(strData, ref nOffset, sS, sE, pe, PwDefs.NotesField, pd))
 				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				m_strModifiedField, false))
+			if(!ReadString(strData, ref nOffset, sS, sE, pe, g_strModifiedField, pd))
 				return false;
 
 			return true;
@@ -139,7 +132,7 @@ namespace KeePass.DataExchange.Formats
 
 		private static bool ReadString(string strData, ref int nOffset,
 			string strStart, string strEnd, PwEntry pe, string strFieldName,
-			bool bProtect)
+			PwDatabase pd)
 		{
 			nOffset = strData.IndexOf(strStart, nOffset);
 			if(nOffset < 0) return false;
@@ -148,19 +141,19 @@ namespace KeePass.DataExchange.Formats
 				strStart, strEnd);
 
 			string strValue = strRawValue.Trim();
-			if(strValue == @"<br>") strValue = string.Empty;
+			if(strValue == "<br>") strValue = string.Empty;
 			strValue = strValue.Replace("\r", string.Empty);
 			strValue = strValue.Replace("\n", string.Empty);
-			strValue = strValue.Replace(@"<br>", MessageService.NewLine);
+			strValue = strValue.Replace("<br>", MessageService.NewLine);
 
-			if((strFieldName != null) && (strFieldName == m_strModifiedField))
+			if(strFieldName == g_strModifiedField)
 			{
 				DateTime dt = ReadModified(strValue);
 				pe.CreationTime = dt;
 				pe.LastModificationTime = dt;
 			}
 			else if(strFieldName != null)
-				pe.Strings.Set(strFieldName, new ProtectedString(bProtect, strValue));
+				ImportUtil.Add(pe, strFieldName, strValue, pd);
 
 			nOffset += strStart.Length + strRawValue.Length + strEnd.Length;
 			return true;
@@ -169,7 +162,7 @@ namespace KeePass.DataExchange.Formats
 		private static DateTime ReadModified(string strValue)
 		{
 			if(strValue == null) { Debug.Assert(false); return DateTime.UtcNow; }
-			if(strValue.StartsWith(m_strModifiedHdrStart)) return DateTime.UtcNow;
+			if(strValue.StartsWith(g_strModifiedHdrStart)) return DateTime.UtcNow;
 
 			string[] vParts = strValue.Split(new char[] { ' ', ':', '/' },
 				StringSplitOptions.RemoveEmptyEntries);

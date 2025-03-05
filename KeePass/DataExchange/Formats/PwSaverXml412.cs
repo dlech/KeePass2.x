@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ namespace KeePass.DataExchange.Formats
 
 			if(!string.IsNullOrEmpty(strName) && !string.IsNullOrEmpty(strValue))
 			{
-				string strF = ImportUtil.MapNameToStandardField(strName, true);
+				string strF;
 				if((strName == "Control Panel") || (strName == "Webmail Interface"))
 					strF = PwDefs.UrlField;
 				else if(strName == "FTP Address")
@@ -162,8 +162,8 @@ namespace KeePass.DataExchange.Formats
 					strF = "FTP User Name";
 				else if(strName == "FTP Password")
 					strF = strName;
-
-				if(string.IsNullOrEmpty(strF)) strF = strName;
+				else
+					strF = ImportUtil.MapName(strName, true);
 
 				ImportUtil.Add(pe, strF, strValue, pd);
 			}

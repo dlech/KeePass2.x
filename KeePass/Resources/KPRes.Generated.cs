@@ -475,6 +475,8 @@ namespace KeePass.Resources
 			m_strIncompatibleWithSorting = TryGetEx(dictNew, "IncompatibleWithSorting", m_strIncompatibleWithSorting);
 			m_strInherited = TryGetEx(dictNew, "Inherited", m_strInherited);
 			m_strInheritSettingFromParent = TryGetEx(dictNew, "InheritSettingFromParent", m_strInheritSettingFromParent);
+			m_strInitiallyOff = TryGetEx(dictNew, "InitiallyOff", m_strInitiallyOff);
+			m_strInitiallyOn = TryGetEx(dictNew, "InitiallyOn", m_strInitiallyOn);
 			m_strInstalled = TryGetEx(dictNew, "Installed", m_strInstalled);
 			m_strInstalledLanguages = TryGetEx(dictNew, "InstalledLanguages", m_strInstalledLanguages);
 			m_strInstrAndGenInfo = TryGetEx(dictNew, "InstrAndGenInfo", m_strInstrAndGenInfo);
@@ -597,6 +599,7 @@ namespace KeePass.Resources
 			m_strModified = TryGetEx(dictNew, "Modified", m_strModified);
 			m_strMore = TryGetEx(dictNew, "More", m_strMore);
 			m_strMoreAnd = TryGetEx(dictNew, "MoreAnd", m_strMoreAnd);
+			m_strMoreCommands = TryGetEx(dictNew, "MoreCommands", m_strMoreCommands);
 			m_strMoreEntries = TryGetEx(dictNew, "MoreEntries", m_strMoreEntries);
 			m_strMoreInfo = TryGetEx(dictNew, "MoreInfo", m_strMoreInfo);
 			m_strMoveDown = TryGetEx(dictNew, "MoveDown", m_strMoveDown);
@@ -756,6 +759,7 @@ namespace KeePass.Resources
 			m_strPwGenProfiles = TryGetEx(dictNew, "PwGenProfiles", m_strPwGenProfiles);
 			m_strQuality = TryGetEx(dictNew, "Quality", m_strQuality);
 			m_strQualityCheckToggle = TryGetEx(dictNew, "QualityCheckToggle", m_strQualityCheckToggle);
+			m_strQualityEstAvg = TryGetEx(dictNew, "QualityEstAvg", m_strQualityEstAvg);
 			m_strQualityEstimation = TryGetEx(dictNew, "QualityEstimation", m_strQualityEstimation);
 			m_strQuick = TryGetEx(dictNew, "Quick", m_strQuick);
 			m_strQuickSearchDerefData = TryGetEx(dictNew, "QuickSearchDerefData", m_strQuickSearchDerefData);
@@ -938,6 +942,7 @@ namespace KeePass.Resources
 			m_strTypeUnknownHint = TryGetEx(dictNew, "TypeUnknownHint", m_strTypeUnknownHint);
 			m_strUnderline = TryGetEx(dictNew, "Underline", m_strUnderline);
 			m_strUndo = TryGetEx(dictNew, "Undo", m_strUndo);
+			m_strUnhideEmptyData = TryGetEx(dictNew, "UnhideEmptyData", m_strUnhideEmptyData);
 			m_strUnhidePasswords = TryGetEx(dictNew, "UnhidePasswords", m_strUnhidePasswords);
 			m_strUnhidePasswordsDesc = TryGetEx(dictNew, "UnhidePasswordsDesc", m_strUnhidePasswordsDesc);
 			m_strUnhideSourceCharactersToo = TryGetEx(dictNew, "UnhideSourceCharactersToo", m_strUnhideSourceCharactersToo);
@@ -1457,6 +1462,8 @@ namespace KeePass.Resources
 			"IncompatibleWithSorting",
 			"Inherited",
 			"InheritSettingFromParent",
+			"InitiallyOff",
+			"InitiallyOn",
 			"Installed",
 			"InstalledLanguages",
 			"InstrAndGenInfo",
@@ -1579,6 +1586,7 @@ namespace KeePass.Resources
 			"Modified",
 			"More",
 			"MoreAnd",
+			"MoreCommands",
 			"MoreEntries",
 			"MoreInfo",
 			"MoveDown",
@@ -1738,6 +1746,7 @@ namespace KeePass.Resources
 			"PwGenProfiles",
 			"Quality",
 			"QualityCheckToggle",
+			"QualityEstAvg",
 			"QualityEstimation",
 			"Quick",
 			"QuickSearchDerefData",
@@ -1920,6 +1929,7 @@ namespace KeePass.Resources
 			"TypeUnknownHint",
 			"Underline",
 			"Undo",
+			"UnhideEmptyData",
 			"UnhidePasswords",
 			"UnhidePasswordsDesc",
 			"UnhideSourceCharactersToo",
@@ -6933,6 +6943,28 @@ namespace KeePass.Resources
 			get { return m_strInheritSettingFromParent; }
 		}
 
+		private static string m_strInitiallyOff =
+			@"Initially off";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Initially off'.
+		/// </summary>
+		public static string InitiallyOff
+		{
+			get { return m_strInitiallyOff; }
+		}
+
+		private static string m_strInitiallyOn =
+			@"Initially on";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Initially on'.
+		/// </summary>
+		public static string InitiallyOn
+		{
+			get { return m_strInitiallyOn; }
+		}
+
 		private static string m_strInstalled =
 			@"Installed";
 		/// <summary>
@@ -8273,6 +8305,17 @@ namespace KeePass.Resources
 		public static string MoreAnd
 		{
 			get { return m_strMoreAnd; }
+		}
+
+		private static string m_strMoreCommands =
+			@"&More Commands";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// '&amp;More Commands'.
+		/// </summary>
+		public static string MoreCommands
+		{
+			get { return m_strMoreCommands; }
 		}
 
 		private static string m_strMoreEntries =
@@ -10022,6 +10065,17 @@ namespace KeePass.Resources
 		public static string QualityCheckToggle
 		{
 			get { return m_strQualityCheckToggle; }
+		}
+
+		private static string m_strQualityEstAvg =
+			@"Average estimated quality";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Average estimated quality'.
+		/// </summary>
+		public static string QualityEstAvg
+		{
+			get { return m_strQualityEstAvg; }
 		}
 
 		private static string m_strQualityEstimation =
@@ -12024,6 +12078,17 @@ namespace KeePass.Resources
 		public static string Undo
 		{
 			get { return m_strUndo; }
+		}
+
+		private static string m_strUnhideEmptyData =
+			@"Unhide empty data";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Unhide empty data'.
+		/// </summary>
+		public static string UnhideEmptyData
+		{
+			get { return m_strUnhideEmptyData; }
 		}
 
 		private static string m_strUnhidePasswords =

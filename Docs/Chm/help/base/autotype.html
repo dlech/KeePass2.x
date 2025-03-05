@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -72,9 +72,8 @@
 
 <br />
 
-<a name="autobasic"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="" />
-Basic Auto-Type Information</h2>
+<h2 class="sectiontitle" id="autobasic"><img src="../images/b16x16_ktouch.png"
+alt="" /> Basic Auto-Type Information</h2>
 
 <p>KeePass features an &quot;Auto-Type&quot; functionality. This feature allows you to define
 a sequence of keypresses, which KeePass can automatically perform for you. The
@@ -134,9 +133,8 @@ the above methods.</p>
 
 <br />
 
-<a name="req"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Requirements and Limitations</h2>
+<h2 class="sectiontitle" id="req"><img src="../images/b16x16_help.png"
+alt="" /> Requirements and Limitations</h2>
 
 <p><b>Rights:</b><br />
 For auto-type to work, KeePass must be running with the same or higher
@@ -181,9 +179,8 @@ target="_blank">Auto-Type on Wayland</a> page.</p>
 
 <br />
 
-<a name="autoctx"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="" />
-Context Menu: '<i>Perform Auto-Type</i>' Command</h2>
+<h2 class="sectiontitle" id="autoctx"><img src="../images/b16x16_ktouch.png"
+alt="" /> Context Menu: '<i>Perform Auto-Type</i>' Command</h2>
 
 <p>This method is the one that requires the least amount of configuration and is
 the simpler one, but it has the disadvantage that you need to select the entry
@@ -203,9 +200,8 @@ association. If none of the associations match, the default sequence is used.</p
 
 <br />
 
-<a name="autoglobal"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="" />
-Global Auto-Type Hot Key</h2>
+<h2 class="sectiontitle" id="autoglobal"><img src="../images/b16x16_ktouch.png"
+alt="" /> Global Auto-Type Hot Key</h2>
 
 <p>This is the more powerful method, but it also requires a little bit more
 work/knowledge, before it can be used.</p>
@@ -283,9 +279,8 @@ title to determine a match.
 
 <br />
 
-<a name="autoseq"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="" />
-Auto-Type Keystroke Sequences</h2>
+<h2 class="sectiontitle" id="autoseq"><img src="../images/b16x16_ktouch.png"
+alt="" /> Auto-Type Keystroke Sequences</h2>
 
 <p>An auto-type keystroke sequence is a one-line string that can contain
 placeholders and special key codes.</p>
@@ -421,9 +416,8 @@ target="_blank">virtual key</a> of value <i>X</i>; see <a href="#vkey">below</a>
 
 <br />
 
-<a name="vkey"></a>
 
-<b><code>{VKEY <i>X</i> <i>F</i>}</code>:</b><br />
+<b id="vkey"><code>{VKEY <i>X</i> <i>F</i>}</code>:</b><br />
 This command sends the
 <a href="https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes"
 target="_blank">virtual key</a> of value <i>X</i>.
@@ -530,9 +524,8 @@ you can write them directly into the keystroke sequence definition.</p>
 
 <br />
 
-<a name="autowindows"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_window_list.png" alt="" />
-Target Window Filters</h2>
+<h2 class="sectiontitle" id="autowindows"><img src="../images/b16x16_window_list.png"
+alt="" /> Target Window Filters</h2>
 
 <p>When creating a custom window/sequence association, you need to tell
 KeePass how the matching window titles look like. Here, KeePass supports
@@ -573,9 +566,8 @@ See the usage examples for more information.</p>
 
 <br />
 
-<a name="changedefaultseq"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ktouch.png" alt="" />
-Change Default Auto-Type Sequence</h2>
+<h2 class="sectiontitle" id="changedefaultseq"><img src="../images/b16x16_ktouch.png"
+alt="" /> Change Default Auto-Type Sequence</h2>
 
 <p>The default auto-type sequence (i.e. the one which is used when you don't specify
 a custom one) is <code>{USERNAME}{TAB}{PASSWORD}{ENTER}</code>. KeePass allows you
@@ -601,9 +593,8 @@ to the <i>'Auto-Type'</i> tab.
 
 <br /><br />
 
-<a name="autoexample"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="" />
-Usage Example</h2>
+<h2 class="sectiontitle" id="autoexample"><img src="../images/b16x16_ascii.png"
+alt="" /> Usage Example</h2>
 
 <p>Now let's have a look at a real-world example: logging into a website. In this example,
 will we use the global auto-type hot key to fill out the login webpage.

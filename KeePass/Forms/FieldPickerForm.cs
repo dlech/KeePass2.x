@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
-using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
+using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Utility;
@@ -47,25 +47,15 @@ namespace KeePass.Forms
 		internal static FpField ShowAndRestore(string strTitle, string strText,
 			List<FpField> lFields)
 		{
-			IntPtr h = IntPtr.Zero;
-			try { h = NativeMethods.GetForegroundWindowHandle(); }
-			catch(Exception) { Debug.Assert(false); }
-
-			FieldPickerForm dlg = new FieldPickerForm();
-			dlg.InitEx(strTitle, strText, lFields);
-
-			FpField fpResult = null;
-			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
-				fpResult = dlg.SelectedField;
-
-			try
+			using(FocusRestoreScope frs = new FocusRestoreScope())
 			{
-				if(h != IntPtr.Zero)
-					NativeMethods.EnsureForegroundWindow(h);
-			}
-			catch(Exception) { Debug.Assert(false); }
+				FieldPickerForm dlg = new FieldPickerForm();
+				dlg.InitEx(strTitle, strText, lFields);
 
-			return fpResult;
+				if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+					return dlg.SelectedField;
+				return null;
+			}
 		}
 
 		public FieldPickerForm()
@@ -116,8 +106,8 @@ namespace KeePass.Forms
 					if(fpf == null) { Debug.Assert(false); continue; }
 
 					ListViewItem lvi = new ListViewItem(fpf.Name);
-					lvi.SubItems.Add(fpf.Value.IsProtected ? PwDefs.HiddenPassword :
-						StrUtil.MultiToSingleLine(fpf.Value.ReadString()));
+					lvi.SubItems.Add(StrUtil.MultiToSingleLine(
+						EntryUtil.GetHiddenString(fpf.Value, fpf.Value.IsProtected)));
 					lvi.Tag = fpf;
 
 					m_lvFields.Items.Add(lvi);
@@ -127,7 +117,7 @@ namespace KeePass.Forms
 						if(fpf.Group != strGroup)
 						{
 							strGroup = fpf.Group;
-							lvg = new ListViewGroup(strGroup, HorizontalAlignment.Left);
+							lvg = new ListViewGroup(strGroup);
 
 							m_lvFields.Groups.Add(lvg);
 						}

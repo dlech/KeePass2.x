@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -189,7 +189,7 @@ namespace KeePass.Forms
 
 				string str;
 				if(bHideSensitive && ((si.Flags & LvfiFlags.Sensitive) != LvfiFlags.None))
-					str = PwDefs.HiddenPassword;
+					str = EntryUtil.GetHiddenString(si.TextPS, true);
 				else str = si.Text;
 
 				m_lvi.SubItems[i].Text = str;
@@ -207,7 +207,7 @@ namespace KeePass.Forms
 		}
 
 		private object m_oText;
-		public string Text
+		public string Text // Cf. TextPS
 		{
 			get
 			{
@@ -219,6 +219,21 @@ namespace KeePass.Forms
 
 				Debug.Assert(false);
 				return string.Empty;
+			}
+		}
+
+		internal ProtectedString TextPS // Cf. Text
+		{
+			get
+			{
+				string str = (m_oText as string);
+				if(str != null) return new ProtectedString(false, str);
+
+				ProtectedString ps = (m_oText as ProtectedString);
+				if(ps != null) return ps;
+
+				Debug.Assert(false);
+				return ProtectedString.Empty;
 			}
 		}
 

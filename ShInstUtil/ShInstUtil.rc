@@ -65,8 +65,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,57,1,0
- PRODUCTVERSION 2,57,1,0
+ FILEVERSION 2,58,0,0
+ PRODUCTVERSION 2,58,0,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -83,12 +83,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Dominik Reichl"
             VALUE "FileDescription", "ShInstUtil - KeePass Helper Utility"
-            VALUE "FileVersion", "2.57.1.0"
+            VALUE "FileVersion", "2.58.0.0"
             VALUE "InternalName", "ShInstUtil"
-            VALUE "LegalCopyright", "Copyright © 2007-2024 Dominik Reichl"
+            VALUE "LegalCopyright", "Copyright © 2007-2025 Dominik Reichl"
             VALUE "OriginalFilename", "ShInstUtil.exe"
             VALUE "ProductName", "ShInstUtil - KeePass Helper Utility"
-            VALUE "ProductVersion", "2.57.1.0"
+            VALUE "ProductVersion", "2.58.0.0"
         END
     END
     BLOCK "VarFileInfo"

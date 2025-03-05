@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -51,7 +51,7 @@ placeholders can be used.</p>
 <li><a href="#plh">Other Placeholders</a></li>
 </ul>
 
-
+<br />
 
 
 
@@ -76,20 +76,19 @@ cannot be used in the URL field (but it can be used in the
 
 <br />
 
-<a name="entryfields"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png" alt="" />
-Entry Field Placeholders</h2>
+<h2 class="sectiontitle" id="entryfields"><img src="../images/b16x16_chardevice.png"
+alt="" /> Entry Field Placeholders</h2>
 
 <br />
 
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
-<tr><th>Placeholder</th><th>Field</th></tr>
-<tr><td><code>{TITLE}</code></td><td>Title</td></tr>
-<tr><td><code>{USERNAME}</code></td><td>User name</td></tr>
-<tr><td><code>{URL}</code></td><td>URL</td></tr>
-<tr><td><code>{PASSWORD}</code></td><td>Password</td></tr>
-<tr><td><code>{NOTES}</code></td><td>Notes</td></tr>
+<tr><th>Placeholder</th><th>Value</th></tr>
+<tr><td><code>{TITLE}</code></td><td>Title of the entry.</td></tr>
+<tr><td><code>{USERNAME}</code></td><td>User name of the entry.</td></tr>
+<tr><td><code>{URL}</code></td><td>URL of the entry.</td></tr>
+<tr><td><code>{PASSWORD}</code></td><td>Password of the entry.</td></tr>
+<tr><td><code>{NOTES}</code></td><td>Notes of the entry.</td></tr>
 </table>
 
 <br />
@@ -101,13 +100,12 @@ you can use the placeholder <code>{S:eMail}</code>.
 
 
 <br />
-
 <br />
 
 
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
-<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><th>Placeholder</th><th>Value</th></tr>
 <tr><td><code>{URL:RMVSCM}</code></td><td>Entry URL without scheme name.</td></tr>
 <tr><td><code>{URL:SCM}</code></td><td>Scheme name of the entry URL.</td></tr>
 <tr><td><code>{URL:HOST}</code></td><td>Host component of the entry URL.</td></tr>
@@ -125,24 +123,23 @@ An example for the <code>{URL:...}</code> placeholders can be found <a href="#ur
 
 <br /><br />
 
-<a name="fieldrefs"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png" alt="" />
-Entry Field References</h2>
+<h2 class="sectiontitle" id="fieldrefs"><img src="../images/b16x16_chardevice.png"
+alt="" /> Entry Field References</h2>
 
 <p>Fields of <i>other</i> entries can be inserted using
 <a href="fieldrefs.html">Field References</a>.</p>
 
 <br />
 
-<a name="envctx"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png" alt="" />
-Paths and Date/Time Placeholders</h2>
+<h2 class="sectiontitle" id="envctx"><img src="../images/b16x16_chardevice.png"
+alt="" /> Paths and Date/Time Placeholders</h2>
 
 <br />
 
+<!-- Cf. autourl.html#subst -->
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
-<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><th>Placeholder</th><th>Value</th></tr>
 <tr><td><code>{EDGE}</code></td><td>Path to Microsoft Edge, if installed.</td></tr>
 <tr><td><code>{FIREFOX}</code></td><td>Path to Mozilla Firefox, if installed.</td></tr>
 <tr><td><code>{GOOGLECHROME}</code></td><td>Path to Google Chrome (or Chromium
@@ -166,7 +163,7 @@ rel="nofollow">microsoft-edge:https://keepass.info/</a>.</p> -->
 
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
-<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><th>Placeholder</th><th>Value</th></tr>
 <tr><td><code>{APPDIR}</code></td><td>KeePass application directory path.</td></tr>
 </table>
 
@@ -175,7 +172,7 @@ rel="nofollow">microsoft-edge:https://keepass.info/</a>.</p> -->
 
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
-<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><th>Placeholder</th><th>Value</th></tr>
 <tr><td><code>{GROUP}</code></td><td>Name of the entry's parent group.</td></tr>
 <tr><td><code>{GROUP_PATH}</code></td><td>Full path of the entry's parent group.</td></tr>
 <tr><td><code>{GROUP_NOTES}</code></td><td>Notes of the entry's parent group.</td></tr>
@@ -197,9 +194,9 @@ rel="nofollow">microsoft-edge:https://keepass.info/</a>.</p> -->
 
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
-<tr><th>Placeholder</th><th>Is Replaced By</th></tr>
+<tr><th>Placeholder</th><th>Value</th></tr>
 <tr><td><code>{DT_SIMPLE}</code></td><td>Current local date/time as a simple,
-sortable string. For example, for 2012-07-25 17:05:34 the value is 20120725170534.</td></tr>
+sortable string. For example, for 2028-07-25 17:05:34 the value is 20280725170534.</td></tr>
 <tr><td><code>{DT_YEAR}</code></td><td>Year component of the current local date/time.</td></tr>
 <tr><td><code>{DT_MONTH}</code></td><td>Month component of the current local date/time.</td></tr>
 <tr><td><code>{DT_DAY}</code></td><td>Day component of the current local date/time.</td></tr>
@@ -217,9 +214,8 @@ sortable string. For example, for 2012-07-25 17:05:34 the value is 2012072517053
 
 <br /><br />
 
-<a name="envvars"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_konsole.png" alt="" />
-Environment Variables</h2>
+<h2 class="sectiontitle" id="envvars"><img src="../images/b16x16_konsole.png"
+alt="" /> Environment Variables</h2>
 
 <p>System environment variables are supported.
 The name of the variable must be enclosed in '<code>%</code>' characters.
@@ -227,16 +223,15 @@ For example <code>%TEMP%</code> is replaced by the user's temporary path.</p>
 
 <br />
 
-<a name="texttrf"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="" />
-Text Transformations</h2>
+<h2 class="sectiontitle" id="texttrf"><img src="../images/b16x16_ascii.png"
+alt="" /> Text Transformations</h2>
 
 <br />
 
 
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
-<tr><th>Placeholder</th><th>Action</th></tr>
+<tr><th>Placeholder</th><th>Value</th></tr>
 <tr><td><code>{T-REPLACE-RX:/<i>Text</i>/<i>Search</i>/<i>Replace</i>/}</code></td>
 <td>Searches the regular expression <em>Search</em> in <em>Text</em>
 and replaces all matches by <em>Replace</em>.
@@ -249,10 +244,9 @@ See <a href="#conv">below</a>.</td></tr>
 
 <br /><br />
 
-<a name="replacerx"></a>
 
-<b><code>{T-REPLACE-RX:/<i>Text</i>/<i>Search</i>/<i>Replace</i>/}</code> &#8211; Replace
-Using Regular Expression:</b><br />
+<b id="replacerx"><code>{T-REPLACE-RX:/<i>Text</i>/<i>Search</i>/<i>Replace</i>/}</code>
+&#8211; Replace Using Regular Expression:</b><br />
 This placeholder searches the
 <!-- https://msdn.microsoft.com/en-us/library/az24scfc.aspx -->
 <!-- https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference -->
@@ -280,9 +274,8 @@ When running the URL field, KeePass opens
 
 <br /><br />
 
-<a name="conv"></a>
 
-<b><code>{T-CONV:/<i>Text</i>/<i>Type</i>/}</code> &#8211; Convert:</b><br />
+<b id="conv"><code>{T-CONV:/<i>Text</i>/<i>Type</i>/}</code> &#8211; Convert:</b><br />
 This placeholder converts <em>Text</em> to <em>Type</em>.<br />
 <br />
 All parameters are Spr-compiled, i.e. placeholders can be used within them.<br />
@@ -323,16 +316,24 @@ which results in the text '<code>A</code>').</li>
 
 <br /><br />
 
-<a name="plh"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_chardevice.png" alt="" />
-Other Placeholders</h2>
+<h2 class="sectiontitle" id="plh"><img src="../images/b16x16_chardevice.png"
+alt="" /> Other Placeholders</h2>
+
+<br />
+
+<table class="tablebox75">
+<colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
+<tr><th>Placeholder</th><th>Value</th></tr>
+<tr><td><code>{PASSWORD_ENC}</code></td><td>Password in encrypted form.
+See <a href="#passwordenc">below</a>.</td></tr>
+</table>
 
 <br />
 
 
 <table class="tablebox75">
 <colgroup><col style="width: 50%;" /><col style="width: 50%;" /></colgroup>
-<tr><th>Placeholder</th><th>Action</th></tr>
+<tr><th>Placeholder</th><th>Value/Action</th></tr>
 <tr><td><code>{PICKCHARS}</code><br />
 <code>{PICKCHARS:<i>Fld</i>:<i>Opt</i>}</code></td><td>Shows a dialog to pick certain characters from an entry string.
 See <a href="#pickchars">below</a>.</td></tr>
@@ -341,8 +342,6 @@ whose value will be inserted.</td></tr>
 <tr><td><code>{NEWPASSWORD}</code><br />
 <code>{NEWPASSWORD:/<em>Profile</em>/.../}</code></td><td>Generates a new password.
 See <a href="#newpassword">below</a>.</td></tr>
-<tr><td><code>{PASSWORD_ENC}</code></td><td>Password in encrypted form.
-See <a href="#passwordenc">below</a>.</td></tr>
 <tr><td><code>{HMACOTP}</code></td><td>Generates an HMAC-based one-time password.
 See <a href="#otp">below</a>.</td></tr>
 <tr><td><code>{TIMEOTP}</code></td><td>Generates a time-based one-time password.
@@ -370,8 +369,25 @@ See <a href="#url">below</a>.</td></tr>
 </table>
 
 
-<!-- <a name="pickpasswordchars"></a>
-<b>Picking Password Characters:</b><br />
+<br />
+
+<p><b id="passwordenc"><code>{PASSWORD_ENC}</code> &#8211; Encrypting Passwords:</b><br />
+The <code>{PASSWORD_ENC}</code> placeholder is replaced by the password
+of the current entry in encrypted form. The password is encrypted using
+credentials of the current Windows user. The encrypted password should
+not be stored and only works for the current user.<br />
+<br />
+It is intended to be used in conjunction with the
+<code>-pw-enc</code> <a href="cmdline.html">command line</a> parameter
+(see the <a href="autourl.html">URL Field</a> page for
+an example how to define a URL to open an additional KeePass database).
+The placeholder cannot be used to transfer passwords to other applications
+(except KeePass), because the target applications don't know how to decrypt
+encrypted passwords generated by <code>{PASSWORD_ENC}</code>.</p>
+
+<br />
+
+<!-- <b id="pickpasswordchars">Picking Password Characters:</b><br />
 The password character picking dialog can be invoked multiple times in one
 auto-typing sequence. Use <code>{PICKPASSWORDCHARS}</code> first, then append
 numbers starting with 2, i.e. <code>{PICKPASSWORDCHARS2}</code>,
@@ -385,11 +401,8 @@ allow to pick 5 characters. Advantage of predefining the number of characters:
 when enough characters have been picked, the dialog closes automatically,
 i.e. you don't need to click [OK] anymore. -->
 
-<br /><br />
 
-<a name="pickchars"></a>
-
-<b><code>{PICKCHARS}</code> &#8211; Picking Characters:</b><br />
+<b id="pickchars"><code>{PICKCHARS}</code> &#8211; Picking Characters:</b><br />
 <a href="https://keepass.info/screenshots/windows_vista/pickchars_big.png"
 target="_blank"><img src="../../screenshots/windows_vista/pickchars.png"
 class="floatrightws" alt="Character Picking Dialog" /></a>
@@ -492,9 +505,8 @@ or slowing down the whole sequence, e.g. by prepending <code>{DELAY=150}</code>.
 
 <br /><br />
 
-<a name="newpassword"></a>
 
-<b><code>{NEWPASSWORD}</code> and <code>{NEWPASSWORD:/<em>Profile</em>/.../}</code>
+<b id="newpassword"><code>{NEWPASSWORD}</code> and <code>{NEWPASSWORD:/<em>Profile</em>/.../}</code>
 &#8211; Generating New Passwords:</b><br />
 The <code>{NEWPASSWORD}</code> placeholder generates a new password
 for the current entry, based on the
@@ -557,29 +569,9 @@ As with the <code>{NEWPASSWORD}</code> placeholder,
 
 <br /><br />
 
-<a name="passwordenc"></a>
-
-<b><code>{PASSWORD_ENC}</code> &#8211; Encrypting Passwords:</b><br />
-The <code>{PASSWORD_ENC}</code> placeholder is replaced by the password
-of the current entry in encrypted form. The password is encrypted using
-credentials of the current Windows user. The encrypted password should
-not be stored and only works for the current user.<br />
-<br />
-It is intended to be used in conjunction with the
-<code>-pw-enc</code> <a href="cmdline.html">command line</a> parameter
-(see the <a href="autourl.html">URL Field</a> page for
-an example how to define a URL to open an additional KeePass database).
-The placeholder cannot be used to transfer passwords to other applications
-(except KeePass), because the target applications don't know how to decrypt
-encrypted passwords generated by <code>{PASSWORD_ENC}</code>.
-
-
-<br /><br />
-
 <a name="hmacotp"></a>
-<a name="otp"></a>
 
-<b>One-Time Passwords (OTPs):</b><br />
+<b id="otp">One-Time Passwords (OTPs):</b><br />
 KeePass provides menu commands in the main window for generating one-time
 passwords ('Copy HMAC-Based OTP', 'Show HMAC-Based OTP', 'Copy Time-Based OTP',
 'Show Time-Based OTP').
@@ -678,9 +670,8 @@ provide additional functions related to OTPs.
 
 <br /><br />
 
-<a name="url"></a>
 
-<b><code>{URL:...}</code> and <code>{BASE:...}</code>:</b><br />
+<b id="url"><code>{URL:...}</code> and <code>{BASE:...}</code>:</b><br />
 The <code>{URL:...}</code> placeholder is replaced by the specified part
 of the current entry's URL; this typically is useful in an
 entry-specific URL override (defined on the 'Properties' tab of the entry dialog).
@@ -723,9 +714,9 @@ the placeholders return the following values:<br />
 
 <br /><br />
 
-<a name="cmd"></a>
 
-<b><code>{CMD:/<i>CommandLine</i>/<i>Options</i>/}</code> &#8211; Running a command line:</b><br />
+<b id="cmd"><code>{CMD:/<i>CommandLine</i>/<i>Options</i>/}</code>
+&#8211; Running a command line:</b><br />
 The <code>{CMD:/<i>CommandLine</i>/<i>Options</i>/}</code> placeholder
 runs the specified command line.<br />
 <br />

@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -54,9 +54,8 @@ Usage Tips &amp; Tricks:
 
 <br />
 
-<a name="stdcp"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="" />
-Standard Capabilities</h2>
+<h2 class="sectiontitle" id="stdcp"><img src="../images/b16x16_ascii.png"
+alt="" /> Standard Capabilities</h2>
 
 <p>The URL field can execute any valid URL for which a protocol handler is defined.
 On most systems at least the <code>http://</code>, <code>https://</code>,
@@ -68,9 +67,8 @@ KeePass will automatically use PuTTY for <code>ssh://</code> URLs, too.</p>
 
 <br />
 
-<a name="cmdln"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="" />
-Executing Command Lines</h2>
+<h2 class="sectiontitle" id="cmdln"><img src="../images/b16x16_openterm.png"
+alt="" /> Executing Command Lines</h2>
 
 <p>Instead of a URL, you can also execute command lines using the URL field.
 To tell KeePass that the line you entered
@@ -154,9 +152,8 @@ On Windows, this is irrelevant, as single quotes do not have a special meaning h
 
 <br />
 
-<a name="subst"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="" />
-Placeholders</h2>
+<h2 class="sectiontitle" id="subst"><img src="../images/b16x16_ascii.png"
+alt="" /> Placeholders</h2>
 
 <p>In the URL field, you can use several placeholders that will get automatically replaced
 when the URL is executed. For example:</p>
@@ -177,20 +174,21 @@ If you would like to start a new KeePass instance, you could set the URL to:</p>
 
 <pre>cmd://&quot;{APPDIR}\KeePass.exe&quot;</pre>
 
+<!-- Cf. placeholders.html#envctx -->
 <p>To use different browsers for entries, you can use URLs like the following:<br />
-<code>cmd://{INTERNETEXPLORER} &quot;https://www.example.com/&quot;</code><br />
+<code>cmd://{EDGE} &quot;https://www.example.com/&quot;</code><br />
 <code>cmd://{FIREFOX} &quot;https://www.example.com/&quot;</code><br />
-<code>cmd://{OPERA} &quot;https://www.example.com/&quot;</code><br />
 <code>cmd://{GOOGLECHROME} &quot;https://www.example.com/&quot;</code><br />
+<code>cmd://{INTERNETEXPLORER} &quot;https://www.example.com/&quot;</code><br />
+<code>cmd://{OPERA} &quot;https://www.example.com/&quot;</code><br />
 <code>cmd://{SAFARI} &quot;https://www.example.com/&quot;</code><br />
 The browser placeholder will be replaced by the browser's executable path (if the
 browser is installed).</p>
 
 <br />
 
-<a name="override"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_ascii.png" alt="" />
-Changing the URL Handler (URL Override)</h2>
+<h2 class="sectiontitle" id="override"><img src="../images/b16x16_ascii.png"
+alt="" /> Changing the URL Handler (URL Override)</h2>
 
 <br />
 
@@ -242,9 +240,8 @@ i.e. process monitors and similar utilities aren't be able to read the master pa
 
 <br /><br />
 
-<a name="rdpts"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="" />
-Starting RDP/TS Sessions</h2>
+<h2 class="sectiontitle" id="rdpts"><img src="../images/b16x16_openterm.png"
+alt="" /> Starting RDP/TS Sessions</h2>
 
 <p>You can use the URL field of entries and the virtual <code>cmd://</code>
 protocol to start remote desktop connections.</p>
@@ -276,9 +273,8 @@ the following URL opens the specified RDP file:</p>
 
 <br />
 
-<a name="builtin"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="" />
-Executing Built-In Shell Commands</h2>
+<h2 class="sectiontitle" id="builtin"><img src="../images/b16x16_openterm.png"
+alt="" /> Executing Built-In Shell Commands</h2>
 
 <p>The URL field can be used to start applications/documents and URLs.
 If you want to execute a built-in shell command, like <code>COPY</code> for

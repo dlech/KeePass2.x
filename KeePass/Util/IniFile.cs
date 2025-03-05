@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -52,7 +52,8 @@ namespace KeePass.Util
 					str = str.Trim();
 					if(str.Length == 0) continue;
 
-					if(str.StartsWith("[") && str.EndsWith("]"))
+					if(str[0] == ';') { } // Ignore comment
+					else if((str[0] == '[') && (str[str.Length - 1] == ']'))
 						strSection = str.Substring(1, str.Length - 2);
 					else
 					{

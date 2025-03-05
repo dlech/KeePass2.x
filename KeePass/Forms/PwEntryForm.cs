@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -254,8 +254,8 @@ namespace KeePass.Forms
 			// The user may have deleted the custom icon (using the
 			// icon dialog accessible through the entry dialog and
 			// then opening a history entry)
-			if(!m_pwCustomIconID.Equals(PwUuid.Zero) &&
-				(m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID) >= 0))
+			if(!m_pwCustomIconID.IsZero && (m_pwDatabase.GetCustomIconIndex(
+				m_pwCustomIconID) >= 0))
 			{
 				// int nInx = (int)PwIcon.Count + m_pwDatabase.GetCustomIconIndex(m_pwCustomIconID);
 				// if((nInx > -1) && (nInx < m_ilIcons.Images.Count))
@@ -410,11 +410,9 @@ namespace KeePass.Forms
 						lvi.SubItems.Add(MultipleValuesEx.CueString);
 						MultipleValuesEx.ConfigureText(lvi, 1);
 					}
-					else if(bProt)
-						lvi.SubItems.Add(PwDefs.HiddenPassword);
 					else
 						lvi.SubItems.Add(StrUtil.MultiToSingleLine(
-							kvp.Value.ReadString()));
+							EntryUtil.GetHiddenString(kvp.Value, bProt)));
 				}
 				UIUtil.Scroll(m_lvStrings, s, false);
 				m_lvStrings.EndUpdate();
@@ -1604,42 +1602,42 @@ namespace KeePass.Forms
 		{
 			if(!bNames && !bValues) { Debug.Assert(false); return; }
 
-			StringBuilder sb = new StringBuilder();
-			MemoryStream ms = new MemoryStream();
-
-			foreach(ListViewItem lvi in m_lvStrings.SelectedItems)
+			using(MemoryStream ms = new MemoryStream())
 			{
-				string strName = (lvi.Text ?? string.Empty);
-				Debug.Assert(m_vStrings.Exists(strName));
-				ProtectedString psValue = m_vStrings.GetSafe(strName);
+				StringBuilder sb = new StringBuilder();
 
-				if(sb.Length != 0) sb.AppendLine();
+				foreach(ListViewItem lvi in m_lvStrings.SelectedItems)
+				{
+					string strName = (lvi.Text ?? string.Empty);
+					Debug.Assert(m_vStrings.Exists(strName));
+					ProtectedString psValue = m_vStrings.GetSafe(strName);
+
+					if(sb.Length != 0) sb.AppendLine();
+
+					if(bNames && bValues)
+					{
+						byte[] pbName = StrUtil.Utf8.GetBytes(strName);
+						byte[] pbValue = psValue.ReadUtf8();
+
+						ms.WriteByte(1);
+						MemUtil.Write(ms, MemUtil.Int32ToBytes(pbName.Length));
+						MemUtil.Write(ms, pbName);
+						MemUtil.Write(ms, MemUtil.Int32ToBytes(pbValue.Length));
+						MemUtil.Write(ms, pbValue);
+						ms.WriteByte((byte)(psValue.IsProtected ? 1 : 0));
+					}
+					else if(bNames) sb.Append(strName);
+					else sb.Append(psValue.ReadString());
+				}
 
 				if(bNames && bValues)
 				{
-					byte[] pbName = StrUtil.Utf8.GetBytes(strName);
-					byte[] pbValue = psValue.ReadUtf8();
-
-					ms.WriteByte(1);
-					MemUtil.Write(ms, MemUtil.Int32ToBytes(pbName.Length));
-					MemUtil.Write(ms, pbName);
-					MemUtil.Write(ms, MemUtil.Int32ToBytes(pbValue.Length));
-					MemUtil.Write(ms, pbValue);
-					ms.WriteByte((byte)(psValue.IsProtected ? 1 : 0));
+					ms.WriteByte(0);
+					byte[] pb = MemUtil.Compress(ms.ToArray());
+					ClipboardUtil.Copy(pb, ClipFmtStrings, false, this.Handle);
 				}
-				else if(bNames) sb.Append(strName);
-				else sb.Append(psValue.ReadString());
+				else ClipboardUtil.Copy(sb.ToString(), false, false, null, null, this.Handle);
 			}
-
-			if(bNames && bValues)
-			{
-				ms.WriteByte(0);
-				byte[] pb = MemUtil.Compress(ms.ToArray());
-				ClipboardUtil.Copy(pb, ClipFmtStrings, false, this.Handle);
-			}
-			else ClipboardUtil.Copy(sb.ToString(), false, false, null, null, this.Handle);
-
-			ms.Dispose();
 		}
 
 		private void PerformStrPaste()
@@ -1684,40 +1682,40 @@ namespace KeePass.Forms
 		{
 			if(!bWindows && !bSequences) { Debug.Assert(false); return; }
 
-			StringBuilder sb = new StringBuilder();
-			MemoryStream ms = new MemoryStream();
-
-			foreach(ListViewItem lvi in m_lvAutoType.SelectedItems)
+			using(MemoryStream ms = new MemoryStream())
 			{
-				AutoTypeAssociation a = (lvi.Tag as AutoTypeAssociation);
-				if(a == null) { Debug.Assert(false); continue; }
+				StringBuilder sb = new StringBuilder();
 
-				if(sb.Length != 0) sb.AppendLine();
+				foreach(ListViewItem lvi in m_lvAutoType.SelectedItems)
+				{
+					AutoTypeAssociation a = (lvi.Tag as AutoTypeAssociation);
+					if(a == null) { Debug.Assert(false); continue; }
+
+					if(sb.Length != 0) sb.AppendLine();
+
+					if(bWindows && bSequences)
+					{
+						byte[] pbWnd = StrUtil.Utf8.GetBytes(a.WindowName);
+						byte[] pbSeq = StrUtil.Utf8.GetBytes(a.Sequence);
+
+						ms.WriteByte(1);
+						MemUtil.Write(ms, MemUtil.Int32ToBytes(pbWnd.Length));
+						MemUtil.Write(ms, pbWnd);
+						MemUtil.Write(ms, MemUtil.Int32ToBytes(pbSeq.Length));
+						MemUtil.Write(ms, pbSeq);
+					}
+					else if(bWindows) sb.Append(a.WindowName);
+					else sb.Append(a.Sequence);
+				}
 
 				if(bWindows && bSequences)
 				{
-					byte[] pbWnd = StrUtil.Utf8.GetBytes(a.WindowName);
-					byte[] pbSeq = StrUtil.Utf8.GetBytes(a.Sequence);
-
-					ms.WriteByte(1);
-					MemUtil.Write(ms, MemUtil.Int32ToBytes(pbWnd.Length));
-					MemUtil.Write(ms, pbWnd);
-					MemUtil.Write(ms, MemUtil.Int32ToBytes(pbSeq.Length));
-					MemUtil.Write(ms, pbSeq);
+					ms.WriteByte(0);
+					byte[] pb = MemUtil.Compress(ms.ToArray());
+					ClipboardUtil.Copy(pb, ClipFmtAutoType, false, this.Handle);
 				}
-				else if(bWindows) sb.Append(a.WindowName);
-				else sb.Append(a.Sequence);
+				else ClipboardUtil.Copy(sb.ToString(), false, false, null, null, this.Handle);
 			}
-
-			if(bWindows && bSequences)
-			{
-				ms.WriteByte(0);
-				byte[] pb = MemUtil.Compress(ms.ToArray());
-				ClipboardUtil.Copy(pb, ClipFmtAutoType, false, this.Handle);
-			}
-			else ClipboardUtil.Copy(sb.ToString(), false, false, null, null, this.Handle);
-
-			ms.Dispose();
 		}
 
 		private void PerformAutoTypePaste()
@@ -1784,7 +1782,7 @@ namespace KeePass.Forms
 				m_pwEntryIcon = (PwIcon)ipf.ChosenIconId;
 				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
 
-				if(!m_pwCustomIconID.Equals(PwUuid.Zero))
+				if(!m_pwCustomIconID.IsZero)
 					UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
 						m_pwDatabase, m_pwCustomIconID), true);
 				else
@@ -1867,7 +1865,7 @@ namespace KeePass.Forms
 				Debug.Assert(m_vStrings.Exists(strFieldFrom));
 				string strValue = m_vStrings.ReadSafe(strFieldFrom);
 
-				if(PwDefs.IsStandardField(strFieldTo) && (strFieldTo != PwDefs.NotesField))
+				if(!PwDefs.IsMultiLineField(strFieldTo))
 					strValue = StrUtil.MultiToSingleLine(strValue).Trim();
 
 				if(string.IsNullOrEmpty(strValue)) continue;
@@ -2506,11 +2504,11 @@ namespace KeePass.Forms
 		{
 			if(d == null) { Debug.Assert(false); return; }
 
-			MemoryProtectionConfig mp = ((pd != null) ? pd.MemoryProtection :
+			MemoryProtectionConfig mpc = ((pd != null) ? pd.MemoryProtection :
 				(new MemoryProtectionConfig()));
 
 			string str = d.ReadSafe(PwDefs.NotesField);
-			d.Set(PwDefs.NotesField, new ProtectedString(mp.ProtectNotes,
+			d.Set(PwDefs.NotesField, new ProtectedString(mpc.ProtectNotes,
 				StrUtil.NormalizeNewLines(str, true)));
 
 			// Custom strings are normalized by the string editing form

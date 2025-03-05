@@ -1654,41 +1654,35 @@
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.#ctor">
             <summary>
-            Construct a new protected string object. Protection is
-            disabled.
+            Construct a new protected string. Protection is disabled.
             </summary>
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean,System.String)">
             <summary>
-            Construct a new protected string. The string is initialized
-            to the value supplied in the parameters.
+            Construct a new protected string.
             </summary>
-            <param name="bEnableProtection">If this parameter is <c>true</c>,
-            the string will be protected in memory (encrypted). If it
-            is <c>false</c>, the string will be stored as plain-text.</param>
-            <param name="strValue">The initial string value.</param>
+            <param name="bEnableProtection">Specifies whether to encrypt the
+            data in the process memory.</param>
+            <param name="strValue">The string value.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean,System.Byte[])">
             <summary>
-            Construct a new protected string. The string is initialized
-            to the value supplied in the parameters (UTF-8 encoded string).
+            Construct a new protected string.
             </summary>
-            <param name="bEnableProtection">If this parameter is <c>true</c>,
-            the string will be protected in memory (encrypted). If it
-            is <c>false</c>, the string will be stored as plain-text.</param>
-            <param name="vUtf8Value">The initial string value, encoded as
-            UTF-8 byte array. This parameter won't be modified; the caller
-            is responsible for clearing it.</param>
+            <param name="bEnableProtection">Specifies whether to encrypt the
+            data in the process memory.</param>
+            <param name="vUtf8Value">The string value, encoded as UTF-8 byte
+            array. The <c>ProtectedString</c> object does not modify or take
+            ownership of the data, i.e. the caller is responsible for clearing it.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.#ctor(System.Boolean,KeePassLib.Security.XorredBuffer)">
             <summary>
-            Construct a new protected string. The string is initialized
-            to the value passed in the <c>XorredBuffer</c> object.
+            Construct a new protected string.
             </summary>
-            <param name="bEnableProtection">Enable protection or not.</param>
-            <param name="xb"><c>XorredBuffer</c> object containing the
-            string in UTF-8 representation. The UTF-8 string must not
-            be <c>null</c>-terminated.</param>
+            <param name="bEnableProtection">Specifies whether to encrypt the
+            data in the process memory.</param>
+            <param name="xb"><c>XorredBuffer</c> object containing the string
+            in UTF-8 representation. The UTF-8 string must not be null-terminated.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedString.ReadString">
             <summary>
@@ -1759,35 +1753,31 @@
             <summary>
             Construct a new protected binary data object.
             </summary>
-            <param name="bEnableProtection">If this paremeter is <c>true</c>,
-            the data will be encrypted in memory. If it is <c>false</c>, the
-            data is stored in plain-text in the process memory.</param>
+            <param name="bEnableProtection">Specifies whether to encrypt the
+            data in the process memory.</param>
             <param name="pbData">Value of the protected object.
-            The input parameter is not modified and
-            <c>ProtectedBinary</c> doesn't take ownership of the data,
-            i.e. the caller is responsible for clearing it.</param>
+            The <c>ProtectedBinary</c> object does not modify or take ownership
+            of the data, i.e. the caller is responsible for clearing it.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,System.Byte[],System.Int32,System.Int32)">
             <summary>
             Construct a new protected binary data object.
             </summary>
-            <param name="bEnableProtection">If this paremeter is <c>true</c>,
-            the data will be encrypted in memory. If it is <c>false</c>, the
-            data is stored in plain-text in the process memory.</param>
+            <param name="bEnableProtection">Specifies whether to encrypt the
+            data in the process memory.</param>
             <param name="pbData">Value of the protected object.
-            The input parameter is not modified and
-            <c>ProtectedBinary</c> doesn't take ownership of the data,
-            i.e. the caller is responsible for clearing it.</param>
+            The <c>ProtectedBinary</c> object does not modify or take ownership
+            of the data, i.e. the caller is responsible for clearing it.</param>
             <param name="iOffset">Offset for <paramref name="pbData" />.</param>
             <param name="cbSize">Size for <paramref name="pbData" />.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.#ctor(System.Boolean,KeePassLib.Security.XorredBuffer)">
             <summary>
             Construct a new protected binary data object.
-            Copy the data from a <c>XorredBuffer</c> object.
             </summary>
-            <param name="bEnableProtection">Enable protection or not.</param>
-            <param name="xb"><c>XorredBuffer</c> object containing the data.</param>
+            <param name="bEnableProtection">Specifies whether to encrypt the
+            data in the process memory.</param>
+            <param name="xb"><c>XorredBuffer</c> object to copy the data from.</param>
         </member>
         <member name="M:KeePassLib.Security.ProtectedBinary.ReadData">
             <summary>

@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -56,9 +56,8 @@ without any option prefix.</p>
 
 <br />
 
-<a name="masterkey"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kgpg.png" alt="" />
-Master Key</h2>
+<h2 class="sectiontitle" id="masterkey"><img src="../images/b16x16_kgpg.png"
+alt="" /> Master Key</h2>
 
 <p>The master key for the database can be passed to KPScript
 using one of the following ways:</p>
@@ -93,9 +92,8 @@ key using the normal master key dialog of KeePass.</li>
 
 <br />
 
-<a name="cmd"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_konsole.png" alt="" />
-Available Commands</h2>
+<h2 class="sectiontitle" id="cmd"><img src="../images/b16x16_konsole.png"
+alt="" /> Available Commands</h2>
 
 <p>Please note that commands are added incrementally based on user requests. If you are
 missing a command, please let the KeePass team know and it will be added to the
@@ -122,8 +120,8 @@ next release of KPScript.</p>
 
 <br />
 <hr />
-<a name="listgroups"></a>
-<p><b>Command: ListGroups</b></p>
+
+<p><b id="listgroups">Command: ListGroups</b></p>
 
 <p>This command lists all groups in a format that easily machine-readable. The output
 is not intended to be printed/used directly. Usage example:</p>
@@ -133,8 +131,8 @@ This will list all groups contained in the MyDb.kdbx database file.</p>
 
 <br />
 <hr />
-<a name="listentries"></a>
-<p><b>Command: ListEntries</b></p>
+
+<p><b id="listentries">Command: ListEntries</b></p>
 
 <p>This command lists all entries in a format that easily machine-readable. The output
 is not intended to be printed/used directly. The entry identification
@@ -148,8 +146,8 @@ It will output a list of all entries contained in the MyDb.kdbx database file.</
 
 <br />
 <hr />
-<a name="getentrystring"></a>
-<p><b>Command: GetEntryString</b></p>
+
+<p><b id="getentrystring">Command: GetEntryString</b></p>
 
 <p>Retrieves the value of an entry string field. The entry identification syntax
 is exactly the same as in the <a href="#editentry">EditEntry</a> command.
@@ -183,8 +181,8 @@ It outputs the user names of all entries that have the title
 
 <br />
 <hr />
-<a name="addentry"></a>
-<p><b>Command: AddEntry</b></p>
+
+<p><b id="addentry">Command: AddEntry</b></p>
 
 <p>This command adds an entry to the database. To specify the entry details, use the
 standard string field identifiers as parameter names and their values for the contents.
@@ -228,8 +226,8 @@ Sets the expiry date/time of the entry.</li>
 
 <br />
 <hr />
-<a name="editentry"></a>
-<p><b>Command: EditEntry</b></p>
+
+<p><b id="editentry">Command: EditEntry</b></p>
 
 <p>This command edits existing entries.</p>
 
@@ -298,8 +296,8 @@ first create backups of entries before modifying them.</p>
 
 <br />
 <hr />
-<a name="moveentry"></a>
-<p><b>Command: MoveEntry</b></p>
+
+<p><b id="moveentry">Command: MoveEntry</b></p>
 
 <p>This command moves one or more existing entries. The entry identification
 syntax is exactly the same as in the <a href="#editentry">EditEntry</a> command.</p>
@@ -318,23 +316,23 @@ The <code>-GroupName:</code> parameter can be used
 
 <br />
 <hr />
-<a name="deleteentry"></a>
-<p><b>Command: DeleteEntry</b></p>
+
+<p><b id="deleteentry">Command: DeleteEntry</b></p>
 
 <p>This command deletes one or more existing entries. The entry identification
 syntax is exactly the same as in the <a href="#editentry">EditEntry</a> command.</p>
 
 <br />
 <hr />
-<a name="deleteallentries"></a>
-<p><b>Command: DeleteAllEntries</b></p>
+
+<p><b id="deleteallentries">Command: DeleteAllEntries</b></p>
 
 <p>This command deletes all entries (in all subgroups).</p>
 
 <br />
 <hr />
-<a name="import"></a>
-<p><b>Command: Import</b></p>
+
+<p><b id="import">Command: Import</b></p>
 
 <p>This command imports a file into the database.</p>
 
@@ -376,8 +374,8 @@ with the prefix '<code>-imp_</code>'
 
 <br />
 <hr />
-<a name="export"></a>
-<p><b>Command: Export</b></p>
+
+<p><b id="export">Command: Export</b></p>
 
 <p>This command exports (parts of) the database.</p>
 
@@ -406,8 +404,8 @@ can be passed using the &quot;-XslFile&quot; parameter.</li>
 
 <br />
 <hr />
-<a name="sync"></a>
-<p><b>Command: Sync</b></p>
+
+<p><b id="sync">Command: Sync</b></p>
 
 <p>This command synchronizes the database with another one.
 The other database path has to be specified using the
@@ -417,8 +415,8 @@ The other database path has to be specified using the
 
 <br />
 <hr />
-<a name="changemasterkey"></a>
-<p><b>Command: ChangeMasterKey</b></p>
+
+<p><b id="changemasterkey">Command: ChangeMasterKey</b></p>
 
 <p>This command changes the master key of the database.
 The new key values are specified using the standard
@@ -429,8 +427,8 @@ and <code>-newuseraccount</code> (all are optional). Usage example:</p>
 
 <br />
 <hr />
-<a name="detachbins"></a>
-<p><b>Command: DetachBins</b></p>
+
+<p><b id="detachbins">Command: DetachBins</b></p>
 
 <p>This command saves all entry attachments (into the directory of the database)
 and removes them from the database.
@@ -442,8 +440,8 @@ Usage example:</p>
 
 <br />
 <hr />
-<a name="genpw"></a>
-<p><b>Command: GenPw</b></p>
+
+<p><b id="genpw">Command: GenPw</b></p>
 
 <p>Generates passwords.</p>
 
@@ -469,8 +467,8 @@ Generates five 128-bit hex passwords (when no translation is used).</p>
 
 <br />
 <hr />
-<a name="estimatequality"></a>
-<p><b>Command: EstimateQuality</b></p>
+
+<p><b id="estimatequality">Command: EstimateQuality</b></p>
 
 <p>Estimates the <a href="https://keepass.info/help/kb/pw_quality_est.html"
 target="_blank">quality</a> (in bits) of the password specified via the
@@ -481,9 +479,8 @@ Usage example:</p>
 
 <br />
 
-<a name="enc"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Console Character Encoding</h2>
+<h2 class="sectiontitle" id="enc"><img src="../images/b16x16_help.png"
+alt="" /> Console Character Encoding</h2>
 
 <p>If you observe garbled special characters in the output, please read the page
 <a href="https://keepass.info/help/kb/console_encoding.html" target="_blank">Console
