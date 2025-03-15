@@ -70,7 +70,7 @@
 			this.m_cbNoRepeat = new System.Windows.Forms.CheckBox();
 			this.m_lblSecRedInfo = new System.Windows.Forms.Label();
 			this.m_tabPreview = new System.Windows.Forms.TabPage();
-			this.m_pbPreview = new System.Windows.Forms.ProgressBar();
+			this.m_lblQuality = new System.Windows.Forms.Label();
 			this.m_tbPreview = new System.Windows.Forms.TextBox();
 			this.m_lblPreview = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_numGenChars)).BeginInit();
@@ -497,7 +497,7 @@
 			// 
 			// m_tabPreview
 			// 
-			this.m_tabPreview.Controls.Add(this.m_pbPreview);
+			this.m_tabPreview.Controls.Add(this.m_lblQuality);
 			this.m_tabPreview.Controls.Add(this.m_tbPreview);
 			this.m_tabPreview.Controls.Add(this.m_lblPreview);
 			this.m_tabPreview.Location = new System.Drawing.Point(4, 22);
@@ -508,28 +508,29 @@
 			this.m_tabPreview.Text = "Preview";
 			this.m_tabPreview.UseVisualStyleBackColor = true;
 			// 
-			// m_pbPreview
+			// m_lblQuality
 			// 
-			this.m_pbPreview.Location = new System.Drawing.Point(9, 30);
-			this.m_pbPreview.Name = "m_pbPreview";
-			this.m_pbPreview.Size = new System.Drawing.Size(437, 15);
-			this.m_pbPreview.TabIndex = 1;
+			this.m_lblQuality.Location = new System.Drawing.Point(6, 392);
+			this.m_lblQuality.Name = "m_lblQuality";
+			this.m_lblQuality.Size = new System.Drawing.Size(445, 15);
+			this.m_lblQuality.TabIndex = 2;
+			this.m_lblQuality.Text = "<>";
 			// 
 			// m_tbPreview
 			// 
 			this.m_tbPreview.AcceptsReturn = true;
-			this.m_tbPreview.Location = new System.Drawing.Point(9, 51);
+			this.m_tbPreview.Location = new System.Drawing.Point(9, 27);
 			this.m_tbPreview.Multiline = true;
 			this.m_tbPreview.Name = "m_tbPreview";
 			this.m_tbPreview.ReadOnly = true;
 			this.m_tbPreview.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.m_tbPreview.Size = new System.Drawing.Size(437, 350);
-			this.m_tbPreview.TabIndex = 2;
+			this.m_tbPreview.Size = new System.Drawing.Size(437, 359);
+			this.m_tbPreview.TabIndex = 1;
 			this.m_tbPreview.WordWrap = false;
 			// 
 			// m_lblPreview
 			// 
-			this.m_lblPreview.Location = new System.Drawing.Point(6, 12);
+			this.m_lblPreview.Location = new System.Drawing.Point(6, 9);
 			this.m_lblPreview.Name = "m_lblPreview";
 			this.m_lblPreview.Size = new System.Drawing.Size(445, 15);
 			this.m_lblPreview.TabIndex = 0;
@@ -595,7 +596,6 @@
 		private System.Windows.Forms.TabPage m_tabPreview;
 		private System.Windows.Forms.Label m_lblPreview;
 		private System.Windows.Forms.TextBox m_tbPreview;
-		private System.Windows.Forms.ProgressBar m_pbPreview;
 		private System.Windows.Forms.CheckBox m_cbLatin1S;
 		private System.Windows.Forms.CheckBox m_cbBrackets;
 		private System.Windows.Forms.CheckBox m_cbSpecial;
@@ -618,5 +618,6 @@
 		private System.Windows.Forms.RadioButton m_rbCustom;
 		private System.Windows.Forms.Button m_btnCustomOpt;
 		private System.Windows.Forms.Button m_btnProfileEnforce;
+		private System.Windows.Forms.Label m_lblQuality;
 	}
 }

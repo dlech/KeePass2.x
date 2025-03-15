@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -296,14 +296,17 @@ namespace KeePass.UI
 			dlg.AddButton((int)DialogResult.OK, KPRes.Yes, null);
 			dlg.AddButton((int)DialogResult.Cancel, KPRes.No, null);
 
-			if(dlg.ShowDialog())
+			using(FocusRestoreScope frs = new FocusRestoreScope())
 			{
-				bool b = (dlg.Result == (int)DialogResult.OK);
-				if(b && (piForSet != null) && dlg.ResultVerificationChecked)
-					piForSet.SetValue(oCfgContainer, false, null);
-				return b;
+				if(dlg.ShowDialog())
+				{
+					bool b = (dlg.Result == (int)DialogResult.OK);
+					if(b && (piForSet != null) && dlg.ResultVerificationChecked)
+						piForSet.SetValue(oCfgContainer, false, null);
+					return b;
+				}
+				return MessageService.AskYesNo(strText);
 			}
-			return MessageService.AskYesNo(strText);
 		}
 
 		internal static void ShowFileException(string strCmdLine, Exception ex,

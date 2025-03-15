@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -151,12 +151,10 @@ namespace KeePass.Util
 			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return null; }
 
 			PwUuid pu = pd.EntryTemplatesGroup;
-			if(pu.Equals(PwUuid.Zero)) return null;
-
-			return pd.RootGroup.FindGroup(pu, true);
+			return (pu.IsZero ? null : pd.RootGroup.FindGroup(pu, true));
 		}
 
-		private static Image GetImage(PwIcon ic, PwUuid puCustom)
+		private static Image GetImage(PwIcon pi, PwUuid puCustom)
 		{
 			MainForm mf = Program.MainForm;
 			PwDatabase pd = mf.ActiveDatabase;
@@ -165,10 +163,8 @@ namespace KeePass.Util
 			ImageList il = mf.ClientIcons;
 			if(il == null) { Debug.Assert(false); return null; }
 
-			int i;
-			if(puCustom.Equals(PwUuid.Zero)) i = (int)ic;
-			else i = (int)PwIcon.Count + pd.GetCustomIconIndex(puCustom);
-
+			int i = (puCustom.IsZero ? (int)pi : ((int)PwIcon.Count +
+				pd.GetCustomIconIndex(puCustom)));
 			if((i < 0) || (i >= il.Images.Count)) { Debug.Assert(false); return null; }
 			return il.Images[i];
 		}

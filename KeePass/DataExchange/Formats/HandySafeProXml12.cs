@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
-using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
@@ -81,11 +80,11 @@ namespace KeePass.DataExchange.Formats
 		{
 			HspFolder hspRoot = XmlUtilEx.Deserialize<HspFolder>(sInput);
 
-			AddFolder(pdStorage.RootGroup, hspRoot, false);
+			AddFolder(pdStorage.RootGroup, hspRoot, false, pdStorage);
 		}
 
 		private static void AddFolder(PwGroup pgParent, HspFolder hspFolder,
-			bool bNewGroup)
+			bool bNewGroup, PwDatabase pd)
 		{
 			if(hspFolder == null) { Debug.Assert(false); return; }
 
@@ -103,17 +102,17 @@ namespace KeePass.DataExchange.Formats
 			if(hspFolder.Folders != null)
 			{
 				foreach(HspFolder fld in hspFolder.Folders)
-					AddFolder(pg, fld, true);
+					AddFolder(pg, fld, true, pd);
 			}
 
 			if(hspFolder.Cards != null)
 			{
 				foreach(HspCard crd in hspFolder.Cards)
-					AddCard(pg, crd);
+					AddCard(pg, crd, pd);
 			}
 		}
 
-		private static void AddCard(PwGroup pgParent, HspCard hspCard)
+		private static void AddCard(PwGroup pgParent, HspCard hspCard, PwDatabase pd)
 		{
 			if(hspCard == null) { Debug.Assert(false); return; }
 
@@ -121,10 +120,10 @@ namespace KeePass.DataExchange.Formats
 			pgParent.AddEntry(pe, true);
 
 			if(!string.IsNullOrEmpty(hspCard.Name))
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(false, hspCard.Name));
+				ImportUtil.Add(pe, PwDefs.TitleField, hspCard.Name, pd);
 
 			if(!string.IsNullOrEmpty(hspCard.Note))
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(false, hspCard.Note));
+				ImportUtil.Add(pe, PwDefs.NotesField, hspCard.Note, pd);
 
 			if(hspCard.Fields == null) return;
 			foreach(HspField fld in hspCard.Fields)
@@ -132,13 +131,9 @@ namespace KeePass.DataExchange.Formats
 				if(fld == null) { Debug.Assert(false); continue; }
 				if(string.IsNullOrEmpty(fld.Name) || string.IsNullOrEmpty(fld.Value)) continue;
 
-				string strKey = ImportUtil.MapNameToStandardField(fld.Name, true);
-				if(string.IsNullOrEmpty(strKey)) strKey = fld.Name;
+				string strKey = ImportUtil.MapName(fld.Name, true);
 
-				string strValue = pe.Strings.ReadSafe(strKey);
-				if(strValue.Length > 0) strValue += ", ";
-				strValue += fld.Value;
-				pe.Strings.Set(strKey, new ProtectedString(false, strValue));
+				ImportUtil.Add(pe, strKey, fld.Value, pd);
 			}
 		}
 	}

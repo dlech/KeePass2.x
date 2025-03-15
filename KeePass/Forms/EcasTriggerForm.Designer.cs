@@ -173,30 +173,30 @@
 			// m_cbTurnOffAfterAction
 			// 
 			this.m_cbTurnOffAfterAction.AutoSize = true;
-			this.m_cbTurnOffAfterAction.Location = new System.Drawing.Point(9, 263);
+			this.m_cbTurnOffAfterAction.Location = new System.Drawing.Point(9, 151);
 			this.m_cbTurnOffAfterAction.Name = "m_cbTurnOffAfterAction";
 			this.m_cbTurnOffAfterAction.Size = new System.Drawing.Size(224, 17);
-			this.m_cbTurnOffAfterAction.TabIndex = 8;
+			this.m_cbTurnOffAfterAction.TabIndex = 6;
 			this.m_cbTurnOffAfterAction.Text = "&Turn off after executing actions (run once)";
 			this.m_cbTurnOffAfterAction.UseVisualStyleBackColor = true;
 			// 
 			// m_tbComments
 			// 
 			this.m_tbComments.AcceptsReturn = true;
-			this.m_tbComments.Location = new System.Drawing.Point(9, 164);
+			this.m_tbComments.Location = new System.Drawing.Point(9, 196);
 			this.m_tbComments.Multiline = true;
 			this.m_tbComments.Name = "m_tbComments";
 			this.m_tbComments.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.m_tbComments.Size = new System.Drawing.Size(543, 83);
-			this.m_tbComments.TabIndex = 7;
+			this.m_tbComments.TabIndex = 8;
 			// 
 			// m_lblTriggerComments
 			// 
 			this.m_lblTriggerComments.AutoSize = true;
-			this.m_lblTriggerComments.Location = new System.Drawing.Point(6, 148);
+			this.m_lblTriggerComments.Location = new System.Drawing.Point(6, 180);
 			this.m_lblTriggerComments.Name = "m_lblTriggerComments";
 			this.m_lblTriggerComments.Size = new System.Drawing.Size(59, 13);
-			this.m_lblTriggerComments.TabIndex = 6;
+			this.m_lblTriggerComments.TabIndex = 7;
 			this.m_lblTriggerComments.Text = "&Comments:";
 			// 
 			// m_lblInitiallyOnDesc
@@ -215,7 +215,7 @@
 			this.m_cbInitiallyOn.Name = "m_cbInitiallyOn";
 			this.m_cbInitiallyOn.Size = new System.Drawing.Size(72, 17);
 			this.m_cbInitiallyOn.TabIndex = 4;
-			this.m_cbInitiallyOn.Text = "Initially &on";
+			this.m_cbInitiallyOn.Text = "&Initially on";
 			this.m_cbInitiallyOn.UseVisualStyleBackColor = true;
 			// 
 			// m_cbEnabled

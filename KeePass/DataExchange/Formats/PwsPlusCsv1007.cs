@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ using KeePass.Resources;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
-using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
@@ -78,9 +77,7 @@ namespace KeePass.DataExchange.Formats
 				PwEntry pe = new PwEntry(true, true);
 				pg.AddEntry(pe, true);
 
-				string strTitle = vLine[1].Trim();
-				if(strTitle.Length > 0)
-					ImportUtil.Add(pe, PwDefs.TitleField, strTitle, pdStorage);
+				ImportUtil.Add(pe, PwDefs.TitleField, vLine[1].Trim(), pdStorage);
 
 				for(int i = 0; i < 10; ++i)
 				{
@@ -88,22 +85,13 @@ namespace KeePass.DataExchange.Formats
 					string strValue = vLine[(i * 3) + 4].Trim();
 					if((strKey.Length == 0) || (strValue.Length == 0)) continue;
 
-					string strMapped = ImportUtil.MapNameToStandardField(strKey, true);
-					if(string.IsNullOrEmpty(strMapped)) strMapped = strKey;
-					ImportUtil.Add(pe, strMapped, strValue, pdStorage);
+					strKey = ImportUtil.MapName(strKey, true);
+
+					ImportUtil.Add(pe, strKey, strValue, pdStorage);
 				}
 
-				string strNotesPre = pe.Strings.ReadSafe(PwDefs.NotesField);
-				string strNotes = vLine[33].Trim();
-				if(strNotes.Length > 0)
-				{
-					if(strNotesPre.Length == 0)
-						ImportUtil.Add(pe, PwDefs.NotesField, strNotes, pdStorage);
-					else
-						pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-							pdStorage.MemoryProtection.ProtectNotes, strNotesPre +
-							Environment.NewLine + Environment.NewLine + strNotes));
-				}
+				ImportUtil.AppendToField(pe, PwDefs.NotesField, vLine[33].Trim(),
+					pdStorage, MessageService.NewParagraph, true);
 			}
 		}
 	}

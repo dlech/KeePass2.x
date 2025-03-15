@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ using KeePassLibSD;
 #else
 using System.IO.Compression;
 #endif
+
+using KeePassLib.Delegates;
 
 namespace KeePassLib.Utility
 {
@@ -472,6 +474,26 @@ namespace KeePassLib.Utility
 			return ((u >> nBits) | (u << (64 - nBits)));
 		}
 
+		private static void AddVersionComponent(ref ulong uVersion, int iValue)
+		{
+			if(iValue < 0) iValue = 0;
+			else if(iValue > 0xFFFF) { Debug.Assert(false); iValue = 0xFFFF; }
+
+			uVersion = (uVersion << 16) | (uint)iValue;
+		}
+
+		internal static ulong VersionToUInt64(Version v)
+		{
+			if(v == null) { Debug.Assert(false); return 0; }
+
+			ulong u = 0;
+			AddVersionComponent(ref u, v.Major);
+			AddVersionComponent(ref u, v.Minor);
+			AddVersionComponent(ref u, v.Build);
+			AddVersionComponent(ref u, v.Revision);
+			return u;
+		}
+
 		public static bool ArraysEqual(byte[] x, byte[] y)
 		{
 			// Return false if one of them is null (not comparable)!
@@ -813,6 +835,43 @@ namespace KeePassLib.Utility
 
 				d[ta] = true; // Prevent duplicates
 				yield return ta;
+			}
+
+			yield break;
+		}
+
+		internal static IEnumerable<T> Distinct<T, TKey>(IEnumerable<T> s,
+			GFunc<T, TKey> fGetKey, bool bPreferLast)
+		{
+			if(s == null) throw new ArgumentNullException("s");
+			if(fGetKey == null) throw new ArgumentNullException("fGetKey");
+
+			Dictionary<TKey, bool> d = new Dictionary<TKey, bool>();
+
+			if(bPreferLast)
+			{
+				List<T> l = new List<T>(s);
+				int n = l.Count;
+				bool[] v = new bool[n];
+
+				for(int i = n - 1; i >= 0; --i)
+				{
+					TKey k = fGetKey(l[i]);
+					if(!d.ContainsKey(k)) { d[k] = true; v[i] = true; }
+				}
+
+				for(int i = 0; i < n; ++i)
+				{
+					if(v[i]) yield return l[i];
+				}
+			}
+			else
+			{
+				foreach(T t in s)
+				{
+					TKey k = fGetKey(t);
+					if(!d.ContainsKey(k)) { d[k] = true; yield return t; }
+				}
 			}
 
 			yield break;

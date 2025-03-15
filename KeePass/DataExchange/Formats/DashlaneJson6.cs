@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -148,6 +148,10 @@ namespace KeePass.DataExchange.Formats
 						strKey = PwDefs.TitleField;
 						break;
 
+					case "secondarylogin":
+						strKey = KPRes.UserName;
+						break;
+
 					case "domain":
 						strKey = PwDefs.UrlField;
 						break;
@@ -162,16 +166,9 @@ namespace KeePass.DataExchange.Formats
 						}
 						break;
 
-					case "secondarylogin":
-						strKey = KPRes.UserName + " 2";
-						break;
-
 					default:
 						if(!strNorm.Contains("date") && !strNorm.Contains("time"))
-						{
-							string strStd = ImportUtil.MapNameToStandardField(strKey, true);
-							if(!string.IsNullOrEmpty(strStd)) strKey = strStd;
-						}
+							strKey = ImportUtil.MapName(strKey, true);
 						break;
 				}
 
@@ -181,7 +178,7 @@ namespace KeePass.DataExchange.Formats
 					strValue = TryConvertTime(strValue);
 
 				if(!string.IsNullOrEmpty(strValue))
-					ImportUtil.AppendToField(pe, strKey, strValue, pd);
+					ImportUtil.Add(pe, strKey, strValue, pd);
 			}
 		}
 

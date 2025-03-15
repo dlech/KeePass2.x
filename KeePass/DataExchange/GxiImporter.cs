@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -278,18 +278,14 @@ namespace KeePass.DataExchange
 			if(strKey.Length == 0) return;
 
 			if(p.StringKeyToStd)
-			{
-				string strMapped = ImportUtil.MapNameToStandardField(strKey,
-					p.StringKeyToStdFuzzy);
-				if(!string.IsNullOrEmpty(strMapped)) strKey = strMapped;
-			}
+				strKey = ImportUtil.MapName(strKey, p.StringKeyToStdFuzzy);
 
 			string strValue = QueryValueSafe(xpBase, (bFirst ? p.StringValueXPath :
 				p.StringValueXPath2));
 			strValue = ApplyRepl(strValue, (bFirst ? c.StringValueRepl :
 				c.StringValueRepl2));
 
-			ImportUtil.AppendToField(c.Entry, strKey, strValue, c.Database);
+			ImportUtil.Add(c.Entry, strKey, strValue, c.Database);
 		}
 
 		private static void ImportBinaryKvp(XPathNavigator xpBase, GxiProfile p,

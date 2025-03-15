@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading;
 
 using KeePass.App.Configuration;
+using KeePass.Util;
 using KeePass.Util.Spr;
 
 using KeePassLib;
@@ -37,58 +38,57 @@ namespace KeePass.Plugins
 {
 	public static class PlgxCache
 	{
-		private const string CacheDirName = "PluginCache";
+		private const string CacheFolder = "PluginCache";
+		private const byte CacheVersion = 1;
 
-		private static string m_strAppEnvID = null;
-
-		private static string GetAppEnvID()
+		private static byte[] g_pbAppEnvID = null;
+		// When changing this method, consider incrementing CacheVersion
+		private static byte[] GetAppEnvID()
 		{
-			if(m_strAppEnvID != null) return m_strAppEnvID;
+			if(g_pbAppEnvID != null) return g_pbAppEnvID;
 
-			StringBuilder sb = new StringBuilder();
-
-			Assembly asm = null;
-			AssemblyName asmName = null;
-			try
+			using(MemoryStream ms = new MemoryStream())
 			{
-				asm = Assembly.GetExecutingAssembly();
-				asmName = asm.GetName();
-			}
-			catch(Exception) { Debug.Assert(false); }
+				using(BinaryWriter bw = new BinaryWriter(ms))
+				{
+					bw.Write(PwDefs.FileVersion64);
 
-			try { sb.Append(asmName.Version.ToString(4)); }
-			catch(Exception) { Debug.Assert(false); sb.Append(PwDefs.VersionString); }
+					if(Program.IsDevelopmentSnapshot())
+					{
+						try
+						{
+							byte[] pb = CryptoUtil.HashSha256(WinUtil.GetExecutable());
+							bw.Write((byte)1);
+							bw.Write(pb);
+						}
+						catch(Exception) { Debug.Assert(false); bw.Write(byte.MaxValue); }
+					}
+					else bw.Write((byte)0);
 
 #if DEBUG
-			sb.Append("d");
+					bw.Write((byte)1);
+#else
+					bw.Write((byte)0);
 #endif
 
-			sb.Append(",PK=");
-			try
-			{
-				byte[] pk = asmName.GetPublicKeyToken();
-				sb.Append(Convert.ToBase64String(pk, Base64FormattingOptions.None));
+					try
+					{
+						AssemblyName an = Assembly.GetExecutingAssembly().GetName();
+						byte[] pb = (an.GetPublicKeyToken() ?? MemUtil.EmptyByteArray);
+						bw.Write(pb.Length);
+						bw.Write(pb);
+					}
+					catch(Exception) { Debug.Assert(false); bw.Write((int)-1); }
+
+					bw.Write(MemUtil.VersionToUInt64(Environment.Version));
+					bw.Write(IntPtr.Size);
+					bw.Write((int)NativeLib.GetPlatformID());
+				}
+
+				byte[] pbID = ms.ToArray();
+				g_pbAppEnvID = pbID;
+				return pbID;
 			}
-			catch(Exception) { Debug.Assert(false); sb.Append('?'); }
-
-			sb.Append(",CLR=");
-			sb.Append(Environment.Version.ToString(4));
-			sb.Append(",Ptr=");
-			sb.Append(IntPtr.Size.ToString());
-
-			sb.Append(",OS=");
-			PlatformID p = NativeLib.GetPlatformID();
-			if((p == PlatformID.Win32NT) || (p == PlatformID.Win32S) ||
-				(p == PlatformID.Win32Windows))
-				sb.Append("Win");
-			else if(p == PlatformID.WinCE) sb.Append("WinCE");
-			else if(p == PlatformID.Xbox) sb.Append("Xbox");
-			else if(p == PlatformID.Unix) sb.Append("Unix");
-			else if(p == PlatformID.MacOSX) sb.Append("MacOSX");
-			else sb.Append('?');
-
-			m_strAppEnvID = sb.ToString();
-			return m_strAppEnvID;
 		}
 
 		public static string GetCacheRoot()
@@ -122,25 +122,29 @@ namespace KeePass.Plugins
 			// }
 			// catch(Exception) { Debug.Assert(false); }
 
-			return (UrlUtil.EnsureTerminatingSeparator(strDataDir, false) + CacheDirName);
+			return (UrlUtil.EnsureTerminatingSeparator(strDataDir, false) + CacheFolder);
 		}
 
 		public static string GetCacheDirectory(PlgxPluginInfo plgx, bool bEnsureExists)
 		{
 			if(plgx == null) { Debug.Assert(false); return null; }
 
-			StringBuilder sb = new StringBuilder();
-			sb.Append(plgx.BaseFileName);
-			sb.Append(':');
-			sb.Append(Convert.ToBase64String(plgx.FileUuid.UuidBytes,
-				Base64FormattingOptions.None));
-			sb.Append(';');
-			sb.Append(GetAppEnvID());
+			// When changing this method, consider incrementing CacheVersion
+			byte[] pbHash;
+			using(MemoryStream ms = new MemoryStream())
+			{
+				using(BinaryWriter bw = new BinaryWriter(ms, StrUtil.Utf8))
+				{
+					bw.Write(CacheVersion);
+					bw.Write(plgx.BaseFileName); // Length-prefixed
+					bw.Write(plgx.FileUuid.UuidBytes);
+					bw.Write(GetAppEnvID());
+				}
 
-			byte[] pbID = StrUtil.Utf8.GetBytes(sb.ToString());
-			byte[] pbHash = CryptoUtil.HashSha256(pbID);
+				pbHash = CryptoUtil.HashSha256(ms.ToArray());
+			}
 
-			string strHash = Convert.ToBase64String(pbHash, Base64FormattingOptions.None);
+			string strHash = Convert.ToBase64String(pbHash);
 			strHash = StrUtil.AlphaNumericOnly(strHash);
 			if(strHash.Length > 20) strHash = strHash.Substring(0, 20);
 

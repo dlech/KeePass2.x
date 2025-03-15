@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -104,20 +104,19 @@ namespace KeePass.DataExchange.Formats
 		private static void AddField(Dictionary<string, string> dItems,
 			string strKey, string strValue)
 		{
-			string strKeyTrl = ImportUtil.MapNameToStandardField(strKey, true);
-			if(string.IsNullOrEmpty(strKeyTrl)) strKeyTrl = strKey;
+			strKey = ImportUtil.MapName(strKey, true);
 
-			if(!dItems.ContainsKey(strKeyTrl))
+			if(!dItems.ContainsKey(strKey))
 			{
-				dItems[strKeyTrl] = strValue;
+				dItems[strKey] = strValue;
 				return;
 			}
 
-			string strPreValue = dItems[strKeyTrl];
+			string strPreValue = dItems[strKey];
 			if((strPreValue.Length > 0) && (strValue.Length > 0))
 				strPreValue += ", ";
 
-			dItems[strKeyTrl] = strPreValue + strValue;
+			dItems[strKey] = strPreValue + strValue;
 		}
 
 		private static void AddEntry(PwGroup pg, Dictionary<string, string> dItems,

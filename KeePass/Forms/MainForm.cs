@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ using KeePass.Util.Spr;
 using KeePassLib;
 using KeePassLib.Collections;
 using KeePassLib.Cryptography.PasswordGenerator;
+using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
@@ -71,6 +72,7 @@ namespace KeePass.Forms
 		private bool m_bBlockColumnUpdates = false;
 		private uint m_uBlockGroupSelectionEvent = 0;
 		private uint m_uBlockEntrySelectionEvent = 0;
+		private uint m_uBlockEntrySelectionRestoration = 0;
 
 		private bool m_bForceExitOnce = false;
 
@@ -480,6 +482,17 @@ namespace KeePass.Forms
 
 			LoadPlugins();
 
+			GAction<ContextMenuStrip, ToolStripMenuItem> fAddMore = ((ctx, tsmi) =>
+			{
+				ctx.Items.AddRange(new ToolStripItem[] {
+					new ToolStripSeparator(),
+					new ToolStripMenuItem(KPRes.MoreCommands,
+						Properties.Resources.B16x16_Redo,
+						((senderMC, eMC) => { tsmi.ShowDropDown(); })) });
+			});
+			fAddMore(m_ctxGroupList, m_menuGroup);
+			fAddMore(m_ctxPwList, m_menuEntry);
+
 			bool bCanMaximize = ((this.WindowState == FormWindowState.Normal) && !IsTrayed());
 			Debug.Assert(bCanMaximize);
 			if(bMaximize && bCanMaximize)
@@ -657,26 +670,17 @@ namespace KeePass.Forms
 			prf.GeneratorType = PasswordGeneratorType.CharSet;
 			for(uint iSamples = 0; iSamples < 1500; ++iSamples)
 			{
-				pg = pd.RootGroup.Groups.GetAt(iSamples % 5);
-
 				pe = new PwEntry(true, true);
+				pd.RootGroup.Groups.GetAt(iSamples % 5).AddEntry(pe, true);
 
-				ProtectedString ps;
-				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.TitleField, ps.WithProtection(
-					pd.MemoryProtection.ProtectTitle));
-				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.UserNameField, ps.WithProtection(
-					pd.MemoryProtection.ProtectUserName));
-				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.UrlField, ps.WithProtection(
-					pd.MemoryProtection.ProtectUrl));
-				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.PasswordField, ps.WithProtection(
-					pd.MemoryProtection.ProtectPassword));
-				PwGenerator.Generate(out ps, prf, null, null);
-				pe.Strings.Set(PwDefs.NotesField, ps.WithProtection(
-					pd.MemoryProtection.ProtectNotes));
+				pe.IconId = (PwIcon)r.Next(0, (int)PwIcon.Count);
+
+				foreach(string strName in PwDefs.GetStandardFields())
+				{
+					ProtectedString ps;
+					PwGenerator.Generate(out ps, prf, null, null);
+					ImportUtil.Add(pe, strName, ps.ReadString(), pd);
+				}
 
 				pe.CreationTime = DateTime.FromBinary(lTimeMin + (long)(r.NextDouble() *
 					(lTimeMax - lTimeMin)));
@@ -688,10 +692,6 @@ namespace KeePass.Forms
 					(lTimeMax - lTimeMin)));
 				pe.LocationChanged = DateTime.FromBinary(lTimeMin + (long)(r.NextDouble() *
 					(lTimeMax - lTimeMin)));
-
-				pe.IconId = (PwIcon)r.Next(0, (int)PwIcon.Count);
-
-				pg.AddEntry(pe, true);
 			}
 
 			pd.CustomData.Set("Sample Custom Data 1", "0123456789", null);
@@ -1097,7 +1097,7 @@ namespace KeePass.Forms
 			UIUtil.SetChecked(m_menuViewShowToolBar, b);
 		}
 
-		private void OnViewShowEntryView(object sender, EventArgs e)
+		private void OnViewShowDetailsView(object sender, EventArgs e)
 		{
 			Debug.Assert(m_bFormLoaded); // The following toggles!
 			ShowEntryView(!Program.Config.MainWindow.EntryView.Show);
@@ -1693,7 +1693,7 @@ namespace KeePass.Forms
 			{
 				PwIcon pi = (PwIcon)ipf.ChosenIconId;
 				PwUuid pu = ipf.ChosenCustomIconUuid;
-				bool bCustom = !pu.Equals(PwUuid.Zero);
+				bool bCustom = !pu.IsZero;
 
 				foreach(PwEntry pe in vEntries)
 				{
@@ -1785,17 +1785,17 @@ namespace KeePass.Forms
 
 		private void OnToolsPwGenerator(object sender, EventArgs e)
 		{
-			PwDatabase pwDb = m_docMgr.ActiveDatabase;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
 
 			PwGeneratorForm pgf = new PwGeneratorForm();
-			pgf.InitEx(null, pwDb.IsOpen, IsTrayed());
+			pgf.InitEx(null, pd.IsOpen, IsTrayed());
 
 			if(pgf.ShowDialog() == DialogResult.OK)
 			{
-				if(pwDb.IsOpen)
+				if(pd.IsOpen)
 				{
 					PwGroup pg = GetSelectedGroup();
-					if(pg == null) pg = pwDb.RootGroup;
+					if(pg == null) pg = pd.RootGroup;
 
 					PwEntry pe = new PwEntry(true, true);
 					pg.AddEntry(pe, true);
@@ -1805,13 +1805,13 @@ namespace KeePass.Forms
 					bool bAcceptAlways = false;
 					string strError;
 					ProtectedString psNew = PwGeneratorUtil.GenerateAcceptable(
-						pgf.SelectedProfile, pbAdditionalEntropy, pe, pwDb,
-						true, ref bAcceptAlways, out strError);
+						pgf.SelectedProfile, pbAdditionalEntropy, pe, pd, true,
+						ref bAcceptAlways, out strError);
 
 					if(string.IsNullOrEmpty(strError))
 					{
 						pe.Strings.Set(PwDefs.PasswordField, psNew.WithProtection(
-							pwDb.MemoryProtection.ProtectPassword));
+							pd.MemoryProtection.ProtectPassword));
 
 						UpdateUI(false, null, false, null, true, null, true, m_lvEntries);
 						SelectEntry(pe, true, true, true, true);
@@ -1824,14 +1824,14 @@ namespace KeePass.Forms
 
 		private void OnToolsTanWizard(object sender, EventArgs e)
 		{
-			PwDatabase pwDb = m_docMgr.ActiveDatabase;
-			if(!pwDb.IsOpen) { Debug.Assert(false); return; }
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if(!pd.IsOpen) { Debug.Assert(false); return; }
 
 			PwGroup pgSelected = GetSelectedGroup();
 			if(pgSelected == null) return;
 
 			TanWizardForm twf = new TanWizardForm();
-			twf.InitEx(pwDb, pgSelected);
+			twf.InitEx(pd, pgSelected);
 
 			if(UIUtil.ShowDialogAndDestroy(twf) == DialogResult.OK)
 				UpdateUI(false, null, false, null, true, null, true);
@@ -1987,8 +1987,8 @@ namespace KeePass.Forms
 
 		private void OnToolsGeneratePasswordList(object sender, EventArgs e)
 		{
-			PwDatabase pwDb = m_docMgr.ActiveDatabase;
-			if(!pwDb.IsOpen) return;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if(!pd.IsOpen) return;
 
 			PwGeneratorForm pgf = new PwGeneratorForm();
 			pgf.InitEx(null, true, IsTrayed());
@@ -1996,7 +1996,7 @@ namespace KeePass.Forms
 			if(pgf.ShowDialog() == DialogResult.OK)
 			{
 				PwGroup pg = GetSelectedGroup();
-				if(pg == null) pg = pwDb.RootGroup;
+				if(pg == null) pg = pd.RootGroup;
 
 				SingleLineEditForm dlgCount = new SingleLineEditForm();
 				dlgCount.InitEx(KPRes.GenerateCount, KPRes.GenerateCountDesc,
@@ -2020,8 +2020,8 @@ namespace KeePass.Forms
 
 						string strError;
 						ProtectedString psNew = PwGeneratorUtil.GenerateAcceptable(
-							pgf.SelectedProfile, pbAdditionalEntropy, pe, pwDb,
-							true, ref bAcceptAlways, out strError);
+							pgf.SelectedProfile, pbAdditionalEntropy, pe, pd, true,
+							ref bAcceptAlways, out strError);
 
 						if(!string.IsNullOrEmpty(strError))
 						{
@@ -2030,7 +2030,7 @@ namespace KeePass.Forms
 						}
 
 						pe.Strings.Set(PwDefs.PasswordField, psNew.WithProtection(
-							pwDb.MemoryProtection.ProtectPassword));
+							pd.MemoryProtection.ProtectPassword));
 
 						l.Add(pe);
 					}

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
-using KeePassLib.Collections;
 using KeePassLib.Delegates;
 using KeePassLib.Utility;
 
@@ -204,7 +203,8 @@ namespace KeePass.Forms
 			}
 
 			m_tsbHideSensitive.Text = SecureTextBoxEx.GetPasswordCharString(3);
-			m_tsbHideSensitive.ToolTipText = KPRes.TogglePasswordAsterisks;
+			m_tsbHideSensitive.ToolTipText = KPRes.TogglePasswordAsterisks +
+				" (" + UIUtil.GetKeysName(Keys.Control | Keys.H) + ")";
 			m_tsbHideSensitive.Checked = (bHasSensitive &&
 				(!AppPolicy.Current.UnhidePasswords ||
 				Program.Config.MainWindow.IsColumnHidden(AceColumnType.Password)));
@@ -408,6 +408,11 @@ namespace KeePass.Forms
 			if((k == Keys.Escape) && !bC && !bA)
 			{
 				this.DialogResult = DialogResult.Cancel;
+				return true;
+			}
+			if((k == Keys.H) && bC && !bA && m_tsbHideSensitive.Enabled)
+			{
+				m_tsbHideSensitive.PerformClick();
 				return true;
 			}
 			if((k == Keys.Return) && m_tstFilter.Focused)

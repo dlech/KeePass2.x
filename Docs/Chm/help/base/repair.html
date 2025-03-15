@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -38,9 +38,9 @@
 <p>KeePass can repair corrupted databases in some cases.</p></td>
 </tr></table>
 
-<p>KeePass has quite some features to avoid database file corruption
-(transacted database writing, device buffer flushing, ...). However,
-data corruption can still be caused by other programs, the system or
+<p>KeePass has some features to avoid database file corruption
+(transacted database writing, device buffer flushing, ...).
+However, data corruption can still be caused by other programs, the system or
 broken storage devices (note that KeePass by default is verifying the integrity
 of database files immediately after writing them, i.e. at this point of time,
 KeePass guarantees file integrity; however, KeePass of course can't do anything
@@ -83,9 +83,8 @@ KeePass plugins page.</p>
 
 <br />
 
-<a name="hdr"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kcmdrkonqi.png" alt="" />
-File Header/Signature</h2>
+<h2 class="sectiontitle" id="hdr"><img src="../images/b16x16_kcmdrkonqi.png"
+alt="" /> File Header/Signature</h2>
 
 <p>If your database file has been deleted and you want to try recovering
 it using a tool that supports a file header/signature detection:

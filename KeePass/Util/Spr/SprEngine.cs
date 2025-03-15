@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -385,38 +385,37 @@ namespace KeePass.Util.Spr
 		private static string FillEntryStrings(string str, SprContext ctx,
 			uint uRecursionLevel)
 		{
-			List<string> vKeys = ctx.Entry.Strings.GetKeys();
+			List<string> lKeys = ctx.Entry.Strings.GetKeys();
 
 			// Ensure that all standard field names are in the list
 			// (this is required in order to replace the standard placeholders
 			// even if the corresponding standard field isn't present in
 			// the entry)
-			List<string> vStdNames = PwDefs.GetStandardFields();
-			foreach(string strStdField in vStdNames)
+			foreach(string strField in PwDefs.GetStandardFields())
 			{
-				if(!vKeys.Contains(strStdField)) vKeys.Add(strStdField);
+				if(!lKeys.Contains(strField)) lKeys.Add(strField);
 			}
 
 			// Do not directly enumerate the strings in ctx.Entry.Strings,
 			// because strings might change during the Spr compilation
-			foreach(string strField in vKeys)
+			foreach(string strField in lKeys)
 			{
 				string strKey = (PwDefs.IsStandardField(strField) ?
 					(@"{" + strField + @"}") :
 					(@"{" + PwDefs.AutoTypeStringPrefix + strField + @"}"));
 
+				// Use GetSafe because the field doesn't necessarily exist
+				// (might be a standard field that has been added above)
+				ProtectedString psValue = ctx.Entry.Strings.GetSafe(strField);
+
 				if(!ctx.ForcePlainTextPasswords && strKey.Equals(@"{" +
 					PwDefs.PasswordField + @"}", StrUtil.CaseIgnoreCmp) &&
 					Program.Config.MainWindow.IsColumnHidden(AceColumnType.Password))
 				{
-					str = Fill(str, strKey, PwDefs.HiddenPassword, ctx, null);
-					continue;
+					str = Fill(str, strKey, EntryUtil.GetHiddenString(psValue, true),
+						ctx, null);
 				}
-
-				// Use GetSafe because the field doesn't necessarily exist
-				// (might be a standard field that has been added above)
-				str = Fill(str, strKey, ctx.Entry.Strings.GetSafe(strField),
-					ctx, uRecursionLevel);
+				else str = Fill(str, strKey, psValue, ctx, uRecursionLevel);
 			}
 
 			return str;
@@ -593,7 +592,8 @@ namespace KeePass.Util.Spr
 					{
 						if(!ctx.ForcePlainTextPasswords &&
 							Program.Config.MainWindow.IsColumnHidden(AceColumnType.Password))
-							strInsData = PwDefs.HiddenPassword;
+							strInsData = EntryUtil.GetHiddenString(peFound.Strings.Get(
+								PwDefs.PasswordField), true);
 						// Mass confirm non-active => DoS
 						else if(((ctx.Flags & SprCompileFlags.Active) == SprCompileFlags.None) ||
 							ConfirmSpr(strFullRef, Program.Config.UI, "ShowRefPPlhConfirmDialog"))
@@ -686,14 +686,17 @@ namespace KeePass.Util.Spr
 			dlg.AddButton((int)DialogResult.OK, KPRes.Yes, null);
 			dlg.AddButton((int)DialogResult.Cancel, KPRes.No, null);
 
-			if(dlg.ShowDialog())
+			using(FocusRestoreScope frs = new FocusRestoreScope())
 			{
-				bool b = (dlg.Result == (int)DialogResult.OK);
-				if(b && (piForSet != null) && dlg.ResultVerificationChecked)
-					piForSet.SetValue(oCfgContainer, false, null);
-				return b;
+				if(dlg.ShowDialog())
+				{
+					bool b = (dlg.Result == (int)DialogResult.OK);
+					if(b && (piForSet != null) && dlg.ResultVerificationChecked)
+						piForSet.SetValue(oCfgContainer, false, null);
+					return b;
+				}
+				return MessageService.AskYesNo(strText);
 			}
-			return MessageService.AskYesNo(strText);
 		}
 
 		// Cf. char[] overload

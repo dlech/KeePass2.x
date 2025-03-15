@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -174,6 +174,7 @@ namespace KeePass.UI
 			foreach(KeyValuePair<string, object> kvp in m_lItems)
 			{
 				Debug.Assert(kvp.Key != null);
+				// Cf. AppConfigEx.OnLoad (ToUpperInvariant)
 				if(kvp.Key.Equals(strDisplayName, StrUtil.CaseIgnoreCmp))
 				{
 					bExists = true;

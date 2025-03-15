@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -84,9 +84,8 @@
 
 <br />
 
-<a name="mode_se"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_xmag.png" alt="" />
-Search Mode 'Simple Expression'</h2>
+<h2 class="sectiontitle" id="mode_se"><img src="../images/b16x16_xmag.png"
+alt="" /> Search Mode 'Simple Expression'</h2>
 
 <p>In this mode, KeePass searches the specified terms in the selected fields.
 For an entry to match, <em>all</em> terms must match.</p>
@@ -109,8 +108,7 @@ If you want to find exact matches instead, use a
 
 <p><b>Examples.</b></p>
 
-<a name="ex_se_multi"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_se_multi">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Multiple terms</th></tr>
 <tr><td>Find what:</td><td><code>Michael Home</code></td></tr>
@@ -121,8 +119,7 @@ If you want to find exact matches instead, use a
 
 <br />
 
-<a name="ex_se_spc"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_se_spc">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Terms with spaces</th></tr>
 <tr><td>Find what:</td><td><code>Michael &quot;Web Server&quot;</code></td></tr>
@@ -133,8 +130,7 @@ If you want to find exact matches instead, use a
 
 <br />
 
-<a name="ex_se_excl"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_se_excl">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Exclusions (2.x)</th></tr>
 <tr><td>Find what:</td><td><code>Michael -Home</code></td></tr>
@@ -145,9 +141,8 @@ If you want to find exact matches instead, use a
 
 <br /><br />
 
-<a name="mode_re"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_xmag.png" alt="" />
-Search Mode 'Regular Expression'</h2>
+<h2 class="sectiontitle" id="mode_re"><img src="../images/b16x16_xmag.png"
+alt="" /> Search Mode 'Regular Expression'</h2>
 
 <p>In this mode, KeePass searches for matches of a regular expression
 in the selected fields.</p>
@@ -168,8 +163,7 @@ target="_blank">Regex101: Build, test and debug regex</a></li>
 
 <p><b>Examples.</b></p>
 
-<a name="ex_re_exact"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_re_exact">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Exact term</th></tr>
 <tr><td>Find what:</td><td><code>^Michael$</code></td></tr>
@@ -180,8 +174,7 @@ i.e. 'Michael' is not only a substring of the entry's user name).</td></tr>
 
 <br />
 
-<a name="ex_re_pw_short"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_re_pw_short">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Short passwords</th></tr>
 <tr><td>Find what:</td><td><code>^.{1,10}$</code></td></tr>
@@ -194,8 +187,7 @@ use the 'Password Quality' command in the 'Find' menu.</td></tr>
 
 <br />
 
-<a name="ex_re_tags_or"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_re_tags_or">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Multiple tags (OR, exact)</th></tr>
 <tr><td>Find what:</td><td><code>^(Home|Private)$</code></td></tr>
@@ -206,9 +198,8 @@ use the 'Password Quality' command in the 'Find' menu.</td></tr>
 
 <br /><br />
 
-<a name="mode_xpe"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_xmag.png" alt="" />
-Search Mode 'XPath Expression' (2.x)</h2>
+<h2 class="sectiontitle" id="mode_xpe"><img src="../images/b16x16_xmag.png"
+alt="" /> Search Mode 'XPath Expression' (2.x)</h2>
 
 <p>In this mode, a <a href="https://keepass.info/help/kb/kdbx.html#xml"
 target="_blank">KeePass 2.x XML</a> DOM of the current database is
@@ -242,8 +233,7 @@ target="_blank">XML Replace</a> feature.</p>
 
 <p><b>Examples.</b></p>
 
-<a name="ex_xpe_icon"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_xpe_icon">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Icon</th></tr>
 <tr><td>Find what:</td>
@@ -254,8 +244,7 @@ target="_blank">XML Replace</a> feature.</p>
 
 <br />
 
-<a name="ex_xpe_exp_year"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_xpe_exp_year">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Expired in specific year</th></tr>
 <tr><td>Find what:</td>
@@ -265,8 +254,7 @@ target="_blank">XML Replace</a> feature.</p>
 
 <br />
 
-<a name="ex_xpe_str_c"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_xpe_str_c">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Custom string field</th></tr>
 <tr><td>Find what:</td>
@@ -278,8 +266,7 @@ named 'Telephone' whose value contains '12345'.</td></tr>
 
 <br />
 
-<a name="ex_xpe_bin_ext"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_xpe_bin_ext">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Attached PDF files</th></tr>
 <tr><td>Find what:</td>
@@ -292,8 +279,7 @@ name ends with '.pdf'.</td></tr>
 
 <br />
 
-<a name="ex_xpe_clr_bg"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_xpe_clr_bg">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Background color</th></tr>
 <tr><td>Find what:</td>
@@ -310,8 +296,7 @@ background color.</td></tr>
 
 <br />
 
-<a name="ex_xpe_tags_and"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_xpe_tags_and">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Multiple tags (AND, exact)</th></tr>
 <tr><td>Find what:</td>
@@ -328,8 +313,7 @@ the tags.</td></tr>
 
 <br />
 
-<a name="ex_xpe_hist_cnt"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_xpe_hist_cnt">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">History entry count</th></tr>
 <tr><td>Find what:</td>
@@ -340,8 +324,7 @@ the tags.</td></tr>
 
 <br />
 
-<a name="ex_xpe_grp_notes"></a>
-<table class="tablebox searchextbl">
+<table class="tablebox searchextbl" id="ex_xpe_grp_notes">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Group notes</th></tr>
 <tr><td>Find what:</td>
@@ -353,9 +336,8 @@ If there are multiple such groups, the entries of all these groups are found.</t
 
 <br /><br />
 
-<a name="prf"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="" />
-Search Profiles (2.x)</h2>
+<h2 class="sectiontitle" id="prf"><img src="../images/b16x16_kmultiple.png"
+alt="" /> Search Profiles (2.x)</h2>
 
 <p>KeePass can save search parameters as a search profile.
 This can be useful when you are regularly performing similar searches.</p>
@@ -392,9 +374,8 @@ click the profile deletion button.</p>
 
 <br />
 
-<a name="quick"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_xmag.png" alt="" />
-Quick Search Box</h2>
+<h2 class="sectiontitle" id="quick"><img src="../images/b16x16_xmag.png"
+alt="" /> Quick Search Box</h2>
 
 <p>The quick search box in the toolbar of the main window supports
 <a href="#mode_se">simple expression</a> and

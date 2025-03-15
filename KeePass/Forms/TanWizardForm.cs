@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,8 +26,9 @@ using System.Text;
 using System.Windows.Forms;
 
 using KeePass.App;
-using KeePass.UI;
+using KeePass.DataExchange;
 using KeePass.Resources;
+using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Security;
@@ -130,19 +131,12 @@ namespace KeePass.Forms
 			if(strTan.Length == 0) return;
 
 			PwEntry pe = new PwEntry(true, true);
-			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-				m_pwDatabase.MemoryProtection.ProtectTitle, PwDefs.TanTitle));
-
-			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-				m_pwDatabase.MemoryProtection.ProtectPassword, strTan));
+			ImportUtil.Add(pe, PwDefs.TitleField, PwDefs.TanTitle, m_pwDatabase);
+			ImportUtil.Add(pe, PwDefs.PasswordField, strTan, m_pwDatabase);
 
 			if(bSetIndex && (nTanIndex >= 0))
 			{
-				Debug.Assert(PwDefs.TanIndexField == PwDefs.UserNameField);
-
-				pe.Strings.Set(PwDefs.TanIndexField, new ProtectedString(
-					m_pwDatabase.MemoryProtection.ProtectUserName, nTanIndex.ToString()));
-
+				ImportUtil.Add(pe, PwDefs.TanIndexField, nTanIndex.ToString(), m_pwDatabase);
 				++nTanIndex;
 			}
 

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -213,6 +213,9 @@ namespace KeePassLib.Utility
 		// 3574233558:
 		//   Problems with minimizing windows, no content rendered.
 		//   https://sourceforge.net/p/keepass/discussion/329220/thread/d50a79d6/
+		// 4190280862:
+		//   Handling of right-click on tree node for context menu differs.
+		//   https://sourceforge.net/p/keepass/discussion/329220/thread/aff9c29c9e/
 		public static bool IsRequired(uint uBugID)
 		{
 			if(!MonoWorkarounds.IsRequired()) return false;

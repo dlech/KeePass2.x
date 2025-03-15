@@ -1767,6 +1767,9 @@ namespace KeePass.Util.XmlSerialization
 					case "UnhideButtonAlsoUnhidesSource":
 						o.UnhideButtonAlsoUnhidesSource = ReadBoolean(xr);
 						break;
+					case "UnhideEmptyData":
+						o.UnhideEmptyData = ReadBoolean(xr);
+						break;
 					default:
 						Debug.Assert(false);
 						xr.Skip();

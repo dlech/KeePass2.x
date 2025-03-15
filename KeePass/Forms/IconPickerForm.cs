@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ namespace KeePass.Forms
 			RecreateCustomIconList(m_puDefaultCustomIcon);
 			CreateCustomContextMenu();
 
-			if(!m_puDefaultCustomIcon.Equals(PwUuid.Zero))
+			if(!m_puDefaultCustomIcon.IsZero)
 			{
 				m_radioCustom.Checked = true;
 				UIUtil.SetFocus(m_lvCustomIcons, this);
@@ -189,7 +189,7 @@ namespace KeePass.Forms
 
 		private void SelectCustomIcon(PwUuid pu)
 		{
-			if(pu.Equals(PwUuid.Zero)) return;
+			if(pu.IsZero) return;
 
 			foreach(ListViewItem lvi in m_lvCustomIcons.Items)
 			{
@@ -401,7 +401,6 @@ namespace KeePass.Forms
 
 						const int wMax = PwCustomIcon.MaxWidth;
 						const int hMax = PwCustomIcon.MaxHeight;
-
 						if((img.Width <= wMax) && (img.Height <= hMax))
 							img.Save(msPng, ImageFormat.Png);
 						else
@@ -423,7 +422,7 @@ namespace KeePass.Forms
 					m_pd.UINeedsIconUpdate = true;
 					m_pd.Modified = true;
 
-					if(puSelect.Equals(PwUuid.Zero)) puSelect = pu;
+					if(puSelect.IsZero) puSelect = pu;
 				}
 				catch(ArgumentException)
 				{

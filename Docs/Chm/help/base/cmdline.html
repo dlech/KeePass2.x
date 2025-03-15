@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -49,9 +49,8 @@
 
 <br />
 
-<a name="gen"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="" />
-General</h2>
+<h2 class="sectiontitle" id="gen"><img src="../images/b16x16_openterm.png"
+alt="" /> General</h2>
 
 <p>You can pass a file path in the command line in order to tell KeePass to open
 this file immediately after startup.</p>
@@ -71,11 +70,16 @@ Passwords can be passed using the <code>-pw:</code> option. In order to
 pass 'abc' as password, you would add the following argument to the command line:
 <code>-pw:abc</code>. Note that there must be no space between the '<code>:</code>' and the
 password. If your password contains a space, you must enclose it in quotes. For
-example: <code>-pw:&quot;my secret password&quot;</code>.</p>
+example: <code>-pw:&quot;My secret password&quot;</code>.</p>
 
 <p>Using the <code>-pw:</code> option is not recommended, due to
 security reasons (the operating system allows reading the command line
 options of other applications).</p>
+
+<p>The <code>-pw-enc:</code> parameter is similar to <code>-pw:</code>, but it
+requires the password to be encrypted. Encrypted passwords can be generated
+using the <a href="placeholders.html#passwordenc"><code>{PASSWORD_ENC}</code></a>
+placeholder.</p>
 
 <p>When passing the <code>-pw-stdin</code> option, KeePass
 reads the password from the StdIn stream.
@@ -98,7 +102,7 @@ For example, if you lock your database with a password <i>and</i> a key file, bu
 just want to type in the password (so, without selecting the key file manually),
 your command line could look like this:</p>
 
-<pre>KeePass.exe &quot;C:\My Documents\MyDatabase.kdbx&quot; -preselect:C:\pwsafe.key</pre>
+<pre>KeePass.exe &quot;C:\My Documents\Database.kdbx&quot; -preselect:C:\pwsafe.key</pre>
 
 <p>KeePass will then show a prompt for the master key of the database, in whose
 key file/provider list the <code>C:\pwsafe.key</code> file is already selected.
@@ -132,11 +136,6 @@ The optional <code>-ioiscomplete</code> switch
 tells KeePass that the path and file system credentials are complete
 (the 'Open URL' dialog will not be displayed then).<br />
 <br />
-The <code>-pw-enc:</code> parameter is similar to <code>-pw:</code>, but
-it requires the password to be encrypted. Encrypted passwords can be
-generated using the <a href="placeholders.html#passwordenc"><code>{PASSWORD_ENC}</code></a>
-placeholder.<br />
-<br />
 The <code>-entry-url-open</code> option makes other already opened KeePass instances
 search for an entry and open its URL. The entry is identified by its UUID,
 which you can pass as <code>-uuid:</code> command line parameter.<br />
@@ -160,40 +159,38 @@ sensitive data (e.g. passwords).
 
 <br />
 
-<a name="ex"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_openterm.png" alt="" />
-Usage Examples</h2>
+<h2 class="sectiontitle" id="ex"><img src="../images/b16x16_openterm.png"
+alt="" /> Usage Examples</h2>
 
-<p>Open the database file <i>'C:\My Documents\MyDatabase.kdbx'</i> (KeePass will prompt you
+<p>Open the database file <i>'C:\My Documents\Database.kdbx'</i> (KeePass will prompt you
 for the password and/or key file location):</p>
 
-<pre>KeePass.exe &quot;C:\My Documents\MyDatabase.kdbx&quot;</pre>
+<pre>KeePass.exe &quot;C:\My Documents\Database.kdbx&quot;</pre>
 
 <p>If you got a database that is locked with a password 'abc', you could open it like this:</p>
 
-<pre>KeePass.exe &quot;C:\My Documents\MyDatabaseWithPw.kdbx&quot; -pw:abc</pre>
+<pre>KeePass.exe &quot;C:\My Documents\DatabaseWithPw.kdbx&quot; -pw:abc</pre>
 
 <p>If your USB stick always mounts to drive F: and you've locked your database with a key file
 on the USB stick, you could open your database as follows:</p>
 
-<pre>KeePass.exe &quot;C:\My Documents\MyDatabaseWithFile.kdbx&quot; -keyfile:F:\pwsafe.key</pre>
+<pre>KeePass.exe &quot;C:\My Documents\DatabaseWithFile.kdbx&quot; -keyfile:F:\pwsafe.key</pre>
 
 <p>If you've locked your database using a password <i>and</i> a key file, you can combine
 the two switches and open your database as follows:</p>
 
-<pre>KeePass.exe &quot;C:\My Documents\MyDatabaseWithTwo.kdbx&quot; -pw:abc -keyfile:F:\pwsafe.key</pre>
+<pre>KeePass.exe &quot;C:\My Documents\DatabaseWithTwo.kdbx&quot; -pw:abc -keyfile:F:\pwsafe.key</pre>
 
 <p>You have locked your database using a password <i>and</i> a key file, but only
 want to have the key file preselected (i.e. you want to get prompted for the
 password), your command line would look like this:</p>
 
-<pre>KeePass.exe &quot;C:\My Documents\MyDatabaseWithTwo.kdbx&quot; -preselect:F:\pwsafe.key</pre>
+<pre>KeePass.exe &quot;C:\My Documents\DatabaseWithTwo.kdbx&quot; -preselect:F:\pwsafe.key</pre>
 
 <br />
 
-<a name="batch"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_konsole.png" alt="" />
-Starting KeePass using a Batch File</h2>
+<h2 class="sectiontitle" id="batch"><img src="../images/b16x16_konsole.png"
+alt="" /> Starting KeePass using a Batch File</h2>
 
 <p>Batch files can be used to start KeePass. Mostly you want to
 specify some of the parameters listed above. You can theoretically
@@ -202,10 +199,10 @@ into the batch file, but this is not recommended as the command
 window will stay open until KeePass is closed. The following
 method is recommended instead:</p>
 
-<pre>START &quot;&quot; KeePass.exe ..\MyDb.kdbx -pw:MySecretPw</pre>
+<pre>START &quot;&quot; KeePass.exe ..\Database.kdbx -pw:MySecretPw</pre>
 
 <p>This <code>START</code> command will run KeePass (which opens the
-<code>..\MyDb.kdbx</code> file using
+<code>..\Database.kdbx</code> file using
 <code>MySecretPw</code> as password). KeePass is assumed to be in the same
 directory (working directory) as the batch file, otherwise you need to
 specify a different path.</p>
@@ -223,9 +220,8 @@ If you want to learn more about the <code>START</code> command syntax, type
 
 <br />
 
-<a name="close"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_konsole.png" alt="" />
-Closing/Locking KeePass using a Batch File</h2>
+<h2 class="sectiontitle" id="close"><img src="../images/b16x16_konsole.png"
+alt="" /> Closing/Locking KeePass using a Batch File</h2>
 
 <p>To close all currently running KeePass instances, call
 <code>KeePass.exe</code> with the <code>'--exit-all'</code> parameter:</p>
@@ -248,9 +244,8 @@ of all other KeePass instances.</p>
 
 <br />
 
-<a name="urloverride"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_enhanced_browsing.png" alt="" />
-Editing URL Overrides (2.x)</h2>
+<h2 class="sectiontitle" id="urloverride"><img src="../images/b16x16_enhanced_browsing.png"
+alt="" /> Editing URL Overrides (2.x)</h2>
 
 <p>KeePass 2.x supports the following command line options for editing
 <a href="autourl.html#override">URL overrides</a>:</p>

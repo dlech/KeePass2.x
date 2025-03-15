@@ -1348,6 +1348,12 @@
 		<Data Name="InheritSettingFromParent">
 			<Value>Inherit setting from parent</Value>
 		</Data>
+		<Data Name="InitiallyOff">
+			<Value>Initially off</Value>
+		</Data>
+		<Data Name="InitiallyOn">
+			<Value>Initially on</Value>
+		</Data>
 		<Data Name="Installed">
 			<Value>Installed</Value>
 		</Data>
@@ -1713,6 +1719,9 @@
 		</Data>
 		<Data Name="MoreAnd">
 			<Value>and {PARAM} more</Value>
+		</Data>
+		<Data Name="MoreCommands">
+			<Value>&amp;More Commands</Value>
 		</Data>
 		<Data Name="MoreEntries">
 			<Value>{PARAM} more entries</Value>
@@ -2190,6 +2199,9 @@
 		</Data>
 		<Data Name="QualityCheckToggle">
 			<Value>Enable/disable quality estimation for this entry (here, in password quality reports, ...)</Value>
+		</Data>
+		<Data Name="QualityEstAvg">
+			<Value>Average estimated quality</Value>
 		</Data>
 		<Data Name="QualityEstimation">
 			<Value>Quality Estimation</Value>
@@ -2736,6 +2748,9 @@
 		</Data>
 		<Data Name="Undo">
 			<Value>Undo</Value>
+		</Data>
+		<Data Name="UnhideEmptyData">
+			<Value>Unhide empty data</Value>
 		</Data>
 		<Data Name="UnhidePasswords">
 			<Value>Unhide Passwords</Value>

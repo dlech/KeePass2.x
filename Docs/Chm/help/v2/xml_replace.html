@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -68,9 +68,8 @@
 
 <br />
 
-<a name="info"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-General Information</h2>
+<h2 class="sectiontitle" id="info"><img src="../images/b16x16_help.png"
+alt="" /> General Information</h2>
 
 <p>XML Replace is a powerful feature that modifies a database by manipulating
 its XML representation.</p>
@@ -96,14 +95,12 @@ these. Furthermore, any changes to database properties
 
 <br />
 
-<a name="ex"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Examples</h2>
+<h2 class="sectiontitle" id="ex"><img src="../images/b16x16_help.png"
+alt="" /> Examples</h2>
 
 <br />
 
-<a name="repstr"></a>
-<table class="tablebox">
+<table class="tablebox" id="repstr">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Replace text in all entry titles and notes</th></tr>
 <tr><td>Select nodes:</td>
@@ -119,8 +116,7 @@ replaces all occurences of <code><i>TheTextToFind</i></code> by
 
 <br />
 
-<a name="tohttps"></a>
-<table class="tablebox">
+<table class="tablebox" id="tohttps">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Replace all HTTP URLs by HTTPS URLs</th></tr>
 <tr><td>Select nodes:</td>
@@ -136,8 +132,7 @@ HTTP URLs by HTTPS URLs.</td></tr>
 
 <br />
 
-<a name="repgrpicon"></a>
-<table class="tablebox">
+<table class="tablebox" id="repgrpicon">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Replace group icons</th></tr>
 <tr><td>Select nodes:</td>
@@ -156,8 +151,7 @@ All icon IDs can be found in the icon picker dialog.</td></tr>
 <br />
 
 <!-- https://sourceforge.net/p/keepass/discussion/329221/thread/56a33495/ -->
-<a name="delstr"></a>
-<table class="tablebox">
+<table class="tablebox" id="delstr">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Delete entry strings by name</th></tr>
 <tr><td>Select nodes:</td>
@@ -169,8 +163,7 @@ All icon IDs can be found in the icon picker dialog.</td></tr>
 
 <br />
 
-<a name="delbinext"></a>
-<table class="tablebox">
+<table class="tablebox" id="delbinext">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Delete entry attachments by name extension</th></tr>
 <tr><td>Select nodes:</td>
@@ -182,8 +175,7 @@ ending in '.jpg'.</td></tr>
 
 <br />
 
-<a name="resetbgcolor"></a>
-<table class="tablebox">
+<table class="tablebox" id="resetbgcolor">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Reset background colors</th></tr>
 <tr><td>Select nodes:</td>
@@ -195,8 +187,7 @@ default (transparent/alternating).</td></tr>
 
 <br />
 
-<a name="atdisable"></a>
-<table class="tablebox">
+<table class="tablebox" id="atdisable">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Disable auto-type for entries with empty fields</th></tr>
 <tr><td>Select nodes:</td>
@@ -211,8 +202,7 @@ user name field or an empty password field.</td></tr>
 
 <br />
 
-<a name="atdelayupper"></a>
-<table class="tablebox">
+<table class="tablebox" id="atdelayupper">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Convert <code>{DELAY=</code> to upper-case</th></tr>
 <tr><td>Select nodes:</td>
@@ -233,8 +223,7 @@ may be useful as preparation for the following example (which matches
 
 <br />
 
-<a name="ataddstddelay"></a>
-<table class="tablebox">
+<table class="tablebox" id="ataddstddelay">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Prepend <code>{DELAY=50}</code> to all sequences without a <code>{DELAY=</code></th></tr>
 <tr><td>Select nodes:</td>
@@ -258,8 +247,7 @@ This can e.g. be done using the XML Replace operation mentioned
 
 <br />
 
-<a name="atmodstddelay"></a>
-<table class="tablebox">
+<table class="tablebox" id="atmodstddelay">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Change <code>{DELAY=</code> values</th></tr>
 <tr><td>Select nodes:</td>
@@ -275,8 +263,7 @@ within auto-type sequence overrides and associations to 50.</td></tr>
 
 <br />
 
-<a name="atrmvstddelay"></a>
-<table class="tablebox">
+<table class="tablebox" id="atrmvstddelay">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Remove <code>{DELAY=<em>x</em>}</code> from all sequences</th></tr>
 <tr><td>Select nodes:</td>
@@ -292,8 +279,7 @@ all auto-type sequences.</td></tr>
 
 <br />
 
-<a name="atresetifstddelay"></a>
-<table class="tablebox">
+<table class="tablebox" id="atresetifstddelay">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Reset default sequences that contain <code>{DELAY=</code></th></tr>
 <tr><td>Select nodes:</td>
@@ -307,8 +293,7 @@ i.e. the option 'Inherit default auto-type sequence from group' is activated.</t
 
 <br />
 
-<a name="ataddassoc"></a>
-<table class="tablebox">
+<table class="tablebox" id="ataddassoc">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Add an auto-type association to all entries</th></tr>
 <tr><td>Select nodes:</td>
@@ -324,8 +309,7 @@ i.e. the option 'Inherit default auto-type sequence from group' is activated.</t
 
 <br />
 
-<a name="copyurls"></a>
-<table class="tablebox">
+<table class="tablebox" id="copyurls">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Copy entry URLs into title fields</th></tr>
 <tr><td>Select nodes:</td>
@@ -346,8 +330,7 @@ use the following for 'Select nodes':<br />
 
 <br />
 
-<a name="copytitles"></a>
-<table class="tablebox">
+<table class="tablebox" id="copytitles">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Copy entry titles into empty user name fields</th></tr>
 <tr><td>Select nodes:</td>
@@ -364,8 +347,7 @@ entry, if this field is empty.</td></tr>
 
 <br />
 
-<a name="firstnotempty"></a>
-<table class="tablebox">
+<table class="tablebox" id="firstnotempty">
 <colgroup><col style="width: 20%;" /><col style="width: 80%;" /></colgroup>
 <tr><th colspan="2">Ensure first line is not empty</th></tr>
 <tr><td>Select nodes:</td>

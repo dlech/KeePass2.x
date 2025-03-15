@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -45,7 +45,7 @@
 <ul>
 <li><a href="#intro">Introduction: What is Two-Channel Auto-Type Obfuscation?</a></li>
 <li><a href="#usage">When can Two-Channel Auto-Type Obfuscation be used?</a></li>
-<li><a href="#setup">How to enable / configure Two-Channel Auto-Type Obfuscation?</a></li>
+<li><a href="#setup">How to enable/configure Two-Channel Auto-Type Obfuscation?</a></li>
 </ul>
 
 </li>
@@ -63,9 +63,8 @@
 
 <br />
 
-<a name="intro"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Introduction: What is Two-Channel Auto-Type Obfuscation?</h2>
+<h2 class="sectiontitle" id="intro"><img src="../images/b16x16_help.png"
+alt="" /> Introduction: What is Two-Channel Auto-Type Obfuscation?</h2>
 
 <p>The <a href="../base/autotype.html">Auto-Type</a> feature of KeePass
 is very powerful: it sends simulated keypresses to other applications.
@@ -94,9 +93,8 @@ auto-type.</p>
 
 <br />
 
-<a name="usage"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-When can Two-Channel Auto-Type Obfuscation be used?</h2>
+<h2 class="sectiontitle" id="usage"><img src="../images/b16x16_help.png"
+alt="" /> When can Two-Channel Auto-Type Obfuscation be used?</h2>
 
 <p>TCATO cannot be used with all windows. The target window(s) must
 support clipboard operations and navigation within edit controls using arrow keys.
@@ -131,18 +129,16 @@ entry. You have to enable it explicitly on the <i>'Auto-Type'</i> tab page in th
 
 <br />
 
-<a name="setup"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-How to enable / configure Two-Channel Auto-Type Obfuscation?</h2>
+<h2 class="sectiontitle" id="setup"><img src="../images/b16x16_help.png"
+alt="" /> How to enable/configure Two-Channel Auto-Type Obfuscation?</h2>
 
 <p>All you need to do is to tick the checkbox <i>&quot;Two-channel auto-type obfuscation&quot;</i>
 of an entry ('Auto-Type' tab page of the entry editing window); KeePass will do the rest.</p>
 
 <br />
 
-<a name="tech"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_help.png" alt="" />
-Technical Overview</h2>
+<h2 class="sectiontitle" id="tech"><img src="../images/b16x16_help.png"
+alt="" /> Technical Overview</h2>
 
 <p>Instead of simply sending simulated keypresses to the target application (as normal
 auto-type does), obfuscated auto-type does the following:</p>
@@ -168,9 +164,8 @@ flat intertwining combs). Copy/paste the first part, merge the rest by sending k
 
 <br />
 
-<!-- <a name="clipblock"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="" />
-Clipboard Event Blocker</h2>
+<!-- <h2 class="sectiontitle" id="clipblock"><img src="../images/b16x16_file_locked.png"
+alt="" /> Clipboard Event Blocker</h2>
 
 <p>Because we are heavily using the clipboard, it is useful to block all
 current clipboard monitors. This means that no other applications will get
@@ -183,9 +178,8 @@ from receiving any events.</p>
 
 <br /> -->
 
-<a name="splittext"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="" />
-Intelligently Splitting the Text</h2>
+<h2 class="sectiontitle" id="splittext"><img src="../images/b16x16_kmultiple.png"
+alt="" /> Intelligently Splitting the Text</h2>
 
 <p>The text to be sent must first be split intelligently. Not all parts of the
 string can be sent using the clipboard: special key codes and key modifiers must be passed
@@ -219,9 +213,8 @@ be sent using the clipboard.</p>
 
 <br />
 
-<a name="splitsecret"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kmultiple.png" alt="" />
-Splitting the Secrets</h2>
+<h2 class="sectiontitle" id="splitsecret"><img src="../images/b16x16_kmultiple.png"
+alt="" /> Splitting the Secrets</h2>
 
 <p>Let's transfer &quot;mymail@myprovider.com&quot; to the target application using
 TCATO.<!--

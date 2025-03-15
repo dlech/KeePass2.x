@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -108,10 +108,9 @@ namespace KeePass.DataExchange.Formats
 					string strName = ReadNameAttrib(xmlChild);
 					if(string.IsNullOrEmpty(strName)) continue;
 
-					string strKpName = ImportUtil.MapNameToStandardField(strName, true);
-					if(string.IsNullOrEmpty(strKpName)) strKpName = strName;
+					strName = ImportUtil.MapName(strName, true);
 
-					ImportUtil.Add(pe, strKpName, xmlChild, pd);
+					ImportUtil.Add(pe, strName, xmlChild, pd);
 				}
 				else if(xmlChild.Name.Equals(ElemNotes, StrUtil.CaseIgnoreCmp))
 					ImportUtil.Add(pe, PwDefs.NotesField, xmlChild, pd);

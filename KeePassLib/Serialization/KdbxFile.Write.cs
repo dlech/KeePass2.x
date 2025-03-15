@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -492,7 +492,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemNotes, pg.Notes, true);
 			WriteObject(ElemIcon, (int)pg.IconId);
 			
-			if(!pg.CustomIconUuid.Equals(PwUuid.Zero))
+			if(!pg.CustomIconUuid.IsZero)
 				WriteObject(ElemCustomIconID, pg.CustomIconUuid);
 			
 			WriteList(ElemTimes, pg);
@@ -504,7 +504,7 @@ namespace KeePassLib.Serialization
 
 			if(m_uFileVersion >= FileVersion32_4_1)
 			{
-				if(!pg.PreviousParentGroup.Equals(PwUuid.Zero))
+				if(!pg.PreviousParentGroup.IsZero)
 					WriteObject(ElemPreviousParentGroup, pg.PreviousParentGroup);
 
 				List<string> lTags = pg.Tags;
@@ -530,7 +530,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemUuid, pe.Uuid);
 			WriteObject(ElemIcon, (int)pe.IconId);
 
-			if(!pe.CustomIconUuid.Equals(PwUuid.Zero))
+			if(!pe.CustomIconUuid.IsZero)
 				WriteObject(ElemCustomIconID, pe.CustomIconUuid);
 
 			WriteObject(ElemFgColor, StrUtil.ColorToUnnamedHtml(pe.ForegroundColor, true), false);
@@ -542,8 +542,7 @@ namespace KeePassLib.Serialization
 
 			WriteObject(ElemTags, StrUtil.TagsToString(pe.Tags, false), true);
 
-			if((m_uFileVersion >= FileVersion32_4_1) &&
-				!pe.PreviousParentGroup.Equals(PwUuid.Zero))
+			if((m_uFileVersion >= FileVersion32_4_1) && !pe.PreviousParentGroup.IsZero)
 				WriteObject(ElemPreviousParentGroup, pe.PreviousParentGroup);
 
 			WriteList(ElemTimes, pe);

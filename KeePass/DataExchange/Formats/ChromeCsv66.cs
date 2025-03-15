@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,11 +53,11 @@ namespace KeePass.DataExchange.Formats
 			CsvStreamReaderEx csr = new CsvStreamReaderEx(str, opt);
 
 			CsvTableEntryReader tr = new CsvTableEntryReader(pdStorage);
-			tr.SetDataAppend("name", PwDefs.TitleField);
-			tr.SetDataAppend("username", PwDefs.UserNameField);
-			tr.SetDataAppend("password", PwDefs.PasswordField);
-			tr.SetDataAppend("url", PwDefs.UrlField);
-			tr.SetDataAppend("note", PwDefs.NotesField);
+			tr.SetDataAdd("name", PwDefs.TitleField);
+			tr.SetDataAdd("username", PwDefs.UserNameField);
+			tr.SetDataAdd("password", PwDefs.PasswordField);
+			tr.SetDataAdd("url", PwDefs.UrlField);
+			tr.SetDataAdd("note", PwDefs.NotesField);
 
 			tr.Read(csr);
 		}

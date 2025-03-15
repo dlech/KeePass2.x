@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -292,10 +292,12 @@ namespace KeePass.App.Configuration
 		internal void OnLoad()
 		{
 			ulong uVersion = this.Meta.GetVersion();
-			AceMainWindow aceMW = this.MainWindow;
-			AceSecurity aceSec = this.Security;
-			AceSearch aceSearch = this.Search;
+			AceApplication aceApp = this.Application;
+			AceDefaults aceDef = this.Defaults;
 			AceIntegration aceInt = this.Integration;
+			AceMainWindow aceMW = this.MainWindow;
+			AceSearch aceSearch = this.Search;
+			AceSecurity aceSec = this.Security;
 
 			// aceInt.UrlSchemeOverrides.SetDefaultsIfEmpty();
 
@@ -344,6 +346,19 @@ namespace KeePass.App.Configuration
 					aceInt.UrlSchemeOverrides.BuiltInOverridesEnabled = 0;
 			}
 
+			// When the regular configuration file contains an MRU item with a
+			// relative path and the enforced configuration file contains a
+			// corresponding one with an absolute path, the path conversion may
+			// result in duplicate MRU items;
+			// cf. GetNodeKey and MruList.AddItem (CaseIgnoreCmp)
+			aceApp.MostRecentlyUsed.Items = new List<IOConnectionInfo>(
+				MemUtil.Distinct<IOConnectionInfo, string>(aceApp.MostRecentlyUsed.Items,
+				(ioc => ioc.GetDisplayName().ToUpperInvariant()), true));
+			// Cf. GetNodeKey and AceDefaults.GetKeyAssocIndex (CaseIgnoreCmp)
+			aceDef.KeySources = new List<AceKeyAssoc>(
+				MemUtil.Distinct<AceKeyAssoc, string>(aceDef.KeySources,
+				(a => a.DatabasePath.ToUpperInvariant()), true));
+
 			if(NativeLib.IsUnix())
 			{
 				aceSec.PreventScreenCapture = false;
@@ -367,7 +382,7 @@ namespace KeePass.App.Configuration
 			if(MonoWorkarounds.IsRequired(1418))
 			{
 				aceMW.MinimizeAfterOpeningDatabase = false;
-				this.Application.Start.MinimizedAndLocked = false;
+				aceApp.Start.MinimizedAndLocked = false;
 			}
 
 			if(MonoWorkarounds.IsRequired(1976))
@@ -708,7 +723,7 @@ namespace KeePass.App.Configuration
 					break;
 
 				case "/Configuration/Application/MostRecentlyUsed/Items/ConnectionInfo":
-					strA = XmlUtil.SafeInnerXml(xn, "Path");
+					strA = XmlUtil.SafeInnerXml(xn, "Path"); // Cf. OnLoad
 					strB = XmlUtil.SafeInnerXml(xn, "UserName"); // Cf. MRU display name
 					break;
 
@@ -721,7 +736,7 @@ namespace KeePass.App.Configuration
 					break;
 
 				case "/Configuration/Defaults/KeySources/Association":
-					strA = XmlUtil.SafeInnerXml(xn, "DatabasePath");
+					strA = XmlUtil.SafeInnerXml(xn, "DatabasePath"); // Cf. OnLoad
 					break;
 
 				case "/Configuration/Integration/UrlSchemeOverrides/CustomOverrides/Override":

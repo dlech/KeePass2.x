@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2024 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -73,9 +73,8 @@ There is no backdoor and no universal key that can open your database.</p>
 
 <br />
 
-<a name="password"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_password.png" alt="" />
-Master Password</h2>
+<h2 class="sectiontitle" id="password"><img src="../images/b16x16_password.png"
+alt="" /> Master Password</h2>
 
 <p>If you use a master password, you only have to remember one password or
 passphrase (which should be good!) to open your database.</p>
@@ -86,9 +85,8 @@ for details.</p>
 
 <br />
 
-<a name="keyfiles"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_file_locked.png" alt="" />
-Key File</h2>
+<h2 class="sectiontitle" id="keyfiles"><img src="../images/b16x16_file_locked.png"
+alt="" /> Key File</h2>
 
 <p>A key file is a file that contains a key (and possibly additional data,
 e.g. a hash that allows to verify the integrity of the key).
@@ -115,16 +113,24 @@ For example, you could store the key file on a separate USB stick.</p>
 
 <p><b>Hiding the location.</b>
 The key file <em>content</em> must be kept secret, not its location
-(file path/name).
-Trying to hide the key file (e.g. by storing it among
+(file path/name). Trying to hide the key file (e.g. by storing it among
 a thousand other files, in the hope that an attacker does not know which
 file is the correct one) typically does not increase the security, because
 it is easy to find out the correct file (e.g. by inspecting the last access
 times of files, lists of recently used files of the operating system,
-file system auditing logs, anti-virus software logs, etc.).
-KeePass has an option for remembering the paths of key files,
-which is turned on by default; turning it off typically just decreases
-the usability without increasing the security.</p>
+file system auditing logs, anti-virus software logs, etc.).</p>
+
+<p>KeePass has an option for remembering the paths of key files, which is turned
+on by default; turning it off typically just decreases the usability without
+increasing the security.
+This option only affects KeePass itself (i.e. turning it off does not prevent
+the operating system or other software from remembering the paths).
+If you only want to prevent a key file from appearing in the recently used files
+list of Windows (which does not really affect the security) after selecting it
+in KeePass, consider turning on the option for entering the master key on a
+<a href="security.html#secdesktop">secure desktop</a> (KeePass will then show a
+simpler key file selection dialog that does not add the file to the recently
+used files list of Windows).</p>
 
 <p><b>Backup.</b>
 You should create a backup of your key file (onto an independent data
@@ -191,9 +197,8 @@ in the master key creation dialog.
 
 <br /><br />
 
-<a name="winuser"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kdmconfig.png" alt="" />
-Windows User Account</h2>
+<h2 class="sectiontitle" id="winuser"><img src="../images/b16x16_kdmconfig.png"
+alt="" /> Windows User Account</h2>
 
 <br />
 
@@ -265,9 +270,8 @@ As such a backup is not encrypted, it must be stored in a secure location.<br />
 
 <br /><br />
 
-<a name="pwmin"></a>
-<h2 class="sectiontitle"><img src="../images/b16x16_kdmconfig.png" alt="" />
-For Administrators: Specifying Minimum Properties of Master Keys</h2>
+<h2 class="sectiontitle" id="pwmin"><img src="../images/b16x16_kdmconfig.png"
+alt="" /> For Administrators: Specifying Minimum Properties of Master Keys</h2>
 
 <p>Administrators can specify a minimum length
 and/or the minimum estimated quality that master passwords must have in

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -73,15 +73,15 @@ namespace KeePass.DataExchange.Formats
 				return str.Equals("http://sn", StrUtil.CaseIgnoreCmp);
 			};
 
-			ctr.SetDataAppend("name", PwDefs.TitleField);
-			ctr.SetDataAppend("username", PwDefs.UserNameField);
-			ctr.SetDataAppend("password", PwDefs.PasswordField);
+			ctr.SetDataAdd("name", PwDefs.TitleField);
+			ctr.SetDataAdd("username", PwDefs.UserNameField);
+			ctr.SetDataAdd("password", PwDefs.PasswordField);
 
 			ctr.SetDataHandler(strColUrl, delegate(string str, PwEntry pe,
 				string[] vContextRow)
 			{
 				if(!fIsSecNote(vContextRow))
-					ImportUtil.AppendToField(pe, PwDefs.UrlField, str, pd);
+					ImportUtil.Add(pe, PwDefs.UrlField, str, pd);
 			});
 
 			ctr.SetDataHandler("extra", delegate(string str, PwEntry pe,
@@ -94,7 +94,7 @@ namespace KeePass.DataExchange.Formats
 					return;
 				}
 
-				ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pd);
+				ImportUtil.Add(pe, PwDefs.NotesField, str, pd);
 			});
 
 			ctr.SetDataHandler("grouping", delegate(string str, PwEntry pe,
@@ -131,8 +131,7 @@ namespace KeePass.DataExchange.Formats
 				if((iFieldLen > 0) && !bNotesFound)
 				{
 					string strRaw = strLine.Substring(0, iFieldLen).Trim();
-					string strField = ImportUtil.MapNameToStandardField(strRaw, false);
-					if(string.IsNullOrEmpty(strField)) strField = strRaw;
+					string strField = ImportUtil.MapName(strRaw, false);
 
 					if(strField.Length != 0)
 					{
@@ -143,8 +142,7 @@ namespace KeePass.DataExchange.Formats
 					}
 				}
 
-				ImportUtil.AppendToField(pe, strFieldName, strLine.Substring(
-					iDataOffset), pd);
+				ImportUtil.Add(pe, strFieldName, strLine.Substring(iDataOffset), pd);
 			}
 		}
 	}

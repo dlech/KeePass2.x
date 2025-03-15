@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -52,8 +52,8 @@ namespace KeePass.Ecas
 		public EcasEventType(PwUuid puType, string strName, PwIcon pi,
 			EcasParameter[] vParams, EcasEventCompare f)
 		{
-			if((puType == null) || puType.Equals(PwUuid.Zero))
-				throw new ArgumentNullException("puType");
+			if(puType == null) throw new ArgumentNullException("puType");
+			if(puType.IsZero) throw new ArgumentOutOfRangeException("puType");
 			if(strName == null) throw new ArgumentNullException("strName");
 
 			m_puTypeE = puType;

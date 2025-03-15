@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -553,6 +553,12 @@ namespace KeePass.DataExchange
 			return string.Empty;
 		}
 
+		internal static string MapName(string strName, bool bAllowFuzzy)
+		{
+			string str = MapNameToStandardField(strName, bAllowFuzzy);
+			return ((str.Length != 0) ? str : (strName ?? string.Empty));
+		}
+
 		public static void AppendToField(PwEntry pe, string strName, string strValue,
 			PwDatabase pdContext)
 		{
@@ -567,11 +573,8 @@ namespace KeePass.DataExchange
 			if(strValue == null) { Debug.Assert(false); strValue = string.Empty; }
 
 			if(strSeparator == null)
-			{
-				if(PwDefs.IsStandardField(strName) && (strName != PwDefs.NotesField))
-					strSeparator = ", ";
-				else strSeparator = MessageService.NewLine;
-			}
+				strSeparator = (PwDefs.IsMultiLineField(strName) ?
+					MessageService.NewLine : ", ");
 
 			ProtectedString psEx = pe.Strings.Get(strName);
 			if((psEx == null) || psEx.IsEmpty)

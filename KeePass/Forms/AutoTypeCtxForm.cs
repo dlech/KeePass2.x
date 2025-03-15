@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@ using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
 
-using KeePassLib;
-
 namespace KeePass.Forms
 {
 	public partial class AutoTypeCtxForm : Form
@@ -57,7 +55,7 @@ namespace KeePass.Forms
 		public void InitEx(List<AutoTypeCtx> lCtxs, ImageList ilIcons)
 		{
 			m_lCtxs = lCtxs;
-			m_ilIcons = UIUtil.CloneImageList(ilIcons, true);
+			m_ilIcons = ilIcons;
 		}
 
 		public AutoTypeCtxForm()
@@ -85,9 +83,6 @@ namespace KeePass.Forms
 
 			UIUtil.SetExplorerTheme(m_lvItems, true);
 
-			if(m_ilIcons != null) m_lvItems.SmallImageList = m_ilIcons;
-			else { Debug.Assert(false); m_ilIcons = new ImageList(); }
-
 			m_bCanShowPasswords = AppPolicy.Current.UnhidePasswords;
 
 			RecreateEntryList();
@@ -114,12 +109,7 @@ namespace KeePass.Forms
 
 			DestroyToolsContextMenu();
 
-			if(m_ilIcons != null)
-			{
-				m_lvItems.SmallImageList = null; // Detach event handlers
-				m_ilIcons.Dispose();
-				m_ilIcons = null;
-			}
+			UIUtil.DisposeImageList(m_lvItems, m_ilIcons);
 
 			GlobalWindowManager.RemoveWindow(this);
 		}
@@ -127,12 +117,11 @@ namespace KeePass.Forms
 		private void RecreateEntryList()
 		{
 			long lFlags = Program.Config.UI.AutoTypeCtxFlags;
-
 			if(!m_bCanShowPasswords)
 				lFlags &= ~(long)AceAutoTypeCtxFlags.ColPassword;
 
 			UIUtil.CreateEntryList(m_lvItems, m_lCtxs, (AceAutoTypeCtxFlags)lFlags,
-				m_ilIcons);
+				m_ilIcons, true);
 		}
 
 		private void ProcessResize()
@@ -196,8 +185,8 @@ namespace KeePass.Forms
 
 			foreach(ToolStripItem tsi in m_tsmiColumns.DropDownItems)
 				tsi.Click -= this.OnToggleColumn;
-
 			m_tsmiColumns = null;
+
 			m_ctxTools.Dispose();
 			m_ctxTools = null;
 		}
@@ -206,8 +195,8 @@ namespace KeePass.Forms
 		{
 			DestroyToolsContextMenu();
 
-			m_ctxTools = new CustomContextMenuStripEx();
 			m_tsmiColumns = new ToolStripMenuItem(KPRes.Columns);
+			m_ctxTools = new CustomContextMenuStripEx();
 			m_ctxTools.Items.Add(m_tsmiColumns);
 
 			long lFlags = Program.Config.UI.AutoTypeCtxFlags;

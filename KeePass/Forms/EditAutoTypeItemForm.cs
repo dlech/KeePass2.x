@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2024 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -212,7 +212,7 @@ namespace KeePass.Forms
 				"APPDIR", "DB_PATH", "DB_DIR", "DB_NAME", "DB_BASENAME", "DB_EXT",
 				"ENV_DIRSEP", "ENV_PROGRAMFILES_X86", VkcBreak,
 
-				// "INTERNETEXPLORER", "FIREFOX", "OPERA", "GOOGLECHROME",
+				// "EDGE", "FIREFOX", "GOOGLECHROME", "INTERNETEXPLORER", "OPERA",
 				// "SAFARI", VkcBreak,
 
 				"DT_SIMPLE", "DT_YEAR", "DT_MONTH", "DT_DAY", "DT_HOUR", "DT_MINUTE",
@@ -225,11 +225,9 @@ namespace KeePass.Forms
 			RichTextBuilder rb = new RichTextBuilder();
 			rb.AppendLine(KPRes.StandardFields, FontStyle.Bold, null, null, strSfx, null);
 
-			rb.Append("{" + PwDefs.TitleField + "} ");
-			rb.Append("{" + PwDefs.UserNameField + "} ");
-			rb.Append("{" + PwDefs.PasswordField + "} ");
-			rb.Append("{" + PwDefs.UrlField + "} ");
-			rb.Append("{" + PwDefs.NotesField + "}");
+			List<string> lStd = PwDefs.GetStandardFields();
+			for(int i = 0; i < lStd.Count; ++i)
+				rb.Append(((i == 0) ? "{" : " {") + lStd[i].ToUpperInvariant() + "}");
 
 			bool bCustomInitialized = false, bFirst = true;
 			foreach(KeyValuePair<string, ProtectedString> kvp in m_vStringDict)
