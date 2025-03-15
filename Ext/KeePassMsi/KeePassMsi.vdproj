@@ -926,7 +926,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass: Copyright ï¿½ 2003-2025 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright © 2003-2025 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1049,7 +1049,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass: Copyright ï¿½ 2003-2025 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright © 2003-2025 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }

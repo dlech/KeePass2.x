@@ -85,7 +85,7 @@ BEGIN
             VALUE "FileDescription", "ShInstUtil - KeePass Helper Utility"
             VALUE "FileVersion", "2.58.0.0"
             VALUE "InternalName", "ShInstUtil"
-            VALUE "LegalCopyright", "Copyright ï¿½ 2007-2025 Dominik Reichl"
+            VALUE "LegalCopyright", "Copyright © 2007-2025 Dominik Reichl"
             VALUE "OriginalFilename", "ShInstUtil.exe"
             VALUE "ProductName", "ShInstUtil - KeePass Helper Utility"
             VALUE "ProductVersion", "2.58.0.0"
