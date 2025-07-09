@@ -303,6 +303,21 @@ namespace KeePassLib
 		UIIcon = 1
 	}
 
+	// Cf. System.Runtime.InteropServices.Architecture (since .NET 4.7.1).
+	internal enum ArchitectureEx
+	{
+		/// <summary>Unknown processor architecture.</summary>
+		None = 0,
+		/// <summary>32-bit x86 (x86-32).</summary>
+		X86,
+		/// <summary>64-bit x86 (x86-64).</summary>
+		X64,
+		/// <summary>32-bit ARM (ARM32).</summary>
+		Arm,
+		/// <summary>64-bit ARM (ARM64).</summary>
+		Arm64
+	}
+
 	public enum DesktopType
 	{
 		None = 0,

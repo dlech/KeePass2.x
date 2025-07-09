@@ -187,8 +187,6 @@ namespace KeePass.Forms
 			m_nLockTimerMax = (int)Program.Config.Security.WorkspaceLocking.LockAfterTime;
 			m_nClipClearMax = Program.Config.Security.ClipboardClearAfterSeconds;
 
-			NativeLib.AllowNative = Program.Config.Native.NativeKeyTransformations;
-
 			m_ctxEntryPreviewContextMenu.Attach(m_richEntryView, this);
 
 			m_dynStringsMenu = new DynamicMenu(m_menuEntryOtherData.DropDownItems);
@@ -1262,7 +1260,7 @@ namespace KeePass.Forms
 
 				GlobalWindowManager.CustomizeFormHandleCreated(this, null, true);
 
-				AppConfigSerializer.Save();
+				SaveConfig();
 				UpdateTrayIcon(true);
 			}
 			UIUtil.DestroyForm(ofDlg);

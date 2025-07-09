@@ -36,7 +36,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class XslTransform2x : FileFormatProvider
+	internal sealed class XslTransform2 : FileFormatProvider
 	{
 		private const string ParamXslFile = "XslFile";
 

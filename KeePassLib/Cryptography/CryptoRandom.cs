@@ -129,12 +129,7 @@ namespace KeePassLib.Cryptography
 			lock(m_oSyncRoot)
 			{
 				byte[] pbPool = m_pbEntropyPool.ReadData();
-				int cbPool = pbPool.Length;
-				int cbNew = pbNewData.Length;
-
-				byte[] pbCmp = new byte[cbPool + cbNew];
-				Array.Copy(pbPool, pbCmp, cbPool);
-				Array.Copy(pbNewData, 0, pbCmp, cbPool, cbNew);
+				byte[] pbCmp = MemUtil.Concat(pbPool, pbNewData);
 
 #if KeePassLibSD
 				using(SHA256Managed hPool = new SHA256Managed())
@@ -302,14 +297,7 @@ namespace KeePassLib.Cryptography
 				byte[] pbCtr = MemUtil.UInt64ToBytes(m_uCounter);
 				byte[] pbCsp = GetCspRandom();
 
-				int cbPool = pbPool.Length;
-				int cbCtr = pbCtr.Length;
-				int cbCsp = pbCsp.Length;
-
-				pbCmp = new byte[cbPool + cbCtr + cbCsp];
-				Array.Copy(pbPool, pbCmp, cbPool);
-				Array.Copy(pbCtr, 0, pbCmp, cbPool, cbCtr);
-				Array.Copy(pbCsp, 0, pbCmp, cbPool + cbCtr, cbCsp);
+				pbCmp = MemUtil.Concat(pbPool, pbCtr, pbCsp);
 
 				MemUtil.ZeroByteArray(pbPool);
 				MemUtil.ZeroByteArray(pbCtr);

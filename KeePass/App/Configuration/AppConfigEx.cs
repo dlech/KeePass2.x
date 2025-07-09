@@ -245,12 +245,12 @@ namespace KeePass.App.Configuration
 		{
 			get
 			{
-				return this.CustomConfig.Serialize(); // m_cc might be null
+				return this.CustomConfig.Serialize();
 			}
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				this.CustomConfig.Deserialize(value); // m_cc might be null
+				this.CustomConfig.Deserialize(value);
 			}
 		}
 
@@ -261,10 +261,11 @@ namespace KeePass.App.Configuration
 		/// </summary>
 		private void PrepareSave()
 		{
-			AceMeta aceMeta = this.Meta; // m_meta might be null
-			AceApplication aceApp = this.Application; // m_aceApp might be null
-			AceSearch aceSearch = this.Search; // m_aceSearch might be null
-			AceDefaults aceDef = this.Defaults; // m_def might be null
+			// Member variables might be null
+			AceMeta aceMeta = this.Meta;
+			AceApplication aceApp = this.Application;
+			AceSearch aceSearch = this.Search;
+			AceDefaults aceDef = this.Defaults;
 
 			aceMeta.Version = StrUtil.VersionToString(PwDefs.FileVersion64);
 			aceMeta.OmitItemsWithDefaultValues = true;
@@ -410,8 +411,8 @@ namespace KeePass.App.Configuration
 
 		private void ChangePathsRelAbs(bool bMakeAbsolute)
 		{
-			AceApplication aceApp = this.Application; // m_aceApp might be null
-			AceDefaults aceDef = this.Defaults; // m_def might be null
+			AceApplication aceApp = this.Application;
+			AceDefaults aceDef = this.Defaults;
 
 			ChangePathRelAbs(aceApp.LastUsedFile, bMakeAbsolute);
 
@@ -460,8 +461,8 @@ namespace KeePass.App.Configuration
 
 		private void ObfuscateCred(bool bObf)
 		{
-			AceApplication aceApp = this.Application; // m_aceApp might be null
-			AceIntegration aceInt = this.Integration; // m_int might be null
+			AceApplication aceApp = this.Application;
+			AceIntegration aceInt = this.Integration;
 
 			aceApp.LastUsedFile.Obfuscate(bObf);
 
@@ -501,7 +502,7 @@ namespace KeePass.App.Configuration
 
 		private void DpiScale()
 		{
-			AceMeta aceMeta = this.Meta; // m_meta might be null
+			AceMeta aceMeta = this.Meta;
 			double dCfgX = aceMeta.DpiFactorX, dCfgY = aceMeta.DpiFactorY;
 			double dScrX = DpiUtil.FactorX, dScrY = DpiUtil.FactorY;
 
@@ -583,9 +584,10 @@ namespace KeePass.App.Configuration
 
 		public void Apply(AceApplyFlags f)
 		{
-			AceApplication aceApp = this.Application; // m_aceApp might be null
-			AceSecurity aceSec = this.Security; // m_sec might be null
-			AceIntegration aceInt = this.Integration; // m_int might be null
+			AceApplication aceApp = this.Application;
+			AceIntegration aceInt = this.Integration;
+			AceNative aceNtv = this.Native;
+			AceSecurity aceSec = this.Security;
 
 			if((f & AceApplyFlags.Proxy) != AceApplyFlags.None)
 				IOConnection.SetProxy(aceInt.ProxyType, aceInt.ProxyAddress,
@@ -597,6 +599,9 @@ namespace KeePass.App.Configuration
 
 			if((f & AceApplyFlags.FileTransactions) != AceApplyFlags.None)
 				FileTransactionEx.ExtraSafe = aceApp.FileTxExtra;
+
+			if((f & AceApplyFlags.Native) != AceApplyFlags.None)
+				NativeLib.AllowNative = aceNtv.NativeKeyTransformations;
 		}
 
 		private static readonly Dictionary<object, string> g_dictXmlPathCache =
@@ -807,6 +812,7 @@ namespace KeePass.App.Configuration
 		Proxy = 0x1,
 		Ssl = 0x2,
 		FileTransactions = 0x4,
+		Native = 0x8,
 
 		All = 0x7FFF
 	}

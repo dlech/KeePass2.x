@@ -27,13 +27,11 @@ using System.Drawing;
 #endif
 
 using KeePassLib.Collections;
-using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Cryptography.KeyDerivation;
 using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
-using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -663,7 +661,7 @@ namespace KeePassLib
 		/// Save the currently open database. The file is written to the
 		/// location it has been opened from.
 		/// </summary>
-		/// <param name="slLogger">Logger that recieves status information.</param>
+		/// <param name="slLogger">Logger that receives status information.</param>
 		public void Save(IStatusLogger slLogger)
 		{
 			Debug.Assert(!HasDuplicateUuids());
@@ -706,7 +704,7 @@ namespace KeePassLib
 		/// currently open database is saved to the specified location, but it
 		/// isn't made the default location (i.e. no lock files will be moved for
 		/// example).</param>
-		/// <param name="slLogger">Logger that recieves status information.</param>
+		/// <param name="slLogger">Logger that receives status information.</param>
 		public void SaveAs(IOConnectionInfo ioConnection, bool bIsPrimaryNow,
 			IStatusLogger slLogger)
 		{
@@ -1345,8 +1343,8 @@ namespace KeePassLib
 		{
 			List<PwObjectBlock<T>> lBlocks = new List<PwObjectBlock<T>>();
 
-			Dictionary<PwUuid, bool> dItemUuids = new Dictionary<PwUuid, bool>();
-			foreach(T t in lItems) { dItemUuids[t.Uuid] = true; }
+			HashSet<PwUuid> hsItemUuids = new HashSet<PwUuid>();
+			foreach(T t in lItems) hsItemUuids.Add(t.Uuid);
 
 			uint n = lItems.UCount;
 			for(uint u = 0; u < n; ++u)
@@ -1377,7 +1375,7 @@ namespace KeePassLib
 						IStructureItem ptOrg = ppOrg.GetItemById(idOrgNext);
 						if(ptOrg == null) { idOrgNext = 0; break; }
 						if(ptOrg.Uuid.Equals(tNext.Uuid)) break; // Found it
-						if(dItemUuids.ContainsKey(ptOrg.Uuid)) { idOrgNext = 0; break; }
+						if(hsItemUuids.Contains(ptOrg.Uuid)) { idOrgNext = 0; break; }
 						++idOrgNext;
 					}
 					if(idOrgNext == 0) break;
@@ -1388,7 +1386,7 @@ namespace KeePassLib
 						IStructureItem ptSrc = ppSrc.GetItemById(idSrcNext);
 						if(ptSrc == null) { idSrcNext = 0; break; }
 						if(ptSrc.Uuid.Equals(tNext.Uuid)) break; // Found it
-						if(dItemUuids.ContainsKey(ptSrc.Uuid)) { idSrcNext = 0; break; }
+						if(hsItemUuids.Contains(ptSrc.Uuid)) { idSrcNext = 0; break; }
 						++idSrcNext;
 					}
 					if(idSrcNext == 0) break;
@@ -1796,14 +1794,13 @@ namespace KeePassLib
 			if(lUuids == null) { Debug.Assert(false); throw new ArgumentNullException("lUuids"); }
 			if(lUuids.Count == 0) return false;
 
-			Dictionary<PwUuid, bool> dToDel = new Dictionary<PwUuid, bool>();
-			foreach(PwUuid pu in lUuids) { dToDel[pu] = true; }
+			HashSet<PwUuid> hsToDel = new HashSet<PwUuid>(lUuids);
 
 			DateTime dt = DateTime.UtcNow;
 			for(int i = m_vCustomIcons.Count - 1; i >= 0; --i)
 			{
 				PwUuid pu = m_vCustomIcons[i].Uuid;
-				if(dToDel.ContainsKey(pu))
+				if(hsToDel.Contains(pu))
 				{
 					m_vCustomIcons[i] = null; // Removed below
 					m_vDeletedObjects.Add(new PwDeletedObject(pu, dt));
@@ -1819,20 +1816,20 @@ namespace KeePassLib
 
 		private void FixCustomIconRefs()
 		{
-			Dictionary<PwUuid, bool> d = new Dictionary<PwUuid, bool>();
-			foreach(PwCustomIcon ci in m_vCustomIcons) { d[ci.Uuid] = true; }
+			HashSet<PwUuid> hs = new HashSet<PwUuid>();
+			foreach(PwCustomIcon ci in m_vCustomIcons) hs.Add(ci.Uuid);
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				PwUuid pu = pg.CustomIconUuid;
-				if(pu.IsZero) return true;
-				if(!d.ContainsKey(pu)) pg.CustomIconUuid = PwUuid.Zero;
+				if(!pu.IsZero && !hs.Contains(pu))
+					pg.CustomIconUuid = PwUuid.Zero;
 				return true;
 			};
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				FixCustomIconRefs(pe, d);
+				FixCustomIconRefs(pe, hs);
 				return true;
 			};
 
@@ -1840,105 +1837,81 @@ namespace KeePassLib
 			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 		}
 
-		private void FixCustomIconRefs(PwEntry pe, Dictionary<PwUuid, bool> d)
+		private void FixCustomIconRefs(PwEntry pe, HashSet<PwUuid> hs)
 		{
 			PwUuid pu = pe.CustomIconUuid;
-			if(pu.IsZero) return;
-			if(!d.ContainsKey(pu)) pe.CustomIconUuid = PwUuid.Zero;
+			if(!pu.IsZero && !hs.Contains(pu))
+				pe.CustomIconUuid = PwUuid.Zero;
 
-			foreach(PwEntry peH in pe.History) FixCustomIconRefs(peH, d);
+			foreach(PwEntry peH in pe.History) FixCustomIconRefs(peH, hs);
 		}
 
-		private int GetTotalObjectUuidCount()
+		private long GetTotalObjectUuidCount()
 		{
 			uint uGroups, uEntries;
 			m_pgRootGroup.GetCounts(true, out uGroups, out uEntries);
 
-			uint uTotal = uGroups + uEntries + 1; // 1 for root group
-			if(uTotal > 0x7FFFFFFFU) { Debug.Assert(false); return 0x7FFFFFFF; }
-			return (int)uTotal;
+			return ((long)uGroups + (long)uEntries + 1); // 1 for root group
 		}
 
 		internal bool HasDuplicateUuids()
 		{
-			int nTotal = GetTotalObjectUuidCount();
-			Dictionary<PwUuid, object> d = new Dictionary<PwUuid, object>(nTotal);
+			HashSet<PwUuid> hs = new HashSet<PwUuid>();
 			bool bDupFound = false;
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				PwUuid pu = pg.Uuid;
-				if(d.ContainsKey(pu))
-				{
-					bDupFound = true;
-					return false;
-				}
-
-				d.Add(pu, null);
-				Debug.Assert(d.ContainsKey(pu));
+				if(!hs.Add(pg.Uuid)) { bDupFound = true; return false; }
 				return true;
 			};
-
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				PwUuid pu = pe.Uuid;
-				if(d.ContainsKey(pu))
-				{
-					bDupFound = true;
-					return false;
-				}
-
-				d.Add(pu, null);
-				Debug.Assert(d.ContainsKey(pu));
+				if(!hs.Add(pe.Uuid)) { bDupFound = true; return false; }
 				return true;
 			};
 
 			gh(m_pgRootGroup);
 			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-			Debug.Assert(bDupFound || (d.Count == nTotal));
+			Debug.Assert(bDupFound || (hs.Count == GetTotalObjectUuidCount()));
 			return bDupFound;
 		}
 
 		internal void FixDuplicateUuids()
 		{
-			int nTotal = GetTotalObjectUuidCount();
-			Dictionary<PwUuid, object> d = new Dictionary<PwUuid, object>(nTotal);
+			HashSet<PwUuid> hs = new HashSet<PwUuid>();
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				PwUuid pu = pg.Uuid;
-				if(d.ContainsKey(pu))
+				if(!hs.Add(pg.Uuid))
 				{
-					pu = new PwUuid(true);
-					while(d.ContainsKey(pu)) { Debug.Assert(false); pu = new PwUuid(true); }
-
-					pg.Uuid = pu;
+					while(true)
+					{
+						PwUuid pu = new PwUuid(true);
+						if(hs.Add(pu)) { pg.Uuid = pu; break; }
+						Debug.Assert(false);
+					}
 				}
-
-				d.Add(pu, null);
 				return true;
 			};
-
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				PwUuid pu = pe.Uuid;
-				if(d.ContainsKey(pu))
+				if(!hs.Add(pe.Uuid))
 				{
-					pu = new PwUuid(true);
-					while(d.ContainsKey(pu)) { Debug.Assert(false); pu = new PwUuid(true); }
-
-					pe.SetUuid(pu, true);
+					while(true)
+					{
+						PwUuid pu = new PwUuid(true);
+						if(hs.Add(pu)) { pe.SetUuid(pu, true); break; }
+						Debug.Assert(false);
+					}
 				}
-
-				d.Add(pu, null);
 				return true;
 			};
 
 			gh(m_pgRootGroup);
 			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-			Debug.Assert(d.Count == nTotal);
+			Debug.Assert(hs.Count == GetTotalObjectUuidCount());
 			Debug.Assert(!HasDuplicateUuids());
 		}
 
@@ -2137,42 +2110,42 @@ namespace KeePassLib
 
 		public uint DeleteUnusedCustomIcons()
 		{
-			Dictionary<PwUuid, bool> dToDel = new Dictionary<PwUuid, bool>();
-			foreach(PwCustomIcon ci in m_vCustomIcons) { dToDel[ci.Uuid] = true; }
+			HashSet<PwUuid> hsToDel = new HashSet<PwUuid>();
+			foreach(PwCustomIcon ci in m_vCustomIcons) hsToDel.Add(ci.Uuid);
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				PwUuid pu = pg.CustomIconUuid;
-				if(!pu.IsZero) dToDel.Remove(pu);
+				if(!pu.IsZero) hsToDel.Remove(pu);
 				return true;
 			};
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				RemoveCustomIconsFromDict(dToDel, pe);
+				RemoveCustomIconsFromSet(hsToDel, pe);
 				return true;
 			};
 
 			gh(m_pgRootGroup);
 			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-			uint cDel = (uint)dToDel.Count;
+			uint cDel = (uint)hsToDel.Count;
 			if(cDel != 0)
 			{
-				DeleteCustomIcons(new List<PwUuid>(dToDel.Keys));
+				DeleteCustomIcons(new List<PwUuid>(hsToDel));
 				m_bUINeedsIconUpdate = true;
 			}
 
 			return cDel;
 		}
 
-		private static void RemoveCustomIconsFromDict(Dictionary<PwUuid, bool> d,
+		private static void RemoveCustomIconsFromSet(HashSet<PwUuid> hs,
 			PwEntry pe)
 		{
 			PwUuid pu = pe.CustomIconUuid;
-			if(!pu.IsZero) d.Remove(pu);
+			if(!pu.IsZero) hs.Remove(pu);
 
-			foreach(PwEntry peH in pe.History) RemoveCustomIconsFromDict(d, peH);
+			foreach(PwEntry peH in pe.History) RemoveCustomIconsFromSet(hs, peH);
 		}
 
 		internal static void CopyCustomIcons(PwDatabase pdFrom, PwDatabase pdTo,

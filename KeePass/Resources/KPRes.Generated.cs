@@ -418,8 +418,6 @@ namespace KeePass.Resources
 			m_strFormat = TryGetEx(dictNew, "Format", m_strFormat);
 			m_strFormatNoDatabaseDesc = TryGetEx(dictNew, "FormatNoDatabaseDesc", m_strFormatNoDatabaseDesc);
 			m_strFormatNoDatabaseName = TryGetEx(dictNew, "FormatNoDatabaseName", m_strFormatNoDatabaseName);
-			m_strFormatNoRootEntries = TryGetEx(dictNew, "FormatNoRootEntries", m_strFormatNoRootEntries);
-			m_strFormatNoSubGroupsInRoot = TryGetEx(dictNew, "FormatNoSubGroupsInRoot", m_strFormatNoSubGroupsInRoot);
 			m_strFormatOnlyOneAttachment = TryGetEx(dictNew, "FormatOnlyOneAttachment", m_strFormatOnlyOneAttachment);
 			m_strGeneral = TryGetEx(dictNew, "General", m_strGeneral);
 			m_strGenerate = TryGetEx(dictNew, "Generate", m_strGenerate);
@@ -494,15 +492,10 @@ namespace KeePass.Resources
 			m_strItemsDisabled = TryGetEx(dictNew, "ItemsDisabled", m_strItemsDisabled);
 			m_strItemsNoSensitiveEsp = TryGetEx(dictNew, "ItemsNoSensitiveEsp", m_strItemsNoSensitiveEsp);
 			m_strIterations = TryGetEx(dictNew, "Iterations", m_strIterations);
-			m_strKdbKeePassLibC = TryGetEx(dictNew, "KdbKeePassLibC", m_strKdbKeePassLibC);
-			m_strKdbWUA = TryGetEx(dictNew, "KdbWUA", m_strKdbWUA);
+			m_strKdbMasterKeyCmp = TryGetEx(dictNew, "KdbMasterKeyCmp", m_strKdbMasterKeyCmp);
 			m_strKdbxFiles = TryGetEx(dictNew, "KdbxFiles", m_strKdbxFiles);
 			m_strKdfAdjust = TryGetEx(dictNew, "KdfAdjust", m_strKdfAdjust);
 			m_strKdfParams1Sec = TryGetEx(dictNew, "KdfParams1Sec", m_strKdfParams1Sec);
-			m_strKeePassLibCLong = TryGetEx(dictNew, "KeePassLibCLong", m_strKeePassLibCLong);
-			m_strKeePassLibCNotFound = TryGetEx(dictNew, "KeePassLibCNotFound", m_strKeePassLibCNotFound);
-			m_strKeePassLibCNotWindows = TryGetEx(dictNew, "KeePassLibCNotWindows", m_strKeePassLibCNotWindows);
-			m_strKeePassLibCNotWindowsHint = TryGetEx(dictNew, "KeePassLibCNotWindowsHint", m_strKeePassLibCNotWindowsHint);
 			m_strKeepExisting = TryGetEx(dictNew, "KeepExisting", m_strKeepExisting);
 			m_strKeyboardKeyAlt = TryGetEx(dictNew, "KeyboardKeyAlt", m_strKeyboardKeyAlt);
 			m_strKeyboardKeyCtrl = TryGetEx(dictNew, "KeyboardKeyCtrl", m_strKeyboardKeyCtrl);
@@ -615,7 +608,7 @@ namespace KeePass.Resources
 			m_strMoveUp = TryGetEx(dictNew, "MoveUp", m_strMoveUp);
 			m_strMultipleValues = TryGetEx(dictNew, "MultipleValues", m_strMultipleValues);
 			m_strName = TryGetEx(dictNew, "Name", m_strName);
-			m_strNativeLibUse = TryGetEx(dictNew, "NativeLibUse", m_strNativeLibUse);
+			m_strNativeLibUse2 = TryGetEx(dictNew, "NativeLibUse2", m_strNativeLibUse2);
 			m_strNavigation = TryGetEx(dictNew, "Navigation", m_strNavigation);
 			m_strNetwork = TryGetEx(dictNew, "Network", m_strNetwork);
 			m_strNeverExpires = TryGetEx(dictNew, "NeverExpires", m_strNeverExpires);
@@ -1405,8 +1398,6 @@ namespace KeePass.Resources
 			"Format",
 			"FormatNoDatabaseDesc",
 			"FormatNoDatabaseName",
-			"FormatNoRootEntries",
-			"FormatNoSubGroupsInRoot",
 			"FormatOnlyOneAttachment",
 			"General",
 			"Generate",
@@ -1481,15 +1472,10 @@ namespace KeePass.Resources
 			"ItemsDisabled",
 			"ItemsNoSensitiveEsp",
 			"Iterations",
-			"KdbKeePassLibC",
-			"KdbWUA",
+			"KdbMasterKeyCmp",
 			"KdbxFiles",
 			"KdfAdjust",
 			"KdfParams1Sec",
-			"KeePassLibCLong",
-			"KeePassLibCNotFound",
-			"KeePassLibCNotWindows",
-			"KeePassLibCNotWindowsHint",
 			"KeepExisting",
 			"KeyboardKeyAlt",
 			"KeyboardKeyCtrl",
@@ -1602,7 +1588,7 @@ namespace KeePass.Resources
 			"MoveUp",
 			"MultipleValues",
 			"Name",
-			"NativeLibUse",
+			"NativeLibUse2",
 			"Navigation",
 			"Network",
 			"NeverExpires",
@@ -6316,28 +6302,6 @@ namespace KeePass.Resources
 			get { return m_strFormatNoDatabaseName; }
 		}
 
-		private static string m_strFormatNoRootEntries =
-			@"This file format doesn't support root groups. All entries in the root group are moved to the first subgroup.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'This file format doesn&#39;t support root groups. All entries in the root group are moved to the first subgroup.'.
-		/// </summary>
-		public static string FormatNoRootEntries
-		{
-			get { return m_strFormatNoRootEntries; }
-		}
-
-		private static string m_strFormatNoSubGroupsInRoot =
-			@"To export to this file format, the root group must have at least one subgroup.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'To export to this file format, the root group must have at least one subgroup.'.
-		/// </summary>
-		public static string FormatNoSubGroupsInRoot
-		{
-			get { return m_strFormatNoSubGroupsInRoot; }
-		}
-
 		private static string m_strFormatOnlyOneAttachment =
 			@"This file format only supports one attachment per entry. Only the first attachment is saved, the others are ignored.";
 		/// <summary>
@@ -7152,26 +7116,15 @@ namespace KeePass.Resources
 			get { return m_strIterations; }
 		}
 
-		private static string m_strKdbKeePassLibC =
-			@"The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.";
+		private static string m_strKdbMasterKeyCmp =
+			@"KDB files can be encrypted with a master password and/or a key file, not with a Windows user account or a plugin.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.'.
+		/// 'KDB files can be encrypted with a master password and/or a key file, not with a Windows user account or a plugin.'.
 		/// </summary>
-		public static string KdbKeePassLibC
+		public static string KdbMasterKeyCmp
 		{
-			get { return m_strKdbKeePassLibC; }
-		}
-
-		private static string m_strKdbWUA =
-			@"KDB files can be encrypted using a master password and/or a key file, not using a Windows User Account.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'KDB files can be encrypted using a master password and/or a key file, not using a Windows User Account.'.
-		/// </summary>
-		public static string KdbWUA
-		{
-			get { return m_strKdbWUA; }
+			get { return m_strKdbMasterKeyCmp; }
 		}
 
 		private static string m_strKdbxFiles =
@@ -7205,50 +7158,6 @@ namespace KeePass.Resources
 		public static string KdfParams1Sec
 		{
 			get { return m_strKdfParams1Sec; }
-		}
-
-		private static string m_strKeePassLibCLong =
-			@"KeePassLibC (1.x File Support)";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'KeePassLibC (1.x File Support)'.
-		/// </summary>
-		public static string KeePassLibCLong
-		{
-			get { return m_strKeePassLibCLong; }
-		}
-
-		private static string m_strKeePassLibCNotFound =
-			@"KeePassLibC could not be found.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'KeePassLibC could not be found.'.
-		/// </summary>
-		public static string KeePassLibCNotFound
-		{
-			get { return m_strKeePassLibCNotFound; }
-		}
-
-		private static string m_strKeePassLibCNotWindows =
-			@"Importing/exporting data from/to KDB files is only supported on Windows (because a library is used that contains the core code of KeePass 1.x, which is Windows-only).";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Importing/exporting data from/to KDB files is only supported on Windows (because a library is used that contains the core code of KeePass 1.x, which is Windows-only).'.
-		/// </summary>
-		public static string KeePassLibCNotWindows
-		{
-			get { return m_strKeePassLibCNotWindows; }
-		}
-
-		private static string m_strKeePassLibCNotWindowsHint =
-			@"Please use a different file format for migrating your data.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'Please use a different file format for migrating your data.'.
-		/// </summary>
-		public static string KeePassLibCNotWindowsHint
-		{
-			get { return m_strKeePassLibCNotWindowsHint; }
 		}
 
 		private static string m_strKeepExisting =
@@ -8483,15 +8392,15 @@ namespace KeePass.Resources
 			get { return m_strName; }
 		}
 
-		private static string m_strNativeLibUse =
-			@"Use native library for faster key transformations";
+		private static string m_strNativeLibUse2 =
+			@"Use native support library (for faster key transformations, etc.)";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Use native library for faster key transformations'.
+		/// 'Use native support library (for faster key transformations, etc.)'.
 		/// </summary>
-		public static string NativeLibUse
+		public static string NativeLibUse2
 		{
-			get { return m_strNativeLibUse; }
+			get { return m_strNativeLibUse2; }
 		}
 
 		private static string m_strNavigation =

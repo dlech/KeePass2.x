@@ -27,20 +27,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_22BA2527C1AC43E5B61F88AA217DF2E2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2A0C1DA9803A47F5842BC63F7CC0FEBC"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_442863E39B69D2D0EE0DFF0823AF5611"
-        "OwnerKey" = "8:_8C05ADB649434D7892E36709EBDED4CC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -75,7 +63,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9BCEB0D341714092A0374B47DA8238DD"
+        "MsmKey" = "8:_9BA75AE35A1C4015BA2F966996B15553"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -111,6 +99,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D29ED0E92F1441F880E4320D589AD97C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DAAAE31B085C427CBA478B4E9F684B26"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FD15DCE9D96DECA1BB580526A7A931C7"
+        "OwnerKey" = "8:_8C05ADB649434D7892E36709EBDED4CC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_8C05ADB649434D7892E36709EBDED4CC"
         "MsmSig" = "8:_UNDEFINED"
@@ -118,13 +124,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_442863E39B69D2D0EE0DFF0823AF5611"
+        "OwnerKey" = "8:_C4F8814F844C43EE8C9F5B662182B11A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C4F8814F844C43EE8C9F5B662182B11A"
+        "OwnerKey" = "8:_FD15DCE9D96DECA1BB580526A7A931C7"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -252,26 +258,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_22BA2527C1AC43E5B61F88AA217DF2E2"
-            {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePassLibC32.dll"
-            "TargetName" = "8:KeePassLibC32.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2A0C1DA9803A47F5842BC63F7CC0FEBC"
             {
             "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePass.chm"
@@ -290,32 +276,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_442863E39B69D2D0EE0DFF0823AF5611"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.58.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                }
-            "SourcePath" = "8:KeePass.EXE"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_46CD3E3687454981A64BCF41FB207030"
@@ -382,7 +342,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.58.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.59.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -429,10 +389,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9BCEB0D341714092A0374B47DA8238DD"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9BA75AE35A1C4015BA2F966996B15553"
             {
-            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePassLibC64.dll"
-            "TargetName" = "8:KeePassLibC64.dll"
+            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePassLibN.x64.dll"
+            "TargetName" = "8:KeePassLibN.x64.dll"
             "Tag" = "8:"
             "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
             "Condition" = "8:"
@@ -533,7 +493,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.58.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.59.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -558,6 +518,77 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D29ED0E92F1441F880E4320D589AD97C"
+            {
+            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePassLibN.x32.dll"
+            "TargetName" = "8:KeePassLibN.x32.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DAAAE31B085C427CBA478B4E9F684B26"
+            {
+            "SourcePath" = "8:..\\..\\Build\\KeePass_Distrib\\KeePassLibN.a64.dll"
+            "TargetName" = "8:KeePassLibN.a64.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FD15DCE9D96DECA1BB580526A7A931C7"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.59.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_FD15DCE9D96DECA1BB580526A7A931C7"
+                    {
+                    "Name" = "8:KeePass.exe"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:KeePass.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
         }
@@ -682,16 +713,16 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:KeePass 2.58"
-        "ProductCode" = "8:{695A895D-DD4C-4E12-9A47-EECEC1AEFB28}"
-        "PackageCode" = "8:{E2BD210D-3692-4905-8FB7-13CBAA5E74EE}"
+        "ProductName" = "8:KeePass 2.59"
+        "ProductCode" = "8:{FBB2D312-7A6C-4CF9-A9B1-F7DADB0200CE}"
+        "PackageCode" = "8:{76030544-5455-4475-BB92-5FBFCA2D6CF4}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.58.0"
+        "ProductVersion" = "8:2.59.0"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://keepass.info/"

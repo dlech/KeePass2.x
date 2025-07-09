@@ -46,81 +46,141 @@ namespace KeePassLib.Native
 		// internal const uint TF_SFT_HIDDEN = 0x00000008;
 
 #if !KeePassUAP
-		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKey256")]
+		[DllImport(NativeLib.DllFileX32, EntryPoint = "AesKdfTransformHalf",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKey32(IntPtr pbBuf256,
-			IntPtr pbKey256, UInt64 uRounds);
+		private static extern bool AesKdfTransformHalfX32(IntPtr pbData16,
+			IntPtr pbSeed32, ulong uRounds);
 
-		[DllImport("KeePassLibC64.dll", EntryPoint = "TransformKey256")]
+		[DllImport(NativeLib.DllFileX64, EntryPoint = "AesKdfTransformHalf",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TransformKey64(IntPtr pbBuf256,
-			IntPtr pbKey256, UInt64 uRounds);
+		private static extern bool AesKdfTransformHalfX64(IntPtr pbData16,
+			IntPtr pbSeed32, ulong uRounds);
 
-		internal static bool TransformKey(IntPtr pbBuf256, IntPtr pbKey256,
-			UInt64 uRounds)
+		[DllImport(NativeLib.DllFileA64, EntryPoint = "AesKdfTransformHalf",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool AesKdfTransformHalfA64(IntPtr pbData16,
+			IntPtr pbSeed32, ulong uRounds);
+
+		internal static bool AesKdfTransformHalf(IntPtr pbData16, IntPtr pbSeed32,
+			ulong uRounds)
 		{
-			if(IntPtr.Size == 4)
-				return TransformKey32(pbBuf256, pbKey256, uRounds);
-			return TransformKey64(pbBuf256, pbKey256, uRounds);
+			ArchitectureEx a = NativeLib.ProcessArchitecture;
+
+			if(a == ArchitectureEx.X86)
+				return AesKdfTransformHalfX32(pbData16, pbSeed32, uRounds);
+			if(a == ArchitectureEx.X64)
+				return AesKdfTransformHalfX64(pbData16, pbSeed32, uRounds);
+			if(a == ArchitectureEx.Arm64)
+				return AesKdfTransformHalfA64(pbData16, pbSeed32, uRounds);
+
+			Debug.Assert(false);
+			return false;
 		}
 
-		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKeyBenchmark256")]
-		private static extern UInt64 TransformKeyBenchmark32(UInt32 uTimeMs);
+		[DllImport(NativeLib.DllFileX32, EntryPoint = "AesKdfTransformBenchmarkHalf",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern ulong AesKdfTransformBenchmarkHalfX32(uint uMilliseconds);
 
-		[DllImport("KeePassLibC64.dll", EntryPoint = "TransformKeyBenchmark256")]
-		private static extern UInt64 TransformKeyBenchmark64(UInt32 uTimeMs);
+		[DllImport(NativeLib.DllFileX64, EntryPoint = "AesKdfTransformBenchmarkHalf",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern ulong AesKdfTransformBenchmarkHalfX64(uint uMilliseconds);
 
-		internal static UInt64 TransformKeyBenchmark(UInt32 uTimeMs)
+		[DllImport(NativeLib.DllFileA64, EntryPoint = "AesKdfTransformBenchmarkHalf",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern ulong AesKdfTransformBenchmarkHalfA64(uint uMilliseconds);
+
+		internal static ulong AesKdfTransformBenchmarkHalf(uint uMilliseconds)
 		{
-			if(IntPtr.Size == 4)
-				return TransformKeyBenchmark32(uTimeMs);
-			return TransformKeyBenchmark64(uTimeMs);
+			ArchitectureEx a = NativeLib.ProcessArchitecture;
+
+			if(a == ArchitectureEx.X86)
+				return AesKdfTransformBenchmarkHalfX32(uMilliseconds);
+			if(a == ArchitectureEx.X64)
+				return AesKdfTransformBenchmarkHalfX64(uMilliseconds);
+			if(a == ArchitectureEx.Arm64)
+				return AesKdfTransformBenchmarkHalfA64(uMilliseconds);
+
+			Debug.Assert(false);
+			return 0;
 		}
 #endif
 
 		// =============================================================
-		// LibArgon2 20190702+
+		// LibArgon2 20190702/20210625+
+		// Cf. methods in 'NativeMethods.Unix.cs'.
 
-		[DllImport("KeePassLibC32.dll", EntryPoint = "argon2_hash")]
-		internal static extern int argon2_hash_w32(uint t_cost, uint m_cost,
+		[DllImport(NativeLib.DllFileX32, EntryPoint = "argon2_hash",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern int argon2_hash_x32(uint t_cost, uint m_cost,
 			uint parallelism, IntPtr pwd, IntPtr pwdlen, IntPtr salt,
 			IntPtr saltlen, IntPtr hash, IntPtr hashlen, IntPtr encoded,
 			IntPtr encodedlen, int type, uint version);
-		[DllImport("KeePassLibC64.dll", EntryPoint = "argon2_hash")]
-		internal static extern int argon2_hash_w64(uint t_cost, uint m_cost,
+
+		[DllImport(NativeLib.DllFileX64, EntryPoint = "argon2_hash",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern int argon2_hash_x64(uint t_cost, uint m_cost,
 			uint parallelism, IntPtr pwd, IntPtr pwdlen, IntPtr salt,
 			IntPtr saltlen, IntPtr hash, IntPtr hashlen, IntPtr encoded,
 			IntPtr encodedlen, int type, uint version);
-		// Cf. argon2_hash_u0 and argon2_hash_u1
 
-		/* [DllImport("KeePassLibC32.dll", EntryPoint = "TF_ShowLangBar")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TF_ShowLangBar32(UInt32 dwFlags);
+		[DllImport(NativeLib.DllFileA64, EntryPoint = "argon2_hash",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern int argon2_hash_a64(uint t_cost, uint m_cost,
+			uint parallelism, IntPtr pwd, IntPtr pwdlen, IntPtr salt,
+			IntPtr saltlen, IntPtr hash, IntPtr hashlen, IntPtr encoded,
+			IntPtr encodedlen, int type, uint version);
 
-		[DllImport("KeePassLibC64.dll", EntryPoint = "TF_ShowLangBar")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool TF_ShowLangBar64(UInt32 dwFlags);
-
-		internal static bool TfShowLangBar(uint dwFlags)
+		internal static int argon2_hash(uint t_cost, uint m_cost,
+			uint parallelism, IntPtr pwd, IntPtr pwdlen, IntPtr salt,
+			IntPtr saltlen, IntPtr hash, IntPtr hashlen, IntPtr encoded,
+			IntPtr encodedlen, int type, uint version)
 		{
-			if(IntPtr.Size == 4) return TF_ShowLangBar32(dwFlags);
-			return TF_ShowLangBar64(dwFlags);
-		} */
+			ArchitectureEx a = NativeLib.ProcessArchitecture;
 
-		[DllImport("KeePassLibC32.dll", EntryPoint = "ProtectProcessWithDacl")]
-		private static extern void ProtectProcessWithDacl32();
+			if(a == ArchitectureEx.X86)
+				return argon2_hash_x32(t_cost, m_cost, parallelism, pwd, pwdlen, salt,
+					saltlen, hash, hashlen, encoded, encodedlen, type, version);
+			if(a == ArchitectureEx.X64)
+				return argon2_hash_x64(t_cost, m_cost, parallelism, pwd, pwdlen, salt,
+					saltlen, hash, hashlen, encoded, encodedlen, type, version);
+			if(a == ArchitectureEx.Arm64)
+				return argon2_hash_a64(t_cost, m_cost, parallelism, pwd, pwdlen, salt,
+					saltlen, hash, hashlen, encoded, encodedlen, type, version);
 
-		[DllImport("KeePassLibC64.dll", EntryPoint = "ProtectProcessWithDacl")]
-		private static extern void ProtectProcessWithDacl64();
+			Debug.Assert(false);
+			return int.MinValue;
+		}
 
-		internal static void ProtectProcessWithDacl()
+		[DllImport(NativeLib.DllFileX32, EntryPoint = "AuxProtectProcessWithDacl",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern void AuxProtectProcessWithDaclX32();
+
+		[DllImport(NativeLib.DllFileX64, EntryPoint = "AuxProtectProcessWithDacl",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern void AuxProtectProcessWithDaclX64();
+
+		[DllImport(NativeLib.DllFileA64, EntryPoint = "AuxProtectProcessWithDacl",
+			ExactSpelling = true, CallingConvention = NativeLib.DllCallingConvention)]
+		private static extern void AuxProtectProcessWithDaclA64();
+
+		internal static void AuxProtectProcessWithDacl()
 		{
 			try
 			{
 				if(NativeLib.IsUnix()) return;
 
-				if(IntPtr.Size == 4) ProtectProcessWithDacl32();
-				else ProtectProcessWithDacl64();
+				ArchitectureEx a = NativeLib.ProcessArchitecture;
+
+				if(a == ArchitectureEx.X86)
+					AuxProtectProcessWithDaclX32();
+				else if(a == ArchitectureEx.X64)
+					AuxProtectProcessWithDaclX64();
+				else if(a == ArchitectureEx.Arm64)
+					AuxProtectProcessWithDaclA64();
+				else { Debug.Assert(false); }
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

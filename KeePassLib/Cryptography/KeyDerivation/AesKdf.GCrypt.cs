@@ -207,7 +207,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			return GCryptRun32(pbData32, pbKey32, ref uRounds, 0);
 		}
 
-		private static bool TransformKeyBenchmarkGCrypt(uint uTimeMs, out ulong uRounds)
+		private static bool TransformKeyGCryptBenchmark(uint uTimeMs, out ulong uRounds)
 		{
 			uRounds = 0;
 			if(uTimeMs == 0) { Debug.Assert(false); return true; }

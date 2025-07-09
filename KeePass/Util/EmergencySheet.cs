@@ -143,9 +143,9 @@ namespace KeePass.Util
 				return (bRtl ? StrUtil.EnsureLtrPath(str) : str);
 			};
 
-			StringBuilder sb = KeePassHtml2x.HtmlPart1ToHead(bRtl, strName +
+			StringBuilder sb = KeePassHtml2.HtmlPart1ToHead(bRtl, strName +
 				" - " + strDocKind);
-			KeePassHtml2x.HtmlPart2ToStyle(sb);
+			KeePassHtml2.HtmlPart2ToStyle(sb);
 
 			string strFont = "\"Arial\", \"Tahoma\", \"Verdana\", sans-serif;";
 			// https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
@@ -283,7 +283,7 @@ namespace KeePass.Util
 			sb.AppendLine("\tfont-size: 12pt;");
 			sb.AppendLine("}");
 
-			KeePassHtml2x.HtmlPart3ToBody(sb);
+			KeePassHtml2.HtmlPart3ToBody(sb);
 
 			ImageArchive ia = new ImageArchive();
 			ia.Load(Properties.Resources.Images_App_HighRes);
@@ -336,7 +336,7 @@ namespace KeePass.Util
 				GenerateKfb(sb, pd, strDbFile, strKeyFile,
 					h, ne, ltrPath, strFillInit, strFillInitEx, strFillEnd, strFill);
 
-			KeePassHtml2x.HtmlPart4ToEnd(sb);
+			KeePassHtml2.HtmlPart4ToEnd(sb);
 
 			string strDoc = sb.ToString();
 #if DEBUG

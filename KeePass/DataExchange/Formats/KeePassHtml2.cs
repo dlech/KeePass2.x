@@ -33,7 +33,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassHtml2x : FileFormatProvider
+	internal sealed class KeePassHtml2 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return false; } }
 		public override bool SupportsExport { get { return true; } }

@@ -21,14 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text;
 
 #if !KeePassUAP
 using System.Security.Cryptography;
 #endif
 
-using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography
@@ -178,39 +176,54 @@ namespace KeePassLib.Cryptography
 		}
 
 #if !KeePassUAP
-		private static bool? g_obAesCsp = null;
-		internal static SymmetricAlgorithm CreateAes()
+		internal static SymmetricAlgorithm CreateAes(int cKeyBits, CipherMode cm,
+			PaddingMode pm)
 		{
-			if(g_obAesCsp.HasValue)
-				return (g_obAesCsp.Value ? CreateAesCsp() : new RijndaelManaged());
+			SymmetricAlgorithm a = CreateAesCore();
 
-			SymmetricAlgorithm a = CreateAesCsp();
-			g_obAesCsp = (a != null);
-			return (a ?? new RijndaelManaged());
+			if(a.BlockSize != 128) { Debug.Assert(false); a.BlockSize = 128; }
+			a.KeySize = cKeyBits;
+			a.Mode = cm;
+			a.Padding = pm;
+
+			return a;
 		}
 
-		private static SymmetricAlgorithm CreateAesCsp()
+		private static SymmetricAlgorithm CreateAesCore()
 		{
+			// https://github.com/dotnet/runtime/issues/18012
+			/* try
+			{
+				Assembly asm = typeof(AesCryptoServiceProvider).Assembly;
+				Type tCng = asm.GetType("System.Security.Cryptography.AesCng", false);
+				if((tCng != null) && !MonoWorkarounds.IsRequired())
+				{
+					Type tLacs = asm.GetType("System.LocalAppContextSwitches", false);
+					if(tLacs != null)
+					{
+						PropertyInfo piNC = tLacs.GetProperty("SymmetricCngAlwaysUseNCrypt",
+							BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+						if((piNC != null) && !(bool)piNC.GetValue(null, null))
+							return (SymmetricAlgorithm)Activator.CreateInstance(tCng);
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); } */
+
 			try
 			{
-				// On Windows, the CSP implementation is only minimally
-				// faster (and for key derivations it's not used anyway,
-				// as KeePass uses a native implementation based on
-				// CNG/BCrypt, which is much faster)
-				if(!NativeLib.IsUnix()) return null;
-
-				string strFqn = Assembly.CreateQualifiedName(
-					"System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-					"System.Security.Cryptography.AesCryptoServiceProvider");
-
-				Type t = Type.GetType(strFqn);
-				if(t == null) return null;
-
-				return (Activator.CreateInstance(t) as SymmetricAlgorithm);
+				Aes a = Aes.Create();
+				if(a != null) return a;
+				Debug.Assert(false);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			return null;
+			try { return new AesCryptoServiceProvider(); }
+			catch(Exception) { Debug.Assert(false); }
+
+			RijndaelManaged r = new RijndaelManaged();
+			r.BlockSize = 128;
+			return r;
 		}
 #endif
 

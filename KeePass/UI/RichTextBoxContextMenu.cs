@@ -220,7 +220,7 @@ namespace KeePass.UI
 
 		private void OnDeleteCommand(object sender, EventArgs e)
 		{
-			// The following resets formattings
+			// The following resets formatting
 			/* int nStart = m_rtb.SelectionStart, nLength = m_rtb.SelectionLength;
 			if((nStart < 0) || (nLength <= 0)) return;
 			string strText = m_rtb.Text;

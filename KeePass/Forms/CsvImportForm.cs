@@ -28,6 +28,7 @@ using System.Windows.Forms;
 
 using KeePass.App;
 using KeePass.DataExchange;
+using KeePass.DataExchange.Formats;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
@@ -550,7 +551,7 @@ namespace KeePass.Forms
 			if(bCreatePreview) m_lvImportPreview.BeginUpdate();
 
 			DateTime dtNow = DateTime.UtcNow;
-			DateTime dtNoExpire = KdbTime.NeverExpireTime.ToDateTime();
+			DateTime dtNeverExpires = (new KeePassKdb1()).NeverExpiresTime;
 			bool bIgnoreFirstRow = m_cbIgnoreFirst.Checked;
 			bool bIsFirstRow = true;
 			bool bMergeGroups = m_cbMergeGroups.Checked;
@@ -606,7 +607,7 @@ namespace KeePass.Forms
 						bool bParseSuccess;
 						pe.ExpiryTime = ParseDateTime(ref strField, cfi, dtNow,
 							out bParseSuccess);
-						pe.Expires = (bParseSuccess && (pe.ExpiryTime != dtNoExpire));
+						pe.Expires = (bParseSuccess && (pe.ExpiryTime != dtNeverExpires));
 					}
 					else if(cfi.Type == CsvFieldType.Tags)
 						StrUtil.AddTags(pe.Tags, StrUtil.StringToTags(strField));

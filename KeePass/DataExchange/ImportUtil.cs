@@ -344,7 +344,7 @@ namespace KeePass.DataExchange
 				UIUtil.DestroyForm(iocf);
 			}
 
-			return Import(pd, new KeePassKdb2x(), lConnections.ToArray(),
+			return Import(pd, new KeePassKdbx2(), lConnections.ToArray(),
 				true, uiOps, false, fParent);
 		}
 
@@ -361,7 +361,7 @@ namespace KeePass.DataExchange
 
 			IOConnectionInfo[] vConnections = new IOConnectionInfo[1] { iocSyncWith };
 
-			bool? ob = Import(pd, new KeePassKdb2x(), vConnections,
+			bool? ob = Import(pd, new KeePassKdbx2(), vConnections,
 				true, uiOps, bForceSave, fParent);
 
 			// Always raise the post event, such that the event pair can

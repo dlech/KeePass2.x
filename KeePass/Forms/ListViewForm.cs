@@ -581,8 +581,8 @@ namespace KeePass.Forms
 
 			GFunc<string, string> h = new GFunc<string, string>(StrUtil.StringToHtml);
 
-			StringBuilder sb = KeePassHtml2x.HtmlPart1ToHead(bRtl, m_strTitle);
-			KeePassHtml2x.HtmlPart2ToStyle(sb);
+			StringBuilder sb = KeePassHtml2.HtmlPart1ToHead(bRtl, m_strTitle);
+			KeePassHtml2.HtmlPart2ToStyle(sb);
 
 			sb.AppendLine("body {");
 			sb.AppendLine("\tcolor: #000000;");
@@ -675,7 +675,7 @@ namespace KeePass.Forms
 				sb.AppendLine("}");
 			}
 
-			KeePassHtml2x.HtmlPart3ToBody(sb);
+			KeePassHtml2.HtmlPart3ToBody(sb);
 
 			sb.AppendLine("<h2>" + h(m_strTitle) + "</h2>");
 
@@ -795,7 +795,7 @@ namespace KeePass.Forms
 			PerformExport(fGroup, fItem);
 			fEnsureTable(false);
 
-			KeePassHtml2x.HtmlPart4ToEnd(sb);
+			KeePassHtml2.HtmlPart4ToEnd(sb);
 			return sb.ToString();
 		}
 

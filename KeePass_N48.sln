@@ -1,12 +1,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeePass_2", "KeePass\KeePass_2.csproj", "{10938016-DEE2-4A25-9A5A-8FD3444379CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeePass_N48", "KeePass\KeePass_N48.csproj", "{10938016-DEE2-4A25-9A5A-8FD3444379CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeePassLib_2", "KeePassLib\KeePassLib_2.csproj", "{53573E4E-33CB-4FDB-8698-C95F5E40E7F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeePassLib_N48", "KeePassLib\KeePassLib_N48.csproj", "{53573E4E-33CB-4FDB-8698-C95F5E40E7F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrlUtil_2", "Translation\TrlUtil\TrlUtil_2.csproj", "{B7E890E7-BF50-4450-9A52-C105BD98651C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrlUtil_N48", "Translation\TrlUtil\TrlUtil_N48.csproj", "{B7E890E7-BF50-4450-9A52-C105BD98651C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +61,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {EA0FDB55-6CD5-425E-A67B-EEA40DCC85B1}
+		SolutionGuid = {16B215C4-1BB7-4346-9D2F-82E9DB40901A}
 	EndGlobalSection
 EndGlobal

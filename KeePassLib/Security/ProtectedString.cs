@@ -412,11 +412,7 @@ namespace KeePassLib.Security
 			try
 			{
 				vB = b.ReadChars();
-
-				vNew = new char[vA.Length + vB.Length];
-				Array.Copy(vA, vNew, vA.Length);
-				Array.Copy(vB, 0, vNew, vA.Length, vB.Length);
-
+				vNew = MemUtil.Concat(vA, vB);
 				pbNew = StrUtil.Utf8.GetBytes(vNew);
 				ps = new ProtectedString(true, pbNew);
 			}

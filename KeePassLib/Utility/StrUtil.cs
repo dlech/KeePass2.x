@@ -1535,13 +1535,11 @@ namespace KeePassLib.Utility
 			if(lTags.Count >= 2)
 			{
 				// Deduplicate
-				Dictionary<string, bool> d = new Dictionary<string, bool>();
-				for(int i = lTags.Count - 1; i >= 0; --i)
-					d[lTags[i]] = true;
-				if(d.Count != lTags.Count)
+				HashSet<string> hs = new HashSet<string>(lTags);
+				if(hs.Count != lTags.Count)
 				{
 					lTags.Clear();
-					lTags.AddRange(d.Keys);
+					lTags.AddRange(hs);
 				}
 
 				lTags.Sort(StrUtil.CompareNaturally);
@@ -1643,13 +1641,13 @@ namespace KeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Split a string and include the separators in the splitted array.
+		/// Split a string and include the separators in the split array.
 		/// </summary>
 		/// <param name="str">String to split.</param>
 		/// <param name="vSeps">Separators.</param>
 		/// <param name="bCaseSensitive">Specifies whether separators are
 		/// matched case-sensitively or not.</param>
-		/// <returns>Splitted string including separators.</returns>
+		/// <returns>Split string including separators.</returns>
 		public static List<string> SplitWithSep(string str, string[] vSeps,
 			bool bCaseSensitive)
 		{
@@ -2157,6 +2155,24 @@ namespace KeePassLib.Utility
 			}
 
 			return (iB == cB);
+		}
+
+		internal static byte[] GetBytesSZ(string str, Encoding enc)
+		{
+			if(enc == null) throw new ArgumentNullException("enc");
+
+			int cbNull;
+			if(enc is UTF8Encoding) cbNull = 1;
+			else if(enc is UnicodeEncoding) cbNull = 2;
+			else throw new ArgumentOutOfRangeException("enc");
+
+			Debug.Assert(str != null);
+			if(string.IsNullOrEmpty(str)) return new byte[cbNull];
+
+			int cb = enc.GetByteCount(str);
+			byte[] pb = new byte[cb + cbNull];
+			enc.GetBytes(str, 0, str.Length, pb, 0);
+			return pb;
 		}
 	}
 }

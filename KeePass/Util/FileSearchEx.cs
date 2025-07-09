@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -157,18 +158,16 @@ namespace KeePass.Util
 			string[] vSfx = g_vQuickSuffixes;
 			if(vSfx == null)
 			{
-				Dictionary<string, bool> d = new Dictionary<string, bool>(
-					StrUtil.CaseIgnoreComparer);
+				string[] vAll = new string[] {
+					"." + AppDefs.FileExtension.FileExt,
+					"." + KeePassKdb1.FileExt1,
+					"." + KeePassKdb1.FileExt2,
+					FileTransactionEx.StrTempSuffix,
+					FileTransactionEx.StrTxfTempSuffix
+				};
+				Debug.Assert(vAll.All(str => !string.IsNullOrEmpty(str)));
 
-				d["." + AppDefs.FileExtension.FileExt] = true;
-				d["." + KeePassKdb1x.FileExt1] = true;
-				d["." + KeePassKdb1x.FileExt2] = true;
-				d[FileTransactionEx.StrTempSuffix] = true;
-				d[FileTransactionEx.StrTxfTempSuffix] = true;
-
-				if(d.ContainsKey(string.Empty)) { Debug.Assert(false); d.Remove(string.Empty); }
-
-				vSfx = (new List<string>(d.Keys)).ToArray();
+				vSfx = vAll.Distinct(StrUtil.CaseIgnoreComparer).ToArray();
 				g_vQuickSuffixes = vSfx;
 			}
 
@@ -209,7 +208,7 @@ namespace KeePass.Util
 									" (" + PwDefs.ShortProductName + " 2.x)");
 							if(u == u1x)
 								return new FsxResult(strFile,
-									KeePassKdb1x.FileExt1.ToUpperInvariant() +
+									KeePassKdb1.FileExt1.ToUpperInvariant() +
 									" (" + PwDefs.ShortProductName + " 1.x)");
 						}
 					}

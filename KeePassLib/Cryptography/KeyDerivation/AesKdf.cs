@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 #if KeePassUAP
 using Org.BouncyCastle.Crypto;
@@ -44,7 +45,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 		public static readonly string ParamSeed = "S"; // Byte[32]
 		public static readonly string ParamRounds = "R"; // UInt64
 
-		private const ulong BenchStep = 3001;
+		private const int AkcBufferBlocks = 8192;
 
 		public override PwUuid Uuid
 		{
@@ -112,175 +113,193 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			return TransformKey(pbMsg, pbSeed, uRounds);
 		}
 
-		private static byte[] TransformKey(byte[] pbOriginalKey32, byte[] pbSeed32,
-			ulong uNumRounds)
+		private static byte[] TransformKey(byte[] pbData32, byte[] pbSeed32,
+			ulong uRounds)
 		{
-			Debug.Assert((pbOriginalKey32 != null) && (pbOriginalKey32.Length == 32));
-			if(pbOriginalKey32 == null) throw new ArgumentNullException("pbOriginalKey32");
-			if(pbOriginalKey32.Length != 32) throw new ArgumentException();
-
-			Debug.Assert((pbSeed32 != null) && (pbSeed32.Length == 32));
+			if(pbData32 == null) throw new ArgumentNullException("pbData32");
+			if(pbData32.Length != 32) throw new ArgumentOutOfRangeException("pbData32");
 			if(pbSeed32 == null) throw new ArgumentNullException("pbSeed32");
-			if(pbSeed32.Length != 32) throw new ArgumentException();
+			if(pbSeed32.Length != 32) throw new ArgumentOutOfRangeException("pbSeed32");
 
-			byte[] pbNewKey = new byte[32];
-			Array.Copy(pbOriginalKey32, pbNewKey, pbNewKey.Length);
+			byte[] pbTrf32 = new byte[32];
+			Array.Copy(pbData32, pbTrf32, 32);
 
 			try
 			{
-				if(NativeLib.TransformKey256(pbNewKey, pbSeed32, uNumRounds))
-					return CryptoUtil.HashSha256(pbNewKey);
+				if(NativeLib.TransformKey256(pbTrf32, pbSeed32, uRounds))
+					return CryptoUtil.HashSha256(pbTrf32);
 
-				if(TransformKeyGCrypt(pbNewKey, pbSeed32, uNumRounds))
-					return CryptoUtil.HashSha256(pbNewKey);
+				if(TransformKeyGCrypt(pbTrf32, pbSeed32, uRounds))
+					return CryptoUtil.HashSha256(pbTrf32);
 
-				if(TransformKeyManaged(pbNewKey, pbSeed32, uNumRounds))
-					return CryptoUtil.HashSha256(pbNewKey);
+				TransformKeyManaged(pbTrf32, pbSeed32, uRounds);
+				return CryptoUtil.HashSha256(pbTrf32);
 			}
-			finally { MemUtil.ZeroByteArray(pbNewKey); }
-
-			return null;
+			finally { MemUtil.ZeroByteArray(pbTrf32); }
 		}
 
-		internal static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbSeed32,
-			ulong uNumRounds)
+		internal static void TransformKeyManaged(byte[] pbData32, byte[] pbSeed32,
+			ulong uRounds)
 		{
+			if(uRounds == 0) return;
+
 #if KeePassUAP
 			KeyParameter kp = new KeyParameter(pbSeed32);
 			AesEngine aes = new AesEngine();
 			aes.Init(true, kp);
 
-			for(ulong u = 0; u < uNumRounds; ++u)
+			for(ulong u = 0; u < uRounds; ++u)
 			{
-				aes.ProcessBlock(pbNewKey32, 0, pbNewKey32, 0);
-				aes.ProcessBlock(pbNewKey32, 16, pbNewKey32, 16);
+				aes.ProcessBlock(pbData32, 0, pbData32, 0);
+				aes.ProcessBlock(pbData32, 16, pbData32, 16);
 			}
 
 			aes.Reset();
 #else
-			byte[] pbIV = new byte[16];
-
-			using(SymmetricAlgorithm a = CryptoUtil.CreateAes())
+			byte[] pbDataL = null, pbDataR = null;
+			try
 			{
-				if(a.BlockSize != 128) // AES block size
-				{
-					Debug.Assert(false);
-					a.BlockSize = 128;
-				}
-				a.KeySize = 256;
-				a.Mode = CipherMode.ECB;
+				pbDataL = MemUtil.Mid(pbData32, 0, 16);
+				pbDataR = MemUtil.Mid(pbData32, 16, 16);
 
-				using(ICryptoTransform t = a.CreateEncryptor(pbSeed32, pbIV))
-				{
-					// !t.CanReuseTransform -- doesn't work with Mono
-					if((t == null) || (t.InputBlockSize != 16) ||
-						(t.OutputBlockSize != 16))
-					{
-						Debug.Assert(false);
-						return false;
-					}
+				Exception exL = null, exR = null;
 
-					for(ulong u = 0; u < uNumRounds; ++u)
+				Thread thL = new Thread(new ThreadStart(() => { exL =
+					TransformKeyManagedHalf(pbDataL, pbSeed32, uRounds); }));
+				Thread thR = new Thread(new ThreadStart(() => { exR =
+					TransformKeyManagedHalf(pbDataR, pbSeed32, uRounds); }));
+				thL.Start();
+				thR.Start();
+				thL.Join();
+				thR.Join();
+
+				if(exL != null) throw new Exception(null, exL);
+				if(exR != null) throw new Exception(null, exR);
+
+				Array.Copy(pbDataL, 0, pbData32, 0, 16);
+				Array.Copy(pbDataR, 0, pbData32, 16, 16);
+			}
+			finally
+			{
+				MemUtil.ZeroByteArray(pbDataL);
+				MemUtil.ZeroByteArray(pbDataR);
+			}
+#endif
+		}
+
+		private static Exception TransformKeyManagedHalf(byte[] pbData16,
+			byte[] pbSeed32, ulong uRounds)
+		{
+			byte[] pbBuf = null;
+			try
+			{
+				byte[] pbZero = new byte[AkcBufferBlocks * 16];
+				pbBuf = new byte[AkcBufferBlocks * 16];
+
+				using(SymmetricAlgorithm a = CryptoUtil.CreateAes(256, CipherMode.CBC,
+					PaddingMode.None))
+				{
+					using(ICryptoTransform t = a.CreateEncryptor(pbSeed32, pbData16))
 					{
-						t.TransformBlock(pbNewKey32, 0, 16, pbNewKey32, 0);
-						t.TransformBlock(pbNewKey32, 16, 16, pbNewKey32, 16);
+						while(true)
+						{
+							ulong cBlocks = Math.Min(uRounds, (ulong)AkcBufferBlocks);
+							int cBytes = (int)cBlocks << 4;
+
+							t.TransformBlock(pbZero, 0, cBytes, pbBuf, 0);
+
+							uRounds -= cBlocks;
+							if(uRounds == 0)
+							{
+								if(cBytes == 0) { Debug.Assert(false); }
+								else Array.Copy(pbBuf, cBytes - 16, pbData16, 0, 16);
+
+								break;
+							}
+						}
 					}
 				}
 			}
-#endif
+			catch(Exception ex) { Debug.Assert(false); return ex; }
+			finally { MemUtil.ZeroByteArray(pbBuf); }
 
-			return true;
+			return null;
 		}
 
 		public override KdfParameters GetBestParameters(uint uMilliseconds)
 		{
-			KdfParameters p = GetDefaultParameters();
 			ulong uRounds;
 
-			// Try native method
-			if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
+			if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds)) { }
+			else if(TransformKeyGCryptBenchmark(uMilliseconds, out uRounds)) { }
+			else
 			{
-				p.SetUInt64(ParamRounds, uRounds);
-				return p;
+				Exception exL = null, exR = null;
+				ulong uRoundsL = 0, uRoundsR = 0;
+
+				Thread thL = new Thread(new ThreadStart(() => { exL =
+					TransformKeyManagedBenchmarkHalf(uMilliseconds, out uRoundsL); }));
+				Thread thR = new Thread(new ThreadStart(() => { exR =
+					TransformKeyManagedBenchmarkHalf(uMilliseconds, out uRoundsR); }));
+				thL.Start();
+				thR.Start();
+				thL.Join();
+				thR.Join();
+
+				if(exL != null) throw new Exception(null, exL);
+				if(exR != null) throw new Exception(null, exR);
+
+				uRounds = (uRoundsL >> 1) + (uRoundsR >> 1);
 			}
 
-			if(TransformKeyBenchmarkGCrypt(uMilliseconds, out uRounds))
-			{
-				p.SetUInt64(ParamRounds, uRounds);
-				return p;
-			}
-
-			byte[] pbKey = new byte[32];
-			byte[] pbNewKey = new byte[32];
-			for(int i = 0; i < pbKey.Length; ++i)
-			{
-				pbKey[i] = (byte)i;
-				pbNewKey[i] = (byte)i;
-			}
-
-#if KeePassUAP
-			KeyParameter kp = new KeyParameter(pbKey);
-			AesEngine aes = new AesEngine();
-			aes.Init(true, kp);
-#else
-			byte[] pbIV = new byte[16];
-
-			using(SymmetricAlgorithm a = CryptoUtil.CreateAes())
-			{
-				if(a.BlockSize != 128) // AES block size
-				{
-					Debug.Assert(false);
-					a.BlockSize = 128;
-				}
-				a.KeySize = 256;
-				a.Mode = CipherMode.ECB;
-
-				using(ICryptoTransform t = a.CreateEncryptor(pbKey, pbIV))
-				{
-					// !t.CanReuseTransform -- doesn't work with Mono
-					if((t == null) || (t.InputBlockSize != 16) ||
-						(t.OutputBlockSize != 16))
-					{
-						Debug.Assert(false);
-						p.SetUInt64(ParamRounds, PwDefs.DefaultKeyEncryptionRounds);
-						return p;
-					}
-#endif
-
-					uRounds = 0;
-					int tStart = Environment.TickCount;
-					while(true)
-					{
-						for(ulong j = 0; j < BenchStep; ++j)
-						{
-#if KeePassUAP
-							aes.ProcessBlock(pbNewKey, 0, pbNewKey, 0);
-							aes.ProcessBlock(pbNewKey, 16, pbNewKey, 16);
-#else
-							t.TransformBlock(pbNewKey, 0, 16, pbNewKey, 0);
-							t.TransformBlock(pbNewKey, 16, 16, pbNewKey, 16);
-#endif
-						}
-
-						uRounds += BenchStep;
-						if(uRounds < BenchStep) // Overflow check
-						{
-							uRounds = ulong.MaxValue;
-							break;
-						}
-
-						uint tElapsed = (uint)(Environment.TickCount - tStart);
-						if(tElapsed > uMilliseconds) break;
-					}
-
-					p.SetUInt64(ParamRounds, uRounds);
-#if KeePassUAP
-					aes.Reset();
-#else
-				}
-			}
-#endif
+			KdfParameters p = GetDefaultParameters();
+			if(uRounds != 0) p.SetUInt64(ParamRounds, uRounds);
+			else { Debug.Assert(false); }
 			return p;
+		}
+
+		private static Exception TransformKeyManagedBenchmarkHalf(uint uMilliseconds,
+			out ulong uRounds)
+		{
+			uRounds = 0;
+
+			try
+			{
+				const ulong cBlocks = AkcBufferBlocks;
+				const int cBytes = checked((int)cBlocks * 16);
+
+				byte[] pbData16 = new byte[16];
+				byte[] pbSeed32 = new byte[32];
+				byte[] pbZero = new byte[cBytes];
+				byte[] pbBuf = new byte[cBytes];
+
+				Random r = CryptoRandom.NewWeakRandom();
+				r.NextBytes(pbData16);
+				r.NextBytes(pbSeed32);
+
+				using(SymmetricAlgorithm a = CryptoUtil.CreateAes(256, CipherMode.CBC,
+					PaddingMode.None))
+				{
+					using(ICryptoTransform t = a.CreateEncryptor(pbSeed32, pbData16))
+					{
+						int tStart = Environment.TickCount;
+						while((uint)(Environment.TickCount - tStart) <= uMilliseconds)
+						{
+							t.TransformBlock(pbZero, 0, cBytes, pbBuf, 0);
+
+							uRounds += cBlocks;
+							if(uRounds < cBlocks) // Overflow check
+							{
+								uRounds = ulong.MaxValue;
+								break;
+							}
+						}
+					}
+				}
+			}
+			catch(Exception ex) { Debug.Assert(false); return ex; }
+
+			return null;
 		}
 	}
 }

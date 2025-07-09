@@ -107,7 +107,7 @@ namespace KeePass.DataExchange.Formats
 			if(string.IsNullOrEmpty(strFavsRoot)) return false;
 
 			uint uTotalGroups, uTotalEntries, uEntriesProcessed = 0;
-			pwExportInfo.DataGroup.GetCounts(true, out uTotalGroups, out uTotalEntries);
+			pg.GetCounts(true, out uTotalGroups, out uTotalEntries);
 
 			if(!m_bInRoot) // In folder
 			{
@@ -121,14 +121,14 @@ namespace KeePass.DataExchange.Formats
 					WaitForDirCommit(strFavsSub, false);
 				}
 
-				ExportGroup(pwExportInfo.DataGroup, strFavsSub, slLogger,
-					uTotalEntries, ref uEntriesProcessed, pwExportInfo);
+				ExportGroup(pg, strFavsSub, slLogger, uTotalEntries,
+					ref uEntriesProcessed, pwExportInfo);
 			}
 			else // In root
 			{
 				DeletePreviousExport(strFavsRoot, slLogger);
-				ExportGroup(pwExportInfo.DataGroup, strFavsRoot, slLogger,
-					uTotalEntries, ref uEntriesProcessed, pwExportInfo);
+				ExportGroup(pg, strFavsRoot, slLogger, uTotalEntries,
+					ref uEntriesProcessed, pwExportInfo);
 			}
 
 			Debug.Assert(uEntriesProcessed == uTotalEntries);

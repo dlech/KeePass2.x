@@ -731,6 +731,34 @@ namespace KeePassLib.Utility
 			}
 		}
 
+		internal static T[] Concat<T>(T[] v1, T[] v2)
+		{
+			if(v1 == null) { Debug.Assert(false); v1 = EmptyArray<T>(); }
+			if(v2 == null) { Debug.Assert(false); v2 = EmptyArray<T>(); }
+
+			int c1 = v1.Length, c2 = v2.Length;
+
+			T[] v = new T[c1 + c2]; // Overflow => negative => exception; no data copied
+			Array.Copy(v1, 0, v, 0, c1);
+			Array.Copy(v2, 0, v, c1, c2);
+			return v;
+		}
+
+		internal static T[] Concat<T>(T[] v1, T[] v2, T[] v3)
+		{
+			if(v1 == null) { Debug.Assert(false); v1 = EmptyArray<T>(); }
+			if(v2 == null) { Debug.Assert(false); v2 = EmptyArray<T>(); }
+			if(v3 == null) { Debug.Assert(false); v3 = EmptyArray<T>(); }
+
+			int c1 = v1.Length, c2 = v2.Length, c3 = v3.Length;
+
+			T[] v = new T[checked(c1 + c2 + c3)]; // Overflow => exception; no data copied
+			Array.Copy(v1, 0, v, 0, c1);
+			Array.Copy(v2, 0, v, c1, c2);
+			Array.Copy(v3, 0, v, c1 + c2, c3);
+			return v;
+		}
+
 		public static int IndexOf<T>(T[] vHaystack, T[] vNeedle)
 			where T : IEquatable<T>
 		{
@@ -776,23 +804,17 @@ namespace KeePassLib.Utility
 			if(a == null) throw new ArgumentNullException("a");
 			if(b == null) throw new ArgumentNullException("b");
 
-			Dictionary<T, bool> d = ((cmp != null) ?
-				(new Dictionary<T, bool>(cmp)) : (new Dictionary<T, bool>()));
+			HashSet<T> hs = ((cmp != null) ? (new HashSet<T>(cmp)) :
+				(new HashSet<T>()));
 
 			foreach(T ta in a)
 			{
-				if(d.ContainsKey(ta)) continue; // Prevent duplicates
-
-				d[ta] = true;
-				yield return ta;
+				if(hs.Add(ta)) yield return ta; // Prevent duplicates
 			}
 
 			foreach(T tb in b)
 			{
-				if(d.ContainsKey(tb)) continue; // Prevent duplicates
-
-				d[tb] = true;
-				yield return tb;
+				if(hs.Add(tb)) yield return tb; // Prevent duplicates
 			}
 
 			yield break;
@@ -804,15 +826,12 @@ namespace KeePassLib.Utility
 			if(a == null) throw new ArgumentNullException("a");
 			if(b == null) throw new ArgumentNullException("b");
 
-			Dictionary<T, bool> d = ((cmp != null) ?
-				(new Dictionary<T, bool>(cmp)) : (new Dictionary<T, bool>()));
-
-			foreach(T tb in b) { d[tb] = true; }
+			HashSet<T> hs = ((cmp != null) ? (new HashSet<T>(b, cmp)) :
+				(new HashSet<T>(b)));
 
 			foreach(T ta in a)
 			{
-				if(d.Remove(ta)) // Prevent duplicates
-					yield return ta;
+				if(hs.Remove(ta)) yield return ta; // Prevent duplicates
 			}
 
 			yield break;
@@ -824,17 +843,12 @@ namespace KeePassLib.Utility
 			if(a == null) throw new ArgumentNullException("a");
 			if(b == null) throw new ArgumentNullException("b");
 
-			Dictionary<T, bool> d = ((cmp != null) ?
-				(new Dictionary<T, bool>(cmp)) : (new Dictionary<T, bool>()));
-
-			foreach(T tb in b) { d[tb] = true; }
+			HashSet<T> hs = ((cmp != null) ? (new HashSet<T>(b, cmp)) :
+				(new HashSet<T>(b)));
 
 			foreach(T ta in a)
 			{
-				if(d.ContainsKey(ta)) continue;
-
-				d[ta] = true; // Prevent duplicates
-				yield return ta;
+				if(hs.Add(ta)) yield return ta; // Prevent duplicates
 			}
 
 			yield break;
@@ -846,7 +860,7 @@ namespace KeePassLib.Utility
 			if(s == null) throw new ArgumentNullException("s");
 			if(fGetKey == null) throw new ArgumentNullException("fGetKey");
 
-			Dictionary<TKey, bool> d = new Dictionary<TKey, bool>();
+			HashSet<TKey> hs = new HashSet<TKey>();
 
 			if(bPreferLast)
 			{
@@ -857,7 +871,7 @@ namespace KeePassLib.Utility
 				for(int i = n - 1; i >= 0; --i)
 				{
 					TKey k = fGetKey(l[i]);
-					if(!d.ContainsKey(k)) { d[k] = true; v[i] = true; }
+					if(hs.Add(k)) v[i] = true;
 				}
 
 				for(int i = 0; i < n; ++i)
@@ -870,7 +884,7 @@ namespace KeePassLib.Utility
 				foreach(T t in s)
 				{
 					TKey k = fGetKey(t);
-					if(!d.ContainsKey(k)) { d[k] = true; yield return t; }
+					if(hs.Add(k)) yield return t;
 				}
 			}
 
@@ -914,6 +928,13 @@ namespace KeePassLib.Utility
 			return r;
 		}
 
+		/// <summary>
+		/// Safely dispose an object if possible. Examples:
+		/// <c>RNGCryptoServiceProvider</c> does not implement <c>IDisposable</c>
+		/// in .NET 3.5, but in later .NET versions it does;
+		/// the <c>Dispose</c> method of <c>SymmetricAlgorithm</c> in .NET 3.5
+		/// is not public; etc.
+		/// </summary>
 		[MethodImpl(MioNoOptimize)]
 		internal static void DisposeIfPossible(object o)
 		{

@@ -171,15 +171,8 @@ namespace KeePassLib.Keys
 				pbKey = pbRandom;
 			else
 			{
-				int cbAdd = pbAdditionalEntropy.Length;
-				int cbRnd = pbRandom.Length;
-
-				byte[] pbCmp = new byte[cbAdd + cbRnd];
-				Array.Copy(pbAdditionalEntropy, 0, pbCmp, 0, cbAdd);
-				Array.Copy(pbRandom, 0, pbCmp, cbAdd, cbRnd);
-
+				byte[] pbCmp = MemUtil.Concat(pbAdditionalEntropy, pbRandom);
 				pbKey = CryptoUtil.HashSha256(pbCmp);
-
 				MemUtil.ZeroByteArray(pbCmp);
 			}
 

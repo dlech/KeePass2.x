@@ -28,17 +28,17 @@ namespace KeePassLib.Cryptography
 {
 	public static class PopularPasswords
 	{
-		private static readonly Dictionary<int, Dictionary<char[], bool>> g_dicts =
-			new Dictionary<int, Dictionary<char[], bool>>();
+		private static readonly Dictionary<int, HashSet<char[]>> g_dSets =
+			new Dictionary<int, HashSet<char[]>>();
 
 		internal static int MaxLength
 		{
 			get
 			{
-				Debug.Assert(g_dicts.Count > 0); // Should be initialized
+				Debug.Assert(g_dSets.Count > 0); // Should be initialized
 
 				int iMaxLen = 0;
-				foreach(int iLen in g_dicts.Keys)
+				foreach(int iLen in g_dSets.Keys)
 				{
 					if(iLen > iMaxLen) iMaxLen = iLen;
 				}
@@ -49,8 +49,8 @@ namespace KeePassLib.Cryptography
 
 		internal static bool ContainsLength(int nLength)
 		{
-			Dictionary<char[], bool> dDummy;
-			return g_dicts.TryGetValue(nLength, out dDummy);
+			HashSet<char[]> hsDummy;
+			return g_dSets.TryGetValue(nLength, out hsDummy);
 		}
 
 		public static bool IsPopularPassword(char[] vPassword)
@@ -77,17 +77,17 @@ namespace KeePassLib.Cryptography
 
 		private static bool IsPopularPasswordPriv(char[] vPassword, out ulong uDictSize)
 		{
-			Debug.Assert(g_dicts.Count > 0); // Should be initialized with data
+			Debug.Assert(g_dSets.Count > 0); // Should be initialized
 
-			Dictionary<char[], bool> d;
-			if(!g_dicts.TryGetValue(vPassword.Length, out d))
+			HashSet<char[]> hs;
+			if(!g_dSets.TryGetValue(vPassword.Length, out hs))
 			{
 				uDictSize = 0;
 				return false;
 			}
 
-			uDictSize = (ulong)d.Count;
-			return d.ContainsKey(vPassword);
+			uDictSize = (ulong)hs.Count;
+			return hs.Contains(vPassword);
 		}
 
 		public static void Add(byte[] pbData, bool bGZipped)
@@ -113,14 +113,14 @@ namespace KeePassLib.Cryptography
 							char[] vWord = new char[cc];
 							sb.CopyTo(0, vWord, 0, cc);
 
-							Dictionary<char[], bool> d;
-							if(!g_dicts.TryGetValue(cc, out d))
+							HashSet<char[]> hs;
+							if(!g_dSets.TryGetValue(cc, out hs))
 							{
-								d = new Dictionary<char[], bool>(MemUtil.ArrayHelperExOfChar);
-								g_dicts[cc] = d;
+								hs = new HashSet<char[]>(MemUtil.ArrayHelperExOfChar);
+								g_dSets[cc] = hs;
 							}
 
-							d[vWord] = true;
+							hs.Add(vWord);
 							sb.Remove(0, cc);
 						}
 					}

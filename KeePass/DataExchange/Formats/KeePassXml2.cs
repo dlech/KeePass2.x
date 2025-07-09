@@ -31,7 +31,7 @@ using KeePassLib.Serialization;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassXml2x : FileFormatProvider
+	internal sealed class KeePassXml2 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return true; } }

@@ -68,7 +68,7 @@ namespace KeePassLib.Serialization
 		/// entries to write. If <c>null</c>, the complete database will
 		/// be written.</param>
 		/// <param name="fmt">Format of the file to create.</param>
-		/// <param name="slLogger">Logger that recieves status information.</param>
+		/// <param name="slLogger">Logger that receives status information.</param>
 		public void Save(Stream sSaveTo, PwGroup pgDataSource, KdbxFormat fmt,
 			IStatusLogger slLogger)
 		{

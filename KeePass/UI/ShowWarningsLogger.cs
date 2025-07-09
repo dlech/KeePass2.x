@@ -38,7 +38,7 @@ namespace KeePass.UI
 	public sealed class ShowWarningsLogger : IStatusLogger
 	{
 		private readonly StatusBarLogger m_sblDefault;
-		private StatusLoggerForm m_slForm = null;
+		private StatusLoggerForm m_slf = null;
 		private readonly Form m_fTaskbarWindow;
 
 		private bool m_bActive = false;
@@ -47,6 +47,8 @@ namespace KeePass.UI
 
 		private readonly List<KeyValuePair<LogStatusType, string>> m_lCachedMessages =
 			new List<KeyValuePair<LogStatusType, string>>();
+
+		internal bool IsFormShown { get { return (m_slf != null); } }
 
 		[Obsolete]
 		public ShowWarningsLogger(StatusBarLogger sblDefault) :
@@ -85,8 +87,8 @@ namespace KeePass.UI
 
 			if(m_sblDefault != null)
 				m_sblDefault.StartLogging(strOperation, bWriteOperationToLog);
-			if(m_slForm != null)
-				m_slForm.StartLogging(strOperation, bWriteOperationToLog);
+			if(m_slf != null)
+				m_slf.StartLogging(strOperation, bWriteOperationToLog);
 			if(m_fTaskbarWindow != null)
 			{
 				TaskbarList.SetProgressValue(m_fTaskbarWindow, 0, 100);
@@ -105,7 +107,7 @@ namespace KeePass.UI
 			Debug.Assert(m_bActive);
 
 			if(m_sblDefault != null) m_sblDefault.EndLogging();
-			if(m_slForm != null) m_slForm.EndLogging();
+			if(m_slf != null) m_slf.EndLogging();
 			SetStyle(TbpFlag.NoProgress);
 
 			m_bActive = false;
@@ -120,9 +122,9 @@ namespace KeePass.UI
 			{
 				if(!m_sblDefault.SetProgress(uPercent)) b = false;
 			}
-			if(m_slForm != null)
+			if(m_slf != null)
 			{
-				if(!m_slForm.SetProgress(uPercent)) b = false;
+				if(!m_slf.SetProgress(uPercent)) b = false;
 			}
 			if(m_fTaskbarWindow != null)
 			{
@@ -137,24 +139,24 @@ namespace KeePass.UI
 		{
 			Debug.Assert(m_bActive);
 
-			if((m_slForm == null) && ((lsType == LogStatusType.Warning) ||
+			if((m_slf == null) && ((lsType == LogStatusType.Warning) ||
 				(lsType == LogStatusType.Error)))
 			{
-				m_slForm = new StatusLoggerForm();
-				m_slForm.InitEx(false);
+				m_slf = new StatusLoggerForm();
+				m_slf.InitEx(false);
 
-				m_slForm.Show();
-				m_slForm.BringToFront();
+				m_slf.Show();
+				m_slf.BringToFront();
 
 				bool bLoggingStarted = false;
 				foreach(KeyValuePair<LogStatusType, string> kvp in m_lCachedMessages)
 				{
 					if(!bLoggingStarted)
 					{
-						m_slForm.StartLogging(kvp.Value, true);
+						m_slf.StartLogging(kvp.Value, true);
 						bLoggingStarted = true;
 					}
-					else m_slForm.SetText(kvp.Value, kvp.Key);
+					else m_slf.SetText(kvp.Value, kvp.Key);
 				}
 				Debug.Assert(bLoggingStarted);
 
@@ -166,12 +168,12 @@ namespace KeePass.UI
 			{
 				if(!m_sblDefault.SetText(strNewText, lsType)) b = false;
 			}
-			if(m_slForm != null)
+			if(m_slf != null)
 			{
-				if(!m_slForm.SetText(strNewText, lsType)) b = false;
+				if(!m_slf.SetText(strNewText, lsType)) b = false;
 			}
 
-			if(m_slForm == null)
+			if(m_slf == null)
 				m_lCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
 					lsType, strNewText));
 
@@ -183,9 +185,9 @@ namespace KeePass.UI
 			Debug.Assert(m_bActive);
 
 			bool b = !m_bCancelled;
-			if(m_slForm != null)
+			if(m_slf != null)
 			{
-				if(!m_slForm.ContinueWork()) b = false;
+				if(!m_slf.ContinueWork()) b = false;
 			}
 			if(m_sblDefault != null)
 			{

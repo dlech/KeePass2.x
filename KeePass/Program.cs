@@ -642,7 +642,7 @@ namespace KeePass
 			AppPolicy.ApplyToConfig();
 
 			if(g_appConfig.Security.ProtectProcessWithDacl)
-				KeePassLib.Native.NativeMethods.ProtectProcessWithDacl();
+				KeePassLib.Native.NativeMethods.AuxProtectProcessWithDacl();
 
 			g_appConfig.Apply(AceApplyFlags.All);
 
@@ -1125,11 +1125,11 @@ namespace KeePass
 
 				XmlDocument xd = XmlUtilEx.LoadXmlDocument(strPath, StrUtil.Utf8);
 
-				XmlNamespaceManager nm = new XmlNamespaceManager(xd.NameTable);
+				XmlNamespaceManager xnm = new XmlNamespaceManager(xd.NameTable);
 				const string strAsm1P = "asm1";
 				const string strAsm1U = "urn:schemas-microsoft-com:asm.v1";
-				string strU = nm.LookupNamespace(strAsm1P);
-				if(strU == null) nm.AddNamespace(strAsm1P, strAsm1U);
+				string strU = xnm.LookupNamespace(strAsm1P);
+				if(strU == null) xnm.AddNamespace(strAsm1P, strAsm1U);
 				else fAssert((strU == strAsm1U), true);
 
 				fAssertEx(xd.SelectSingleNode(
@@ -1147,7 +1147,7 @@ namespace KeePass
 						strAsm1P + ":assemblyBinding/" +
 						strAsm1P + ":dependentAssembly[" +
 						strAsm1P + ":assemblyIdentity/@name = \"KeePass\"]/" +
-						strAsm1P + ":bindingRedirect", nm);
+						strAsm1P + ":bindingRedirect", xnm);
 					fAssertEx(xn);
 
 					// XmlAttribute xa = xn.Attributes["oldVersion"];

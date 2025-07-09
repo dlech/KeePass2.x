@@ -137,14 +137,11 @@ namespace KeePass.Util
 				}
 
 				List<string> lCur = StrUtil.StringToTags(tb.Text);
-
-				Dictionary<string, bool> dCur = new Dictionary<string, bool>();
-				foreach(string strTag in lCur) dCur[strTag] = true;
+				HashSet<string> hsCur = new HashSet<string>(lCur);
 
 				List<string> lParent = ((pgParent != null) ?
 					pgParent.GetTagsInherited(true) : new List<string>());
-				Dictionary<string, bool> dParent = new Dictionary<string, bool>();
-				foreach(string strTag in lParent) dParent[strTag] = true;
+				HashSet<string> hsParent = new HashSet<string>(lParent);
 
 				List<string> lAll = new List<string>(lCur);
 				if(pgTagsSource != null)
@@ -170,8 +167,8 @@ namespace KeePass.Util
 					for(int i = 0; i < lAll.Count; ++i)
 					{
 						string strTag = lAll[i]; // Used in Click handler
-						bool bHasTag = dCur.ContainsKey(strTag);
-						bool bInh = dParent.ContainsKey(strTag);
+						bool bHasTag = hsCur.Contains(strTag);
+						bool bInh = hsParent.Contains(strTag);
 
 						string strSuffix = string.Empty;
 						if(bInh) strSuffix = " (" + KPRes.Inherited + ")";

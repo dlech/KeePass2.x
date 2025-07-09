@@ -34,11 +34,6 @@ namespace KeePassLib.Cryptography.Cipher
 {
 	public sealed class StandardAesEngine : ICipherEngine
 	{
-#if !KeePassUAP
-		private const CipherMode SaeCipherMode = CipherMode.CBC;
-		private const PaddingMode SaePaddingMode = PaddingMode.PKCS7;
-#endif
-
 		private static PwUuid g_uuidAes = null;
 		public static PwUuid AesUuid
 		{
@@ -66,7 +61,7 @@ namespace KeePassLib.Cryptography.Cipher
 		{
 			get
 			{
-				return ("AES/Rijndael (" + KLRes.KeyBits.Replace(@"{PARAM}",
+				return ("AES/Rijndael (" + KLRes.KeyBits.Replace("{PARAM}",
 					"256") + ", FIPS 197)");
 			}
 		}
@@ -100,15 +95,8 @@ namespace KeePassLib.Cryptography.Cipher
 #if KeePassUAP
 			return StandardAesEngineExt.CreateStream(s, bEncrypt, pbKey, pbIV);
 #else
-			SymmetricAlgorithm a = CryptoUtil.CreateAes();
-			if(a.BlockSize != 128) // AES block size
-			{
-				Debug.Assert(false);
-				a.BlockSize = 128;
-			}
-			a.KeySize = 256;
-			a.Mode = SaeCipherMode;
-			a.Padding = SaePaddingMode;
+			SymmetricAlgorithm a = CryptoUtil.CreateAes(256, CipherMode.CBC,
+				PaddingMode.PKCS7);
 
 			ICryptoTransform t;
 			if(bEncrypt) t = a.CreateEncryptor(pbKey, pbIV);

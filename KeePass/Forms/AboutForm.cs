@@ -28,12 +28,12 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using KeePass.App;
-using KeePass.DataExchange;
 using KeePass.Resources;
 using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
+using KeePassLib.Native;
 using KeePassLib.Utility;
 
 namespace KeePass.Forms
@@ -90,6 +90,14 @@ namespace KeePass.Forms
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
+		private static string GetProcessArchitecture()
+		{
+			string str = NativeLib.ToString(NativeLib.ProcessArchitecture);
+			if(!string.IsNullOrEmpty(str)) return str;
+
+			return KPRes.BitsA.Replace("{PARAM}", (IntPtr.Size * 8).ToString());
+		}
+
 		private static string GetMainVersion()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -110,15 +118,9 @@ namespace KeePass.Forms
 				catch(Exception) { Debug.Assert(false); }
 			}
 
-			const string strParamPlh = @"{PARAM}";
-			string strBits = KPRes.BitsA;
-			if(strBits.IndexOf(strParamPlh) >= 0)
-			{
-				sb.Append(" (");
-				sb.Append(strBits.Replace(strParamPlh, (IntPtr.Size * 8).ToString()));
-				sb.Append(')');
-			}
-			else { Debug.Assert(false); }
+			sb.Append(" (");
+			sb.Append(GetProcessArchitecture());
+			sb.Append(')');
 
 			return sb.ToString();
 		}
@@ -137,26 +139,39 @@ namespace KeePass.Forms
 
 			AddComponentItem(PwDefs.ShortProductName, strMainVersion, strExe);
 
+			const string strNtvBase = NativeLib.BaseName;
+			bool b = false;
+			try
+			{
+				string strNtvPath = NativeLib.FileName;
+				if(!string.IsNullOrEmpty(strNtvPath))
+				{
+					strNtvPath = strDir + strNtvPath;
+					if(File.Exists(strNtvPath))
+					{
+						FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(strNtvPath);
+						if(fvi != null)
+						{
+							Version v = new Version(fvi.FileMajorPart, fvi.FileMinorPart,
+								fvi.FileBuildPart, fvi.FilePrivatePart);
+							ulong u = MemUtil.VersionToUInt64(v);
+							AddComponentItem(strNtvBase, StrUtil.VersionToString(u) +
+								" (" + GetProcessArchitecture() + ")", strNtvPath);
+							b = true;
+						}
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+			if(!b) AddComponentItem(strNtvBase, KPRes.NotInstalled, null);
+
 			string strXsl = UrlUtil.EnsureTerminatingSeparator(strDir +
 				AppDefs.XslFilesDir, false);
-			bool b = File.Exists(strXsl + AppDefs.XslFileHtmlFull);
+			b = File.Exists(strXsl + AppDefs.XslFileHtmlFull);
 			b &= File.Exists(strXsl + AppDefs.XslFileHtmlLight);
 			b &= File.Exists(strXsl + AppDefs.XslFileHtmlTabular);
 			AddComponentItem(KPRes.XslStylesheetsKdbx, (b ? KPRes.Installed :
 				KPRes.NotInstalled), (b ? strXsl : null));
-
-			b = KdbFile.IsLibraryInstalled();
-			string strVer = (b ? (KdbManager.KeePassVersionString + " - 0x" +
-				KdbManager.LibraryBuild.ToString("X4")) : KPRes.NotInstalled);
-			string strPath = null;
-			if(b)
-			{
-				string str = strDir + ((IntPtr.Size == 4) ? KdbManager.DllFile32 :
-					KdbManager.DllFile64);
-				if(File.Exists(str)) strPath = str;
-				else { Debug.Assert(false); } // Somewhere else?
-			}
-			AddComponentItem(KPRes.KeePassLibCLong, strVer, strPath);
 		}
 
 		private void AddComponentItem(string strName, string strVersion, string strPath)
@@ -189,13 +204,13 @@ namespace KeePass.Forms
 			m_ctxComponents.Items.Add(new ToolStripSeparator());
 
 			ToolStripMenuItem tsmiCopyVersion = new ToolStripMenuItem(
-				KPRes.CopyObject.Replace(@"{PARAM}", m_lvComponents.Columns[1].Text),
+				KPRes.CopyObject.Replace("{PARAM}", m_lvComponents.Columns[1].Text),
 				Properties.Resources.B16x16_EditCopy);
 			tsmiCopyVersion.Click += this.OnComponentCopyVersion;
 			m_ctxComponents.Items.Add(tsmiCopyVersion);
 
 			ToolStripMenuItem tsmiCopyPath = new ToolStripMenuItem(
-				KPRes.CopyObject.Replace(@"{PARAM}", KPRes.Path),
+				KPRes.CopyObject.Replace("{PARAM}", KPRes.Path),
 				Properties.Resources.B16x16_EditCopyLink);
 			tsmiCopyPath.Click += this.OnComponentCopyTag;
 			m_ctxComponents.Items.Add(tsmiCopyPath);

@@ -168,7 +168,7 @@ namespace KeePass.Forms
 
 			lvg = AddGroup(KPRes.Advanced);
 			AddOption(aceDef, "NewEntryExpiresInDays", lvg, fRA(KPRes.ExpiryDefaultDays));
-			AddOption(cfg.Native, "NativeKeyTransformations", lvg, KPRes.NativeLibUse);
+			AddOption(cfg.Native, "NativeKeyTransformations", lvg, KPRes.NativeLibUse2);
 			AddOption(aceSec, "KeyTransformWeakWarning", lvg, KPRes.KeyTransformWeakWarning);
 			AddOption(aceSec, "PreventScreenCapture", lvg, KPRes.PreventScreenCapture);
 			AddOption(aceSec, "MasterKeyOnSecureDesktop", lvg, KPRes.MasterKeyOnSecureDesktop);

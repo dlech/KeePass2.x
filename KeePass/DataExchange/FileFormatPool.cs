@@ -69,18 +69,18 @@ namespace KeePass.DataExchange
 		{
 			List<FileFormatProvider> l = m_lFormats;
 
-			l.Add(new KeePassCsv1x());
-			l.Add(new KeePassKdb1x());
-			l.Add(new KeePassKdb2x());
-			l.Add(new KeePassKdb2xRepair());
-			l.Add(new KeePassKdb2x3());
-			l.Add(new KeePassXml1x());
-			l.Add(new KeePassXml2x());
+			l.Add(new KeePassCsv1());
+			l.Add(new KeePassKdb1());
+			l.Add(new KeePassKdbx2());
+			l.Add(new KeePassKdbx2Repair());
+			l.Add(new KeePassKdbx2v3());
+			l.Add(new KeePassXml1());
+			l.Add(new KeePassXml2());
 
 			l.Add(new GenericCsv());
 
-			l.Add(new KeePassHtml2x());
-			l.Add(new XslTransform2x());
+			l.Add(new KeePassHtml2());
+			l.Add(new XslTransform2());
 			l.Add(new WinFavorites10(false));
 			l.Add(new WinFavorites10(true));
 

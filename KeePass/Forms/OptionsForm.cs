@@ -388,7 +388,7 @@ namespace KeePass.Forms
 
 			if(NativeLib.IsLibraryInstalled())
 				m_cdxSecurityOptions.CreateItem(cfg.Native, "NativeKeyTransformations",
-					lvg, KPRes.NativeLibUse);
+					lvg, KPRes.NativeLibUse2);
 
 			m_cdxSecurityOptions.CreateItem(aceSec, "KeyTransformWeakWarning",
 				lvg, KPRes.KeyTransformWeakWarning);
@@ -823,9 +823,6 @@ namespace KeePass.Forms
 			else Program.Config.Security.ClipboardClearAfterSeconds = -1;
 
 			m_cdxSecurityOptions.UpdateData(true);
-
-			NativeLib.AllowNative = Program.Config.Native.NativeKeyTransformations;
-
 			m_cdxPolicy.UpdateData(true);
 			m_cdxGuiOptions.UpdateData(true);
 

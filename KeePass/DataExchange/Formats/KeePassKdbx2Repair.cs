@@ -36,7 +36,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassKdb2xRepair : FileFormatProvider
+	internal sealed class KeePassKdbx2Repair : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return false; } }

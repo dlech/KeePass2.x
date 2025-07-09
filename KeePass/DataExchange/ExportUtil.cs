@@ -182,7 +182,13 @@ namespace KeePass.DataExchange
 						WinUtil.ShowFileInFileManager(iocOutput.Path, true);
 				}
 			}
-			catch(Exception ex) { MessageService.ShowWarning(ex); }
+			catch(Exception ex)
+			{
+				ShowWarningsLogger swl = (slLogger as ShowWarningsLogger);
+				if((swl != null) && swl.IsFormShown)
+					swl.SetText(StrUtil.FormatException(ex, null), LogStatusType.Error);
+				else MessageService.ShowWarning(ex);
+			}
 			finally
 			{
 				if(ckOrgMasterKey != null)
@@ -212,28 +218,28 @@ namespace KeePass.DataExchange
 			if(pg == null) { Debug.Assert(false); return null; }
 			if(pd == null) { Debug.Assert(false); return pg; }
 
-			Dictionary<PwUuid, bool> dUuids = CollectUuids(pg);
+			HashSet<PwUuid> hsUuids = CollectUuids(pg);
 
-			PwGroup pgNew = FilterCloneGroup(pd.RootGroup, dUuids);
+			PwGroup pgNew = FilterCloneGroup(pd.RootGroup, hsUuids);
 			Debug.Assert(pgNew.GetEntriesCount(true) == pg.GetEntriesCount(true));
 			return pgNew;
 		}
 
-		private static Dictionary<PwUuid, bool> CollectUuids(PwGroup pg)
+		private static HashSet<PwUuid> CollectUuids(PwGroup pg)
 		{
-			Dictionary<PwUuid, bool> d = new Dictionary<PwUuid, bool>();
+			HashSet<PwUuid> hs = new HashSet<PwUuid>();
 
 			Action<IStructureItem> fAdd = delegate(IStructureItem it)
 			{
 				if(it == null) { Debug.Assert(false); return; }
 
-				Debug.Assert(!d.ContainsKey(it.Uuid));
-				d[it.Uuid] = true;
+				Debug.Assert(!hs.Contains(it.Uuid));
+				hs.Add(it.Uuid);
 
 				PwGroup pgParent = it.ParentGroup;
 				while(pgParent != null)
 				{
-					d[pgParent.Uuid] = true;
+					hs.Add(pgParent.Uuid);
 					pgParent = pgParent.ParentGroup;
 				}
 			};
@@ -244,10 +250,10 @@ namespace KeePass.DataExchange
 			fAdd(pg);
 			pg.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-			return d;
+			return hs;
 		}
 
-		private static PwGroup FilterCloneGroup(PwGroup pg, Dictionary<PwUuid, bool> dUuids)
+		private static PwGroup FilterCloneGroup(PwGroup pg, HashSet<PwUuid> hsUuids)
 		{
 			PwGroup pgNew = new PwGroup();
 			pgNew.Uuid = pg.Uuid;
@@ -257,14 +263,14 @@ namespace KeePass.DataExchange
 
 			foreach(PwEntry pe in pg.Entries)
 			{
-				if(dUuids.ContainsKey(pe.Uuid))
+				if(hsUuids.Contains(pe.Uuid))
 					pgNew.AddEntry(pe.CloneDeep(), true, false);
 			}
 
 			foreach(PwGroup pgSub in pg.Groups)
 			{
-				if(dUuids.ContainsKey(pgSub.Uuid))
-					pgNew.AddGroup(FilterCloneGroup(pgSub, dUuids), true, false);
+				if(hsUuids.Contains(pgSub.Uuid))
+					pgNew.AddGroup(FilterCloneGroup(pgSub, hsUuids), true, false);
 			}
 
 			return pgNew;

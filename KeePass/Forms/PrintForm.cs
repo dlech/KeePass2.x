@@ -437,8 +437,8 @@ namespace KeePass.Forms
 				return CompileToHtml(strRaw, p, false);
 			};
 
-			StringBuilder sb = KeePassHtml2x.HtmlPart1ToHead(p.Rtl, pgDataSource.Name);
-			KeePassHtml2x.HtmlPart2ToStyle(sb);
+			StringBuilder sb = KeePassHtml2.HtmlPart1ToHead(p.Rtl, pgDataSource.Name);
+			KeePassHtml2.HtmlPart2ToStyle(sb);
 
 			sb.AppendLine("body {");
 			sb.AppendLine("\tcolor: #000000;");
@@ -566,7 +566,7 @@ namespace KeePass.Forms
 				sb.AppendLine("}");
 			}
 
-			KeePassHtml2x.HtmlPart3ToBody(sb);
+			KeePassHtml2.HtmlPart3ToBody(sb);
 
 			sb.AppendLine("<h2>" + h(pgDataSource.Name) + "</h2>");
 			WriteGroupNotes(sb, pgDataSource);
@@ -766,7 +766,7 @@ namespace KeePass.Forms
 			if(bTabular || bBlocks) sb.AppendLine("</table>");
 			else { Debug.Assert(false); }
 
-			KeePassHtml2x.HtmlPart4ToEnd(sb);
+			KeePassHtml2.HtmlPart4ToEnd(sb);
 
 			string strDoc = sb.ToString();
 #if DEBUG

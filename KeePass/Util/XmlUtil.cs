@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -158,15 +159,9 @@ namespace KeePass.Util
 
 				g_dHtmlEntities = d;
 
-#if DEBUG
-				Dictionary<char, bool> dChars = new Dictionary<char, bool>();
-				foreach(KeyValuePair<string, char> kvp in d)
-				{
-					Debug.Assert((kvp.Key.IndexOf('&') < 0) &&
-						(kvp.Key.IndexOf(';') < 0));
-					dChars[kvp.Value] = true;
-				}
-				Debug.Assert(dChars.Count == d.Count); // Injective
+				Debug.Assert(d.Keys.All(strKey => ((strKey.IndexOf('&') < 0) &&
+					(strKey.IndexOf(';') < 0))));
+				Debug.Assert(d.Values.Distinct().Count() == d.Count);
 
 				Debug.Assert(DecodeHtmlEntities("&euro; A &ecircZ; B &copy;") ==
 					"\u20AC A &ecircZ; B \u00A9");
@@ -174,7 +169,6 @@ namespace KeePass.Util
 					"&lt;&gt;&amp;&apos;&quot;"); // Do not decode XML entities
 				Debug.Assert(DecodeHtmlEntities(@"<![CDATA[&euro;]]>&euro;<![CDATA[&euro;]]>") ==
 					"<![CDATA[&euro;]]>\u20AC<![CDATA[&euro;]]>");
-#endif
 			}
 
 			StringBuilder sb = new StringBuilder();
