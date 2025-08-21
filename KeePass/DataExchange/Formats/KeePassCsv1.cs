@@ -30,7 +30,7 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassCsv1x : FileFormatProvider
+	internal sealed class KeePassCsv1 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return false; } }
 		public override bool SupportsExport { get { return true; } }
@@ -120,8 +120,7 @@ namespace KeePass.DataExchange.Formats
 		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
 			IStatusLogger slLogger)
 		{
-			PwGroup pg = (pwExportInfo.DataGroup ?? ((pwExportInfo.ContextDatabase !=
-				null) ? pwExportInfo.ContextDatabase.RootGroup : null));
+			PwGroup pg = pwExportInfo.DataGroup;
 
 			using(StreamWriter sw = new StreamWriter(sOutput, StrUtil.Utf8))
 			{
@@ -133,7 +132,7 @@ namespace KeePass.DataExchange.Formats
 					return true;
 				};
 
-				if(pg != null) pg.TraverseTree(TraversalMethod.PreOrder, null, eh);
+				pg.TraverseTree(TraversalMethod.PreOrder, null, eh);
 			}
 
 			return true;

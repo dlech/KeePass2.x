@@ -211,12 +211,12 @@ namespace KeePass.Ecas
 			m_bOn = m_bInitiallyOn;
 		}
 
-		public void RunIfMatching(EcasEvent ctxOccured, EcasPropertyDictionary props)
+		public void RunIfMatching(EcasEvent ctxOccurred, EcasPropertyDictionary props)
 		{
 			if(!m_bEnabled || !m_bOn) return;
 
 			EcasContext ctx = new EcasContext(Program.TriggerSystem, this,
-				ctxOccured, props);
+				ctxOccurred, props);
 
 			bool bEventMatches = false;
 			foreach(EcasEvent e in m_events)

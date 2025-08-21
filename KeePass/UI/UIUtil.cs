@@ -178,7 +178,7 @@ namespace KeePass.UI
 			// Rich Edit 4.1 and higher do not support automatic URL
 			// detection and manual CFE_LINK assignments at once
 			// (Rich Edit 3.0 supported this); see EM_AUTOURLDETECT
-			Debug.Assert(!rtb.DetectUrls);
+			Debug.Assert(!rtb.DetectUrls || NativeLib.IsUnix());
 
 			Debug.Assert(rtb.HideSelection); // Flicker opt.
 
@@ -311,6 +311,9 @@ namespace KeePass.UI
 
 			try
 			{
+				// EM_SETCHARFORMAT is not supported on Unix-like systems
+				if(NativeLib.IsUnix()) { rtb.DetectUrls = true; return; }
+
 				string str = (rtb.Text ?? string.Empty);
 				int iOffset = 0;
 

@@ -57,6 +57,7 @@ namespace KeePassLib.Resources
 			m_strGroupLower = TryGetEx(dictNew, "GroupLower", m_strGroupLower);
 			m_strInvalidCompositeKey = TryGetEx(dictNew, "InvalidCompositeKey", m_strInvalidCompositeKey);
 			m_strInvalidCompositeKeyHint = TryGetEx(dictNew, "InvalidCompositeKeyHint", m_strInvalidCompositeKeyHint);
+			m_strInvalidCompositeKeyOrCorrupted = TryGetEx(dictNew, "InvalidCompositeKeyOrCorrupted", m_strInvalidCompositeKeyOrCorrupted);
 			m_strInvalidDataWhileDecoding = TryGetEx(dictNew, "InvalidDataWhileDecoding", m_strInvalidDataWhileDecoding);
 			m_strKeePass1xHint = TryGetEx(dictNew, "KeePass1xHint", m_strKeePass1xHint);
 			m_strKeyBits = TryGetEx(dictNew, "KeyBits", m_strKeyBits);
@@ -111,6 +112,7 @@ namespace KeePassLib.Resources
 			"GroupLower",
 			"InvalidCompositeKey",
 			"InvalidCompositeKeyHint",
+			"InvalidCompositeKeyOrCorrupted",
 			"InvalidDataWhileDecoding",
 			"KeePass1xHint",
 			"KeyBits",
@@ -477,6 +479,17 @@ namespace KeePassLib.Resources
 		public static string InvalidCompositeKeyHint
 		{
 			get { return m_strInvalidCompositeKeyHint; }
+		}
+
+		private static string m_strInvalidCompositeKeyOrCorrupted =
+			@"The master key is invalid or the file is corrupted.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The master key is invalid or the file is corrupted.'.
+		/// </summary>
+		public static string InvalidCompositeKeyOrCorrupted
+		{
+			get { return m_strInvalidCompositeKeyOrCorrupted; }
 		}
 
 		private static string m_strInvalidDataWhileDecoding =

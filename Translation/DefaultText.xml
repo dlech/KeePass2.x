@@ -1177,12 +1177,6 @@
 		<Data Name="FormatNoDatabaseName">
 			<Value>This file format doesn't support database names.</Value>
 		</Data>
-		<Data Name="FormatNoRootEntries">
-			<Value>This file format doesn't support root groups. All entries in the root group are moved to the first subgroup.</Value>
-		</Data>
-		<Data Name="FormatNoSubGroupsInRoot">
-			<Value>To export to this file format, the root group must have at least one subgroup.</Value>
-		</Data>
 		<Data Name="FormatOnlyOneAttachment">
 			<Value>This file format only supports one attachment per entry. Only the first attachment is saved, the others are ignored.</Value>
 		</Data>
@@ -1405,11 +1399,8 @@
 		<Data Name="Iterations">
 			<Value>Iterations</Value>
 		</Data>
-		<Data Name="KdbKeePassLibC">
-			<Value>The KeePassLibC library is required to open and save KDB files created by KeePass 1.x.</Value>
-		</Data>
-		<Data Name="KdbWUA">
-			<Value>KDB files can be encrypted using a master password and/or a key file, not using a Windows User Account.</Value>
+		<Data Name="KdbMasterKeyCmp">
+			<Value>KDB files can be encrypted with a master password and/or a key file, not with a Windows user account or a plugin.</Value>
 		</Data>
 		<Data Name="KdbxFiles">
 			<Value>KeePass KDBX Files</Value>
@@ -1419,18 +1410,6 @@
 		</Data>
 		<Data Name="KdfParams1Sec">
 			<Value>Compute parameters that lead to a delay of 1 second on this computer.</Value>
-		</Data>
-		<Data Name="KeePassLibCLong">
-			<Value>KeePassLibC (1.x File Support)</Value>
-		</Data>
-		<Data Name="KeePassLibCNotFound">
-			<Value>KeePassLibC could not be found.</Value>
-		</Data>
-		<Data Name="KeePassLibCNotWindows">
-			<Value>Importing/exporting data from/to KDB files is only supported on Windows (because a library is used that contains the core code of KeePass 1.x, which is Windows-only).</Value>
-		</Data>
-		<Data Name="KeePassLibCNotWindowsHint">
-			<Value>Please use a different file format for migrating your data.</Value>
 		</Data>
 		<Data Name="KeepExisting">
 			<Value>&amp;Keep existing</Value>
@@ -1768,8 +1747,8 @@
 		<Data Name="Name">
 			<Value>Name</Value>
 		</Data>
-		<Data Name="NativeLibUse">
-			<Value>Use native library for faster key transformations</Value>
+		<Data Name="NativeLibUse2">
+			<Value>Use native support library (for faster key transformations, etc.)</Value>
 		</Data>
 		<Data Name="Navigation">
 			<Value>Navigation</Value>
@@ -3048,6 +3027,9 @@
 		</Data>
 		<Data Name="InvalidCompositeKeyHint">
 			<Value>Make sure that the master key is correct and try it again.</Value>
+		</Data>
+		<Data Name="InvalidCompositeKeyOrCorrupted">
+			<Value>The master key is invalid or the file is corrupted.</Value>
 		</Data>
 		<Data Name="InvalidDataWhileDecoding">
 			<Value>Found invalid data while decoding.</Value>

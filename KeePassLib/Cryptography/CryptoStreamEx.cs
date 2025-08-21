@@ -26,6 +26,8 @@ using System.Text;
 #if !KeePassUAP
 using System.Security.Cryptography;
 
+using KeePassLib.Utility;
+
 namespace KeePassLib.Cryptography
 {
 	public sealed class CryptoStreamEx : CryptoStream
@@ -56,8 +58,7 @@ namespace KeePassLib.Cryptography
 				try { if(m_t != null) { m_t.Dispose(); m_t = null; } }
 				catch(Exception) { Debug.Assert(false); }
 
-				// In .NET 2.0, SymmetricAlgorithm.Dispose() is not public
-				try { if(m_a != null) { m_a.Clear(); m_a = null; } }
+				try { if(m_a != null) { MemUtil.DisposeIfPossible(m_a); m_a = null; } }
 				catch(Exception) { Debug.Assert(false); }
 			}
 		}

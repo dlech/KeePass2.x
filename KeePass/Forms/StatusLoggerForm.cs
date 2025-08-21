@@ -31,6 +31,7 @@ using KeePass.UI;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -41,8 +42,8 @@ namespace KeePass.Forms
 		private bool m_bCloseMode = false;
 		private uint m_uLastPercent = 0;
 
-		private uint uWarnings = 0;
-		private uint uErrors = 0;
+		private uint m_cWarnings = 0;
+		private uint m_cErrors = 0;
 
 		private ImageList m_ilIcons = null;
 
@@ -53,12 +54,12 @@ namespace KeePass.Forms
 
 		public void StartLogging(string strOperation, bool bWriteOperationToLog)
 		{
-			if(strOperation != null)
+			if(!string.IsNullOrEmpty(strOperation))
 			{
-				this.Text = PwDefs.ShortProductName + " - " + strOperation;
+				this.Text = strOperation + " - " + PwDefs.ShortProductName;
 				
 				if(bWriteOperationToLog)
-					this.SetText(strOperation, LogStatusType.Info);
+					SetText(strOperation, LogStatusType.Info);
 			}
 
 			m_pbProgress.Value = 0;
@@ -67,14 +68,16 @@ namespace KeePass.Forms
 
 		public void EndLogging()
 		{
+			this.Text = PwDefs.ShortProductName;
 			m_btnCancel.Text = KPRes.Close;
 			m_bCloseMode = true;
 
 			SetText(string.Empty, LogStatusType.AdditionalInfo);
 
-			string strFinish = KPRes.Ready + " " + uErrors.ToString() + " " + KPRes.Errors +
-				", " + uWarnings.ToString() + " " + KPRes.Warnings + ".";
-			this.SetText(strFinish, LogStatusType.Info);
+			string strFinish = KPRes.Ready + " " +
+				KPRes.Errors + ": " + m_cErrors.ToString() + ". " +
+				KPRes.Warnings + ": " + m_cWarnings.ToString() + ".";
+			SetText(strFinish, LogStatusType.Info);
 
 			m_pbProgress.Value = 100;
 			m_uLastPercent = 100;
@@ -99,12 +102,17 @@ namespace KeePass.Forms
 		{
 			if(strNewText != null)
 			{
-				m_lvMessages.Items.Add(strNewText, (int)lsType);
-				m_lvMessages.EnsureVisible(m_lvMessages.Items.Count - 1);
-			}
+				ListViewItem lvi = new ListViewItem(StrUtil.MultiToSingleLine(
+					strNewText), (int)lsType);
+				lvi.Tag = strNewText;
 
-			if(lsType == LogStatusType.Warning) ++uWarnings;
-			else if(lsType == LogStatusType.Error) ++uErrors;
+				m_lvMessages.Items.Add(lvi);
+				m_lvMessages.EnsureVisible(m_lvMessages.Items.Count - 1);
+
+				if(lsType == LogStatusType.Warning) ++m_cWarnings;
+				else if(lsType == LogStatusType.Error) ++m_cErrors;
+			}
+			else { Debug.Assert(false); }
 
 			ProcessResize();
 			Application.DoEvents();
@@ -178,7 +186,9 @@ namespace KeePass.Forms
 				return;
 			}
 
-			UIUtil.SetMultilineText(m_tbDetails, slvic[0].Text);
+			string str = (slvic[0].Tag as string);
+			if(str == null) { Debug.Assert(false); str = string.Empty; }
+			UIUtil.SetMultilineText(m_tbDetails, str);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)

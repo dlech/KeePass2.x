@@ -77,6 +77,18 @@ namespace KeePass.Resources
 		}
 
 		[Obsolete]
+		public static string FormatNoRootEntries
+		{
+			get { return string.Empty; }
+		}
+
+		[Obsolete]
+		public static string FormatNoSubGroupsInRoot
+		{
+			get { return string.Empty; }
+		}
+
+		[Obsolete]
 		public static string GeneratedPasswordSamples
 		{
 			get { return KPRes.GeneratedPasswords; }
@@ -91,7 +103,49 @@ namespace KeePass.Resources
 		[Obsolete]
 		public static string InvalidUserPassword
 		{
-			get { return (KPRes.Invalid + " (" + KPRes.UserName + " / " + KPRes.Password + ")!"); }
+			get { return (KPRes.Invalid + " (" + KPRes.UserNameStc + " / " + KPRes.Password + ")!"); }
+		}
+
+		[Obsolete]
+		public static string KdbKeePassLibC
+		{
+			get { return string.Empty; }
+		}
+
+		[Obsolete]
+		public static string KdbWUA
+		{
+			get { return KPRes.KdbMasterKeyCmp; }
+		}
+
+		[Obsolete]
+		public static string KeePassLibCLong
+		{
+			get { return string.Empty; }
+		}
+
+		[Obsolete]
+		public static string KeePassLibCNotFound
+		{
+			get { return string.Empty; }
+		}
+
+		[Obsolete]
+		public static string KeePassLibCNotWindows
+		{
+			get { return string.Empty; }
+		}
+
+		[Obsolete]
+		public static string KeePassLibCNotWindowsHint
+		{
+			get { return string.Empty; }
+		}
+
+		[Obsolete]
+		public static string NativeLibUse
+		{
+			get { return KPRes.NativeLibUse2; }
 		}
 
 		[Obsolete]

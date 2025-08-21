@@ -768,7 +768,7 @@ namespace KeePass.Native
 			strAnsi = null;
 			strUni = null;
 
-			const uint cbZ = 12; // Minimal number of terminating zero bytes
+			const uint cbZ = 12; // Minimal number of terminating null bytes
 
 			uint cb = 64 + cbZ;
 			IntPtr p = Marshal.AllocCoTaskMem((int)cb);
@@ -895,7 +895,7 @@ namespace KeePass.Native
 		}
 
 		/// <returns>
-		/// Null, if there exists no translation or an error occured.
+		/// Null, if there exists no translation or an error occurred.
 		/// An empty string, if the key is a dead key.
 		/// Otherwise, the generated Unicode string (typically 1 character,
 		/// but can be more when a dead key is stored in the keyboard layout).

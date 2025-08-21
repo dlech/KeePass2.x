@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.DataExchange;
+using KeePass.DataExchange.Formats;
 using KeePass.Ecas;
 using KeePass.Native;
 using KeePass.Plugins;
@@ -1809,6 +1810,9 @@ namespace KeePass.Forms
 			bool bHorz = (m_splitHorizontal.Orientation == Orientation.Horizontal);
 			string strItemSep = (bHorz ? ". " : Environment.NewLine);
 			string strItemTerm = (bHorz ? "." : string.Empty);
+
+			// Mono's linkifier treats a '.' at the end as part of a URL, but not ','
+			if(NativeLib.IsUnix() && bHorz) strItemSep = ", ";
 
 			List<KeyValuePair<string, bool>> lLinks = new List<KeyValuePair<string, bool>>();
 			GAction<string, string> fSetLink = delegate(string strPre, string strLink)
@@ -4483,9 +4487,7 @@ namespace KeePass.Forms
 		{
 			if(lEntries == null) { Debug.Assert(false); lEntries = new PwObjectList<PwEntry>(); }
 
-			Dictionary<PwEntry, bool> d = new Dictionary<PwEntry, bool>();
-			foreach(PwEntry pe in lEntries) d[pe] = true;
-
+			HashSet<PwEntry> hs = new HashSet<PwEntry>(lEntries);
 			bool bDoFocus = bFocusFirst;
 
 			++m_uBlockEntrySelectionEvent;
@@ -4501,7 +4503,7 @@ namespace KeePass.Forms
 					PwEntry pe = pli.Entry;
 					if(pe == null) { Debug.Assert(false); continue; }
 
-					if(d.ContainsKey(pe))
+					if(hs.Contains(pe))
 					{
 						lvi.Selected = true;
 
@@ -6025,24 +6027,20 @@ namespace KeePass.Forms
 			List<string> lAllTags = new List<string>(dAllTags.Keys);
 			lAllTags.Sort(StrUtil.CompareNaturally);
 
-			Dictionary<string, bool> dEnabledTags = null;
+			HashSet<string> hsEnabledTags = null;
 			if((tmm == TagsMenuMode.Add) && (uSelCount > 0))
 			{
-				dEnabledTags = new Dictionary<string, bool>();
 				List<string> lIntersect = pgSel.Entries.GetAt(0).Tags;
 				for(uint u = 1; u < uSelCount; ++u)
 					lIntersect = new List<string>(MemUtil.Intersect(lIntersect,
 						pgSel.Entries.GetAt(u).Tags, null));
-				foreach(string strTag in MemUtil.Except(lAllTags, lIntersect, null))
-					dEnabledTags[strTag] = true;
+
+				hsEnabledTags = new HashSet<string>(MemUtil.Except(lAllTags,
+					lIntersect, null));
 			}
 			else if(tmm == TagsMenuMode.Remove)
-			{
-				dEnabledTags = new Dictionary<string, bool>();
-				List<string> lSelectedTags = pgSel.BuildEntryTagsList(false, false);
-				foreach(string strTag in lSelectedTags)
-					dEnabledTags[strTag] = true;
-			}
+				hsEnabledTags = new HashSet<string>(pgSel.BuildEntryTagsList(
+					false, false));
 
 			string strPrefix = StrUtil.EncodeMenuText(KPRes.Tag + ": ");
 			Image imgIcon = Properties.Resources.B16x16_KNotes;
@@ -6062,9 +6060,9 @@ namespace KeePass.Forms
 				}
 
 				if(bForceDisabled) tsmi.Enabled = false;
-				else if(dEnabledTags != null)
+				else if(hsEnabledTags != null)
 				{
-					if(!dEnabledTags.ContainsKey(strTag)) tsmi.Enabled = false;
+					if(!hsEnabledTags.Contains(strTag)) tsmi.Enabled = false;
 				}
 			}
 
@@ -6136,21 +6134,32 @@ namespace KeePass.Forms
 			UpdateUIState(bModified);
 		}
 
-		private static bool? g_bCachedSelfTestResult = null;
+		private static bool? g_obCachedSelfTestResult = null;
 		private static bool PerformSelfTest()
 		{
-			if(g_bCachedSelfTestResult.HasValue)
-				return g_bCachedSelfTestResult.Value;
+			if(g_obCachedSelfTestResult.HasValue)
+				return g_obCachedSelfTestResult.Value;
 
 			bool bResult = true;
-			try { SelfTest.Perform(); }
+			try
+			{
+				SelfTest.Perform();
+
+#if DEBUG
+				Random r = Program.GlobalRandom;
+				DateTime dt = new DateTime(r.Next(1, 3000), r.Next(1, 13),
+					r.Next(1, 29), r.Next(24), r.Next(60), r.Next(60), DateTimeKind.Utc);
+				byte[] pb = KeePassKdb1.PackTime(dt);
+				Debug.Assert(KeePassKdb1.UnpackTime(pb) == dt);
+#endif
+			}
 			catch(Exception ex)
 			{
 				MessageService.ShowWarning(KPRes.SelfTestFailed, ex);
 				bResult = false;
 			}
 
-			g_bCachedSelfTestResult = bResult;
+			g_obCachedSelfTestResult = bResult;
 			return bResult;
 		}
 

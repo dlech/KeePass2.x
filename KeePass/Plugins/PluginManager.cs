@@ -73,7 +73,7 @@ namespace KeePass.Plugins
 		{
 			string[] vExclNames = new string[] {
 				AppDefs.FileNames.Program, AppDefs.FileNames.XmlSerializers,
-				AppDefs.FileNames.NativeLib32, AppDefs.FileNames.NativeLib64,
+				NativeLib.DllFileA64, NativeLib.DllFileX32, NativeLib.DllFileX64,
 				AppDefs.FileNames.ShInstUtil
 			};
 

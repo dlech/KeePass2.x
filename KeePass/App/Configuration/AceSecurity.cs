@@ -71,13 +71,8 @@ namespace KeePass.App.Configuration
 			set { m_nMasterKeyTries = value; }
 		}
 
-		private bool m_bSecureDesktop = false;
 		[DefaultValue(false)]
-		public bool MasterKeyOnSecureDesktop
-		{
-			get { return m_bSecureDesktop; }
-			set { m_bSecureDesktop = value; }
-		}
+		public bool MasterKeyOnSecureDesktop { get; set; }
 
 		private string m_strMasterKeyExpiryRec = string.Empty;
 		[DefaultValue("")]
@@ -159,30 +154,15 @@ namespace KeePass.App.Configuration
 			set { m_bClearKeyCmdLineOpt = value; }
 		}
 
-		private bool m_bSslCertsAcceptInvalid = false;
 		[DefaultValue(false)]
-		public bool SslCertsAcceptInvalid
-		{
-			get { return m_bSslCertsAcceptInvalid; }
-			set { m_bSslCertsAcceptInvalid = value; }
-		}
+		public bool SslCertsAcceptInvalid { get; set; }
 
-		private bool m_bPreventScreenCapture = false;
 		[DefaultValue(false)]
-		public bool PreventScreenCapture
-		{
-			get { return m_bPreventScreenCapture; }
-			set { m_bPreventScreenCapture = value; }
-		}
+		public bool PreventScreenCapture { get; set; }
 
 		// https://keepass.info/help/v2_dev/customize.html#opt
-		private bool m_bProtectProcessWithDacl = false;
 		[DefaultValue(false)]
-		public bool ProtectProcessWithDacl
-		{
-			get { return m_bProtectProcessWithDacl; }
-			set { m_bProtectProcessWithDacl = value; }
-		}
+		public bool ProtectProcessWithDacl { get; set; }
 	}
 
 	public sealed class AceWorkspaceLocking
@@ -191,75 +171,29 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private bool m_bOnMinimize = false;
 		[DefaultValue(false)]
-		public bool LockOnWindowMinimize
-		{
-			get { return m_bOnMinimize; }
-			set { m_bOnMinimize = value; }
-		}
+		public bool LockOnWindowMinimize { get; set; }
 
-		private bool m_bOnMinimizeToTray = false;
 		[DefaultValue(false)]
-		public bool LockOnWindowMinimizeToTray
-		{
-			get { return m_bOnMinimizeToTray; }
-			set { m_bOnMinimizeToTray = value; }
-		}
+		public bool LockOnWindowMinimizeToTray { get; set; }
 
-		private bool m_bOnSessionSwitch = false;
 		[DefaultValue(false)]
-		public bool LockOnSessionSwitch
-		{
-			get { return m_bOnSessionSwitch; }
-			set { m_bOnSessionSwitch = value; }
-		}
+		public bool LockOnSessionSwitch { get; set; }
 
-		private bool m_bOnSuspend = false;
 		[DefaultValue(false)]
-		public bool LockOnSuspend
-		{
-			get { return m_bOnSuspend; }
-			set { m_bOnSuspend = value; }
-		}
+		public bool LockOnSuspend { get; set; }
 
-		private bool m_bOnRemoteControlChange = false;
 		[DefaultValue(false)]
-		public bool LockOnRemoteControlChange
-		{
-			get { return m_bOnRemoteControlChange; }
-			set { m_bOnRemoteControlChange = value; }
-		}
+		public bool LockOnRemoteControlChange { get; set; }
 
-		private uint m_uLockAfterTime = 0;
-		public uint LockAfterTime
-		{
-			get { return m_uLockAfterTime; }
-			set { m_uLockAfterTime = value; }
-		}
+		public uint LockAfterTime { get; set; }
+		public uint LockAfterGlobalTime { get; set; }
 
-		private uint m_uLockAfterGlobalTime = 0;
-		public uint LockAfterGlobalTime
-		{
-			get { return m_uLockAfterGlobalTime; }
-			set { m_uLockAfterGlobalTime = value; }
-		}
-
-		private bool m_bExitInsteadOfLockingAfterTime = false;
 		[DefaultValue(false)]
-		public bool ExitInsteadOfLockingAfterTime
-		{
-			get { return m_bExitInsteadOfLockingAfterTime; }
-			set { m_bExitInsteadOfLockingAfterTime = value; }
-		}
+		public bool ExitInsteadOfLockingAfterTime { get; set; }
 
-		private bool m_bAlwaysExitInsteadOfLocking = false;
 		[DefaultValue(false)]
-		public bool AlwaysExitInsteadOfLocking
-		{
-			get { return m_bAlwaysExitInsteadOfLocking; }
-			set { m_bAlwaysExitInsteadOfLocking = value; }
-		}
+		public bool AlwaysExitInsteadOfLocking { get; set; }
 	}
 
 	public sealed class AceMasterPassword
@@ -268,19 +202,8 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private uint m_uMinLength = 0;
-		public uint MinimumLength
-		{
-			get { return m_uMinLength; }
-			set { m_uMinLength = value; }
-		}
-
-		private uint m_uMinQuality = 0;
-		public uint MinimumQuality
-		{
-			get { return m_uMinQuality; }
-			set { m_uMinQuality = value; }
-		}
+		public uint MinimumLength { get; set; }
+		public uint MinimumQuality { get; set; }
 
 		private bool m_bRememberWhileOpen = true;
 		[DefaultValue(true)]

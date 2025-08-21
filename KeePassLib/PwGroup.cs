@@ -580,27 +580,19 @@ namespace KeePassLib
 		/// <param name="uNumEntries">Number of entries.</param>
 		public void GetCounts(bool bRecursive, out uint uNumGroups, out uint uNumEntries)
 		{
+			uNumGroups = m_lGroups.UCount;
+			uNumEntries = m_lEntries.UCount;
+
 			if(bRecursive)
 			{
-				uint uTotalGroups = m_lGroups.UCount;
-				uint uTotalEntries = m_lEntries.UCount;
-				uint uSubGroupCount, uSubEntryCount;
-
 				foreach(PwGroup pg in m_lGroups)
 				{
-					pg.GetCounts(true, out uSubGroupCount, out uSubEntryCount);
+					uint cSubGroups, cSubEntries;
+					pg.GetCounts(true, out cSubGroups, out cSubEntries);
 
-					uTotalGroups += uSubGroupCount;
-					uTotalEntries += uSubEntryCount;
+					uNumGroups += cSubGroups;
+					uNumEntries += cSubEntries;
 				}
-
-				uNumGroups = uTotalGroups;
-				uNumEntries = uTotalEntries;
-			}
-			else // !bRecursive
-			{
-				uNumGroups = m_lGroups.UCount;
-				uNumEntries = m_lEntries.UCount;
 			}
 		}
 
@@ -778,28 +770,28 @@ namespace KeePassLib
 
 		internal List<string> BuildEntryTagsList(bool bSort, bool bGroupTags)
 		{
-			Dictionary<string, bool> d = new Dictionary<string, bool>();
+			HashSet<string> hs = new HashSet<string>();
 
 			GroupHandler gh = null;
 			if(bGroupTags)
 			{
 				gh = delegate(PwGroup pg)
 				{
-					foreach(string strTag in pg.Tags) d[strTag] = true;
+					foreach(string strTag in pg.Tags) hs.Add(strTag);
 					return true;
 				};
 			}
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				foreach(string strTag in pe.Tags) d[strTag] = true;
+				foreach(string strTag in pe.Tags) hs.Add(strTag);
 				return true;
 			};
 
 			if(gh != null) gh(this);
 			TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-			List<string> l = new List<string>(d.Keys);
+			List<string> l = new List<string>(hs);
 			if(bSort) l.Sort(StrUtil.CompareNaturally);
 
 			return l;
@@ -1458,23 +1450,22 @@ namespace KeePassLib
 		{
 			if(f == null) { Debug.Assert(false); return MemUtil.EmptyArray<string>(); }
 
-			Dictionary<string, bool> d = new Dictionary<string, bool>();
+			HashSet<string> hs = new HashSet<string>();
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
 				string str = f(pe);
-				if(str != null) d[str] = true;
+				if(str != null) hs.Add(str);
 
 				return true;
 			};
 			TraverseTree(TraversalMethod.PreOrder, null, eh);
 
-			string[] v = new string[d.Count];
-			if(d.Count != 0)
-			{
-				d.Keys.CopyTo(v, 0);
-				if(bSort) Array.Sort<string>(v, StrUtil.CaseIgnoreComparer);
-			}
+			if(hs.Count == 0) return MemUtil.EmptyArray<string>();
+
+			string[] v = new string[hs.Count];
+			hs.CopyTo(v);
+			if(bSort) Array.Sort<string>(v, StrUtil.CaseIgnoreComparer);
 
 			return v;
 		}
@@ -1483,11 +1474,11 @@ namespace KeePassLib
 		{
 			try
 			{
-				Dictionary<string, bool> d = new Dictionary<string, bool>();
+				HashSet<string> hs = new HashSet<string>();
 
 				Action<string> fAdd = delegate(string str)
 				{
-					if(!string.IsNullOrEmpty(str)) d[str] = true;
+					if(!string.IsNullOrEmpty(str)) hs.Add(str);
 				};
 
 				if(bWithStd)
@@ -1518,14 +1509,13 @@ namespace KeePassLib
 				gh(this);
 				TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-				string[] v = new string[d.Count];
-				if(d.Count != 0)
+				if(hs.Count != 0)
 				{
-					d.Keys.CopyTo(v, 0);
+					string[] v = new string[hs.Count];
+					hs.CopyTo(v);
 					Array.Sort<string>(v, StrUtil.CaseIgnoreComparer);
+					return v;
 				}
-
-				return v;
 			}
 			catch(Exception) { Debug.Assert(false); }
 

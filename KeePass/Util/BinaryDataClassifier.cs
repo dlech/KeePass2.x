@@ -164,7 +164,7 @@ namespace KeePass.Util
 			{
 				byte[] z3 = new byte[] { 0, 0, 0 };
 				int i = MemUtil.IndexOf<byte>(pbData, z3);
-				if((i >= 0) && (i < (pbData.Length - 4))) // Ignore last zero char
+				if((i >= 0) && (i < (pbData.Length - 4))) // Ignore last null char
 				{
 					if((i % 4) == 0) return StrUtil.GetEncoding(StrEncodingType.Utf32BE);
 					if((i % 4) == 1) return StrUtil.GetEncoding(StrEncodingType.Utf32LE);
@@ -175,7 +175,7 @@ namespace KeePass.Util
 			if((pbData.Length % 2) == 0)
 			{
 				int i = Array.IndexOf<byte>(pbData, 0);
-				if((i >= 0) && (i < (pbData.Length - 2))) // Ignore last zero char
+				if((i >= 0) && (i < (pbData.Length - 2))) // Ignore last null char
 				{
 					if((i % 2) == 0) return StrUtil.GetEncoding(StrEncodingType.Utf16BE);
 					return StrUtil.GetEncoding(StrEncodingType.Utf16LE);

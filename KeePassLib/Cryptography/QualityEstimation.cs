@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 using KeePassLib.Cryptography.PasswordGenerator;
@@ -141,11 +142,7 @@ namespace KeePassLib.Cryptography
 				m_uCharWeight = uCharWeight;
 				m_uOccExclThreshold = uOccExclThreshold;
 
-#if DEBUG
-				Dictionary<char, bool> d = new Dictionary<char, bool>();
-				foreach(char ch in m_strAlph) { d[ch] = true; }
-				Debug.Assert(d.Count == m_strAlph.Length); // No duplicates
-#endif
+				Debug.Assert(m_strAlph.Distinct().Count() == m_strAlph.Length);
 			}
 
 			public void Reset()

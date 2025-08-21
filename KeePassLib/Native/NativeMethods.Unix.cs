@@ -143,7 +143,8 @@ namespace KeePassLib.Native
 			IntPtr cbOut, IntPtr pbIn, IntPtr cbIn); // cb* are size_t
 
 		// =============================================================
-		// LibArgon2 20190702+
+		// LibArgon2 20190702/20210625+
+		// Cf. methods in 'NativeMethods.cs'.
 
 		// Debian 11
 		[DllImport("libargon2.so.0", EntryPoint = "argon2_hash")]
@@ -151,13 +152,13 @@ namespace KeePassLib.Native
 			uint parallelism, IntPtr pwd, IntPtr pwdlen, IntPtr salt,
 			IntPtr saltlen, IntPtr hash, IntPtr hashlen, IntPtr encoded,
 			IntPtr encodedlen, int type, uint version);
+
 		// Fedora 34
 		[DllImport("libargon2.so.1", EntryPoint = "argon2_hash")]
 		internal static extern int argon2_hash_u1(uint t_cost, uint m_cost,
 			uint parallelism, IntPtr pwd, IntPtr pwdlen, IntPtr salt,
 			IntPtr saltlen, IntPtr hash, IntPtr hashlen, IntPtr encoded,
 			IntPtr encodedlen, int type, uint version);
-		// Cf. argon2_hash_w32 and argon2_hash_w64
 
 		/* internal static IntPtr Utf8ZFromString(string str)
 		{

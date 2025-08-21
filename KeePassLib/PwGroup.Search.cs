@@ -291,7 +291,7 @@ namespace KeePassLib
 
 			pd.RootGroup = SrxpFilterCloneSelf(sp);
 
-			Dictionary<PwUuid, bool> dResults = new Dictionary<PwUuid, bool>();
+			HashSet<PwUuid> hsResults = new HashSet<PwUuid>();
 
 			XmlDocument xd;
 			XPathNodeIterator xpIt = XmlUtilEx.FindNodes(pd, sp.SearchString, sl, out xd);
@@ -312,7 +312,7 @@ namespace KeePassLib
 					if((nt == XPathNodeType.Element) &&
 						(xpNav.Name == KdbxFile.ElemEntry))
 					{
-						SrxpAddResult(dResults, xpNav);
+						SrxpAddResult(hsResults, xpNav);
 						break;
 					}
 
@@ -322,11 +322,11 @@ namespace KeePassLib
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				if(dResults.ContainsKey(pe.Uuid)) lResults.Add(pe);
+				if(hsResults.Contains(pe.Uuid)) lResults.Add(pe);
 				return true;
 			};
 			TraverseTree(TraversalMethod.PreOrder, null, eh);
-			Debug.Assert(lResults.UCount == (uint)dResults.Count);
+			Debug.Assert(lResults.UCount == (uint)hsResults.Count);
 		}
 
 		private static void SrxpClearString(bool bIf, PwEntry pe, string strKey)
@@ -394,7 +394,7 @@ namespace KeePassLib
 			return pgNew;
 		}
 
-		private static void SrxpAddResult(Dictionary<PwUuid, bool> dResults,
+		private static void SrxpAddResult(HashSet<PwUuid> hsResults,
 			XPathNavigator xpNavEntry)
 		{
 			try
@@ -409,8 +409,7 @@ namespace KeePassLib
 				string strUuid = xpNavEntry.Value;
 				if(string.IsNullOrEmpty(strUuid)) { Debug.Assert(false); return; }
 
-				byte[] pb = Convert.FromBase64String(strUuid);
-				dResults[new PwUuid(pb)] = true;
+				hsResults.Add(new PwUuid(Convert.FromBase64String(strUuid)));
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

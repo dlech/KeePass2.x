@@ -13,11 +13,11 @@
 #define MyAppHelpName "KeePass.chm"
 #define MyAppId "KeePassPasswordSafe2"
 
-#define KeeVersionStr "2.58"
-#define KeeVersionStrWithMinor "2.58"
-#define KeeVersionStrWithMinorPath "2.58"
-#define KeeVersionWin "2.58.0.0"
-#define KeeVersionWinShort "2.58"
+#define KeeVersionStr "2.59"
+#define KeeVersionStrWithMinor "2.59"
+#define KeeVersionStrWithMinorPath "2.59"
+#define KeeVersionWin "2.59.0.0"
+#define KeeVersionWinShort "2.59"
 
 #define KeeDevPeriod "2003-2025"
 
@@ -257,10 +257,9 @@ Name: DesktopIcon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 [Components]
 Name: Core; Description: "{cm:MyCompCore}"; Flags: fixed; Types: full compact custom
 Name: UserDoc; Description: "{cm:MyCompHelp}"; Types: full custom
-Name: KeePassLibC; Description: "{cm:MyCompNtvLib}"; Types: full custom
-; Name: NativeLib; Description: Native Crypto Library (Fast Key Transformations); Types: full custom
+Name: KeePassLibN; Description: "{cm:MyCompNtvLib}"; Types: full custom
 Name: XSL; Description: "{cm:MyCompXSL}"; Types: full custom
-Name: NGen; Description: "{cm:MyCompNGen}"; Types: full custom; ExtraDiskSpaceRequired: 8388608
+Name: NGen; Description: "{cm:MyCompNGen}"; Types: full custom; ExtraDiskSpaceRequired: 12582912
 Name: PreLoad; Description: "{cm:MyCompPreLoad}"; Types: full custom; ExtraDiskSpaceRequired: 2048
 ; Name: FileAssoc; Description: {cm:AssocFileExtension,{#MyAppNameShort},.kdbx}; Types: full custom
 
@@ -276,10 +275,9 @@ Source: ..\Build\KeePass_Distrib\KeePass.config.xml; DestDir: {app}; Flags: igno
 Source: ..\Build\KeePass_Distrib\License.txt; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\ShInstUtil.exe; DestDir: {app}; Flags: ignoreversion; Components: Core
 Source: ..\Build\KeePass_Distrib\KeePass.chm; DestDir: {app}; Flags: ignoreversion; Components: UserDoc
-Source: ..\Build\KeePass_Distrib\KeePassLibC32.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibC
-Source: ..\Build\KeePass_Distrib\KeePassLibC64.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibC
-; Source: ..\Build\KeePass_Distrib\KeePassNtv32.dll; DestDir: {app}; Flags: ignoreversion; Components: NativeLib
-; Source: ..\Build\KeePass_Distrib\KeePassNtv64.dll; DestDir: {app}; Flags: ignoreversion; Components: NativeLib
+Source: ..\Build\KeePass_Distrib\KeePassLibN.a64.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibN
+Source: ..\Build\KeePass_Distrib\KeePassLibN.x32.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibN
+Source: ..\Build\KeePass_Distrib\KeePassLibN.x64.dll; DestDir: {app}; Flags: ignoreversion; Components: KeePassLibN
 Source: ..\Build\KeePass_Distrib\XSL\KDBX_Common.xsl; DestDir: {app}\XSL; Flags: ignoreversion; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsFull_HTML.xsl; DestDir: {app}\XSL; Flags: ignoreversion; Components: XSL
 Source: ..\Build\KeePass_Distrib\XSL\KDBX_DetailsLight_HTML.xsl; DestDir: {app}\XSL; Flags: ignoreversion; Components: XSL
@@ -326,6 +324,8 @@ Filename: {app}\ShInstUtil.exe; Parameters: ngen_uninstall; WorkingDir: {app}; F
 ; Delete old files when upgrading
 [InstallDelete]
 Name: {app}\{#MyAppUrlName}; Type: files
+Name: {app}\KeePassLibC32.dll; Type: files
+Name: {app}\KeePassLibC64.dll; Type: files
 Name: {app}\XSL\KDBX_DetailsFull.xsl; Type: files
 Name: {app}\XSL\KDBX_DetailsLite.xsl; Type: files
 Name: {app}\XSL\KDBX_PasswordsOnly.xsl; Type: files

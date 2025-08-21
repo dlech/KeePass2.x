@@ -429,23 +429,23 @@ namespace KeePass.Util
 		private static string[] GetNames<T>(IEnumerable<KeyValuePair<string, T>> eA,
 			IEnumerable<KeyValuePair<string, T>> eB, bool bExclStd)
 		{
-			Dictionary<string, bool> d = null;
+			HashSet<string> hs = null;
 			foreach(KeyValuePair<string, T> kvp in eA)
 			{
 				if(bExclStd && PwDefs.IsStandardField(kvp.Key)) continue;
-				if(d == null) d = new Dictionary<string, bool>();
-				d[kvp.Key] = true;
+				if(hs == null) hs = new HashSet<string>();
+				hs.Add(kvp.Key);
 			}
 			foreach(KeyValuePair<string, T> kvp in eB)
 			{
 				if(bExclStd && PwDefs.IsStandardField(kvp.Key)) continue;
-				if(d == null) d = new Dictionary<string, bool>();
-				d[kvp.Key] = true;
+				if(hs == null) hs = new HashSet<string>();
+				hs.Add(kvp.Key);
 			}
-			if(d == null) return MemUtil.EmptyArray<string>();
+			if(hs == null) return MemUtil.EmptyArray<string>();
 
-			string[] v = new string[d.Count];
-			d.Keys.CopyTo(v, 0);
+			string[] v = new string[hs.Count];
+			hs.CopyTo(v);
 			Array.Sort<string>(v, StrUtil.CompareNaturally);
 			return v;
 		}

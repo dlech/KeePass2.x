@@ -37,10 +37,10 @@ namespace KeePass.Ecas
 			get { return m_trigger; }
 		}
 
-		private readonly EcasEvent m_eOccured;
+		private readonly EcasEvent m_eOccurred;
 		public EcasEvent Event
 		{
-			get { return m_eOccured; }
+			get { return m_eOccurred; }
 		}
 
 		private readonly EcasPropertyDictionary m_props;
@@ -66,7 +66,7 @@ namespace KeePass.Ecas
 
 			m_coll = coll;
 			m_trigger = trigger;
-			m_eOccured = e;
+			m_eOccurred = e;
 			m_props = props;
 		}
 	}

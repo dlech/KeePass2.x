@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{8b2d3ff2-208a-40bb-aa19-0a5a5623a5fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cryptography">
+      <UniqueIdentifier>{ae6dbd17-327e-4e05-bd47-7233d65f76e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cryptography\AesKdf">
+      <UniqueIdentifier>{a6ec31b4-8f95-47b5-9d9e-156b3ad423c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cryptography\Argon2">
+      <UniqueIdentifier>{2cd0521d-5bce-4539-abde-e3a135c4c55e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cryptography\Argon2\include">
+      <UniqueIdentifier>{edd23cc2-6f41-48c1-a29e-dd8a16616c6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cryptography\Argon2\src">
+      <UniqueIdentifier>{70f89ac2-c901-4b2c-bf76-3f6ba91a9b70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cryptography\Argon2\src\blake2">
+      <UniqueIdentifier>{e81d1cf7-23fd-4411-b9b3-0c8ad3319d06}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Framework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\AlignedBuffer.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptography\AesKdf\AesKdf.h">
+      <Filter>Cryptography\AesKdf</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptography\Argon2\include\argon2.h">
+      <Filter>Cryptography\Argon2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptography\Argon2\src\core.h">
+      <Filter>Cryptography\Argon2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptography\Argon2\src\encoding.h">
+      <Filter>Cryptography\Argon2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptography\Argon2\src\thread.h">
+      <Filter>Cryptography\Argon2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptography\Argon2\src\blake2\blake2.h">
+      <Filter>Cryptography\Argon2\src\blake2</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptography\Argon2\src\blake2\blake2-impl.h">
+      <Filter>Cryptography\Argon2\src\blake2</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptography\Argon2\src\blake2\blamka-round-ref.h">
+      <Filter>Cryptography\Argon2\src\blake2</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\AppUtil.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DllMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\AlignedBuffer.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Cryptography\AesKdf\AesKdf.cpp">
+      <Filter>Cryptography\AesKdf</Filter>
+    </ClCompile>
+    <ClCompile Include="Cryptography\Argon2\src\argon2.c">
+      <Filter>Cryptography\Argon2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Cryptography\Argon2\src\core.c">
+      <Filter>Cryptography\Argon2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Cryptography\Argon2\src\encoding.c">
+      <Filter>Cryptography\Argon2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Cryptography\Argon2\src\ref.c">
+      <Filter>Cryptography\Argon2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Cryptography\Argon2\src\thread.c">
+      <Filter>Cryptography\Argon2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Cryptography\Argon2\src\blake2\blake2b.c">
+      <Filter>Cryptography\Argon2\src\blake2</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\AppUtil.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="KeePassLibN.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

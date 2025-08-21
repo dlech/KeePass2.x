@@ -56,13 +56,13 @@ namespace KeePass.App
 			public static readonly string Program = "KeePass.exe";
 			public static readonly string XmlSerializers = "KeePass.XmlSerializers.dll";
 
-			public static readonly string NativeLib32 = "KeePassLibC32.dll";
-			public static readonly string NativeLib64 = "KeePassLibC64.dll";
+			// public static readonly string NativeLib32 = "KeePassLibC32.dll";
+			// public static readonly string NativeLib64 = "KeePassLibC64.dll";
 
 			public static readonly string ShInstUtil = "ShInstUtil.exe";
 		}
 
-		// internal const string MruNameValueSplitter = @"/::/";
+		// internal const string MruNameValueSplitter = "/::/";
 
 		/// <summary>
 		/// Hot key IDs (used in <c>WM_HOTKEY</c> window messages).

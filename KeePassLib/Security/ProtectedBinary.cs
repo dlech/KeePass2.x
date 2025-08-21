@@ -428,13 +428,11 @@ namespace KeePassLib.Security
 				i += 32;
 
 				MemUtil.ZeroByteArray(pb);
-				// In .NET 2.0, RNGCryptoServiceProvider does not
-				// implement IDisposable; in later .NET versions it does
 				MemUtil.DisposeIfPossible(rng);
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			try // In case RNGCryptoServiceProvider doesn't work properly
+			try // In case RNGCryptoServiceProvider does not work properly
 			{
 				byte[] pb = Guid.NewGuid().ToByteArray();
 				Array.Copy(pb, 0, pbAll, i, 16);

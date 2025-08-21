@@ -352,7 +352,7 @@ namespace KeePassLib.Serialization
 		{
 			if(m_uForceVersion != 0) return m_uForceVersion;
 
-			// See also KeePassKdb2x3.Export (KDBX 3.1 export module)
+			// See also KeePassKdbx2v3.Export (KDBX 3.1 export module)
 
 			uint uMin = 0;
 

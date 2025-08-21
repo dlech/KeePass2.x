@@ -192,6 +192,8 @@ namespace KeePassLib.Cryptography.KeyDerivation
 			ulong uMem, ulong uIt, int cbOut, uint uVersion, byte[] pbSecretKey,
 			byte[] pbAssocData)
 		{
+			if(!NativeLib.AllowNative) return null;
+
 			NativeBufferEx nbMsg = null, nbSalt = null, nbHash = null;
 			try
 			{
@@ -212,6 +214,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 				uint t = checked((uint)uIt);
 				nbHash = new NativeBufferEx(cbOut, true, true, true, 1);
 				IntPtr cbHash = new IntPtr(cbOut);
+				IntPtr pZ = IntPtr.Zero;
 
 				bool b = false;
 				if(NativeLib.IsUnix())
@@ -222,8 +225,7 @@ namespace KeePassLib.Cryptography.KeyDerivation
 					{
 						b = (NativeMethods.argon2_hash_u0(t, m, uParallel,
 							nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
-							nbHash.Data, cbHash, IntPtr.Zero, IntPtr.Zero,
-							iType, uVersion) == 0);
+							nbHash.Data, cbHash, pZ, pZ, iType, uVersion) == 0);
 					}
 					catch(DllNotFoundException) { }
 					catch(Exception) { Debug.Assert(false); }
@@ -231,22 +233,12 @@ namespace KeePassLib.Cryptography.KeyDerivation
 					if(!b)
 						b = (NativeMethods.argon2_hash_u1(t, m, uParallel,
 							nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
-							nbHash.Data, cbHash, IntPtr.Zero, IntPtr.Zero,
-							iType, uVersion) == 0);
+							nbHash.Data, cbHash, pZ, pZ, iType, uVersion) == 0);
 				}
 				else // Windows
-				{
-					if(IntPtr.Size == 4)
-						b = (NativeMethods.argon2_hash_w32(t, m, uParallel,
-							nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
-							nbHash.Data, cbHash, IntPtr.Zero, IntPtr.Zero,
-							iType, uVersion) == 0);
-					else
-						b = (NativeMethods.argon2_hash_w64(t, m, uParallel,
-							nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
-							nbHash.Data, cbHash, IntPtr.Zero, IntPtr.Zero,
-							iType, uVersion) == 0);
-				}
+					b = (NativeMethods.argon2_hash(t, m, uParallel,
+						nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
+						nbHash.Data, cbHash, pZ, pZ, iType, uVersion) == 0);
 
 				if(b)
 				{

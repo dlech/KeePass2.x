@@ -23,8 +23,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-using KeePass.Resources;
-
 using KeePassLib.Resources;
 using KeePassLib.Utility;
 

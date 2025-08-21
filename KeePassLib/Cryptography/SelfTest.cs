@@ -108,14 +108,18 @@ namespace KeePassLib.Cryptography
 		internal static void TestFipsComplianceProblems()
 		{
 #if !KeePassUAP
-			try { using(RijndaelManaged r = new RijndaelManaged()) { } }
+			try
+			{
+				MemUtil.DisposeIfPossible(CryptoUtil.CreateAes(256, CipherMode.CBC,
+					PaddingMode.PKCS7));
+			}
 			catch(Exception ex)
 			{
 				throw new ExtendedException("AES/Rijndael", ex);
 			}
 #endif
 
-			try { using(SHA256Managed h = new SHA256Managed()) { } }
+			try { MemUtil.DisposeIfPossible(new SHA256Managed()); }
 			catch(Exception ex)
 			{
 				throw new ExtendedException("SHA-256", ex);
@@ -141,16 +145,9 @@ namespace KeePassLib.Cryptography
 			aes.ProcessBlock(pbData, 0, pbData, 0);
 			aes.Reset();
 #else
-			using(SymmetricAlgorithm a = CryptoUtil.CreateAes())
+			using(SymmetricAlgorithm a = CryptoUtil.CreateAes(256, CipherMode.ECB,
+				PaddingMode.None))
 			{
-				if(a.BlockSize != 128) // AES block size
-				{
-					Debug.Assert(false);
-					a.BlockSize = 128;
-				}
-				a.KeySize = 256;
-				a.Mode = CipherMode.ECB;
-
 				using(ICryptoTransform t = a.CreateEncryptor(pbKey, pbIV))
 				{
 					t.TransformBlock(pbData, 0, 16, pbData, 0);
@@ -209,19 +206,18 @@ namespace KeePassLib.Cryptography
 
 			c.Dispose();
 
-			Dictionary<string, bool> d = new Dictionary<string, bool>();
+			HashSet<string> hs = new HashSet<string>();
 			byte[] z = new byte[32];
-			const int nRounds = 100;
-			for(int i = 0; i < nRounds; ++i)
+			for(int i = 0; i < 100; ++i)
 			{
 				Array.Clear(z, 0, z.Length);
 				using(Salsa20Cipher cI = new Salsa20Cipher(z, MemUtil.Int64ToBytes(i)))
 				{
 					cI.Encrypt(z, 0, z.Length);
 				}
-				d[MemUtil.ByteArrayToHexString(z)] = true;
+				if(!hs.Add(MemUtil.ByteArrayToHexString(z)))
+					throw new SecurityException("Salsa20-4");
 			}
-			if(d.Count != nRounds) throw new SecurityException("Salsa20-4");
 #endif
 		}
 
@@ -838,8 +834,7 @@ namespace KeePassLib.Cryptography
 
 			byte[] pbMan = new byte[pbKey.Length];
 			Array.Copy(pbKey, pbMan, pbKey.Length);
-			if(!AesKdf.TransformKeyManaged(pbMan, pbSeed, uRounds))
-				throw new SecurityException("AES-KDF-1");
+			AesKdf.TransformKeyManaged(pbMan, pbSeed, uRounds);
 			pbMan = CryptoUtil.HashSha256(pbMan);
 
 			AesKdf kdf = new AesKdf();
@@ -849,7 +844,7 @@ namespace KeePassLib.Cryptography
 			byte[] pbKdf = kdf.Transform(pbKey, p);
 
 			if(!MemUtil.ArraysEqual(pbMan, pbKdf))
-				throw new SecurityException("AES-KDF-2");
+				throw new SecurityException("AES-KDF");
 #endif
 		}
 
@@ -862,16 +857,15 @@ namespace KeePassLib.Cryptography
 
 			byte[] pbManaged = new byte[32];
 			Array.Copy(pbOrgKey, pbManaged, 32);
-			if(!AesKdf.TransformKeyManaged(pbManaged, pbSeed, uRounds))
-				throw new SecurityException("AES-KDF-1");
+			AesKdf.TransformKeyManaged(pbManaged, pbSeed, uRounds);
 
 			byte[] pbNative = new byte[32];
 			Array.Copy(pbOrgKey, pbNative, 32);
 			if(!NativeLib.TransformKey256(pbNative, pbSeed, uRounds))
-				return; // Native library not available ("success")
+				return; // Native support library not available ("success")
 
 			if(!MemUtil.ArraysEqual(pbManaged, pbNative))
-				throw new SecurityException("AES-KDF-2");
+				throw new SecurityException("AES-KDF-N");
 #endif
 		}
 
@@ -1147,32 +1141,31 @@ namespace KeePassLib.Cryptography
 					throw new Exception("MemUtil-12");
 			}
 
-			try
+			HashSet<uint> hs = new HashSet<uint>();
+			pb = new byte[24];
+			for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(i + 1);
+			for(int i = 0; i < pb.Length; ++i)
 			{
-				Dictionary<uint, bool> d = new Dictionary<uint, bool>();
-
-				pb = new byte[24];
-				for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(i + 1);
-				for(int i = 0; i < pb.Length; ++i)
+				for(int cb = 1; (i + cb) <= pb.Length; ++cb)
 				{
-					for(int cb = 1; (i + cb) <= pb.Length; ++cb)
-						d.Add(MemUtil.Hash32(pb, i, cb), true); // Throws on dup.
-				}
-
-				for(int cb = 0; cb < 32; ++cb)
-				{
-					pb = new byte[cb];
-					d.Add(MemUtil.Hash32(pb, 0, cb), true);
-
-					for(int i = 0; i < cb; ++i)
-					{
-						pb[i] = 0x80;
-						d.Add(MemUtil.Hash32(pb, 0, cb), true);
-						pb[i] = 0;
-					}
+					if(!hs.Add(MemUtil.Hash32(pb, i, cb)))
+						throw new Exception("Hash32-1");
 				}
 			}
-			catch(Exception) { throw new Exception("Hash32"); }
+			for(int cb = 0; cb < 32; ++cb)
+			{
+				pb = new byte[cb];
+				if(!hs.Add(MemUtil.Hash32(pb, 0, cb)))
+					throw new Exception("Hash32-2");
+
+				for(int i = 0; i < cb; ++i)
+				{
+					pb[i] = 0x80;
+					if(!hs.Add(MemUtil.Hash32(pb, 0, cb)))
+						throw new Exception("Hash32-3");
+					pb[i] = 0;
+				}
+			}
 
 			if(MemUtil.VersionToUInt64(new Version(0xABCD, 8, 9, 0xEF01)) !=
 				0xABCD00080009EF01)

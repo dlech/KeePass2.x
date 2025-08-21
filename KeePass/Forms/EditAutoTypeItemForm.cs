@@ -548,14 +548,11 @@ namespace KeePass.Forms
 
 		private void PopulateWindowsListWin()
 		{
-			Dictionary<IntPtr, bool> dWnds = new Dictionary<IntPtr, bool>();
-			NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr hWnd,
+			HashSet<IntPtr> hsHWnds = new HashSet<IntPtr>();
+			NativeMethods.EnumWindowsProc procEnum = delegate(IntPtr h,
 				IntPtr lParam)
 			{
-				try
-				{
-					if(hWnd != IntPtr.Zero) dWnds[hWnd] = true;
-				}
+				try { if(h != IntPtr.Zero) hsHWnds.Add(h); }
 				catch(Exception) { Debug.Assert(false); }
 
 				return true;
@@ -571,23 +568,22 @@ namespace KeePass.Forms
 			// windows for sure)
 			if(WinUtil.IsAtLeastWindows8)
 			{
-				int nMax = (dWnds.Count * 2) + 2;
+				int nMax = (hsHWnds.Count * 2) + 2;
 				IntPtr h = NativeMethods.FindWindowEx(IntPtr.Zero, IntPtr.Zero,
 					null, null);
 				for(int i = 0; i < nMax; ++i)
 				{
 					if(h == IntPtr.Zero) break;
 
-					dWnds[h] = true;
+					hsHWnds.Add(h);
 
 					h = NativeMethods.FindWindowEx(IntPtr.Zero, h, null, null);
 				}
 			}
 
-			foreach(KeyValuePair<IntPtr, bool> kvp in dWnds)
+			foreach(IntPtr h in hsHWnds)
 				ThreadPool.QueueUserWorkItem(new WaitCallback(
-					EditAutoTypeItemForm.EvalWindowProc),
-					new PwlwInfo(this, kvp.Key));
+					EditAutoTypeItemForm.EvalWindowProc), new PwlwInfo(this, h));
 
 			m_cmbWindow.OrderedImageList = m_lWndImages;
 		}

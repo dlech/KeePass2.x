@@ -436,12 +436,12 @@ namespace KeePass.Forms
 			m_pnlAdv.ResumeLayout(true);
 		}
 
-		private static void InitAutoCompletion(TextBox tb, Dictionary<string, bool> d)
+		private static void InitAutoCompletion(TextBox tb, HashSet<string> hs)
 		{
-			if(d.Count == 0) return;
+			if(hs.Count == 0) return;
 
-			string[] v = new string[d.Count];
-			d.Keys.CopyTo(v, 0);
+			string[] v = new string[hs.Count];
+			hs.CopyTo(v);
 			Array.Sort<string>(v, StrUtil.CaseIgnoreComparer);
 
 			// Do not append, because long suggestions hide the start
@@ -450,8 +450,8 @@ namespace KeePass.Forms
 
 		private void InitAutoCompletions()
 		{
-			Dictionary<string, bool> dUrls = new Dictionary<string, bool>();
-			Dictionary<string, bool> dUsers = new Dictionary<string, bool>();
+			HashSet<string> hsUrls = new HashSet<string>();
+			HashSet<string> hsUsers = new HashSet<string>();
 
 			MainForm mf = Program.MainForm;
 			MruList l = ((mf != null) ? mf.FileMruList : null);
@@ -464,14 +464,14 @@ namespace KeePass.Forms
 				if(ioc.IsLocalFile()) continue;
 
 				string str = ioc.Path;
-				if(!string.IsNullOrEmpty(str)) dUrls[str] = true;
+				if(!string.IsNullOrEmpty(str)) hsUrls.Add(str);
 
 				str = ioc.UserName;
-				if(!string.IsNullOrEmpty(str)) dUsers[str] = true;
+				if(!string.IsNullOrEmpty(str)) hsUsers.Add(str);
 			}
 
-			InitAutoCompletion(m_tbUrl, dUrls);
-			InitAutoCompletion(m_tbUserName, dUsers);
+			InitAutoCompletion(m_tbUrl, hsUrls);
+			InitAutoCompletion(m_tbUserName, hsUsers);
 		}
 	}
 }

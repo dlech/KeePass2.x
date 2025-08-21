@@ -283,7 +283,7 @@ void CheckDotNetInstalled()
 	const std_string strNGen = FindNGen();
 	if(strNGen.size() == 0)
 	{
-		std_string strMsg = _T("KeePass 2.x requires the Microsoft .NET Framework 2.0 or higher. ");
+		std_string strMsg = _T("KeePass 2.x requires the Microsoft .NET Framework 3.5 or higher. ");
 		strMsg += _T("This framework currently does not seem to be installed ");
 		strMsg += _T("on your computer. Without this framework, KeePass will not run.\r\n\r\n");
 		strMsg += _T("The Microsoft .NET Framework is available as free download from the ");

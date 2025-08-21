@@ -314,12 +314,12 @@ namespace KeePass.Util
 
 			public XmElementCollection Except(List<string> lExcept)
 			{
-				Dictionary<string, bool> dEx = new Dictionary<string, bool>();
+				HashSet<string> hsEx = new HashSet<string>();
 				if(lExcept != null)
 				{
 					foreach(string str in lExcept)
 					{
-						if(str != null) dEx[str] = true;
+						if(str != null) hsEx.Add(str);
 						else { Debug.Assert(false); }
 					}
 				}
@@ -329,7 +329,7 @@ namespace KeePass.Util
 
 				foreach(KeyValuePair<string, XmlElement> kvp in m_l)
 				{
-					if(!dEx.ContainsKey(kvp.Key)) c.Add(kvp.Key, kvp.Value);
+					if(!hsEx.Contains(kvp.Key)) c.Add(kvp.Key, kvp.Value);
 				}
 
 				return c;

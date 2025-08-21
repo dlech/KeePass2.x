@@ -422,7 +422,7 @@ namespace KeePass.UI
 				string strFileL = UrlUtil.GetFileName(strPathL);
 				string s = UrlUtil.StripExtension(strFileL);
 
-				if(s == "iexplore")
+				if((s == "iexplore") || (s == "seamonkey"))
 				{
 					// https://msdn.microsoft.com/en-us/library/hh826025.aspx
 					AddAppVariant(it, KPRes.Private, "-private");
@@ -449,7 +449,8 @@ namespace KeePass.UI
 				else if((s == "brave") || (s == "brave-browser") ||
 					(s == "chrome") || (s == "chromium") ||
 					(s == "chromium-browser") || (s == "google-chrome") ||
-					(s == "vivaldi"))
+					(s == "maxthon") || (s == "vivaldi") ||
+					((s == "browser") && strPathN.Contains("/yandex/")))
 				{
 					// https://www.chromium.org/developers/how-tos/run-chromium-with-flags
 					// https://peter.sh/experiments/chromium-command-line-switches/

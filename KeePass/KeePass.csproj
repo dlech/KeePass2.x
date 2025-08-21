@@ -17,6 +17,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +44,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
@@ -427,13 +431,15 @@
     <Compile Include="DataExchange\Formats\HandySafeTxt512.cs" />
     <Compile Include="DataExchange\Formats\KasperskyPwMgrTxt90.cs" />
     <Compile Include="DataExchange\Formats\KasperskyPwMgrXml50.cs" />
-    <Compile Include="DataExchange\Formats\KeePassCsv1x.cs" />
-    <Compile Include="DataExchange\Formats\KeePassHtml2x.cs" />
-    <Compile Include="DataExchange\Formats\KeePassKdb1x.cs" />
-    <Compile Include="DataExchange\Formats\KeePassKdb2x.cs" />
-    <Compile Include="DataExchange\Formats\KeePassKdb2xRepair.cs" />
-    <Compile Include="DataExchange\Formats\KeePassXml1x.cs" />
-    <Compile Include="DataExchange\Formats\KeePassXml2x.cs" />
+    <Compile Include="DataExchange\Formats\KeePassCsv1.cs" />
+    <Compile Include="DataExchange\Formats\KeePassHtml2.cs" />
+    <Compile Include="DataExchange\Formats\KeePassKdb1.cs" />
+    <Compile Include="DataExchange\Formats\KeePassKdb1.Read.cs" />
+    <Compile Include="DataExchange\Formats\KeePassKdb1.Write.cs" />
+    <Compile Include="DataExchange\Formats\KeePassKdbx2.cs" />
+    <Compile Include="DataExchange\Formats\KeePassKdbx2Repair.cs" />
+    <Compile Include="DataExchange\Formats\KeePassXml1.cs" />
+    <Compile Include="DataExchange\Formats\KeePassXml2.cs" />
     <Compile Include="DataExchange\Formats\KeePassXXml041.cs" />
     <Compile Include="DataExchange\Formats\KeeperJson16.cs" />
     <Compile Include="DataExchange\Formats\KeyFolderXml1.cs" />
@@ -475,14 +481,12 @@
     <Compile Include="DataExchange\Formats\Whisper32Csv116.cs" />
     <Compile Include="DataExchange\FileFormatPool.cs" />
     <Compile Include="DataExchange\Formats\WinFavorites10.cs" />
-    <Compile Include="DataExchange\Formats\XslTransform2x.cs" />
+    <Compile Include="DataExchange\Formats\XslTransform2.cs" />
     <Compile Include="DataExchange\Formats\ZdnPwProTxt314.cs" />
     <Compile Include="DataExchange\GxiImporter.cs" />
     <Compile Include="DataExchange\GxiProfile.cs" />
     <Compile Include="DataExchange\ImportUtil.cs" />
     <Compile Include="DataExchange\JsonObject.cs" />
-    <Compile Include="DataExchange\KdbFile.cs" />
-    <Compile Include="DataExchange\KdbManager.cs" />
     <Compile Include="DataExchange\PwExportInfo.cs" />
     <Compile Include="Ecas\EcasContext.cs" />
     <Compile Include="Ecas\EcasEnum.cs" />

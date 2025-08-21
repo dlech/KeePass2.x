@@ -37,7 +37,7 @@ using KeePassLib.Serialization;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal class KeePassKdb2x : FileFormatProvider
+	internal class KeePassKdbx2 : FileFormatProvider
 	{
 		public override bool SupportsImport { get { return true; } }
 		public override bool SupportsExport { get { return true; } }
@@ -71,7 +71,7 @@ namespace KeePass.DataExchange.Formats
 	}
 
 	// KDBX 3.1 export module
-	internal sealed class KeePassKdb2x3 : KeePassKdb2x
+	internal sealed class KeePassKdbx2v3 : KeePassKdbx2
 	{
 		// Only list base class as import module
 		public override bool SupportsImport { get { return false; } }

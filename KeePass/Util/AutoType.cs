@@ -754,17 +754,16 @@ namespace KeePass.Util
 			int cAssoc = pe.AutoType.AssociationsCount;
 			if(cAssoc != 0)
 			{
-				Dictionary<string, bool> d = new Dictionary<string, bool>();
-				d[strSeq] = true;
+				HashSet<string> hs = new HashSet<string>() { strSeq };
 
 				foreach(AutoTypeAssociation a in pe.AutoType.Associations)
 				{
 					string strAssocSeq = a.Sequence;
-					if(strAssocSeq.Length != 0) d[strAssocSeq] = true;
+					if(strAssocSeq.Length != 0) hs.Add(strAssocSeq);
 				}
 
-				int c = d.Count;
-				str += ((c >= 2) ? (" " + KPRes.MoreAnd.Replace(@"{PARAM}",
+				int c = hs.Count;
+				str += ((c >= 2) ? (" " + KPRes.MoreAnd.Replace("{PARAM}",
 					(c - 1).ToString())) : string.Empty) + " (" +
 					cAssoc.ToString() + " " + KPRes.AssociationsLower + ")";
 			}

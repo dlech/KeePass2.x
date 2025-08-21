@@ -167,7 +167,7 @@ namespace KeePass.Util
 			// byte[] pb = new byte[2];
 			// mi.Invoke(oDP, new object[] { CfnViewerIgnore, pb });
 
-			// The following results in two zero bytes in the clipboard
+			// The following results in two null bytes in the clipboard
 			mi.Invoke(oDP, new object[] { CfnViewerIgnore, string.Empty });
 		}
 	} */

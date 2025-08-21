@@ -136,7 +136,8 @@ namespace KeePass.UI
 
 				bool bCaution = (strTitle == KeyUtil.GetReAskKeyTitle(KPRes.Export));
 				Debug.Assert(bCaution || !Environment.StackTrace.Contains("Export") ||
-					Environment.StackTrace.Contains("ExchangeDataForm"));
+					Environment.StackTrace.Contains("ExchangeDataForm") ||
+					Environment.StackTrace.Contains("KeyCreationForm"));
 
 				Color clrStart = Color.FromArgb(64, 64, 128);
 				Color clrEnd = Color.FromArgb(192, 192, 255);
@@ -172,7 +173,7 @@ namespace KeePass.UI
 						g.FillRectangle(brCarbonB, rect);
 					}
 
-					// Workaround gradient drawing bug (e.g. occuring on
+					// Workaround gradient drawing bug (e.g. occurring on
 					// Windows 8.1 with 150% DPI)
 					using(Pen pen = new Pen(Color.Black))
 					{
