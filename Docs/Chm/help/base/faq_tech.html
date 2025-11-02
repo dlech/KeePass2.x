@@ -61,7 +61,7 @@ network drive/share?</a></li>
 <li><a href="#moreclienticons">How can I add more <i>client icons</i> for password entries?</a></li>
 <li><a href="#minimode">Does KeePass support a mini mode?</a></li>
 <li><a href="#nolockafterat">Why doesn't KeePass lock after Auto-Type?</a></li>
-<li><a href="#athotkey">Why doesn't Auto-Type work correctly on Polish systems?</a></li>
+<li><a href="#athotkey">What to do in case of a global hot key conflict?</a></li>
 
 
 
@@ -300,16 +300,19 @@ This does not apply to KeePass 2.x.
 <br /><br />
 
 <h2 class="sectiontitle" id="athotkey"><img src="../images/b16x16_help.png"
-alt="" /> Why doesn't Auto-Type work correctly on Polish systems?</h2>
+alt="" /> What to do in case of a global hot key conflict?</h2>
 
-<p>On Polish systems, the default auto-type hot key
-<kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></kbd>
-conflicts with a system command and is frequently used in typing.
-Therefore, auto-type is often executed accidentally.</p>
+<p>By default, the global hot key for performing <a href="autotype.html">auto-type</a>
+is <kbd><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></kbd>. However, there are a
+few keyboard layouts where this key combination is used for typing a character.
+For example, there is a French keyboard layout where this key combination
+produces the character '&#xE6;',
+and there is a Polish keyboard layout where it produces the character '&#x105;'.
+In case of such a conflict, you need to decide whether you want the key combination
+to continue to be the global hot key or whether you want to change it.</p>
 
-<p>The global auto-type hot key can be changed to a different key combination
-in the KeePass options (see
-<a href="autotype.html#autoglobal">Auto-Type</a> for details).</p>
+<p>In KeePass 2.x, the global hot keys can be changed in 'Tools' &rarr;
+'Options' &rarr; tab 'Integration'.</p>
 
 <br />
 

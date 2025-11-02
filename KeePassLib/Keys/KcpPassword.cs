@@ -32,8 +32,13 @@ namespace KeePassLib.Keys
 	/// </summary>
 	public sealed class KcpPassword : IUserKey
 	{
-		private ProtectedString m_psPassword = null; // Optional
 		private ProtectedBinary m_pbKeyData;
+		private ProtectedString m_psPassword = null; // Optional
+
+		public ProtectedBinary KeyData
+		{
+			get { return m_pbKeyData; }
+		}
 
 		/// <summary>
 		/// Get the password as protected string. This is <c>null</c>
@@ -42,16 +47,6 @@ namespace KeePassLib.Keys
 		public ProtectedString Password
 		{
 			get { return m_psPassword; }
-		}
-
-		/// <summary>
-		/// Get key data. Querying this property is fast (it returns a
-		/// reference to a cached <c>ProtectedBinary</c> object).
-		/// If no key data is available, <c>null</c> is returned.
-		/// </summary>
-		public ProtectedBinary KeyData
-		{
-			get { return m_pbKeyData; }
 		}
 
 		public KcpPassword(byte[] pbPasswordUtf8)
@@ -90,8 +85,8 @@ namespace KeePassLib.Keys
 
 		// public void Clear()
 		// {
-		//	m_psPassword = null;
 		//	m_pbKeyData = null;
+		//	m_psPassword = null;
 		// }
 
 #if (DEBUG && !KeePassLibSD)

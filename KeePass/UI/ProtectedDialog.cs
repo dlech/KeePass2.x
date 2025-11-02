@@ -89,6 +89,8 @@ namespace KeePass.UI
 
 			ProcessMessagesEx();
 
+			IntPtr hWndPrevious = NativeMethods.GetForegroundWindowHandle();
+
 			// Creating a window on the new desktop spawns a CtfMon.exe child
 			// process by default. On Windows Vista, this process is terminated
 			// correctly when the desktop is closed. However, on Windows 7 it
@@ -210,6 +212,10 @@ namespace KeePass.UI
 				}
 				finally { if(f != null) UIUtil.DestroyForm(f); }
 			}
+
+			// Workaround for focus bug in Windows 11;
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/0a4a1a7ee7/
+			NativeMethods.SetForegroundWindowEx(hWndPrevious);
 
 			return dr;
 		}
@@ -408,7 +414,7 @@ namespace KeePass.UI
 
 			r = null;
 
-			if(!bProtect)
+			if(!bProtect || !ProtectedDialog.IsSupported)
 			{
 				TForm tf = fnConstruct();
 				if(tf == null) { Debug.Assert(false); return DialogResult.None; }

@@ -1,5 +1,5 @@
 /*
-  KeePass Password Safe - The Open-Source Password Manager
+  ShInstUtil
   Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
@@ -17,20 +17,24 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+#ifndef ___COMMANDLINEARGS_H___
+#define ___COMMANDLINEARGS_H___
 
-namespace KeePass.App.Configuration
+#pragma once
+
+#include "../Framework.h"
+
+class CCommandLineArgs
 {
-	public sealed class AceLogging
-	{
-		public AceLogging()
-		{
-		}
+public:
+	CCommandLineArgs();
 
-		[DefaultValue(false)]
-		public bool Enabled { get; set; }
-	}
-}
+	const std::vector<tstring>& GetFiles() const { return m_vFiles; }
+	LPCTSTR operator[](LPCTSTR lpName) const;
+
+private:
+	std::vector<tstring> m_vFiles;
+	std::vector<std::pair<tstring, tstring>> m_vParams;
+};
+
+#endif // ___COMMANDLINEARGS_H___

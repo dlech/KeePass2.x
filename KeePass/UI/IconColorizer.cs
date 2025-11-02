@@ -80,11 +80,8 @@ namespace KeePass.UI
 				pb = ms.ToArray();
 			}
 
-			const int cbDir = NativeMethods.ICONDIRSize;
-			if(Marshal.SizeOf(typeof(ICONDIR)) != cbDir) { Debug.Assert(false); return l; }
-			const int cbEntry = NativeMethods.ICONDIRENTRYSize;
-			if(Marshal.SizeOf(typeof(ICONDIRENTRY)) != cbEntry) { Debug.Assert(false); return l; }
-
+			int cbDir = Marshal.SizeOf(typeof(ICONDIR));
+			int cbEntry = Marshal.SizeOf(typeof(ICONDIRENTRY));
 			int iPos = 0;
 
 			ICONDIR d = MemUtil.BytesToStruct<ICONDIR>(pb, iPos);
@@ -120,10 +117,8 @@ namespace KeePass.UI
 			int n = l.Count;
 			if((n <= 0) || (n > ushort.MaxValue)) { Debug.Assert(false); return null; }
 
-			const int cbDir = NativeMethods.ICONDIRSize;
-			if(Marshal.SizeOf(typeof(ICONDIR)) != cbDir) { Debug.Assert(false); return null; }
-			const int cbEntry = NativeMethods.ICONDIRENTRYSize;
-			if(Marshal.SizeOf(typeof(ICONDIRENTRY)) != cbEntry) { Debug.Assert(false); return null; }
+			int cbDir = Marshal.SizeOf(typeof(ICONDIR));
+			int cbEntry = Marshal.SizeOf(typeof(ICONDIRENTRY));
 
 			int iData = cbDir + (n * cbEntry);
 			for(int i = 0; i < n; ++i)
@@ -172,12 +167,7 @@ namespace KeePass.UI
 
 		private static bool RecolorImage(IcImage img, float fHue)
 		{
-			const int cbHeader = NativeMethods.BITMAPINFOHEADERSize;
-			if(Marshal.SizeOf(typeof(BITMAPINFOHEADER)) != cbHeader)
-			{
-				Debug.Assert(false);
-				return false;
-			}
+			int cbHeader = Marshal.SizeOf(typeof(BITMAPINFOHEADER));
 
 			byte[] pb = img.Data;
 			if(pb.Length < cbHeader) { Debug.Assert(false); return false; }

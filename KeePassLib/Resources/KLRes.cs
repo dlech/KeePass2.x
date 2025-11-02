@@ -29,5 +29,11 @@ namespace KeePassLib.Resources
 		{
 			get { return KLRes.FileSaveFailed2; }
 		}
+
+		[Obsolete]
+		public static string UserAccountKeyError
+		{
+			get { return KLRes.UnknownError; }
+		}
 	}
 }

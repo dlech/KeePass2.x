@@ -23,10 +23,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
 using KeePass.Native;
+using KeePass.Resources;
 
 using KeePassLib.Utility;
 
@@ -40,25 +42,37 @@ namespace KeePass.UI
 		private IComparer m_cmpUpdatingPre = null;
 		private SortOrder m_soUpdatingPre = SortOrder.None;
 
-		private ContextMenuStrip m_ctxHeader = null;
+		private bool m_bInGetEmptyMarkup = false;
+
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[DefaultValue((object)null)]
-		internal ContextMenuStrip HeaderContextMenuStrip
+		internal ContextMenuStrip HeaderContextMenuStrip { get; set; }
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue((object)null)]
+		internal Button ItemDeleteButton { get; set; }
+
+		private bool m_bSupportSelectAll = true;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue(true)]
+		internal bool SupportSelectAll
 		{
-			get { return m_ctxHeader; }
-			set { m_ctxHeader = value; }
+			get { return m_bSupportSelectAll; }
+			set { m_bSupportSelectAll = value; }
 		}
 
-		private bool m_bAltItemStyles = false;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue((string)null)]
+		internal string EmptyMarkupEx { get; set; }
+
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[DefaultValue(false)]
-		internal bool UseAlternatingItemStyles
-		{
-			get { return m_bAltItemStyles; }
-			set { m_bAltItemStyles = value; }
-		}
+		internal bool UseAlternatingItemStyles { get; set; }
 
 		public CustomListViewEx() : base()
 		{
@@ -142,10 +156,13 @@ namespace KeePass.UI
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
-			if(HandleRenameKeyEvent(e, true)) return;
+			try
+			{
+				if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+				if(HandleKeyEvent(e, true)) return;
 
-			try { if(SkipGroupHeaderIfRequired(e)) return; }
+				if(SkipGroupHeaderIfRequired(e)) return;
+			}
 			catch(Exception) { Debug.Assert(false); }
 
 			base.OnKeyDown(e);
@@ -153,8 +170,12 @@ namespace KeePass.UI
 
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
-			if(HandleRenameKeyEvent(e, false)) return;
+			try
+			{
+				if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+				if(HandleKeyEvent(e, false)) return;
+			}
+			catch(Exception) { Debug.Assert(false); }
 
 			base.OnKeyUp(e);
 		}
@@ -238,77 +259,104 @@ namespace KeePass.UI
 			return null;
 		}
 
-		private bool HandleRenameKeyEvent(KeyEventArgs e, bool bDown)
+		private bool HandleKeyEvent(KeyEventArgs e, bool bDown)
 		{
-			try
+			Keys k = e.KeyData;
+
+			if((k == Keys.F2) && this.LabelEdit)
 			{
-				if((e.KeyData == Keys.F2) && this.LabelEdit)
+				ListView.SelectedListViewItemCollection lvsc = this.SelectedItems;
+				if(lvsc.Count >= 1)
 				{
-					ListView.SelectedListViewItemCollection lvsic = this.SelectedItems;
-					if(lvsic.Count >= 1)
-					{
-						UIUtil.SetHandled(e, true);
-						if(bDown) lvsic[0].BeginEdit();
-						return true;
-					}
+					UIUtil.SetHandled(e, true);
+					if(bDown) lvsc[0].BeginEdit();
+					return true;
 				}
 			}
-			catch(Exception) { Debug.Assert(false); }
+			else if(((k == Keys.Delete) || (k == (Keys.Shift | Keys.Delete))) &&
+				(this.ItemDeleteButton != null))
+			{
+				UIUtil.SetHandled(e, true);
+				if(bDown && this.ItemDeleteButton.Enabled)
+					this.ItemDeleteButton.PerformClick();
+				return true;
+			}
+			else if((k == (Keys.Control | Keys.A)) && m_bSupportSelectAll &&
+				this.MultiSelect)
+			{
+				UIUtil.SetHandled(e, true);
+				if(bDown) UIUtil.SelectAllItems(this);
+				return true;
+			}
 
 			return false;
 		}
-
-		/* protected override void WndProc(ref Message m)
-		{
-			if(m.Msg == NativeMethods.WM_NOTIFY)
-			{
-				NativeMethods.NMHDR nm = (NativeMethods.NMHDR)m.GetLParam(
-					typeof(NativeMethods.NMHDR));
-				if(nm.code == NativeMethods.NM_RCLICK)
-				{
-					m.Result = (IntPtr)1;
-					return;
-				}
-			}
-
-			base.WndProc(ref m);
-		} */
 
 		protected override void WndProc(ref Message m)
 		{
 			try
 			{
-				if((m.Msg == NativeMethods.WM_CONTEXTMENU) && (m_ctxHeader != null) &&
-					(this.View == View.Details) && (this.HeaderStyle !=
-					ColumnHeaderStyle.None) && !NativeLib.IsUnix())
+				if(m.Msg == NativeMethods.WM_NOTIFY_REFLECT)
 				{
-					IntPtr hList = this.Handle;
-					if(hList != IntPtr.Zero)
+					NativeMethods.NMHDR nmh = (NativeMethods.NMHDR)m.GetLParam(
+						typeof(NativeMethods.NMHDR));
+					if(nmh.code == NativeMethods.LVN_GETEMPTYMARKUP)
 					{
-						IntPtr hHeader = NativeMethods.SendMessage(hList,
-							NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
-						if(hHeader != IntPtr.Zero)
-						{
-							NativeMethods.RECT rc = new NativeMethods.RECT();
-							if(NativeMethods.GetWindowRect(hHeader, ref rc))
-							{
-								long l = m.LParam.ToInt64();
-								short x = (short)(l & 0xFFFF);
-								short y = (short)((l >> 16) & 0xFFFF);
+						NativeMethods.NMLVEMPTYMARKUP nmm = (NativeMethods.NMLVEMPTYMARKUP)
+							m.GetLParam(typeof(NativeMethods.NMLVEMPTYMARKUP));
 
-								if((x >= rc.Left) && (x < rc.Right) &&
-									(y >= rc.Top) && (y < rc.Bottom) &&
-									((x != -1) || (y != -1)))
+						nmm.dwFlags = NativeMethods.EMF_CENTERED;
+						nmm.szMarkup = StrUtil.CompactString3Dots((this.EmptyMarkupEx ??
+							(KPRes.Empty + ".")), NativeMethods.L_MAX_URL_LENGTH - 1);
+
+						Marshal.StructureToPtr(nmm, m.LParam, false);
+						m.Result = NativeMethods.TRUE_PTR;
+
+						if(!m_bInGetEmptyMarkup)
+						{
+							m_bInGetEmptyMarkup = true;
+							Invalidate(); // Workaround for drawing bug
+							m_bInGetEmptyMarkup = false;
+						}
+						else { Debug.Assert(false); }
+
+						return;
+					}
+				}
+				else if(m.Msg == NativeMethods.WM_CONTEXTMENU)
+				{
+					ContextMenuStrip ctx = this.HeaderContextMenuStrip;
+					if((ctx != null) && (this.View == View.Details) &&
+						(this.HeaderStyle != ColumnHeaderStyle.None) && !NativeLib.IsUnix())
+					{
+						IntPtr hList = this.Handle;
+						if(hList != IntPtr.Zero)
+						{
+							IntPtr hHeader = NativeMethods.SendMessage(hList,
+								NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+							if(hHeader != IntPtr.Zero)
+							{
+								NativeMethods.RECT rc = new NativeMethods.RECT();
+								if(NativeMethods.GetWindowRect(hHeader, ref rc))
 								{
-									m_ctxHeader.Show(x, y);
-									return;
+									long l = m.LParam.ToInt64();
+									short x = (short)(l & 0xFFFF);
+									short y = (short)((l >> 16) & 0xFFFF);
+
+									if((x >= rc.Left) && (x < rc.Right) &&
+										(y >= rc.Top) && (y < rc.Bottom) &&
+										((x != -1) || (y != -1)))
+									{
+										ctx.Show(x, y);
+										return;
+									}
 								}
+								else { Debug.Assert(false); }
 							}
 							else { Debug.Assert(false); }
 						}
 						else { Debug.Assert(false); }
 					}
-					else { Debug.Assert(false); }
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -371,7 +419,7 @@ namespace KeePass.UI
 
 		private void ApplyAlternatingItemStyles()
 		{
-			if(!m_bAltItemStyles) return;
+			if(!this.UseAlternatingItemStyles) return;
 
 			Color clrAlt = UIUtil.GetAlternateColorEx(this.BackColor);
 

@@ -18,64 +18,47 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Security;
 
 #if !KeePassUAP
 using System.Security.Cryptography;
 #endif
 
 using KeePassLib.Cryptography;
-using KeePassLib.Resources;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePassLib.Keys
 {
 	/// <summary>
-	/// A user key depending on the currently logged on Windows user account.
+	/// A user key depending on the currently logged on user account.
 	/// </summary>
 	public sealed class KcpUserAccount : IUserKey
 	{
-		private readonly ProtectedBinary m_pbKeyData;
+		private const string UserKeyFileName = "ProtectedUserKey.bin";
 
-		// Constant initialization vector (unique for KeePass)
-		private static readonly byte[] m_pbEntropy = new byte[] {
+		// Unique domain separation tag for this class
+		private static readonly byte[] g_pbDomainSepTag = new byte[] {
 			0xDE, 0x13, 0x5B, 0x5F, 0x18, 0xA3, 0x46, 0x70,
 			0xB2, 0x57, 0x24, 0x29, 0x69, 0x88, 0x98, 0xE6
 		};
 
-		private const string UserKeyFileName = "ProtectedUserKey.bin";
+		private readonly ProtectedBinary m_pbKeyData;
 
-		/// <summary>
-		/// Get key data. Querying this property is fast (it returns a
-		/// reference to a cached <c>ProtectedBinary</c> object).
-		/// If no key data is available, <c>null</c> is returned.
-		/// </summary>
 		public ProtectedBinary KeyData
 		{
 			get { return m_pbKeyData; }
 		}
 
-		/// <summary>
-		/// Construct a user account key.
-		/// </summary>
 		public KcpUserAccount()
 		{
 			if(!CryptoUtil.IsProtectedDataSupported)
 				throw new PlatformNotSupportedException(); // Windows 98/ME
 
-			byte[] pbKey = LoadUserKey(false);
-			if(pbKey == null) pbKey = CreateUserKey();
-			if(pbKey == null) // Should never happen
-			{
-				Debug.Assert(false);
-				throw new SecurityException(KLRes.UserAccountKeyError);
-			}
+			byte[] pbKey = (LoadUserKey() ?? CreateUserKey());
 
-			m_pbKeyData = new ProtectedBinary(true, pbKey);
-			MemUtil.ZeroByteArray(pbKey);
+			try { m_pbKeyData = new ProtectedBinary(true, pbKey); }
+			finally { MemUtil.ZeroByteArray(pbKey); }
 		}
 
 		// public void Clear()
@@ -92,58 +75,59 @@ namespace KeePassLib.Keys
 				Environment.SpecialFolder.ApplicationData);
 #endif
 
-			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
-			strUserDir += PwDefs.ShortProductName;
+			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false) +
+				PwDefs.ShortProductName;
 
 			if(bCreate && !Directory.Exists(strUserDir))
 				Directory.CreateDirectory(strUserDir);
 
-			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
-			return (strUserDir + UserKeyFileName);
+			return (UrlUtil.EnsureTerminatingSeparator(strUserDir, false) +
+				UserKeyFileName);
 		}
 
-		private static byte[] LoadUserKey(bool bThrow)
+		private static byte[] LoadUserKey()
 		{
-			byte[] pbKey = null;
+			string strFilePath = GetUserKeyFilePath(false);
 
-#if !KeePassLibSD
 			try
 			{
-				string strFilePath = GetUserKeyFilePath(false);
+				if(!File.Exists(strFilePath)) return null;
+
 				byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
+				if((pbProtectedKey == null) || (pbProtectedKey.Length == 0))
+					return null;
 
-				pbKey = CryptoUtil.UnprotectData(pbProtectedKey, m_pbEntropy,
-					DataProtectionScope.CurrentUser);
+				return CryptoUtil.UnprotectData(pbProtectedKey,
+					g_pbDomainSepTag, DataProtectionScope.CurrentUser);
 			}
-			catch(Exception)
+			catch(Exception ex)
 			{
-				if(bThrow) throw;
-				pbKey = null;
+				throw new ExtendedException(strFilePath, ex);
 			}
-#endif
-
-			return pbKey;
 		}
 
 		private static byte[] CreateUserKey()
 		{
-#if KeePassLibSD
-			return null;
-#else
 			string strFilePath = GetUserKeyFilePath(true);
 
 			byte[] pbRandomKey = CryptoRandom.Instance.GetRandomBytes(64);
 			byte[] pbProtectedKey = CryptoUtil.ProtectData(pbRandomKey,
-				m_pbEntropy, DataProtectionScope.CurrentUser);
+				g_pbDomainSepTag, DataProtectionScope.CurrentUser);
 
-			File.WriteAllBytes(strFilePath, pbProtectedKey);
+			try
+			{
+				File.WriteAllBytes(strFilePath, pbProtectedKey);
 
-			byte[] pbKey = LoadUserKey(true);
-			Debug.Assert(MemUtil.ArraysEqual(pbKey, pbRandomKey));
-
-			MemUtil.ZeroByteArray(pbRandomKey);
-			return pbKey;
-#endif
+				byte[] pbLoadedKey = LoadUserKey();
+				if(!MemUtil.ArraysEqual(pbLoadedKey, pbRandomKey))
+					throw new InvalidDataException();
+				return pbLoadedKey;
+			}
+			catch(Exception ex)
+			{
+				throw new ExtendedException(strFilePath, ex);
+			}
+			finally { MemUtil.ZeroByteArray(pbRandomKey); }
 		}
 	}
 }

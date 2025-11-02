@@ -25,8 +25,8 @@ namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
-		private static readonly IntPtr FALSE_PTR = IntPtr.Zero;
-		private static readonly IntPtr TRUE_PTR = new IntPtr(1);
+		internal static readonly IntPtr FALSE_PTR = IntPtr.Zero;
+		internal static readonly IntPtr TRUE_PTR = new IntPtr(1);
 
 		internal const int WM_SETFOCUS = 0x0007;
 		internal const int WM_KILLFOCUS = 0x0008;
@@ -56,10 +56,10 @@ namespace KeePass.Native
 		internal const int WM_NOTIFY = 0x004E;
 
 		// See Control.ReflectMessageInternal;
-		// https://msdn.microsoft.com/en-us/library/eeah46xd.aspx
+		// https://learn.microsoft.com/en-us/cpp/mfc/tn062-message-reflection-for-windows-controls
 		internal const int WM_REFLECT = 0x2000;
 
-		internal const int WM_NOTIFY_REFLECT = (WM_NOTIFY + WM_REFLECT);
+		internal const int WM_NOTIFY_REFLECT = WM_NOTIFY + WM_REFLECT;
 
 		internal const int WM_GETTEXTLENGTH = 0x000E;
 		internal const int WM_GETICON = 0x007F;
@@ -104,10 +104,12 @@ namespace KeePass.Native
 		internal const uint KEYEVENTF_KEYUP = 2;
 		internal const uint KEYEVENTF_UNICODE = 4;
 
-		// private const int KL_NAMELENGTH = 9;
-
 		internal const ushort LANG_CZECH = 0x05;
 		internal const ushort LANG_POLISH = 0x15;
+
+		private const int KL_NAMELENGTH = 9;
+		// https://learn.microsoft.com/en-us/globalization/windows-keyboard-layouts
+		internal const string KLID_FRENCH_STD_AZERTY = "0001040C";
 
 		// internal const uint GW_CHILD = 5;
 		internal const uint GW_HWNDNEXT = 2;
@@ -270,8 +272,13 @@ namespace KeePass.Native
 
 		// internal const uint DI_NORMAL = 0x0003;
 
-		// internal const int LVN_FIRST = -100;
-		// internal const int LVN_LINKCLICK = LVN_FIRST - 84;
+		internal const int L_MAX_URL_LENGTH = 2048 + 32 + 4;
+
+		internal const uint EMF_CENTERED = 1;
+
+		private const uint LVN_FIRST = unchecked(0U - 100U);
+		internal const uint LVN_GETEMPTYMARKUP = LVN_FIRST - 87;
+		// internal const uint LVN_LINKCLICK = LVN_FIRST - 84;
 
 		// internal const uint LVGF_NONE = 0x00000000;
 		// internal const uint LVGF_HEADER = 0x00000001;

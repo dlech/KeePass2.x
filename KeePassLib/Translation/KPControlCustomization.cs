@@ -26,7 +26,6 @@ using System.Text;
 using System.Xml.Serialization;
 
 #if !KeePassUAP
-using System.Drawing;
 using System.Windows.Forms;
 #endif
 
@@ -42,11 +41,10 @@ namespace KeePassLib.Translation
 			X, Y, Width, Height
 		}
 
-		private const string m_strControlRelative = @"%c";
-
-		internal const NumberStyles m_nsParser = (NumberStyles.AllowLeadingSign |
+		private const string g_strControlRelative = "%c";
+		private const NumberStyles g_nsDouble = (NumberStyles.AllowLeadingSign |
 			NumberStyles.AllowDecimalPoint);
-		internal static readonly CultureInfo m_lclInv = CultureInfo.InvariantCulture;
+		internal static readonly NumberFormatInfo g_nfiInv = NumberFormatInfo.InvariantInfo;
 
 		private string m_strPosX = string.Empty;
 		[XmlAttribute]
@@ -105,7 +103,7 @@ namespace KeePassLib.Translation
 			Debug.Assert(strValue != null);
 			if(strValue == null) throw new ArgumentNullException("strValue");
 
-			if(strValue.Length > 0) strValue += m_strControlRelative;
+			if(strValue.Length > 0) strValue += g_strControlRelative;
 
 			if(lp == LayoutParameterEx.X) m_strPosX = strValue;
 			else if(lp == LayoutParameterEx.Y) m_strPosY = strValue;
@@ -147,10 +145,10 @@ namespace KeePassLib.Translation
 			else if(p == LayoutParameterEx.Height) iPrev = c.Height;
 			else { Debug.Assert(false); return null; }
 
-			double? dRel = ToControlRelativePercent(strModParam);
-			if(dRel.HasValue)
-				return (iPrev + (int)((dRel.Value * (double)iPrev) / 100.0));
-			
+			double? od = ToControlRelativePercent(strModParam);
+			if(od.HasValue)
+				return (iPrev + (int)((od.Value * iPrev) / 100.0));
+
 			Debug.Assert(false);
 			return null;
 		}
@@ -162,25 +160,18 @@ namespace KeePassLib.Translation
 
 			if(strEncoded.Length == 0) return null;
 
-			if(strEncoded.EndsWith(m_strControlRelative))
+			if(strEncoded.EndsWith(g_strControlRelative))
 			{
 				string strValue = strEncoded.Substring(0, strEncoded.Length -
-					m_strControlRelative.Length);
+					g_strControlRelative.Length);
 				if((strValue.Length == 1) && (strValue == "-"))
 					strValue = "0";
 
-				double dRel;
-				if(double.TryParse(strValue, m_nsParser, m_lclInv, out dRel))
-				{
-					return dRel;
-				}
-				else
-				{
-					Debug.Assert(false);
-					return null;
-				}
+				double d;
+				if(double.TryParse(strValue, g_nsDouble, g_nfiInv, out d))
+					return d;
 			}
-			
+
 			Debug.Assert(false);
 			return null;
 		}
@@ -193,9 +184,9 @@ namespace KeePassLib.Translation
 
 			if(strEncoded.Length == 0) return string.Empty;
 
-			if(strEncoded.EndsWith(m_strControlRelative))
+			if(strEncoded.EndsWith(g_strControlRelative))
 				return strEncoded.Substring(0, strEncoded.Length -
-					m_strControlRelative.Length);
+					g_strControlRelative.Length);
 
 			Debug.Assert(false);
 			return string.Empty;
@@ -270,7 +261,7 @@ namespace KeePassLib.Translation
 		}
 
 #if (!KeePassLibSD && !KeePassUAP)
-		private static readonly Type[] m_vTextControls = new Type[] {
+		private static readonly Type[] g_vTextControls = new Type[] {
 			typeof(MenuStrip), typeof(PictureBox), typeof(ListView),
 			typeof(TreeView), typeof(ToolStrip), typeof(WebBrowser),
 			typeof(Panel), typeof(StatusStrip), typeof(ProgressBar),
@@ -282,9 +273,9 @@ namespace KeePassLib.Translation
 			if(oControl == null) return false;
 
 			Type t = oControl.GetType();
-			for(int i = 0; i < m_vTextControls.Length; ++i)
+			for(int i = 0; i < g_vTextControls.Length; ++i)
 			{
-				if(t == m_vTextControls[i]) return false;
+				if(t == g_vTextControls[i]) return false;
 			}
 
 			return true;
@@ -306,25 +297,27 @@ namespace KeePassLib.Translation
 		{
 			if(c == null) { Debug.Assert(false); return string.Empty; }
 
+			NumberFormatInfo nfi = KpccLayout.g_nfiInv;
+
 			StringBuilder sb = new StringBuilder();
 			WriteCpiParam(sb, c.Text);
 
 			if(c is Form)
 			{
-				WriteCpiParam(sb, c.ClientSize.Width.ToString(KpccLayout.m_lclInv));
-				WriteCpiParam(sb, c.ClientSize.Height.ToString(KpccLayout.m_lclInv));
+				WriteCpiParam(sb, c.ClientSize.Width.ToString(nfi));
+				WriteCpiParam(sb, c.ClientSize.Height.ToString(nfi));
 			}
 			else // Normal control
 			{
-				WriteCpiParam(sb, c.Left.ToString(KpccLayout.m_lclInv));
-				WriteCpiParam(sb, c.Top.ToString(KpccLayout.m_lclInv));
-				WriteCpiParam(sb, c.Width.ToString(KpccLayout.m_lclInv));
-				WriteCpiParam(sb, c.Height.ToString(KpccLayout.m_lclInv));
+				WriteCpiParam(sb, c.Left.ToString(nfi));
+				WriteCpiParam(sb, c.Top.ToString(nfi));
+				WriteCpiParam(sb, c.Width.ToString(nfi));
+				WriteCpiParam(sb, c.Height.ToString(nfi));
 				WriteCpiParam(sb, c.Dock.ToString());
 			}
 
 			WriteCpiParam(sb, c.Font.Name);
-			WriteCpiParam(sb, c.Font.SizeInPoints.ToString(KpccLayout.m_lclInv));
+			WriteCpiParam(sb, c.Font.SizeInPoints.ToString(nfi));
 			WriteCpiParam(sb, c.Font.Bold ? "B" : "N");
 			WriteCpiParam(sb, c.Font.Italic ? "I" : "N");
 			WriteCpiParam(sb, c.Font.Underline ? "U" : "N");

@@ -70,6 +70,8 @@ namespace KeePass.Forms
 
 			m_numHistoryDays.Value = m_pwDatabase.MaintenanceHistoryDays;
 
+			m_lvCustomData.ItemDeleteButton = m_btnCDDel;
+
 			m_sdCustomData = m_pwDatabase.CustomData.CloneDeep();
 			UIUtil.StrDictListInit(m_lvCustomData);
 			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData, false);
@@ -176,8 +178,9 @@ namespace KeePass.Forms
 		private void OnBtnCDDel(object sender, EventArgs e)
 		{
 			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData, false);
-			UIUtil.SetFocus(m_lvCustomData, this);
+
 			EnableControlsEx();
+			UIUtil.SetFocus(m_lvCustomData, this);
 		}
 	}
 }

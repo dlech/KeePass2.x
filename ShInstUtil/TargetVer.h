@@ -1,5 +1,5 @@
 /*
-  KeePass Password Safe - The Open-Source Password Manager
+  ShInstUtil
   Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
@@ -17,20 +17,11 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+#ifndef ___TARGETVER_H___
+#define ___TARGETVER_H___
 
-namespace KeePass.App.Configuration
-{
-	public sealed class AceLogging
-	{
-		public AceLogging()
-		{
-		}
+#pragma once
 
-		[DefaultValue(false)]
-		public bool Enabled { get; set; }
-	}
-}
+#include <SdkDdkVer.h>
+
+#endif // ___TARGETVER_H___

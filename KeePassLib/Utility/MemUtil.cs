@@ -135,6 +135,7 @@ namespace KeePassLib.Utility
 			return sb.ToString();
 		}
 
+		// Cf. StrUtil.IsBase32String.
 		/// <summary>
 		/// Decode Base32 strings according to RFC 4648.
 		/// </summary>

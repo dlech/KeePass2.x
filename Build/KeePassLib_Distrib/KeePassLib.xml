@@ -792,28 +792,9 @@
             unless remembering the password has been turned on.
             </summary>
         </member>
-        <member name="P:KeePassLib.Keys.KcpPassword.KeyData">
-            <summary>
-            Get key data. Querying this property is fast (it returns a
-            reference to a cached <c>ProtectedBinary</c> object).
-            If no key data is available, <c>null</c> is returned.
-            </summary>
-        </member>
         <member name="T:KeePassLib.Keys.KcpUserAccount">
             <summary>
-            A user key depending on the currently logged on Windows user account.
-            </summary>
-        </member>
-        <member name="P:KeePassLib.Keys.KcpUserAccount.KeyData">
-            <summary>
-            Get key data. Querying this property is fast (it returns a
-            reference to a cached <c>ProtectedBinary</c> object).
-            If no key data is available, <c>null</c> is returned.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.Keys.KcpUserAccount.#ctor">
-            <summary>
-            Construct a user account key.
+            A user key depending on the currently logged on user account.
             </summary>
         </member>
         <member name="T:KeePassLib.Keys.CompositeKey">
@@ -1501,12 +1482,6 @@
             'Unknown key derivation function!'.
             </summary>
         </member>
-        <member name="P:KeePassLib.Resources.KLRes.UserAccountKeyError">
-            <summary>
-            Look up a localized string similar to
-            'The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.'.
-            </summary>
-        </member>
         <member name="P:KeePassLib.Resources.KLRes.UserAgent">
             <summary>
             Look up a localized string similar to
@@ -1974,11 +1949,6 @@
         <member name="P:KeePassLib.SearchParameters.DataTransformation">
             <summary>
             Only for serialization.
-            </summary>
-        </member>
-        <member name="M:KeePassLib.SearchParameters.#ctor">
-            <summary>
-            Construct a new search parameters object.
             </summary>
         </member>
         <member name="T:KeePassLib.MemoryProtectionConfig">

@@ -119,10 +119,10 @@ namespace KeePass.Forms
 		private uint m_uLastInputTime = uint.MaxValue;
 		private long m_lLockAtGlobalTicks = long.MaxValue;
 
+		private ComboBox m_cmbQuickFind = null;
 		private uint m_uBlockQuickFind = 0;
-		private readonly object m_objQuickFindSync = new object();
-		private int m_iLastQuickFindTicks = Environment.TickCount - 1500;
-		private string m_strLastQuickSearch = string.Empty;
+		private DateTime m_dtLastQuickFind = DateTime.UtcNow;
+		private string m_strLastQuickFind = null;
 
 		private ToolStripSeparator m_tsSepCustomToolBar = null;
 		private readonly List<ToolStripButton> m_lCustomToolBarButtons = new List<ToolStripButton>();
@@ -357,6 +357,15 @@ namespace KeePass.Forms
 
 			m_pluginManager.UnloadAllPlugins(); // Before saving the configuration
 
+			Debug.Assert(m_tbQuickFind.AutoCompleteMode == AutoCompleteMode.None); // KPB 2349
+			Debug.Assert(m_cmbQuickFind == m_tbQuickFind.ComboBox);
+			if(m_cmbQuickFind != null)
+			{
+				m_cmbQuickFind.SelectionChangeCommitted -= this.OnQuickFindSelectionChangeCommitted;
+				m_cmbQuickFind = null;
+			}
+			else { Debug.Assert(false); }
+
 			// Just unregister the events; no need to remove the buttons
 			foreach(ToolStripButton tbCustom in m_lCustomToolBarButtons)
 				tbCustom.Click -= OnCustomToolBarButtonClicked;
@@ -400,6 +409,7 @@ namespace KeePass.Forms
 			Debug.Assert(m_uUIBlocked == 0);
 			Debug.Assert(m_uUnlockAutoBlocked == 0);
 			Debug.Assert(m_sCancellable.Count == 0);
+			Debug.Assert(m_uBlockQuickFind == 0);
 			Debug.Assert(!m_bBlockColumnUpdates);
 			Debug.Assert(m_uBlockGroupSelectionEvent == 0);
 			Debug.Assert(m_uBlockEntrySelectionEvent == 0);
@@ -1090,9 +1100,18 @@ namespace KeePass.Forms
 				m_nClipClearCur = m_nClipClearMax;
 
 			if((m_nClipClearCur > 0) && (m_nClipClearMax > 0))
+			{
 				m_statusClipboard.Value = ((m_nClipClearCur * 100) / m_nClipClearMax);
+
+				string str = KPRes.ClipboardClearInSeconds2.Replace("{PARAM}",
+					m_nClipClearCur.ToString());
+				UIUtil.SetToolTip(m_statusClipboard, str, true);
+			}
 			else if(m_nClipClearCur == 0)
+			{
+				AccessibilityEx.SetRole(m_statusClipboard.Control, AccessibleRole.Default);
 				m_statusClipboard.Visible = false;
+			}
 		}
 
 		/// <summary>
@@ -1108,11 +1127,11 @@ namespace KeePass.Forms
 
 				m_statusClipboard.Visible = true;
 				UpdateClipboardStatus();
+				AccessibilityEx.SetRole(m_statusClipboard.Control, AccessibleRole.Alert);
 
 				string strText = KPRes.ClipboardDataCopied + " " +
-					KPRes.ClipboardClearInSeconds + ".";
-				strText = strText.Replace(@"[PARAM]", m_nClipClearMax.ToString());
-
+					KPRes.ClipboardClearInSeconds2.Replace("{PARAM}",
+					m_nClipClearMax.ToString()) + ".";
 				SetStatusEx(strText);
 
 				// if(m_ntfTray.Visible)
@@ -2124,6 +2143,10 @@ namespace KeePass.Forms
 				case AceColumnType.AutoTypeSequences:
 					EditSelectedEntry(PwEntryFormTab.AutoType);
 					break;
+				case AceColumnType.GroupPath:
+				case AceColumnType.GroupName:
+					ShowParentGroup(pe);
+					break;
 				default:
 					Debug.Assert(false);
 					break;
@@ -2220,13 +2243,62 @@ namespace KeePass.Forms
 			return sb.ToString();
 		}
 
-		private delegate void PerformSearchQuickDelegate(string strSearch,
-			bool bForceShowExpired, bool bRespectEntrySearchingDisabled);
+		private void PerformSearchQuickAsync(string strSearch)
+		{
+			if(m_uBlockQuickFind != 0) return;
+
+			try
+			{
+				BeginInvoke(new Action(delegate()
+				{
+					try { PerformSearchQuick(strSearch, false, true); }
+					catch(Exception) { Debug.Assert(false); }
+				}));
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
 
 		private void PerformSearchQuick(string strSearch, bool bForceShowExpired,
 			bool bRespectEntrySearchingDisabled)
 		{
 			if(strSearch == null) { Debug.Assert(false); strSearch = string.Empty; }
+
+			if(m_uBlockQuickFind != 0) return;
+
+			DateTime dt = DateTime.UtcNow;
+			if(((dt - m_dtLastQuickFind).TotalSeconds < 1.0) &&
+				(strSearch == m_strLastQuickFind))
+			{
+				Debug.Assert(false); // Multiple event handlers?
+				return;
+			}
+			m_dtLastQuickFind = dt;
+			m_strLastQuickFind = strSearch;
+
+			++m_uBlockQuickFind;
+
+			m_tbQuickFind.DroppedDown = false;
+			if(strSearch.Length != 0)
+			{
+				for(int i = m_tbQuickFind.Items.Count - 1; i >= 0; --i)
+				{
+					if(string.Equals((m_tbQuickFind.Items[i] as string), strSearch,
+						StrUtil.CaseIgnoreCmp))
+					{
+						m_tbQuickFind.Items.RemoveAt(i);
+						break;
+					}
+				}
+
+				Debug.Assert(m_tbQuickFind.MaxDropDownItems == 8);
+				int cMax = Math.Max(m_tbQuickFind.MaxDropDownItems, 1);
+				while(m_tbQuickFind.Items.Count >= cMax)
+					m_tbQuickFind.Items.RemoveAt(m_tbQuickFind.Items.Count - 1);
+
+				m_tbQuickFind.Items.Insert(0, strSearch);
+				m_tbQuickFind.SelectedIndex = 0;
+				m_tbQuickFind.Select(0, strSearch.Length);
+			}
 
 			SearchParameters sp = new SearchParameters();
 
@@ -2239,8 +2311,9 @@ namespace KeePass.Forms
 			else sp.SearchString = strSearch;
 
 			sp.SearchInPasswords = Program.Config.MainWindow.QuickFindSearchInPasswords;
-			sp.SearchInTags = sp.SearchInUuids = sp.SearchInGroupPaths =
-				sp.SearchInGroupNames = true;
+			sp.SearchInTags = sp.SearchInUuids = true;
+			sp.SearchInGroupPaths = sp.SearchInGroupNames =
+				Program.Config.MainWindow.QuickFindSearchInGroupPaths;
 
 			sp.ExcludeExpired = (!bForceShowExpired &&
 				Program.Config.MainWindow.QuickFindExcludeExpired);
@@ -2250,6 +2323,8 @@ namespace KeePass.Forms
 				SearchUtil.StrTrfDeref : string.Empty));
 
 			PerformSearch(sp, false, Program.Config.MainWindow.FocusResultsAfterQuickFind);
+
+			--m_uBlockQuickFind;
 		}
 
 		private void ShowExpiredEntries(bool bOnlyIfExists, bool bShowExpired,
@@ -3337,16 +3412,17 @@ namespace KeePass.Forms
 
 					case EntryDataCommandType.ShowValue:
 						SprContext ctx = new SprContext(pe, pd, SprCompileFlags.All);
-						string str = SprEngine.Compile(edc.Param, ctx);
+						string str = (SprEngine.Compile(edc.Param, ctx) ?? string.Empty);
 
 						if(!string.IsNullOrEmpty(edc.ErrorOnSprFailure) &&
-							(string.IsNullOrEmpty(str) || (str == edc.Param)))
+							((str.Length == 0) || (str == edc.Param)))
 							MessageService.ShowWarning(edc.ErrorOnSprFailure);
 						else
 						{
-							// if(!VistaTaskDialog.ShowMessageBox(null, str,
-							//	PwDefs.ShortProductName, VtdIcon.Information, this))
-							MessageService.ShowInfo(str);
+							bool bComplex = ((str.Length > 30) || StrUtil.IsMultiLine(str));
+							if(bComplex || !VistaTaskDialog.ShowMessageBox(null, str,
+								PwDefs.ShortProductName, VtdIcon.Information, this))
+								MessageService.ShowInfo(str);
 						}
 
 						RefreshEntriesList(); // Spr compilation
@@ -5636,6 +5712,14 @@ namespace KeePass.Forms
 				case AceColumnType.AutoTypeSequences:
 					str = AutoType.GetSequencesText(pe);
 					break;
+				case AceColumnType.GroupPath:
+					PwGroup pgP = pe.ParentGroup;
+					str = ((pgP != null) ? pgP.GetFullPath(true, false) : string.Empty);
+					break;
+				case AceColumnType.GroupName:
+					PwGroup pgN = pe.ParentGroup;
+					str = ((pgN != null) ? pgN.Name : string.Empty);
+					break;
 				default: Debug.Assert(false); str = string.Empty; break;
 			}
 			Debug.Assert((ps != null) ^ (str != null));
@@ -5655,7 +5739,7 @@ namespace KeePass.Forms
 				if((t == AceColumnType.Notes) || (t == AceColumnType.CustomString) ||
 					(t == AceColumnType.PluginExt))
 					str = StrUtil.MultiToSingleLine(str);
-				else { Debug.Assert(str == StrUtil.MultiToSingleLine(str)); }
+				else { Debug.Assert(!StrUtil.IsMultiLine(str)); }
 
 				if(Program.Config.MainWindow.EntryListShowDerefData)
 				{
@@ -6144,6 +6228,7 @@ namespace KeePass.Forms
 			try
 			{
 				SelfTest.Perform();
+				NativeMethods.Test();
 
 #if DEBUG
 				Random r = Program.GlobalRandom;
@@ -6518,9 +6603,9 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void ShowSelectedEntryParentGroup()
+		private void ShowParentGroup(PwEntry pe)
 		{
-			PwEntry pe = GetSelectedEntry(false);
+			if(pe == null) pe = GetSelectedEntry(false);
 			if(pe == null) return;
 
 			PwGroup pg = pe.ParentGroup;

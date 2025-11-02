@@ -238,7 +238,16 @@ namespace KeePassLib.Utility
 
 		public static DateTime ConvertUnixTime(double dtUnix)
 		{
-			try { return TimeUtil.UnixRoot.AddSeconds(dtUnix); }
+			const double dtMaxS = 253402300799; // As ms: 1978-01-11
+			Debug.Assert(dtMaxS == ((DateTime.MaxValue.Ticks -
+				TimeUtil.UnixRoot.Ticks) / TimeSpan.TicksPerSecond));
+
+			try
+			{
+				if(dtUnix > dtMaxS)
+					return TimeUtil.UnixRoot.AddMilliseconds(dtUnix);
+				return TimeUtil.UnixRoot.AddSeconds(dtUnix);
+			}
 			catch(Exception) { Debug.Assert(false); }
 
 			return DateTime.UtcNow;

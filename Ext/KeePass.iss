@@ -13,11 +13,11 @@
 #define MyAppHelpName "KeePass.chm"
 #define MyAppId "KeePassPasswordSafe2"
 
-#define KeeVersionStr "2.59"
-#define KeeVersionStrWithMinor "2.59"
-#define KeeVersionStrWithMinorPath "2.59"
-#define KeeVersionWin "2.59.0.0"
-#define KeeVersionWinShort "2.59"
+#define KeeVersionStr "2.60"
+#define KeeVersionStrWithMinor "2.60"
+#define KeeVersionStrWithMinorPath "2.60"
+#define KeeVersionWin "2.60.0.0"
+#define KeeVersionWinShort "2.60"
 
 #define KeeDevPeriod "2003-2025"
 
@@ -310,16 +310,16 @@ Name: {autodesktop}\{#MyAppNameShortEx}; Filename: {app}\{#MyAppExeName}; Tasks:
 
 [Run]
 ; Filename: {app}\KeePass.exe; Parameters: -RegisterFileExt; Components: FileAssoc
-Filename: {app}\ShInstUtil.exe; Parameters: net_check; WorkingDir: {app}; Flags: skipifdoesntexist skipifsilent
-Filename: {app}\ShInstUtil.exe; Parameters: preload_register; WorkingDir: {app}; StatusMsg: "{cm:MyStatusPreLoad}"; Flags: skipifdoesntexist; Components: PreLoad
-Filename: {app}\ShInstUtil.exe; Parameters: ngen_install; WorkingDir: {app}; StatusMsg: "{cm:MyStatusNGen}"; Flags: skipifdoesntexist; Components: NGen
+Filename: {app}\ShInstUtil.exe; Parameters: -C:DotNetCheck; WorkingDir: {app}; Flags: skipifdoesntexist skipifsilent
+Filename: {app}\ShInstUtil.exe; Parameters: -C:PreLoadRegister; WorkingDir: {app}; StatusMsg: "{cm:MyStatusPreLoad}"; Flags: skipifdoesntexist; Components: PreLoad
+Filename: {app}\ShInstUtil.exe; Parameters: -C:NGenInstall; WorkingDir: {app}; StatusMsg: "{cm:MyStatusNGen}"; Flags: skipifdoesntexist; Components: NGen
 Filename: {app}\{#MyAppExeName}; Description: "{cm:LaunchProgram,{#MyAppNameShort}}"; Flags: postinstall nowait skipifsilent
 Filename: "https://keepass.info/plugins.html"; Description: "{cm:MyOptPlgPage}"; Flags: postinstall shellexec skipifsilent unchecked
 
 [UninstallRun]
 ; Filename: {app}\KeePass.exe; Parameters: -UnregisterFileExt
-Filename: {app}\ShInstUtil.exe; Parameters: preload_unregister; WorkingDir: {app}; Flags: skipifdoesntexist; RunOnceId: "PreLoad"; Components: PreLoad
-Filename: {app}\ShInstUtil.exe; Parameters: ngen_uninstall; WorkingDir: {app}; Flags: skipifdoesntexist; RunOnceId: "NGen"; Components: NGen
+Filename: {app}\ShInstUtil.exe; Parameters: -C:PreLoadUnregister; WorkingDir: {app}; Flags: skipifdoesntexist; RunOnceId: "PreLoad"; Components: PreLoad
+Filename: {app}\ShInstUtil.exe; Parameters: -C:NGenUninstall; WorkingDir: {app}; Flags: skipifdoesntexist; RunOnceId: "NGen"; Components: NGen
 
 ; Delete old files when upgrading
 [InstallDelete]

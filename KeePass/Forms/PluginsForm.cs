@@ -83,7 +83,7 @@ namespace KeePass.Forms
 			m_lvPlugins.SmallImageList = m_ilIcons;
 
 			UpdatePluginsList();
-			if(m_lvPlugins.Items.Count > 0)
+			if(m_lvPlugins.Items.Count != 0)
 				m_lvPlugins.Items[0].Selected = true;
 
 			UpdatePluginDescription();

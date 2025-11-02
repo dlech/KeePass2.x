@@ -342,9 +342,12 @@ namespace KeePass.Forms
 			m_lvBinaries.Columns.Add(KPRes.Attachments, nWidth);
 			m_lvBinaries.Columns.Add(KPRes.Size, nWidth, HorizontalAlignment.Right);
 
+			m_lvStrings.ItemDeleteButton = m_btnStrDelete;
+			m_lvBinaries.ItemDeleteButton = m_btnBinDelete;
+
 			UIUtil.AssignShortcut(m_ctxStrCopyItem, Keys.Control | Keys.C);
 			UIUtil.AssignShortcut(m_ctxStrPasteItem, Keys.Control | Keys.V);
-			UIUtil.AssignShortcut(m_ctxStrSelectAll, Keys.Control | Keys.A);
+			UIUtil.AssignShortcut(m_ctxStrSelectAll, Keys.Control | Keys.A, null, true);
 
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 			{
@@ -493,6 +496,8 @@ namespace KeePass.Forms
 			UIUtil.StrDictListInit(m_lvCustomData);
 			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData, (m_mvec != null));
 
+			m_lvCustomData.ItemDeleteButton = m_btnCDDel;
+
 #if DEBUG
 			m_lvCustomData.KeyDown += delegate(object sender, KeyEventArgs e)
 			{
@@ -558,13 +563,15 @@ namespace KeePass.Forms
 			m_lvAutoType.Columns.Add(KPRes.TargetWindow, nWidth);
 			m_lvAutoType.Columns.Add(KPRes.Sequence, nWidth);
 
+			m_lvAutoType.ItemDeleteButton = m_btnAutoTypeDelete;
+
 			UpdateAutoTypeList(ListSelRestore.None, null, false, false);
 
 			// UIUtil.AssignShortcut(m_ctxAutoTypeCopySeq, Keys.Control | Keys.Shift | Keys.C);
 			UIUtil.AssignShortcut(m_ctxAutoTypeCopyItem, Keys.Control | Keys.C);
 			UIUtil.AssignShortcut(m_ctxAutoTypePasteItem, Keys.Control | Keys.V);
 			UIUtil.AssignShortcut(m_ctxAutoTypeDup, Keys.Control | Keys.K);
-			UIUtil.AssignShortcut(m_ctxAutoTypeSelectAll, Keys.Control | Keys.A);
+			UIUtil.AssignShortcut(m_ctxAutoTypeSelectAll, Keys.Control | Keys.A, null, true);
 
 			if(m_pwEditMode == PwEditMode.ViewReadOnlyEntry)
 				m_cbAutoTypeEnabled.Enabled = false;
@@ -651,10 +658,13 @@ namespace KeePass.Forms
 			m_lvHistory.Columns.Add(KPRes.Modified);
 			m_lvHistory.Columns.Add(KPRes.Size, 72, HorizontalAlignment.Right);
 
+			m_lvHistory.ItemDeleteButton = m_btnHistoryDelete;
+
+			m_lvHistory.SupportSelectAll = false;
 			UIUtil.AssignShortcut(m_ctxHstSelectAll, Keys.Control | Keys.A, null, true);
 			GAction<KeyEventArgs, bool> fOnKey = delegate(KeyEventArgs e, bool bDown)
 			{
-				if((e != null) && e.Control && !e.Alt && (e.KeyCode == Keys.A))
+				if((e != null) && (e.KeyData == (Keys.Control | Keys.A)))
 				{
 					UIUtil.SetHandled(e, true);
 					if(bDown) OnCtxHstSelectAll(null, EventArgs.Empty);
@@ -1258,19 +1268,20 @@ namespace KeePass.Forms
 
 		private void OnBtnStrDelete(object sender, EventArgs e)
 		{
+			ListView.SelectedListViewItemCollection lvsc = m_lvStrings.SelectedItems;
+			if(lvsc.Count == 0) { Debug.Assert(false); return; }
+
 			UpdateEntryStrings(true, false, false);
 
-			ListView.SelectedListViewItemCollection lvsc = m_lvStrings.SelectedItems;
 			foreach(ListViewItem lvi in lvsc)
 			{
 				if(!m_vStrings.Remove(lvi.Text)) { Debug.Assert(false); }
 			}
 
-			if(lvsc.Count > 0)
-			{
-				UpdateEntryStrings(false, false, true);
-				ResizeColumnHeaders();
-			}
+			UpdateEntryStrings(false, false, true);
+
+			ResizeColumnHeaders();
+			UIUtil.SetFocus(m_lvStrings, this);
 		}
 
 		private void OnBtnBinAdd(object sender, EventArgs e)
@@ -1280,19 +1291,20 @@ namespace KeePass.Forms
 
 		private void OnBtnBinDelete(object sender, EventArgs e)
 		{
+			ListView.SelectedListViewItemCollection lvsc = m_lvBinaries.SelectedItems;
+			if(lvsc.Count == 0) { Debug.Assert(false); return; }
+
 			UpdateEntryBinaries(true, false);
 
-			ListView.SelectedListViewItemCollection lvsc = m_lvBinaries.SelectedItems;
 			foreach(ListViewItem lvi in lvsc)
 			{
 				if(!m_vBinaries.Remove(lvi.Text)) { Debug.Assert(false); }
 			}
 
-			if(lvsc.Count > 0)
-			{
-				UpdateEntryBinaries(false, true);
-				ResizeColumnHeaders();
-			}
+			UpdateEntryBinaries(false, true);
+
+			ResizeColumnHeaders();
+			UIUtil.SetFocus(m_lvBinaries, this);
 		}
 
 		private void OnBtnBinSave(object sender, EventArgs e)
@@ -1389,6 +1401,7 @@ namespace KeePass.Forms
 			}
 
 			UpdateAutoTypeList(ListSelRestore.None, null, false, true);
+			UIUtil.SetFocus(m_lvAutoType, this);
 		}
 
 		private List<EfxHistoryItem> GetSelectedHistoryItems()
@@ -1462,6 +1475,7 @@ namespace KeePass.Forms
 			}
 
 			UpdateHistoryList(true, true);
+			UIUtil.SetFocus(m_lvHistory, this);
 		}
 
 		private void OnBtnHistoryMore(object sender, EventArgs e)
@@ -2495,8 +2509,9 @@ namespace KeePass.Forms
 		private void OnBtnCDDel(object sender, EventArgs e)
 		{
 			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData, (m_mvec != null));
-			UIUtil.SetFocus(m_lvCustomData, this);
+
 			EnableControlsEx();
+			UIUtil.SetFocus(m_lvCustomData, this);
 		}
 
 		private static void NormalizeStrings(ProtectedStringDictionary d,
@@ -2606,18 +2621,12 @@ namespace KeePass.Forms
 
 		private void OnCtxStrSelectAll(object sender, EventArgs e)
 		{
-			m_lvStrings.BeginUpdate();
-			foreach(ListViewItem lvi in m_lvStrings.Items)
-				lvi.Selected = true;
-			m_lvStrings.EndUpdate();
+			UIUtil.SelectAllItems(m_lvStrings);
 		}
 
 		private void OnCtxAutoTypeSelectAll(object sender, EventArgs e)
 		{
-			m_lvAutoType.BeginUpdate();
-			foreach(ListViewItem lvi in m_lvAutoType.Items)
-				lvi.Selected = true;
-			m_lvAutoType.EndUpdate();
+			UIUtil.SelectAllItems(m_lvAutoType);
 		}
 
 		private void OnCtxStrOtpGen(object sender, EventArgs e)

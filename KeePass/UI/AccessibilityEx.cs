@@ -289,5 +289,13 @@ namespace KeePass.UI
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
+
+		public static void SetRole(Control c, AccessibleRole ar)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+
+			try { if(AccessibilityEx.Enabled) c.AccessibleRole = ar; }
+			catch(Exception) { Debug.Assert(false); }
+		}
 	}
 }

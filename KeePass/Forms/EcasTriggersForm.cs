@@ -87,6 +87,8 @@ namespace KeePass.Forms
 
 			m_lvTriggers.SmallImageList = m_ilIcons;
 
+			m_lvTriggers.ItemDeleteButton = m_btnDelete;
+
 			m_cbEnableTriggers.Checked = m_ets.Enabled;
 			UpdateTriggerListEx(false);
 

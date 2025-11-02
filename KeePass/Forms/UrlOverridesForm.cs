@@ -69,6 +69,8 @@ namespace KeePass.Forms
 			m_lvOverrides.Columns.Add(KPRes.Scheme, nWidth / 4);
 			m_lvOverrides.Columns.Add(KPRes.UrlOverride, (nWidth * 3) / 4);
 
+			m_lvOverrides.ItemDeleteButton = m_btnDelete;
+
 			UpdateOverridesList(false, false);
 
 			string str = aceInt.UrlOverride;
@@ -191,7 +193,7 @@ namespace KeePass.Forms
 		private void OnBtnEdit(object sender, EventArgs e)
 		{
 			ListView.SelectedListViewItemCollection lvsc = m_lvOverrides.SelectedItems;
-			if((lvsc == null) || (lvsc.Count != 1)) { Debug.Assert(false); return; }
+			if(lvsc.Count != 1) { Debug.Assert(false); return; }
 
 			AceUrlSchemeOverride o = (lvsc[0].Tag as AceUrlSchemeOverride);
 			if((o == null) || o.IsBuiltIn) { Debug.Assert(false); return; }
@@ -205,7 +207,7 @@ namespace KeePass.Forms
 		private void OnBtnDelete(object sender, EventArgs e)
 		{
 			ListView.SelectedListViewItemCollection lvsc = m_lvOverrides.SelectedItems;
-			if((lvsc == null) || (lvsc.Count == 0)) { Debug.Assert(false); return; }
+			if(lvsc.Count == 0) { Debug.Assert(false); return; }
 
 			foreach(ListViewItem lvi in lvsc)
 			{
@@ -216,6 +218,7 @@ namespace KeePass.Forms
 			}
 
 			UpdateOverridesList(true, true);
+			UIUtil.SetFocus(m_lvOverrides, this);
 		}
 
 		private void OnOverrideAllCheckedChanged(object sender, EventArgs e)

@@ -1,5 +1,5 @@
 /*
-  KeePass Password Safe - The Open-Source Password Manager
+  ShInstUtil
   Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
@@ -17,20 +17,32 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+#ifndef ___FRAMEWORK_H___
+#define ___FRAMEWORK_H___
 
-namespace KeePass.App.Configuration
-{
-	public sealed class AceLogging
-	{
-		public AceLogging()
-		{
-		}
+#pragma once
 
-		[DefaultValue(false)]
-		public bool Enabled { get; set; }
-	}
-}
+#define WIN32_LEAN_AND_MEAN
+
+#include "TargetVer.h"
+
+#include <cassert>
+#include <cstdint>
+#include <cstdlib>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <Windows.h>
+
+#include <CommCtrl.h>
+#include <ObjBase.h>
+#include <ShellApi.h>
+#include <ShlObj.h>
+#include <ShObjIdl.h>
+#include <TChar.h>
+#include <VersionHelpers.h>
+
+typedef std::basic_string<TCHAR> tstring;
+
+#endif // ___FRAMEWORK_H___

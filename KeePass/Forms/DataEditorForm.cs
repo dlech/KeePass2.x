@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
 
@@ -154,15 +155,14 @@ namespace KeePass.Forms
 			UIUtil.ConfigureTbButton(m_tbAlignRight, KPRes.AlignRight, KPRes.AlignRight +
 				" (" + UIUtil.GetKeysName(Keys.Control | Keys.R) + ")", null);
 
-			string strSearchTr = ((WinUtil.IsAtLeastWindowsVista ?
+			UIUtil.SetCueBanner(m_tbFind, (WinUtil.IsAtLeastWindowsVista ?
 				string.Empty : " ") + KPRes.Search);
-			UIUtil.SetCueBanner(m_tbFind, strSearchTr);
 
 			UIUtil.SetToolTip(m_tbFontCombo, KPRes.Font, true);
 			UIUtil.SetToolTip(m_tbFontSizeCombo, KPRes.Size, true);
 
-			UIUtil.EnableAutoCompletion(m_tbFontCombo, true);
-			UIUtil.EnableAutoCompletion(m_tbFontSizeCombo, true);
+			UIUtil.EnableAutoCompletion(m_tbFontCombo, true); // Despite KPB 2349
+			// UIUtil.EnableAutoCompletion(m_tbFontSizeCombo, true); // KPB 2349
 
 			m_rtbText.WordWrap = Program.Config.UI.DataEditorWordWrap;
 			m_ctxText.Attach(m_rtbText, this);
@@ -500,7 +500,8 @@ namespace KeePass.Forms
 			{
 				Font f = m_rtbText.SelectionFont;
 				float fSize;
-				if(!float.TryParse(m_tbFontSizeCombo.Text, out fSize))
+				if(!float.TryParse(m_tbFontSizeCombo.Text, NumberStyles.Float,
+					NumberFormatInfo.CurrentInfo, out fSize))
 				{
 					if(f != null) fSize = f.SizeInPoints;
 					else if(FontUtil.DefaultFont != null)

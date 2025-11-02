@@ -225,16 +225,19 @@ namespace KeePass.Util
 				if(Program.Config.Integration.HotKeyGlobalAutoType !=
 					(long)(Keys.Control | Keys.Alt | Keys.A)) return;
 
-				// Check for a conflict only on Polish systems; other
+				// Check for a conflict only on certain systems; other
 				// languages typically don't use Ctrl+Alt+A frequently
 				// and a conflict warning would just be confusing for
 				// most users
 				IntPtr hKL = NativeMethods.GetKeyboardLayout(0);
 				ushort uLangID = (ushort)(hKL.ToInt64() & 0xFFFFL);
 				ushort uPriLangID = NativeMethods.GetPrimaryLangID(uLangID);
-				if(uPriLangID != NativeMethods.LANG_POLISH) return;
+				string strKlid = NativeMethods.GetKeyboardLayoutNameEx();
+				if((uPriLangID != NativeMethods.LANG_POLISH) &&
+					(strKlid != NativeMethods.KLID_FRENCH_STD_AZERTY))
+					return;
 
-				int vk = (int)Keys.A;
+				const int vk = (int)Keys.A;
 
 				// We actually check for RAlt (which maps to Ctrl+Alt)
 				// instead of LCtrl+LAlt
@@ -259,18 +262,28 @@ namespace KeePass.Util
 				dlg.CommandLinks = false;
 				dlg.Content = str;
 				dlg.DefaultButtonID = (int)DialogResult.Cancel;
+				dlg.EnableHyperlinks = true;
+				dlg.FooterText = VistaTaskDialog.CreateLink("h", KPRes.MoreInfo);
 				dlg.MainInstruction = KPRes.KeyboardKeyCtrl + "+" +
 					KPRes.KeyboardKeyAlt + "+A - " + KPRes.Warning;
 				dlg.SetIcon(VtdIcon.Warning);
+				dlg.SetFooterIcon(VtdIcon.Information);
 				dlg.VerificationText = UIUtil.GetDialogNoShowAgainText(null);
 				dlg.WindowTitle = PwDefs.ShortProductName;
+
+				dlg.LinkClicked += delegate(object sender, LinkClickedEventArgs e)
+				{
+					if((e != null) && (e.LinkText == "h"))
+						AppHelp.ShowHelp(AppDefs.HelpTopics.FaqTech,
+							AppDefs.HelpTopics.FaqTechHotKey);
+				};
 
 				if(dlg.ShowDialog(fParent))
 				{
 					if(dlg.ResultVerificationChecked)
 						Program.Config.Integration.CheckHotKeys = false;
 				}
-				else MessageService.ShowWarning(str);
+				// else MessageService.ShowWarning(str); // Check box is required
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}

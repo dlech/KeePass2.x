@@ -20,10 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
-#if !KeePassUAP
 using System.Drawing;
-#endif
+using System.Drawing.Imaging;
 
 using KeePassLib.Utility;
 
@@ -41,7 +39,8 @@ namespace KeePassLib
 		private string m_strName = string.Empty;
 		private DateTime? m_odtLastMod = null;
 
-		private Dictionary<long, Image> m_dImageCache = new Dictionary<long, Image>();
+		private bool? m_obImageValid = null;
+		private readonly Dictionary<long, Image> m_dImageCache = new Dictionary<long, Image>();
 
 		public PwUuid Uuid
 		{
@@ -68,6 +67,16 @@ namespace KeePassLib
 		{
 			get { return m_odtLastMod; }
 			set { m_odtLastMod = value; }
+		}
+
+		internal bool IsImageValid
+		{
+			get
+			{
+				GetImage();
+				Debug.Assert(m_obImageValid.HasValue);
+				return (m_obImageValid ?? false);
+			}
 		}
 
 		[Obsolete("Use GetImage instead.")]
@@ -108,6 +117,19 @@ namespace KeePassLib
 			try { img = GfxUtil.LoadImage(m_pbImageDataPng); }
 			catch(Exception) { Debug.Assert(false); }
 
+			if(img != null) m_obImageValid = true;
+			else
+			{
+				Debug.Assert(false);
+				m_obImageValid = false;
+
+				img = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
+				using(Graphics g = Graphics.FromImage(img))
+				{
+					g.Clear(Color.Transparent);
+				}
+			}
+
 			m_dImageCache[lKey] = img;
 			return img;
 		}
@@ -141,14 +163,7 @@ namespace KeePassLib
 
 		internal PwCustomIcon Clone()
 		{
-			PwCustomIcon ico = new PwCustomIcon(m_uuid, m_pbImageDataPng);
-
-			ico.m_strName = m_strName;
-			ico.m_odtLastMod = m_odtLastMod;
-
-			ico.m_dImageCache = m_dImageCache; // Same image data
-
-			return ico;
+			return (PwCustomIcon)MemberwiseClone();
 		}
 	}
 }

@@ -756,6 +756,12 @@ namespace KeePassLib.Utility
 #endif
 		}
 
+		internal static bool TryParseDoubleInvariant(string str, out double d)
+		{
+			return double.TryParse(str, NumberStyles.Float,
+				NumberFormatInfo.InvariantInfo, out d);
+		}
+
 		public static bool TryParseDateTime(string str, out DateTime dt)
 		{
 #if !KeePassLibSD
@@ -967,7 +973,8 @@ namespace KeePassLib.Utility
 					if((strPartX.Length <= 19) && (strPartY.Length <= 19))
 					{
 						ulong uX, uY;
-						if(ulong.TryParse(strPartX, out uX) && ulong.TryParse(strPartY, out uY))
+						if(TryParseULongInvariant(strPartX, out uX) &&
+							TryParseULongInvariant(strPartY, out uY))
 						{
 							if(uX < uY) return -1;
 							if(uX > uY) return 1;
@@ -979,7 +986,8 @@ namespace KeePassLib.Utility
 					else
 					{
 						double dX, dY;
-						if(double.TryParse(strPartX, out dX) && double.TryParse(strPartY, out dY))
+						if(TryParseDoubleInvariant(strPartX, out dX) &&
+							TryParseDoubleInvariant(strPartY, out dY))
 						{
 							if(dX < dY) return -1;
 							if(dX > dY) return 1;
@@ -1117,6 +1125,30 @@ namespace KeePassLib.Utility
 				if((bt == (byte)' ') || (bt == (byte)'\t') ||
 					(bt == (byte)'\r') || (bt == (byte)'\n'))
 					continue;
+
+				return false;
+			}
+
+			return true;
+		}
+
+		// Cf. MemUtil.ParseBase32.
+		internal static bool IsBase32String(string str)
+		{
+			if(str == null) throw new ArgumentNullException("str");
+
+			bool bPadding = false;
+
+			for(int i = 0; i < str.Length; ++i)
+			{
+				char ch = str[i];
+
+				if(ch == '=') { bPadding = true; continue; }
+				if(bPadding) return false;
+
+				if((ch >= 'A') && (ch <= 'Z')) continue;
+				if((ch >= 'a') && (ch <= 'z')) continue;
+				if((ch >= '2') && (ch <= '7')) continue;
 
 				return false;
 			}
@@ -1695,6 +1727,14 @@ namespace KeePassLib.Utility
 			str = str.Replace('\n', ' ');
 
 			return str;
+		}
+
+		private static readonly char[] g_vNewLine = new char[] { '\r', '\n' };
+		internal static bool IsMultiLine(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+
+			return (str.IndexOfAny(g_vNewLine) >= 0);
 		}
 
 		public static List<string> SplitSearchTerms(string strSearch)

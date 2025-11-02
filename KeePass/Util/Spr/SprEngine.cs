@@ -28,6 +28,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
+using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.Forms;
 using KeePass.Resources;
@@ -679,12 +680,28 @@ namespace KeePass.Util.Spr
 
 			VistaTaskDialog dlg = new VistaTaskDialog();
 			dlg.Content = strText;
+			dlg.EnableHyperlinks = true;
+			dlg.FooterText = KPRes.MoreInfo + ": " +
+				VistaTaskDialog.CreateLink("p", KPRes.Placeholders) + ", " +
+				VistaTaskDialog.CreateLink("s", KPRes.Security) + ".";
 			if(piForSet != null)
 				dlg.VerificationText = UIUtil.GetDialogNoShowAgainText(null);
 			dlg.WindowTitle = PwDefs.ShortProductName;
 			dlg.SetIcon(VtdCustomIcon.Question);
+			dlg.SetFooterIcon(VtdIcon.Information);
 			dlg.AddButton((int)DialogResult.OK, KPRes.Yes, null);
 			dlg.AddButton((int)DialogResult.Cancel, KPRes.No, null);
+
+			dlg.LinkClicked += delegate(object sender, LinkClickedEventArgs e)
+			{
+				string str = (e.LinkText ?? string.Empty);
+				if(str.Equals("p", StrUtil.CaseIgnoreCmp))
+					AppHelp.ShowHelp(AppDefs.HelpTopics.Placeholders, null);
+				else if(str.Equals("s", StrUtil.CaseIgnoreCmp))
+					AppHelp.ShowHelp(AppDefs.HelpTopics.Security,
+						AppDefs.HelpTopics.SecurityMalData);
+				else { Debug.Assert(false); }
+			};
 
 			using(FocusRestoreScope frs = new FocusRestoreScope())
 			{
@@ -695,7 +712,11 @@ namespace KeePass.Util.Spr
 						piForSet.SetValue(oCfgContainer, false, null);
 					return b;
 				}
-				return MessageService.AskYesNo(strText);
+				return MessageService.AskYesNo(strText + MessageService.NewParagraph +
+					KPRes.MoreInfo + ":" + MessageService.NewLine +
+					AppHelp.GetOnlineUrl(AppDefs.HelpTopics.Placeholders, null) +
+					MessageService.NewLine + AppHelp.GetOnlineUrl(
+					AppDefs.HelpTopics.Security, AppDefs.HelpTopics.SecurityMalData));
 			}
 		}
 
