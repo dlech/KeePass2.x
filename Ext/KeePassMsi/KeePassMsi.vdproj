@@ -202,7 +202,7 @@
             "Object" = "8:_B354F7D87A064AA0BBC71E3926639333"
             "FileType" = "3:2"
             "InstallAction" = "3:1"
-            "Arguments" = "8:-C:MsiInstall -AllUsers:[ALLUSERS]"
+            "Arguments" = "8:-C:MsiInstall -AllUsers:[ALLUSERS] -KpsOptions:\"[KPS_OPTIONS]\""
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
             "Identifier" = "8:_C3740982_B4A0_4645_8D16_F4A64C9F61B1"
@@ -216,7 +216,7 @@
             "Object" = "8:_B354F7D87A064AA0BBC71E3926639333"
             "FileType" = "3:2"
             "InstallAction" = "3:3"
-            "Arguments" = "8:-C:MsiUninstall -AllUsers:[ALLUSERS]"
+            "Arguments" = "8:-C:MsiUninstall -AllUsers:[ALLUSERS] -KpsOptions:\"[KPS_OPTIONS]\""
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
             "Identifier" = "8:_D79496BE_49C1_4868_887D_06D5693F8527"
@@ -230,7 +230,7 @@
             "Object" = "8:_B354F7D87A064AA0BBC71E3926639333"
             "FileType" = "3:2"
             "InstallAction" = "3:4"
-            "Arguments" = "8:-C:MsiUninstall -AllUsers:[ALLUSERS]"
+            "Arguments" = "8:-C:MsiUninstall -AllUsers:[ALLUSERS] -KpsOptions:\"[KPS_OPTIONS]\""
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
             "Identifier" = "8:_2C42BC03_479B_4CF5_B872_562CFC9AC2E5"
@@ -384,7 +384,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.60.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.61.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -535,7 +535,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.60.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.61.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -606,7 +606,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.60.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.61.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_FD15DCE9D96DECA1BB580526A7A931C7"
@@ -744,16 +744,16 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:KeePass 2.60"
-        "ProductCode" = "8:{7C096F52-C65F-4B26-9663-FD293907B241}"
-        "PackageCode" = "8:{662F2ACE-17FB-4E39-8074-5C8CBD7FEF65}"
+        "ProductName" = "8:KeePass 2.61"
+        "ProductCode" = "8:{D48EC6CC-E202-4AF6-9130-4D7F181E9693}"
+        "PackageCode" = "8:{C7A8FC2D-B173-409D-8107-EBEB63439A46}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.60.0"
+        "ProductVersion" = "8:2.61.0"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://keepass.info/"
@@ -946,7 +946,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass: Copyright © 2003-2025 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright © 2003-2026 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1069,7 +1069,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:KeePass: Copyright © 2003-2025 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
+                            "Value" = "8:KeePass: Copyright © 2003-2026 Dominik Reichl. The software is distributed under the terms of the GNU General Public License version 2 or later."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }

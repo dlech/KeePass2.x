@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ namespace KeePass.Ecas
 				0xAB, 0x89, 0xF2, 0xF8, 0x70, 0xEF, 0x94, 0xB8 }),
 				KPRes.OpenDatabaseFileStc, PwIcon.FolderOpen, new EcasParameter[] {
 					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
-					new EcasParameter(KPRes.IOConnection + " - " + KPRes.UserName,
+					new EcasParameter(KPRes.IOConnection + " - " + KPRes.UserNameStc,
 						EcasValueType.String, null),
 					new EcasParameter(KPRes.IOConnection + " - " + KPRes.Password,
 						EcasValueType.String, null),
@@ -116,10 +116,14 @@ namespace KeePass.Ecas
 				0x99, 0xB4, 0x57, 0x1D, 0x02, 0xB3, 0xAD, 0x4D }),
 				KPRes.SynchronizeStc, PwIcon.PaperReady, new EcasParameter[] {
 					new EcasParameter(KPRes.FileOrUrl, EcasValueType.String, null),
-					new EcasParameter(KPRes.IOConnection + " - " + KPRes.UserName,
+					new EcasParameter(KPRes.IOConnection + " - " + KPRes.UserNameStc,
 						EcasValueType.String, null),
 					new EcasParameter(KPRes.IOConnection + " - " + KPRes.Password,
-						EcasValueType.String, null) },
+						EcasValueType.String, null),
+					new EcasParameter(KPRes.OnError + " - " + KPRes.Silent,
+						EcasValueType.Bool, null),
+					new EcasParameter(KPRes.OnError + " - " + KPRes.Continue,
+						EcasValueType.Bool, null) },
 				SyncDatabaseFile));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
@@ -177,7 +181,7 @@ namespace KeePass.Ecas
 				0x3B, 0x3D, 0x3E, 0x31, 0xE4, 0xB3, 0x42, 0xA6,
 				0xBA, 0xCC, 0xD5, 0xC0, 0x3B, 0xAC, 0xA9, 0x69 }),
 				KPRes.Wait, PwIcon.Clock, new EcasParameter[] {
-					new EcasParameter(KPRes.TimeSpan + @" [ms]", EcasValueType.UInt64, null) },
+					new EcasParameter(KPRes.TimeSpan + " [ms]", EcasValueType.UInt64, null) },
 				ExecuteSleep));
 
 			m_actions.Add(new EcasActionType(new PwUuid(new byte[] {
@@ -391,20 +395,28 @@ namespace KeePass.Ecas
 
 		private static void SyncDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			string strPath = EcasUtil.GetParamPath(a.Parameters, 0, true);
-			if(string.IsNullOrEmpty(strPath)) return;
+			string[] vPaths = EcasUtil.GetParamPaths(a.Parameters, 0, true);
+			if((vPaths == null) || (vPaths.Length == 0)) return;
 
 			string strIOUserName = EcasUtil.GetParamString(a.Parameters, 1, true);
 			string strIOPassword = EcasUtil.GetParamString(a.Parameters, 2, true);
-
-			IOConnectionInfo ioc = IOFromParameters(strPath, strIOUserName, strIOPassword);
-			if(ioc == null) return;
+			bool bOnErrorSilent = EcasUtil.GetParamBool(a.Parameters, 3);
+			bool bOnErrorContinue = EcasUtil.GetParamBool(a.Parameters, 4);
 
 			MainForm mf = Program.MainForm;
 			PwDatabase pd = mf.ActiveDatabase;
 			if((pd == null) || !pd.IsOpen) return;
 
-			bool? ob = ImportUtil.Synchronize(pd, mf, ioc, false, mf);
+			List<IOConnectionInfo> l = new List<IOConnectionInfo>();
+			foreach(string strPath in vPaths)
+			{
+				IOConnectionInfo ioc = IOFromParameters(strPath, strIOUserName, strIOPassword);
+				if(ioc != null) l.Add(ioc);
+			}
+			if(l.Count == 0) return;
+
+			bool? ob = ImportUtil.Synchronize(pd, mf, l.ToArray(), false, mf,
+				bOnErrorSilent, bOnErrorContinue);
 			mf.UpdateUISyncPost(ob);
 		}
 

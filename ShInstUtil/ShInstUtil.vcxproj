@@ -132,10 +132,12 @@
     <ClInclude Include="ShInstUtil.h" />
     <ClInclude Include="TargetVer.h" />
     <ClInclude Include="Utility\CommandLineArgs.h" />
+    <ClInclude Include="Utility\OptionSet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShInstUtil.cpp" />
     <ClCompile Include="Utility\CommandLineArgs.cpp" />
+    <ClCompile Include="Utility\OptionSet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ShInstUtil.rc" />

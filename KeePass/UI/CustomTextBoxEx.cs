@@ -1,6 +1,6 @@
-/*
+﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,45 +17,32 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/*
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
+
+using KeePass.Native;
 
 namespace KeePass.UI
 {
-	public sealed class TabControlEx : TabControl
+	public sealed class CustomTextBoxEx : TextBox
 	{
-		private Font m_fBold = null;
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		internal event EventHandler<CancelEventArgs> PasteEx;
 
-		public TabControlEx() : base()
+		protected override void WndProc(ref Message m)
 		{
-			m_fBold = FontUtil.CreateFont(this.Font, FontStyle.Bold);
+			if((m.Msg == NativeMethods.WM_PASTE) && (this.PasteEx != null))
+			{
+				CancelEventArgs e = new CancelEventArgs();
+				this.PasteEx(this, e);
+				if(e.Cancel) return;
+			}
 
-			this.DrawMode = TabDrawMode.OwnerDrawFixed;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
-
-			if(disposing) m_fBold.Dispose();
-		}
-
-		protected override void OnDrawItem(DrawItemEventArgs e)
-		{
-			DrawItemEventArgs ev = e;
-
-			if(this.SelectedIndex == e.Index)
-				ev = new DrawItemEventArgs(e.Graphics, m_fBold, e.Bounds,
-					e.Index, e.State);
-
-			e.DrawBackground();
-
-			base.OnDrawItem(ev);
+			base.WndProc(ref m);
 		}
 	}
 }
-*/

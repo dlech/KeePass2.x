@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -195,9 +195,12 @@ namespace KeePassLib.Serialization
 		{
 			if(g_bExtraSafe)
 			{
-				if(!IOConnection.FileExists(m_iocTemp))
-					throw new FileNotFoundException(m_iocTemp.Path +
-						MessageService.NewLine + KLRes.FileSaveFailed);
+				try
+				{
+					if(!IOConnection.FileExists(m_iocTemp, true))
+						throw new FileNotFoundException(KLRes.FileSaveFailed);
+				}
+				catch(Exception ex) { throw new ExtendedException(m_iocTemp.Path, ex); }
 			}
 
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
@@ -215,7 +218,10 @@ namespace KeePassLib.Serialization
 			DateTime? otCreation = null;
 			SimpleStat sStat = null;
 
-			bool bBaseExists = IOConnection.FileExists(m_iocBase);
+			bool bBaseExists;
+			try { bBaseExists = IOConnection.FileExists(m_iocBase, true); }
+			catch(Exception ex) { throw new ExtendedException(m_iocBase.Path, ex); }
+
 			if(bBaseExists && m_iocBase.IsLocalFile())
 			{
 				// FileAttributes faBase = FileAttributes.Normal;

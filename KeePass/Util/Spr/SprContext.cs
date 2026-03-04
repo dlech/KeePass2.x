@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Text;
 
 using KeePassLib;
-using KeePassLib.Interfaces;
+using KeePassLib.Utility;
 
 namespace KeePass.Util.Spr
 {
@@ -45,7 +45,8 @@ namespace KeePass.Util.Spr
 		References = 0x200,
 		EnvVars = 0x400,
 		NewPassword = 0x800,
-		HmacOtp = 0x1000, // {HMACOTP}, {TIMEOTP}, ...
+		HmacOtp = 0x1000, // {HMACOTP}, ...
+		OtpNonActive = 0x400000, // {TIMEOTP}, ...
 		Comments = 0x2000,
 		TextTransforms = 0x10000,
 		Env = 0x20000, // {BASE}, ...
@@ -56,8 +57,8 @@ namespace KeePass.Util.Spr
 		ExtActive = 0x4000, // Active transformations provided by plugins
 		ExtNonActive = 0x8000, // Non-active transformations provided by plugins
 
-		// Next free: 0x400000
-		All = 0x3FFFFF,
+		// Next free: 0x800000
+		All = 0x7FFFFF,
 
 		// Internal:
 		UIInteractive = (SprCompileFlags.PickChars | SprCompileFlags.Run),
@@ -136,9 +137,16 @@ namespace KeePass.Util.Spr
 			set { m_flags = value; }
 		}
 
-		private SprRefCache m_refCache = new SprRefCache();
+		private DateTime? m_odt = null; // For forcing a time; null => current
+		internal DateTime Time
+		{
+			get { return (m_odt ?? DateTime.UtcNow); } // Do not cache UtcNow
+			set { m_odt = TimeUtil.ToUtc(value, true); }
+		}
+
+		private readonly SprRefCache m_refCache = new SprRefCache();
 		/// <summary>
-		/// Used internally by <c>SprEngine</c>; don't modify it.
+		/// Used internally by <c>SprEngine</c>; do not modify it.
 		/// </summary>
 		internal SprRefCache RefCache
 		{

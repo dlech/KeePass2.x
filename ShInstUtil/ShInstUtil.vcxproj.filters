@@ -33,12 +33,18 @@
     <ClInclude Include="Utility\CommandLineArgs.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Utility\OptionSet.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShInstUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utility\CommandLineArgs.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\OptionSet.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
   </ItemGroup>

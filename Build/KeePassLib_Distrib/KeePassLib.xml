@@ -1940,12 +1940,6 @@
             Search parameters for group and entry searches.
             </summary>
         </member>
-        <member name="P:KeePassLib.SearchParameters.ComparisonMode">
-            <summary>
-            String comparison type. Specifies the condition when the specified
-            text matches a group/entry string.
-            </summary>
-        </member>
         <member name="P:KeePassLib.SearchParameters.DataTransformation">
             <summary>
             Only for serialization.
@@ -2471,6 +2465,12 @@
             </summary>
             <param name="iocFrom">Source file path.</param>
             <param name="iocTo">Target file path.</param>
+        </member>
+        <member name="M:KeePassLib.Serialization.IOConnection.CopyData(KeePassLib.Serialization.IOConnectionInfo,KeePassLib.Serialization.IOConnectionInfo)">
+            <summary>
+            Copy only the data/content from one file to another (no metadata
+            like attributes or ACLs).
+            </summary>
         </member>
         <member name="T:KeePassLib.Serialization.KdbxFormat">
             <summary>

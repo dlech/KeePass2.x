@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-using KeePass.App;
 using KeePass.Forms;
 using KeePass.Native;
 using KeePass.Util;
@@ -138,12 +137,10 @@ namespace KeePass.UI
 			// https://social.msdn.microsoft.com/Forums/en-US/winforms/thread/67407313-8cb2-42b4-afb9-8be816f0a601/
 			Debug.Assert(form.ControlBox);
 
-			form.TopMost = Program.Config.MainWindow.AlwaysOnTop;
 			// Form formParent = form.ParentForm;
-			// if(formParent != null) form.TopMost = formParent.TopMost;
+			// if(formParent != null) UIUtil.SetTopMost(form, UIUtil.GetTopMost(formParent));
 			// else { Debug.Assert(false); }
-
-			// form.Font = new System.Drawing.Font(System.Drawing.SystemFonts.MessageBoxFont.Name, 12.0f);
+			if(Program.Config.MainWindow.AlwaysOnTop) UIUtil.SetTopMost(form, true);
 
 			CustomizeForm(form);
 
@@ -392,6 +389,11 @@ namespace KeePass.UI
 			if(tc != null)
 			{
 				Debug.Assert(!lInv.Contains(tc.ImageList)); // See above
+
+				// The ShowToolTips property should not be used, because it
+				// can result in problems when uiAccess="true";
+				// https://sourceforge.net/p/keepass/feature-requests/2964/
+				Debug.Assert(!tc.ShowToolTips);
 			}
 
 			ToolStrip ts = (c as ToolStrip);

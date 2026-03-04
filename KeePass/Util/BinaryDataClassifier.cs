@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -63,14 +63,14 @@ namespace KeePass.Util
 
 		private static bool UrlHasExt(string strUrl, string[] vExts)
 		{
-			Debug.Assert(strUrl.Trim().ToLowerInvariant() == strUrl);
+			Debug.Assert(strUrl.Trim() == strUrl);
 
 			foreach(string strExt in vExts)
 			{
-				Debug.Assert(strExt.StartsWith("."));
-				Debug.Assert(strExt.Trim().ToLower() == strExt);
+				Debug.Assert(strExt.Trim() == strExt);
+				Debug.Assert((strExt.Length >= 2) && (strExt[0] == '.'));
 
-				if(strUrl.EndsWith(strExt, StringComparison.Ordinal))
+				if(strUrl.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
 					return true;
 			}
 
@@ -81,15 +81,15 @@ namespace KeePass.Util
 		{
 			if(strUrl == null) { Debug.Assert(false); throw new ArgumentNullException("strUrl"); }
 
-			string str = strUrl.Trim().ToLowerInvariant();
+			strUrl = strUrl.Trim();
 
-			if(UrlHasExt(str, g_vTextExts))
+			if(UrlHasExt(strUrl, g_vTextExts))
 				return BinaryDataClass.Text;
-			if(UrlHasExt(str, g_vRichTextExts))
+			if(UrlHasExt(strUrl, g_vRichTextExts))
 				return BinaryDataClass.RichText;
-			if(UrlHasExt(str, g_vImageExts))
+			if(UrlHasExt(strUrl, g_vImageExts))
 				return BinaryDataClass.Image;
-			if(UrlHasExt(str, g_vWebExts))
+			if(UrlHasExt(strUrl, g_vWebExts))
 				return BinaryDataClass.WebDocument;
 
 			return BinaryDataClass.Unknown;

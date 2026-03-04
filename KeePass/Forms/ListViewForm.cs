@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -271,8 +271,6 @@ namespace KeePass.Forms
 			string strFilter = m_tstFilter.Text;
 			if((strFilter != null) && (strFilter.Length == 0)) strFilter = null;
 
-			const StringComparison sc = StringComparison.InvariantCultureIgnoreCase;
-
 			if(m_vVisible.Length != m_lData.Count)
 			{
 				Debug.Assert(false);
@@ -307,15 +305,15 @@ namespace KeePass.Forms
 					Debug.Assert(lvi.SubItems.Count == m_lvMain.Columns.Count);
 
 					if(strFilter == null) { }
-					else if((lvgCur != null) && (lvgCur.Header.IndexOf(strFilter,
-						sc) >= 0)) { }
+					else if((lvgCur != null) && StrUtil.ContainsTolerant(lvgCur.Header,
+						strFilter)) { }
 					else
 					{
 						bool bMatch = false;
 						int cSI = lvi.SubItems.Count;
 						for(int iSI = 0; iSI < cSI; ++iSI)
 						{
-							if(GetText(lvi, lvfi, iSI).IndexOf(strFilter, sc) >= 0)
+							if(StrUtil.ContainsTolerant(GetText(lvi, lvfi, iSI), strFilter))
 							{
 								bMatch = true;
 								break;

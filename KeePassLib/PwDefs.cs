@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -56,20 +56,20 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public static readonly uint Version32 = 0x023C0000;
+		public static readonly uint Version32 = 0x023D0000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public static readonly ulong FileVersion64 = 0x0002003C00000000UL;
+		public static readonly ulong FileVersion64 = 0x0002003D00000000;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public static readonly string VersionString = "2.60";
+		public static readonly string VersionString = "2.61";
 
-		public static readonly string Copyright = "Copyright © 2003-2025 Dominik Reichl";
+		public static readonly string Copyright = "Copyright © 2003-2026 Dominik Reichl";
 
 		/// <summary>
 		/// Product website URL. Terminated by a forward slash.
@@ -300,6 +300,7 @@ namespace KeePassLib
 		}
 
 		private PwSearchMode m_sm = PwSearchMode.Simple;
+		[DefaultValue(PwSearchMode.Simple)]
 		public PwSearchMode SearchMode
 		{
 			get { return m_sm; }
@@ -381,31 +382,16 @@ namespace KeePassLib
 		[DefaultValue(false)]
 		public bool SearchInHistory { get; set; }
 
-#if KeePassUAP
-		private StringComparison m_scType = StringComparison.OrdinalIgnoreCase;
-#else
-		private StringComparison m_scType = StringComparison.InvariantCultureIgnoreCase;
-#endif
-		/// <summary>
-		/// String comparison type. Specifies the condition when the specified
-		/// text matches a group/entry string.
-		/// </summary>
+		private StringComparison m_sc = StringComparison.CurrentCultureIgnoreCase;
+		[DefaultValue(StringComparison.CurrentCultureIgnoreCase)]
 		public StringComparison ComparisonMode
 		{
-			get { return m_scType; }
-			set { m_scType = value; }
+			get { return m_sc; }
+			set { m_sc = value; }
 		}
 
 		[DefaultValue(false)]
-		public bool ExcludeExpired { get; set; }
-
-		private bool m_bRespectEntrySearchingDisabled = true;
-		[DefaultValue(true)]
-		public bool RespectEntrySearchingDisabled
-		{
-			get { return m_bRespectEntrySearchingDisabled; }
-			set { m_bRespectEntrySearchingDisabled = value; }
-		}
+		public bool MatchDiacritics { get; set; }
 
 		private StrPwEntryDelegate m_fnDataTrf = null;
 		[XmlIgnore]
@@ -430,6 +416,17 @@ namespace KeePassLib
 			}
 		}
 
+		[DefaultValue(false)]
+		public bool ExcludeExpired { get; set; }
+
+		private bool m_bRespectEntrySearchingDisabled = true;
+		[DefaultValue(true)]
+		public bool RespectEntrySearchingDisabled
+		{
+			get { return m_bRespectEntrySearchingDisabled; }
+			set { m_bRespectEntrySearchingDisabled = value; }
+		}
+
 		[XmlIgnore]
 		public static SearchParameters None
 		{
@@ -452,7 +449,8 @@ namespace KeePassLib
 				Debug.Assert(!sp.SearchInGroupPaths);
 				Debug.Assert(!sp.SearchInGroupNames);
 				Debug.Assert(!sp.SearchInHistory);
-				// Debug.Assert(sp.ComparisonMode == StringComparison.InvariantCultureIgnoreCase);
+				Debug.Assert(sp.ComparisonMode == StringComparison.CurrentCultureIgnoreCase);
+				Debug.Assert(!sp.MatchDiacritics);
 				Debug.Assert(!sp.ExcludeExpired);
 				Debug.Assert(sp.RespectEntrySearchingDisabled);
 

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -84,8 +84,8 @@ namespace KeePass.UI
 			if((pi == null) || !pi.CanRead || !pi.CanWrite)
 				throw new MethodAccessException();
 
-			bool bReadOnly = (m_bReadOnlyIfEnforced ? AppConfigEx.IsOptionEnforced(
-				o, pi) : false);
+			bool bReadOnly = (m_bReadOnlyIfEnforced && AppConfigEx.IsOptionEnforced(
+				o, pi));
 
 			FdxItem it = new FdxItem(c, o, pi, bReadOnly);
 			m_l.Add(it);

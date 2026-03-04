@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -2282,8 +2282,8 @@ namespace KeePass.Forms
 			{
 				for(int i = m_tbQuickFind.Items.Count - 1; i >= 0; --i)
 				{
-					if(string.Equals((m_tbQuickFind.Items[i] as string), strSearch,
-						StrUtil.CaseIgnoreCmp))
+					if(StrUtil.EqualsTolerant((m_tbQuickFind.Items[i] as string),
+						strSearch))
 					{
 						m_tbQuickFind.Items.RemoveAt(i);
 						break;
@@ -2475,7 +2475,7 @@ namespace KeePass.Forms
 				return;
 			}
 
-			SaveWindowState(); // KPF 1093
+			SaveViewState(); // KPF 1093
 
 			IOConnectionInfo ioc;
 			if(ioConnection == null)
@@ -3753,7 +3753,7 @@ namespace KeePass.Forms
 			// if((col != null) && !col.HideWithAsterisks)
 			//	pd.MemoryProtection.ProtectNotes = false;
 
-			if(pd == m_docMgr.ActiveDatabase) SaveWindowState();
+			if(pd == m_docMgr.ActiveDatabase) SaveViewState();
 		}
 
 		private void PostSavingEx(bool bPrimary, PwDatabase pwDatabase,
@@ -3827,6 +3827,8 @@ namespace KeePass.Forms
 			Control cFocus = UIUtil.GetActiveControl(this);
 
 			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if((pd == null) || !pd.IsOpen) { Debug.Assert(false); return false; }
+
 			pd.Modified = true;
 
 			if(bForceSave) ++m_uForceSave;
@@ -4022,7 +4024,7 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void SaveWindowState()
+		private void SaveViewState()
 		{
 			PwDatabase pd = m_docMgr.ActiveDatabase;
 
@@ -4042,19 +4044,25 @@ namespace KeePass.Forms
 				pgSel.LastTopVisibleEntry = peTop.Uuid;
 		}
 
-		private void RestoreWindowState(PwDatabase pd)
+		private void RestoreViewState(bool bUpdateUIState)
 		{
-			PwGroup pgSelect = null;
+			PwDatabase pd = m_docMgr.ActiveDatabase;
+			if(pd == null) { Debug.Assert(false); return; }
+			if(!pd.IsOpen) return;
 
+			PwGroup pgSelect = null;
 			if(!pd.LastSelectedGroup.IsZero)
 			{
 				pgSelect = pd.RootGroup.FindGroup(pd.LastSelectedGroup, true);
+
 				UpdateGroupList(pgSelect);
 				UpdateEntryList(pgSelect, false);
 			}
 
 			SetTopVisibleGroup(pd.LastTopVisibleGroup);
 			if(pgSelect != null) SetTopVisibleEntry(pgSelect.LastTopVisibleEntry);
+
+			if(bUpdateUIState) UpdateUIState(false);
 		}
 
 		private void SetTopVisibleGroup(PwUuid uuidGroup)
@@ -4152,7 +4160,10 @@ namespace KeePass.Forms
 				}
 			}
 			if(bUpdateUI)
+			{
 				UpdateUI(true, null, true, null, true, null, false);
+				RestoreViewState(true);
+			}
 
 			// NativeMethods.ClearIconicBitmaps(this.Handle);
 			Program.TempFilesPool.Clear(TempClearFlags.ContentTaggedFiles);
@@ -4175,7 +4186,7 @@ namespace KeePass.Forms
 			if(UIIsInteractionBlocked()) { Debug.Assert(false); return; }
 			if(!PrepareLock()) return; // Tries to close windows
 
-			SaveWindowState();
+			SaveViewState();
 
 			List<PwDocument> lDocs = m_docMgr.GetDocuments(int.MaxValue);
 			foreach(PwDocument ds in lDocs)
@@ -4193,6 +4204,7 @@ namespace KeePass.Forms
 			}
 
 			UpdateUI(true, null, true, null, true, null, false);
+			RestoreViewState(true);
 
 			if(Program.Config.MainWindow.MinimizeAfterLocking &&
 				!IsAtLeastOneFileOpen())
@@ -4212,11 +4224,11 @@ namespace KeePass.Forms
 			UpdateUI(false, null, true, null, true, null, false);
 		}
 
-		// Does not update the UI (for performance when exiting)
-		private bool CloseAllDocuments(bool bExiting)
+		private bool CloseAllDocuments(bool bExiting, bool bForceUpdateUI)
 		{
 			if(UIIsInteractionBlocked()) { Debug.Assert(false); return false; }
 
+			bool bAllClosed = true;
 			while(true)
 			{
 				List<PwDocument> lDocs = m_docMgr.GetDocuments(int.MaxValue);
@@ -4226,10 +4238,16 @@ namespace KeePass.Forms
 				if((lDocs.Count == 1) && !ds.Database.IsOpen) break;
 
 				CloseDocument(ds, false, bExiting, false, false);
-				if(ds.Database.IsOpen) return false;
+				if(ds.Database.IsOpen) { bAllClosed = false; break; }
 			}
 
-			return true;
+			if(!bAllClosed || !bExiting || bForceUpdateUI)
+			{
+				UpdateUI(true, null, true, null, true, null, false);
+				RestoreViewState(true);
+			}
+
+			return bAllClosed;
 		}
 
 		private void RecreateUITabs()
@@ -4320,8 +4338,7 @@ namespace KeePass.Forms
 
 			UpdateUI(false, ds, true, null, true, null, false);
 
-			RestoreWindowState(ds.Database);
-			UpdateUIState(false);
+			RestoreViewState(true);
 		}
 
 		private void GetTabText(PwDocument ds, out string strName, out string strTip)
@@ -4505,30 +4522,16 @@ namespace KeePass.Forms
 			UpdateTrayIcon(false);
 		}
 
-		private bool GetStartMinimized()
+		private void MinimizeAtStartIfEnabled(bool bFormLoading)
 		{
-			return (Program.Config.Application.Start.MinimizedAndLocked ||
-				(Program.CommandLineArgs[AppDefs.CommandLineOptions.Minimize] != null));
-		}
+			// See also https://sourceforge.net/p/keepass/bugs/2416/
+			if(MonoWorkarounds.IsRequired(1418)) return;
 
-		private void MinimizeToTrayAtStartIfEnabled(bool bFormLoading)
-		{
-			if(GetStartMinimized())
+			if(Program.Config.Application.Start.MinimizedAndLocked ||
+				(Program.CommandLineArgs[AppDefs.CommandLineOptions.Minimize] != null))
 			{
 				if(bFormLoading)
 					UIUtil.SetWindowState(this, FormWindowState.Minimized);
-				else
-				{
-					// The following isn't required anymore, because the
-					// TaskbarButtonCreated message is handled
-
-					// Set the lock overlay icon again (the first time
-					// Windows ignores the call, maybe because the window
-					// wasn't fully constructed at that time yet)
-					// if(IsFileLocked(null))
-					//	TaskbarList.SetOverlayIcon(this,
-					//		Properties.Resources.LockOverlay, KPRes.Locked);
-				}
 
 				if(Program.Config.MainWindow.MinimizeToTray) MinimizeToTray(true);
 				else if(!bFormLoading)
@@ -6412,14 +6415,15 @@ namespace KeePass.Forms
 			return ctx;
 		}
 
+		private bool m_bSettingTopMost = false;
 		private void EnsureAlwaysOnTopOpt()
 		{
-			bool bWish = Program.Config.MainWindow.AlwaysOnTop;
-			if(NativeLib.IsUnix()) { this.TopMost = bWish; return; }
+			if(m_bSettingTopMost) { Debug.Assert(false); return; }
 
-			// Workaround for issue reported in KPB 3475997
-			this.TopMost = false;
-			if(bWish) this.TopMost = true;
+			m_bSettingTopMost = true;
+			try { UIUtil.SetTopMost(this, Program.Config.MainWindow.AlwaysOnTop); }
+			catch(Exception) { Debug.Assert(false); }
+			finally { m_bSettingTopMost = false; }
 		}
 
 		private bool IsPrimaryControlActive()

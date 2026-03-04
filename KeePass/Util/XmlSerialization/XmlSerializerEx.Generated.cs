@@ -2213,14 +2213,17 @@ namespace KeePass.Util.XmlSerialization
 					case "ComparisonMode":
 						o.ComparisonMode = ReadStringComparison(xr);
 						break;
+					case "MatchDiacritics":
+						o.MatchDiacritics = ReadBoolean(xr);
+						break;
+					case "DataTransformation":
+						o.DataTransformation = ReadString(xr);
+						break;
 					case "ExcludeExpired":
 						o.ExcludeExpired = ReadBoolean(xr);
 						break;
 					case "RespectEntrySearchingDisabled":
 						o.RespectEntrySearchingDisabled = ReadBoolean(xr);
-						break;
-					case "DataTransformation":
-						o.DataTransformation = ReadString(xr);
 						break;
 					default:
 						Debug.Assert(false);

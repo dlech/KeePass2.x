@@ -187,6 +187,7 @@ namespace KeePass.Resources
 			m_strConsiderDashesEq = TryGetEx(dictNew, "ConsiderDashesEq", m_strConsiderDashesEq);
 			m_strContact = TryGetEx(dictNew, "Contact", m_strContact);
 			m_strContainsOp = TryGetEx(dictNew, "ContainsOp", m_strContainsOp);
+			m_strContinue = TryGetEx(dictNew, "Continue", m_strContinue);
 			m_strCopiedEntryData = TryGetEx(dictNew, "CopiedEntryData", m_strCopiedEntryData);
 			m_strCopy = TryGetEx(dictNew, "Copy", m_strCopy);
 			m_strCopyAll = TryGetEx(dictNew, "CopyAll", m_strCopyAll);
@@ -646,6 +647,7 @@ namespace KeePass.Resources
 			m_strOlder = TryGetEx(dictNew, "Older", m_strOlder);
 			m_strOldFormat = TryGetEx(dictNew, "OldFormat", m_strOldFormat);
 			m_strOn = TryGetEx(dictNew, "On", m_strOn);
+			m_strOnError = TryGetEx(dictNew, "OnError", m_strOnError);
 			m_strOpAborted = TryGetEx(dictNew, "OpAborted", m_strOpAborted);
 			m_strOpenCmd = TryGetEx(dictNew, "OpenCmd", m_strOpenCmd);
 			m_strOpenDatabase = TryGetEx(dictNew, "OpenDatabase", m_strOpenDatabase);
@@ -861,6 +863,7 @@ namespace KeePass.Resources
 			m_strShowMore = TryGetEx(dictNew, "ShowMore", m_strShowMore);
 			m_strShowTimeOtp = TryGetEx(dictNew, "ShowTimeOtp", m_strShowTimeOtp);
 			m_strShowWithFileManager = TryGetEx(dictNew, "ShowWithFileManager", m_strShowWithFileManager);
+			m_strSilent = TryGetEx(dictNew, "Silent", m_strSilent);
 			m_strSimilarPasswords = TryGetEx(dictNew, "SimilarPasswords", m_strSimilarPasswords);
 			m_strSimilarPasswordsGroup = TryGetEx(dictNew, "SimilarPasswordsGroup", m_strSimilarPasswordsGroup);
 			m_strSimilarPasswordsList2 = TryGetEx(dictNew, "SimilarPasswordsList2", m_strSimilarPasswordsList2);
@@ -947,6 +950,7 @@ namespace KeePass.Resources
 			m_strUnknown = TryGetEx(dictNew, "Unknown", m_strUnknown);
 			m_strUnsaved = TryGetEx(dictNew, "Unsaved", m_strUnsaved);
 			m_strUnsupportedByMono = TryGetEx(dictNew, "UnsupportedByMono", m_strUnsupportedByMono);
+			m_strUpdateAvailable = TryGetEx(dictNew, "UpdateAvailable", m_strUpdateAvailable);
 			m_strUpdateCheck = TryGetEx(dictNew, "UpdateCheck", m_strUpdateCheck);
 			m_strUpdateCheckEnableQ = TryGetEx(dictNew, "UpdateCheckEnableQ", m_strUpdateCheckEnableQ);
 			m_strUpdateCheckFailedNoDl = TryGetEx(dictNew, "UpdateCheckFailedNoDl", m_strUpdateCheckFailedNoDl);
@@ -1172,6 +1176,7 @@ namespace KeePass.Resources
 			"ConsiderDashesEq",
 			"Contact",
 			"ContainsOp",
+			"Continue",
 			"CopiedEntryData",
 			"Copy",
 			"CopyAll",
@@ -1631,6 +1636,7 @@ namespace KeePass.Resources
 			"Older",
 			"OldFormat",
 			"On",
+			"OnError",
 			"OpAborted",
 			"OpenCmd",
 			"OpenDatabase",
@@ -1846,6 +1852,7 @@ namespace KeePass.Resources
 			"ShowMore",
 			"ShowTimeOtp",
 			"ShowWithFileManager",
+			"Silent",
 			"SimilarPasswords",
 			"SimilarPasswordsGroup",
 			"SimilarPasswordsList2",
@@ -1932,6 +1939,7 @@ namespace KeePass.Resources
 			"Unknown",
 			"Unsaved",
 			"UnsupportedByMono",
+			"UpdateAvailable",
 			"UpdateCheck",
 			"UpdateCheckEnableQ",
 			"UpdateCheckFailedNoDl",
@@ -3769,6 +3777,17 @@ namespace KeePass.Resources
 		public static string ContainsOp
 		{
 			get { return m_strContainsOp; }
+		}
+
+		private static string m_strContinue =
+			@"Continue";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Continue'.
+		/// </summary>
+		public static string Continue
+		{
+			get { return m_strContinue; }
 		}
 
 		private static string m_strCopiedEntryData =
@@ -8820,6 +8839,17 @@ namespace KeePass.Resources
 			get { return m_strOn; }
 		}
 
+		private static string m_strOnError =
+			@"On error";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'On error'.
+		/// </summary>
+		public static string OnError
+		{
+			get { return m_strOnError; }
+		}
+
 		private static string m_strOpAborted =
 			@"Operation aborted.";
 		/// <summary>
@@ -11185,6 +11215,17 @@ namespace KeePass.Resources
 			get { return m_strShowWithFileManager; }
 		}
 
+		private static string m_strSilent =
+			@"Silent";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Silent'.
+		/// </summary>
+		public static string Silent
+		{
+			get { return m_strSilent; }
+		}
+
 		private static string m_strSimilarPasswords =
 			@"Similar Passwords";
 		/// <summary>
@@ -12129,6 +12170,17 @@ namespace KeePass.Resources
 		public static string UnsupportedByMono
 		{
 			get { return m_strUnsupportedByMono; }
+		}
+
+		private static string m_strUpdateAvailable =
+			@"An update (for KeePass, plugin, ...) is available!";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'An update (for KeePass, plugin, ...) is available!'.
+		/// </summary>
+		public static string UpdateAvailable
+		{
+			get { return m_strUpdateAvailable; }
 		}
 
 		private static string m_strUpdateCheck =

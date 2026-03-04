@@ -484,6 +484,9 @@
 		<Data Name="ContainsOp">
 			<Value>Contains</Value>
 		</Data>
+		<Data Name="Continue">
+			<Value>Continue</Value>
+		</Data>
 		<Data Name="CopiedEntryData">
 			<Value>Copied entry data to clipboard</Value>
 		</Data>
@@ -1861,6 +1864,9 @@
 		<Data Name="On">
 			<Value>On</Value>
 		</Data>
+		<Data Name="OnError">
+			<Value>On error</Value>
+		</Data>
 		<Data Name="OpAborted">
 			<Value>Operation aborted.</Value>
 		</Data>
@@ -2506,6 +2512,9 @@
 		<Data Name="ShowWithFileManager">
 			<Value>&amp;Show with File Manager</Value>
 		</Data>
+		<Data Name="Silent">
+			<Value>Silent</Value>
+		</Data>
 		<Data Name="SimilarPasswords">
 			<Value>Similar Passwords</Value>
 		</Data>
@@ -2763,6 +2772,9 @@
 		</Data>
 		<Data Name="UnsupportedByMono">
 			<Value>unsupported by Mono</Value>
+		</Data>
+		<Data Name="UpdateAvailable">
+			<Value>An update (for KeePass, plugin, ...) is available!</Value>
 		</Data>
 		<Data Name="UpdateCheck">
 			<Value>Update Check</Value>

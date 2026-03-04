@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -71,15 +71,15 @@ namespace KeePass.DataExchange.Formats
 				str = str.Substring(1, str.Length - 2);
 			else { Debug.Assert(false); }
 
-			string[] list = str.Split(new string[] { "\"\t\"" }, StringSplitOptions.None);
+			string[] v = str.Split(new string[] { "\"\t\"" }, StringSplitOptions.None);
 
 			int iOffset;
-			if(list.Length == 11) iOffset = 0; // 1Password Pro 5.99
-			else if(list.Length == 10) iOffset = -1; // 1PW 6.15
-			else if(list.Length > 11) iOffset = 0; // Unknown extension
+			if(v.Length == 11) iOffset = 0; // 1Password Pro 5.99
+			else if(v.Length == 10) iOffset = -1; // 1PW 6.15
+			else if(v.Length > 11) iOffset = 0; // Unknown extension
 			else return;
 
-			string strGroup = list[9 + iOffset];
+			string strGroup = v[9 + iOffset];
 			PwGroup pg;
 			if(dictGroups.ContainsKey(strGroup)) pg = dictGroups[strGroup];
 			else
@@ -92,31 +92,31 @@ namespace KeePass.DataExchange.Formats
 			PwEntry pe = new PwEntry(true, true);
 			pg.AddEntry(pe, true);
 
-			ImportUtil.Add(pe, PwDefs.TitleField, ParseCsvWord(list[1 + iOffset]), pd);
-			ImportUtil.Add(pe, PwDefs.UserNameField, ParseCsvWord(list[2 + iOffset]), pd);
-			ImportUtil.Add(pe, PwDefs.PasswordField, ParseCsvWord(list[3 + iOffset]), pd);
-			ImportUtil.Add(pe, PwDefs.UrlField, ParseCsvWord(list[4 + iOffset]), pd);
-			ImportUtil.Add(pe, PwDefs.NotesField, ParseCsvWord(list[6 + iOffset]), pd);
+			ImportUtil.Add(pe, PwDefs.TitleField, ParseCsvWord(v[1 + iOffset]), pd);
+			ImportUtil.Add(pe, PwDefs.UserNameField, ParseCsvWord(v[2 + iOffset]), pd);
+			ImportUtil.Add(pe, PwDefs.PasswordField, ParseCsvWord(v[3 + iOffset]), pd);
+			ImportUtil.Add(pe, PwDefs.UrlField, ParseCsvWord(v[4 + iOffset]), pd);
+			ImportUtil.Add(pe, PwDefs.NotesField, ParseCsvWord(v[6 + iOffset]), pd);
 			pe.Strings.Set(PwDefs.PasswordField + " 2", new ProtectedString(
-				pd.MemoryProtection.ProtectPassword, ParseCsvWord(list[7 + iOffset])));
+				pd.MemoryProtection.ProtectPassword, ParseCsvWord(v[7 + iOffset])));
 
 			// 1Password Pro only:
-			// Debug.Assert(list[9] == list[0]); // Very mysterious format...
+			// Debug.Assert(v[9] == v[0]); // ?
 
 			DateTime dt;
-			if(ParseDateTime(list[5 + iOffset], out dt))
+			if(ParseDateTime(v[5 + iOffset], out dt))
 			{
 				pe.CreationTime = pe.LastAccessTime = pe.LastModificationTime = dt;
 			}
 			else { Debug.Assert(false); }
 
-			if(ParseDateTime(list[8 + iOffset], out dt))
+			if(ParseDateTime(v[8 + iOffset], out dt))
 			{
 				pe.Expires = true;
 				pe.ExpiryTime = dt;
 			}
 
-			AddCustomFields(pe, list[10 + iOffset]);
+			AddCustomFields(pe, v[10 + iOffset]);
 		}
 
 		private static string ParseCsvWord(string strWord)
@@ -131,28 +131,30 @@ namespace KeePass.DataExchange.Formats
 
 		private static bool ParseDateTime(string str, out DateTime dt)
 		{
+			str = (str ?? string.Empty).Trim();
 			dt = DateTime.MinValue;
-			if(string.IsNullOrEmpty(str)) return false;
-			if(str.Trim().Equals("nie", StrUtil.CaseIgnoreCmp)) return false;
-			if(str.Trim().Equals("never", StrUtil.CaseIgnoreCmp)) return false;
-			if(str.Trim().Equals("morgen", StrUtil.CaseIgnoreCmp))
+
+			if(str.Length == 0) return false;
+			if(str.Equals("nie", StrUtil.CaseIgnoreCmp)) return false;
+			if(str.Equals("never", StrUtil.CaseIgnoreCmp)) return false;
+			if(str.Equals("morgen", StrUtil.CaseIgnoreCmp))
 			{
 				dt = DateTime.UtcNow.AddDays(1.0);
 				return true;
 			}
 
-			string[] list = str.Split(new char[] { '.', '\r', '\n', ' ', '\t',
+			string[] v = str.Split(new char[] { '.', '\r', '\n', ' ', '\t',
 				'-', ':' }, StringSplitOptions.RemoveEmptyEntries);
 
 			try
 			{
-				if(list.Length == 6)
-					dt = (new DateTime(int.Parse(list[2]), int.Parse(list[1]),
-						int.Parse(list[0]), int.Parse(list[3]), int.Parse(list[4]),
-						int.Parse(list[5]), DateTimeKind.Local)).ToUniversalTime();
-				else if(list.Length == 3)
-					dt = (new DateTime(int.Parse(list[2]), int.Parse(list[1]),
-						int.Parse(list[0]), 0, 0, 0, DateTimeKind.Local)).ToUniversalTime();
+				if(v.Length == 6)
+					dt = (new DateTime(int.Parse(v[2]), int.Parse(v[1]),
+						int.Parse(v[0]), int.Parse(v[3]), int.Parse(v[4]),
+						int.Parse(v[5]), DateTimeKind.Local)).ToUniversalTime();
+				else if(v.Length == 3)
+					dt = (new DateTime(int.Parse(v[2]), int.Parse(v[1]),
+						int.Parse(v[0]), 0, 0, 0, DateTimeKind.Local)).ToUniversalTime();
 				else { Debug.Assert(false); return false; }
 			}
 			catch(Exception) { Debug.Assert(false); return false; }

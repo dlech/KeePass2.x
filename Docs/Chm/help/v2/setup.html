@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2026 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -43,6 +43,7 @@
 <li><a href="#info">General information</a></li>
 <li><a href="#installer">Installer program (KeePass-2.xx-Setup.exe file)</a></li>
 <li><a href="#portable">Portable version (KeePass-2.xx.zip file)</a></li>
+<li><a href="#silent">Silent installation</a></li>
 <!-- <li>Other operating systems than Windows:
 <ul> -->
 <li><a href="#mono">Running KeePass under Mono (Linux, MacOS, BSD, ...)</a></li>
@@ -119,7 +120,7 @@ to remove your configuration settings, you need to delete the configuration
 file in the application data directory of your user profile, see
 <a href="../base/configuration.html">Configuration</a>.</p>
 
-<p><b>Silent Installation:</b><br />
+<!-- <p><b>Silent Installation:</b><br />
 The KeePass installer <code>KeePass-2.xx-Setup.exe</code> supports command line
 switches for silent installation, i.e. the program gets installed without
 asking the user for target directory or association options. The default settings
@@ -130,7 +131,7 @@ installation and shows a status dialog during the setup process. No questions
 will be asked though.</p>
 
 <p>The <code>/VERYSILENT</code> command line switch performs a silent
-installation and does <i>not</i> show a status dialog during the setup process.</p>
+installation and does <i>not</i> show a status dialog during the setup process.</p> -->
 
 <p><b>Destination Path:</b><br />
 The installer allows to choose the destination path to which KeePass is
@@ -145,8 +146,8 @@ display the destination path selection page again.</p>
 
 <p><b>Options/Components:</b><br />
 The installation options/components are explained in detail here:
-<a href="https://keepass.info/help/kb/faq.html#instopt2x" target="_blank">What
-do the 2.x installation options/components mean in detail?</a>.</p>
+'<a href="https://keepass.info/help/kb/faq.html#instopt2x" target="_blank">What
+do the 2.x installation options/components mean in detail?</a>'.</p>
 
 <br />
 
@@ -187,6 +188,74 @@ your system. --></p>
 
 <br />
 
+<h2 class="sectiontitle" id="silent"><img src="../images/b16x16_konsole.png"
+alt="" /> Silent installation</h2>
+
+<p>Both the installer program (<code>KeePass-2.x-Setup.exe</code>) and the
+MSI package (<code>KeePass-2.x.msi</code>) support installing KeePass silently.</p>
+
+<p>Details about the installation options/components can be found here:
+'<a href="https://keepass.info/help/kb/faq.html#instopt2x" target="_blank">What
+do the 2.x installation options/components mean in detail?</a>'.</p>
+
+<ul class="withspc">
+<li><p><b>KeePass-2.x-Setup.exe:</b><br />
+The installer program is built using Inno Setup, which supports various
+command line parameters, including ones for a silent installation
+(<code>/SILENT</code>, <code>/VERYSILENT</code>) and for selecting components/tasks
+(<code>/COMPONENTS="..."</code>, <code>/TASKS="..."</code>,
+<code>/MERGETASKS="..."</code>):<br />
+<a href="https://jrsoftware.org/ishelp/topic_setupcmdline.htm"
+target="_blank">Inno Setup: Setup Command Line Parameters</a>.</p>
+
+<ul>
+<li>Components:
+<code>Core</code>, <code>UserDoc</code>, <code>KeePassLibN</code>,
+<code>XSL</code>, <code>NGen</code>, <code>PreLoad</code>.</li>
+
+<li>Tasks:
+<code>FileAssoc</code>, <code>DesktopIcon</code>.</li>
+
+<li>For further details, see the <code>Ext/KeePass.iss</code> file in the
+KeePass source code package.</li>
+</ul>
+
+<p>For example, if you want to install KeePass silently without associating
+KDBX files with KeePass and with creating a shortcut on the desktop, you could
+run the installer program as follows (as administrator):</p>
+
+<pre>KeePass-2.x-Setup.exe /VERYSILENT /MERGETASKS="!FileAssoc,DesktopIcon"</pre></li>
+
+<li><p><b>KeePass-2.x.msi:</b><br />
+The MSI package can be used for installing KeePass silently, too. Details about
+the command line parameters of <code>MsiExec.exe</code> and properties can be
+found here:<br />
+<a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/msiexec"
+target="_blank">Microsoft: MsiExec</a>,<br />
+<a href="https://learn.microsoft.com/en-us/windows/win32/msi/property-reference"
+target="_blank">Microsoft: Windows Installer Property Reference</a>.</p>
+
+<p>In addition to the standard command line parameters and properties, there is a
+<code>KPS_OPTIONS</code> property that can be used to customize the installation.
+Its value can be a comma-separated list of options. In order to deactivate an
+option, prepend a '<code>!</code>' to its name.</p>
+
+<ul>
+<li>Options: <code>StartMenuIcons</code>, <code>DesktopIcon</code>,
+<code>NGen</code>, <code>PreLoad</code>.</li>
+</ul>
+
+<p>For example, if you want to install KeePass silently for
+<a href="https://learn.microsoft.com/en-us/windows/win32/msi/allusers"
+target="_blank">all users</a> without creating a shortcut on the desktop and
+without optimizing the KeePass start-up performance,
+you could run <code>MsiExec.exe</code> as follows (as administrator):</p>
+
+<pre>MsiExec.exe /i "C:\Path\KeePass-2.x.msi" /qn ALLUSERS=1 KPS_OPTIONS="!DesktopIcon,!PreLoad"</pre></li>
+</ul>
+
+<br />
+
 <h2 class="sectiontitle" id="mono"><img src="../images/b16x16_package_system.png"
 alt="" /> Running KeePass under Mono (Linux, MacOS, BSD, ...)</h2>
 
@@ -204,9 +273,9 @@ A link to a page with more information about this package can be found on the
 downloads page.<br />
 <br /></li>
 
-<li><strong>Fedora Linux:</strong><br />
+<li><strong>Fedora/RHEL/Rocky/Alma Linux:</strong><br />
 Install the <em>keepass</em> package
-(from the Fedora repository; link on the downloads page).<br />
+(from the Fedora/RHEL/Rocky/Alma Linux repository; link on the downloads page).<br />
 <br /></li>
 
 <li><strong>OpenSUSE Linux:</strong><br />
@@ -456,10 +525,10 @@ alt="" /> Migrating from KeePass 1.x to 2.x</h2>
 <p>In order to migrate from KeePass 1.x to 2.x, follow these steps:</p>
 
 <ol>
-<li>Install KeePass 2.x.<br />
+<li>Install KeePass 2.x.<!-- <br />
 If you're using the installer, make sure that the component
 'Native Support Library' is being installed
-(by default this component is enabled).</li>
+(by default this component is enabled). --></li>
 <li>Run KeePass 2.x and create a new KDBX database file (via 'File' &rarr;
 'New').</li>
 <li>Import your old KDB database file into your new KDBX database file

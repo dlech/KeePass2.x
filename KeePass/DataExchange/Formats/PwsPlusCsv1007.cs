@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ namespace KeePass.DataExchange.Formats
 
 				string strType = vLine[0].Trim();
 				if(strType.Equals("Is Template", StrUtil.CaseIgnoreCmp)) continue;
-				if(strType.Equals("1")) continue; // Skip template
+				if(strType == "1") continue; // Skip template
 
 				string strGroup = vLine[2].Trim();
 				PwGroup pg;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -385,8 +385,7 @@ namespace KeePass.Util
 
 			for(int i = 0; i < lSeq.Count; ++i)
 			{
-				string strCanEx = CanonicalizeSeq(lSeq[i]);
-				if(strCanEx.Equals(strCanSeq)) return; // Exists already
+				if(CanonicalizeSeq(lSeq[i]) == strCanSeq) return; // Exists already
 			}
 
 			lSeq.Add(strSeq); // Non-canonical version
@@ -563,8 +562,8 @@ namespace KeePass.Util
 			if(!pe.GetAutoTypeEnabled()) return false;
 			if(!AppPolicy.Try(AppPolicyId.AutoTypeWithoutContext)) return false;
 
-			bool bTopMost = ((fCurrent != null) && fCurrent.TopMost);
-			if(bTopMost) fCurrent.TopMost = false;
+			bool bTopMost = ((fCurrent != null) && UIUtil.GetTopMost(fCurrent));
+			if(bTopMost) UIUtil.SetTopMost(fCurrent, false);
 
 			try
 			{
@@ -574,7 +573,7 @@ namespace KeePass.Util
 			}
 			finally
 			{
-				if(bTopMost) fCurrent.TopMost = true;
+				if(bTopMost) UIUtil.SetTopMost(fCurrent, true);
 			}
 		}
 

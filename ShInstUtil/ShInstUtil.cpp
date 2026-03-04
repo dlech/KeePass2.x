@@ -1,6 +1,6 @@
 /*
   ShInstUtil
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "ShInstUtil.h"
 
 #include "Utility/CommandLineArgs.h"
+#include "Utility/OptionSet.h"
 
 #pragma comment(lib, "ComCtl32.lib")
 #pragma comment(lib, "Version.lib")
@@ -66,21 +67,24 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
 		CheckDotNetInstalled();
 	else if(_tcsicmp(lpCommand, _T("MsiInstall")) == 0)
 	{
+		const COptionSet os(cla[_T("KpsOptions")]);
+
+		UpdateLinks(true, bAllUsers, os.Get(_T("StartMenuIcons"), true),
+			os.Get(_T("DesktopIcon"), true));
 		if(bAllUsers)
 		{
-			UpdateNativeImage(true);
-			RegisterPreLoad(true);
+			if(os.Get(_T("NGen"), true)) UpdateNativeImage(true);
+			if(os.Get(_T("PreLoad"), true)) RegisterPreLoad(true);
 		}
-		UpdateLinks(true, bAllUsers);
 	}
 	else if(_tcsicmp(lpCommand, _T("MsiUninstall")) == 0)
 	{
+		UpdateLinks(false, bAllUsers);
 		if(bAllUsers)
 		{
 			UpdateNativeImage(false);
 			RegisterPreLoad(false);
 		}
-		UpdateLinks(false, bAllUsers);
 	}
 
 	if(SUCCEEDED(hrCom)) CoUninitialize();
@@ -314,7 +318,7 @@ uint64_t GetFileVersion64(const tstring& strFilePath)
 
 void CheckDotNetInstalled()
 {
-	if(IsWindows7OrGreater()) return; // .NET 3.5 is included in Windows 7 and later
+	if(IsWindows7OrGreater()) return; // .NET >= 3.5 is included in Windows 7 and later
 	if(FindNGen(false).size() != 0) return;
 
 	tstring strMsg = _T("KeePass 2.x requires the Microsoft .NET Framework 3.5 or later. ");
@@ -366,52 +370,59 @@ void CreateLink(const tstring& strLinkFilePath, const tstring& strTargetFilePath
 	psl->Release();
 }
 
-void UpdateLinks(bool bInstall, bool bAllUsers)
+void UpdateLinks(bool bInstall, bool bAllUsers, bool bPrograms, bool bDesktop)
 {
 	const tstring strPrograms = GetKnownFolderPath(bAllUsers ?
 		FOLDERID_CommonPrograms : FOLDERID_Programs);
+	assert(strPrograms.size() != 0);
 	const tstring strDesktop = GetKnownFolderPath(bAllUsers ?
 		FOLDERID_PublicDesktop : FOLDERID_Desktop);
+	assert(strDesktop.size() != 0);
 
 	const tstring strExe = GetKeePassExePath();
 	const tstring strChm = EnsureTerminatingSeparator(GetFileDirectory(strExe)) +
 		_T("KeePass.chm");
 
-	if(strPrograms.size() != 0)
+	for(int i = 1; i <= 2; ++i)
 	{
-		const tstring strLnkDirectory = EnsureTerminatingSeparator(strPrograms) +
-			_T("KeePass");
-		const tstring strLnkExe = EnsureTerminatingSeparator(strLnkDirectory) +
-			_T("KeePass.lnk");
-		const tstring strLnkChm = EnsureTerminatingSeparator(strLnkDirectory) +
-			_T("KeePass User Manual.lnk");
+		const tstring strSfx = ((i == 1) ? _T("") : _T(" 2"));
+		const bool bCreate = (bInstall && (i == 2));
+		const bool bDelete = ((!bInstall && (i == 2)) || (bInstall && (i == 1)));
 
-		if(bInstall)
+		if(bPrograms && (strPrograms.size() != 0))
 		{
-			SHCreateDirectoryEx(NULL, strLnkDirectory.c_str(), nullptr);
-			CreateLink(strLnkExe, strExe);
-			CreateLink(strLnkChm, strChm);
+			const tstring strLnkDir = EnsureTerminatingSeparator(strPrograms) +
+				_T("KeePass") + strSfx;
+			const tstring strLnkExe = EnsureTerminatingSeparator(strLnkDir) +
+				_T("KeePass.lnk");
+			const tstring strLnkChm = EnsureTerminatingSeparator(strLnkDir) +
+				_T("KeePass User Manual.lnk");
+
+			if(bCreate)
+			{
+				SHCreateDirectoryEx(NULL, strLnkDir.c_str(), nullptr);
+				CreateLink(strLnkExe, strExe);
+				CreateLink(strLnkChm, strChm);
+			}
+			if(bDelete)
+			{
+				DeleteFile(strLnkExe.c_str());
+				DeleteFile(strLnkChm.c_str());
+				RemoveDirectory(strLnkDir.c_str());
+			}
 		}
-		else
+
+		if(bDesktop && (strDesktop.size() != 0))
 		{
-			DeleteFile(strLnkExe.c_str());
-			DeleteFile(strLnkChm.c_str());
-			RemoveDirectory(strLnkDirectory.c_str());
+			const tstring strLnkExe = EnsureTerminatingSeparator(strDesktop) +
+				_T("KeePass") + strSfx + _T(".lnk");
+
+			if(bCreate)
+			{
+				SHCreateDirectoryEx(NULL, strDesktop.c_str(), nullptr);
+				CreateLink(strLnkExe, strExe);
+			}
+			if(bDelete) DeleteFile(strLnkExe.c_str());
 		}
 	}
-	else { assert(false); }
-
-	if(strDesktop.size() != 0)
-	{
-		const tstring strLnkExe = EnsureTerminatingSeparator(strDesktop) +
-			_T("KeePass.lnk");
-
-		if(bInstall)
-		{
-			SHCreateDirectoryEx(NULL, strDesktop.c_str(), nullptr);
-			CreateLink(strLnkExe, strExe);
-		}
-		else DeleteFile(strLnkExe.c_str());
-	}
-	else { assert(false); }
 }
