@@ -329,8 +329,7 @@ namespace KeePass.Forms
 			dlg.InitEx(m_ioInfo);
 			dlg.SecureDesktopMode = m_bSecureDesktop;
 
-			DialogResult dr = dlg.ShowDialog();
-			if(dr == DialogResult.OK) // && !bSecDesk)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK) // && !bSecDesk
 			{
 				string strFile = dlg.ResultFile;
 				if(!string.IsNullOrEmpty(strFile))
@@ -342,8 +341,6 @@ namespace KeePass.Forms
 				}
 				else { Debug.Assert(false); }
 			}
-
-			UIUtil.DestroyForm(dlg);
 
 			// ProtectedDialog.ContinueOnNormalDesktop(f, this,
 			//	ref m_fInvokeAfterClose, bSecDesk);

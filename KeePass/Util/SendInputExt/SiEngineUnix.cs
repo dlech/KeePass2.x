@@ -90,12 +90,8 @@ namespace KeePass.Util.SendInputExt
 			// Both left and right modifier keys must be released;
 			// releasing only one does not necessarily clear the
 			// modifier state
-			string[] vMods = new string[] {
-				"Shift_L", "Shift_R", "Control_L", "Control_R",
-				"Alt_L", "Alt_R", "Super_L", "Super_R", "Meta_L", "Meta_R"
-			};
-			foreach(string strMod in vMods)
-				RunXDoTool("keyup", strMod);
+			RunXDoTool("keyup", "Shift_L Shift_R Control_L Control_R " +
+				"Alt_L Alt_R Super_L Super_R Meta_L Meta_R");
 		}
 
 		private static void RunXDoTool(string strVerb, string strParam)

@@ -1323,7 +1323,7 @@ namespace KeePass.Forms
 				using(FolderBrowserDialog fbd = UIUtil.CreateFolderBrowserDialog(
 					KPRes.AttachmentsSave))
 				{
-					if(fbd.ShowDialog() != DialogResult.OK) return;
+					if(UIUtil.ShowDialog(fbd) != DialogResult.OK) return;
 
 					string strRootPath = UrlUtil.EnsureTerminatingSeparator(
 						fbd.SelectedPath, false);
@@ -1790,7 +1790,7 @@ namespace KeePass.Forms
 			ipf.InitEx(m_ilIcons, (uint)PwIcon.Count, m_pwDatabase,
 				(uint)m_pwEntryIcon, m_pwCustomIconID);
 
-			if(ipf.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(ipf) == DialogResult.OK)
 			{
 				m_pwEntryIcon = (PwIcon)ipf.ChosenIconId;
 				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
@@ -1802,8 +1802,6 @@ namespace KeePass.Forms
 					UIUtil.SetButtonImage(m_btnIcon, m_ilIcons.Images[
 						(int)m_pwEntryIcon], true);
 			}
-
-			UIUtil.DestroyForm(ipf);
 
 			// UpdateHistoryList(false, true); // User may have deleted a custom icon
 		}
@@ -2080,12 +2078,8 @@ namespace KeePass.Forms
 			FieldRefForm dlg = new FieldRefForm();
 			dlg.InitEx(m_pwDatabase.RootGroup, m_ilIcons, strDefaultRef);
 
-			string strResult = string.Empty;
-			if(dlg.ShowDialog() == DialogResult.OK)
-				strResult = dlg.ResultReference;
-
-			UIUtil.DestroyForm(dlg);
-			return strResult;
+			return ((UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK) ?
+				dlg.ResultReference : string.Empty);
 		}
 
 		private void CreateFieldReferenceIn(Control c, string strDefaultRef,

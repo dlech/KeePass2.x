@@ -61,7 +61,9 @@ namespace KeePass.Util
 
 				uint uEntrySize = (uint)Marshal.SizeOf(typeof(
 					NativeMethods.PROCESSENTRY32));
-				uint pidThis = (uint)Process.GetCurrentProcess().Id;
+
+				uint pidThis;
+				using(Process p = Process.GetCurrentProcess()) { pidThis = (uint)p.Id; }
 
 				for(int i = 0; i < int.MaxValue; ++i)
 				{

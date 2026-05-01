@@ -93,8 +93,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pbData != null);
-			if(m_pbData == null) throw new InvalidOperationException();
+			if(m_pbData == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			GlobalWindowManager.AddWindow(this);
 
@@ -578,7 +577,7 @@ namespace KeePass.Forms
 				dlg.Font = Program.Config.UI.DataEditorFont.ToFont();
 				dlg.ShowColor = false;
 
-				if(dlg.ShowDialog() == DialogResult.OK)
+				if(UIUtil.ShowDialog(dlg) == DialogResult.OK)
 				{
 					Program.Config.UI.DataEditorFont = new AceFont(dlg.Font, true);
 
@@ -629,11 +628,10 @@ namespace KeePass.Forms
 
 				TextEncodingForm dlg = new TextEncodingForm();
 				dlg.InitEx(strContext, pbData);
-				if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return null;
+				if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return null;
 
 				Encoding enc = dlg.SelectedEncoding;
 				int iStart = (int)dlg.DataStartOffset;
-				UIUtil.DestroyForm(dlg);
 				if(enc != null)
 				{
 					try

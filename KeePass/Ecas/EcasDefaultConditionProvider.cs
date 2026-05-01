@@ -123,7 +123,7 @@ namespace KeePass.Ecas
 				IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
 				return IOConnection.FileExists(ioc, false);
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 
 			return false;
 		}

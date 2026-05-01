@@ -651,8 +651,8 @@ namespace KeePass.Util.Spr
 
 			if(chScan == 'T') sp.SearchInTitles = true;
 			else if(chScan == 'U') sp.SearchInUserNames = true;
-			else if(chScan == 'A') sp.SearchInUrls = true;
 			else if(chScan == 'P') sp.SearchInPasswords = true;
+			else if(chScan == 'A') sp.SearchInUrls = true;
 			else if(chScan == 'N') sp.SearchInNotes = true;
 			else if(chScan == 'I') sp.SearchInUuids = true;
 			else if(chScan == 'O') sp.SearchInOther = true;

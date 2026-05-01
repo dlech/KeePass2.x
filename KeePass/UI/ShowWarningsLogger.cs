@@ -145,7 +145,7 @@ namespace KeePass.UI
 				m_slf = new StatusLoggerForm();
 				m_slf.InitEx(false);
 
-				m_slf.Show();
+				UIUtil.Show(m_slf, null);
 				m_slf.BringToFront();
 
 				bool bLoggingStarted = false;

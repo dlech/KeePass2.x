@@ -403,8 +403,13 @@ namespace KeePass.App.Configuration
 		[DefaultValue(false)]
 		public bool UnhideButtonAlsoUnhidesSource { get; set; }
 
-		[DefaultValue(false)]
-		public bool UnhideEmptyData { get; set; }
+		private bool m_bUnhideEmptyData = true;
+		[DefaultValue(true)]
+		public bool UnhideEmptyData
+		{
+			get { return m_bUnhideEmptyData; }
+			set { m_bUnhideEmptyData = value; }
+		}
 	}
 
 	public sealed class AceFont

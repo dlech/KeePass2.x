@@ -122,18 +122,18 @@ namespace KeePass.Util
 			{
 				DataViewerForm dvf = new DataViewerForm();
 				dvf.InitEx(strName, pbData);
+
 				UIUtil.ShowDialogAndDestroy(dvf);
 			}
 			else if(h == BinaryDataHandler.InternalEditor)
 			{
 				DataEditorForm def = new DataEditorForm();
 				def.InitEx(strName, pbData);
-				def.ShowDialog();
+
+				UIUtil.ShowDialogAndDestroy(def);
 
 				if(def.EditedBinaryData != null)
 					pbModData = def.EditedBinaryData;
-
-				UIUtil.DestroyForm(def);
 			}
 			else if(h == BinaryDataHandler.ExternalApp)
 				pbModData = OpenExternal(strName, pbData, opt);

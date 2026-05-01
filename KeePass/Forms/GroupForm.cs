@@ -241,7 +241,7 @@ namespace KeePass.Forms
 			ipf.InitEx(m_ilClientIcons, (uint)PwIcon.Count, m_pwDatabase,
 				(uint)m_pwIconIndex, m_pwCustomIconID);
 
-			if(ipf.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(ipf) == DialogResult.OK)
 			{
 				m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
 				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
@@ -253,8 +253,6 @@ namespace KeePass.Forms
 					UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
 						(int)m_pwIconIndex], true);
 			}
-
-			UIUtil.DestroyForm(ipf);
 		}
 
 		private void OnAutoTypeInheritCheckedChanged(object sender, EventArgs e)
@@ -264,18 +262,15 @@ namespace KeePass.Forms
 
 		private void OnBtnAutoTypeEdit(object sender, EventArgs e)
 		{
-			// string strName = @"(" + KPRes.AutoType + @")";
-
 			AutoTypeConfig atConfig = new AutoTypeConfig();
 			atConfig.DefaultSequence = m_tbDefaultAutoTypeSeq.Text;
 
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
 			dlg.InitEx(atConfig, -1, true, atConfig.DefaultSequence, null);
 
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 				m_tbDefaultAutoTypeSeq.Text = atConfig.DefaultSequence;
 
-			UIUtil.DestroyForm(dlg);
 			EnableControlsEx();
 		}
 

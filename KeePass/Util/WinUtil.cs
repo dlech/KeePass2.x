@@ -145,6 +145,21 @@ namespace KeePass.Util
 			get { return g_bIsAppX; }
 		}
 
+		private static bool? g_obHasUIAccess = null;
+		internal static bool HasUIAccess
+		{
+			get
+			{
+				if(!g_obHasUIAccess.HasValue) g_obHasUIAccess = HasUIAccessEx();
+
+				// UIAccess should be disabled for security reasons;
+				// https://keepass.info/help/base/autotype.html#req
+				Debug.Assert(!g_obHasUIAccess.Value);
+
+				return g_obHasUIAccess.Value;
+			}
+		}
+
 		static WinUtil()
 		{
 			if(NativeLib.IsUnix()) return;
@@ -945,6 +960,42 @@ namespace KeePass.Util
 			{
 				if(bShowError) MessageService.ShowWarning(strFilePath, ex);
 			}
+		}
+
+		private static bool HasUIAccessEx()
+		{
+			try
+			{
+				if(NativeLib.IsUnix()) return false;
+
+				using(Process p = Process.GetCurrentProcess())
+				{
+					IntPtr hToken = IntPtr.Zero;
+					try
+					{
+						if(!NativeMethods.OpenProcessToken(p.Handle,
+							NativeMethods.TOKEN_QUERY, ref hToken))
+						{
+							Debug.Assert(false);
+							return false;
+						}
+
+						uint u = 0, cb = 4;
+						if(NativeMethods.GetTokenInformationUInt32(hToken,
+							NativeMethods.TokenUIAccess, ref u, cb, ref cb))
+							return (u != 0);
+						Debug.Assert(false);
+					}
+					finally
+					{
+						if(hToken != IntPtr.Zero)
+							NativeMethods.CloseHandle(hToken);
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
 		}
 	}
 }

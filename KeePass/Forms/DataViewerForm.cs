@@ -98,8 +98,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pbData != null);
-			if(m_pbData == null) throw new InvalidOperationException();
+			if(m_pbData == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			m_bInitializing = true;
 
@@ -170,6 +169,8 @@ namespace KeePass.Forms
 					m_strDataDesc, m_tscViewers));
 
 			m_picBox.MouseWheel += this.OnPicBoxMouseWheel;
+
+			UIUtil.Configure(m_webBrowser, false, true);
 
 			m_bInitializing = false;
 			UpdateDataView();

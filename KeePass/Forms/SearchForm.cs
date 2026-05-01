@@ -369,27 +369,24 @@ namespace KeePass.Forms
 				KPRes.ProfileSavePrompt, Properties.Resources.B48x48_KMag,
 				string.Empty, lNames.ToArray());
 
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
+
+			string strName = dlg.ResultString;
+			if(string.IsNullOrEmpty(strName) || (strName == ProfileCustom))
+				MessageService.ShowWarning(KPRes.FieldNameInvalid);
+			else
 			{
-				string strName = dlg.ResultString;
+				SearchParameters sp = GetSearchParameters();
+				sp.Name = strName;
 
-				if(string.IsNullOrEmpty(strName) || (strName == ProfileCustom))
-					MessageService.ShowWarning(KPRes.FieldNameInvalid);
-				else
-				{
-					SearchParameters sp = GetSearchParameters();
-					sp.Name = strName;
+				AceSearch aceSearch = Program.Config.Search;
+				int i = aceSearch.FindProfileIndex(strName);
+				if(i >= 0) aceSearch.UserProfiles[i] = sp;
+				else aceSearch.UserProfiles.Add(sp);
 
-					AceSearch aceSearch = Program.Config.Search;
-					int i = aceSearch.FindProfileIndex(strName);
-					if(i >= 0) aceSearch.UserProfiles[i] = sp;
-					else aceSearch.UserProfiles.Add(sp);
-
-					UpdateProfilesList(strName);
-					UpdateUIState();
-				}
+				UpdateProfilesList(strName);
+				UpdateUIState();
 			}
-			UIUtil.DestroyForm(dlg);
 		}
 
 		private void OnBtnProfileDelete(object sender, EventArgs e)

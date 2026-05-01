@@ -1,3 +1,21 @@
+2026-05-01: 2.61.1
+- Improved workaround for focus bug after returning from a
+  secure desktop
+- Improved initial application of the 'Always on Top' option
+- Improved dialog management
+- Improved HTML viewer initialization
+- Reduced flickering in the 'Print' dialog
+- The option 'Unhide empty data' (in 'Tools' -> 'Options' ->
+  tab 'Advanced') is now turned on by default
+- Improved filtering in the field reference creation dialog
+- Improved disposal of process objects
+- Improved performance of the initial key modifier release when
+  performing auto-type on Unix-like systems with XDoTool
+- File transactions where the base file does not exist yet and
+  is accessed via a URL do not fail anymore
+- Various code optimizations
+- Minor other improvements
+
 2026-03-04: 2.61
 - Added option 'Match diacritics' in the 'Find' dialog (turned
   off by default, i.e. the search is diacritic-insensitive)

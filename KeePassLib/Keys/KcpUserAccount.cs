@@ -37,7 +37,7 @@ namespace KeePassLib.Keys
 	{
 		private const string UserKeyFileName = "ProtectedUserKey.bin";
 
-		// Unique domain separation tag for this class
+		// Domain separation tag for this class
 		private static readonly byte[] g_pbDomainSepTag = new byte[] {
 			0xDE, 0x13, 0x5B, 0x5F, 0x18, 0xA3, 0x46, 0x70,
 			0xB2, 0x57, 0x24, 0x29, 0x69, 0x88, 0x98, 0xE6

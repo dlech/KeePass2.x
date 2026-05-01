@@ -397,21 +397,8 @@ namespace KeePass.UI
 		{
 			MessageService.ExternalIncrementMessageCount();
 
-			Form f = fParent;
-			if(f == null) f = MessageService.GetTopForm();
-			if(f == null) f = GlobalWindowManager.TopWindow;
-			if(f == null) f = Program.MainForm;
-
-#if DEBUG
-			if(GlobalWindowManager.TopWindow != null)
-			{
-				Debug.Assert(f == GlobalWindowManager.TopWindow);
-			}
-			if(Program.MainForm != null) // Skip check for TrlUtil
-			{
-				Debug.Assert((f == MessageService.GetTopForm()) || (f == Program.MainForm));
-			}
-#endif
+			Form f = (fParent ?? GlobalWindowManager.TopWindowEx);
+			Debug.Assert(f == MessageService.GetTopForm());
 
 			bool bResult;
 			if((f == null) || !f.InvokeRequired)

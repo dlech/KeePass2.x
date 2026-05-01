@@ -137,7 +137,8 @@ namespace KeePass.UI
 				bool bCaution = (strTitle == KeyUtil.GetReAskKeyTitle(KPRes.Export));
 				Debug.Assert(bCaution || !Environment.StackTrace.Contains("Export") ||
 					Environment.StackTrace.Contains("ExchangeDataForm") ||
-					Environment.StackTrace.Contains("KeyCreationForm"));
+					Environment.StackTrace.Contains("KeyCreationForm") ||
+					Environment.StackTrace.Contains("PrintForm"));
 
 				Color clrStart = Color.FromArgb(64, 64, 128);
 				Color clrEnd = Color.FromArgb(192, 192, 255);

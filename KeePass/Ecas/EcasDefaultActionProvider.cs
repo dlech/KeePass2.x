@@ -608,7 +608,7 @@ namespace KeePass.Ecas
 				PwDatabase pd = Program.MainForm.DocumentManager.SafeFindContainerOf(pe);
 
 				IntPtr hFg = NativeMethods.GetForegroundWindowHandle();
-				if(GlobalWindowManager.HasWindowMW(hFg))
+				if(GlobalWindowManager.HasWindowEx(hFg))
 					AutoType.PerformIntoPreviousWindow(Program.MainForm, pe,
 						pd, strSeq);
 				else AutoType.PerformIntoCurrentWindow(pe, pd, strSeq);

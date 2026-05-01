@@ -58,7 +58,7 @@ namespace KeePass.DataExchange
 
 			try
 			{
-				if(dlg.ShowDialog() == DialogResult.OK)
+				if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 				{
 					FileFormatProvider ffp = dlg.ResultFormat;
 					if(ffp == null) { Debug.Assert(false); return false; }
@@ -90,7 +90,6 @@ namespace KeePass.DataExchange
 			catch(Exception ex) { MessageService.ShowWarning(ex); }
 			finally
 			{
-				UIUtil.DestroyForm(dlg);
 				if(bStatusActive) slLogger.EndLogging();
 			}
 

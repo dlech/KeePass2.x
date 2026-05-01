@@ -49,15 +49,13 @@ namespace KeePass.DataExchange.Formats
 		{
 			string strData = MemUtil.ReadString(sInput, Encoding.Unicode);
 
-			strData = strData.Replace(@"<WBR>", string.Empty);
-			strData = strData.Replace(@"&shy;", string.Empty);
+			strData = strData.Replace("<WBR>", string.Empty);
+			strData = strData.Replace("&shy;", string.Empty);
 
-			using(WebBrowser wb = new WebBrowser())
+			using(WebBrowser wb = UIUtil.CreateWebBrowserHeadless())
 			{
-				wb.Visible = false;
-				wb.ScriptErrorsSuppressed = true;
-
 				UIUtil.SetWebBrowserDocument(wb, strData);
+
 				ImportPriv(pdStorage, wb.Document.Body);
 			}
 		}

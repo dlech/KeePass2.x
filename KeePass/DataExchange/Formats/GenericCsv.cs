@@ -56,6 +56,7 @@ namespace KeePass.DataExchange.Formats
 
 			CsvImportForm dlg = new CsvImportForm();
 			dlg.InitEx(pdStorage, pb);
+
 			UIUtil.ShowDialogAndDestroy(dlg);
 		}
 	}

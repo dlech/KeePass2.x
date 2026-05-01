@@ -89,7 +89,9 @@ namespace KeePass.UI
 
 			ProcessMessagesEx();
 
-			IntPtr hWndPrevious = NativeMethods.GetForegroundWindowHandle();
+			// GetActiveWindow may return null during MainForm.Load,
+			// GetForegroundWindow may return a window of a different application
+			// IntPtr hWndPrevious = NativeMethods.GetForegroundWindowHandle();
 
 			// Creating a window on the new desktop spawns a CtfMon.exe child
 			// process by default. On Windows Vista, this process is terminated
@@ -204,18 +206,20 @@ namespace KeePass.UI
 			if(dr == DialogResult.None)
 			{
 				Form f = m_fnConstruct(objConstructParam);
+				if(f == null) throw new ArgumentNullException("f");
 
 				try
 				{
-					dr = f.ShowDialog();
+					dr = UIUtil.ShowDialog(f);
 					objResult = m_fnResultBuilder(f); // Always
 				}
-				finally { if(f != null) UIUtil.DestroyForm(f); }
+				finally { UIUtil.DestroyForm(f); }
 			}
 
 			// Workaround for focus bug in Windows 11;
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/0a4a1a7ee7/
-			NativeMethods.SetForegroundWindowEx(hWndPrevious);
+			// NativeMethods.SetForegroundWindowEx(hWndPrevious);
+			GlobalWindowManager.ActivateTopWindowEx();
 
 			return dr;
 		}
@@ -312,7 +316,7 @@ namespace KeePass.UI
 				// bLangBar = ShowLangBar(true);
 
 				lock(stp) { stp.State = SecureThreadState.ShowingDialog; }
-				stp.DialogResult = f.ShowDialog(formBackPrimary);
+				stp.DialogResult = UIUtil.ShowDialog(f, formBackPrimary);
 				stp.ResultObject = m_fnResultBuilder(f); // Always
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -421,7 +425,7 @@ namespace KeePass.UI
 
 				try
 				{
-					DialogResult drDirect = tf.ShowDialog();
+					DialogResult drDirect = UIUtil.ShowDialog(tf);
 					r = fnResultBuilder(tf); // Always
 					return drDirect;
 				}

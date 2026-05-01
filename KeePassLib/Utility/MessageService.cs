@@ -174,24 +174,20 @@ namespace KeePassLib.Utility
 				if((f != null) && f.InvokeRequired)
 					return (DialogResult)f.Invoke(new SafeShowMessageBoxInternalDelegate(
 						SafeShowMessageBoxInternal), f, strText, strTitle, mbb, mbi, mbdb);
-				else wnd = f;
+				wnd = f;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			if(wnd == null)
+			if(wnd != null)
 			{
-				if(StrUtil.RightToLeft)
-					return MessageBox.Show(strText, strTitle, mbb, mbi, mbdb, g_mboRtl);
-				return MessageBox.Show(strText, strTitle, mbb, mbi, mbdb);
+				try
+				{
+					if(StrUtil.RightToLeft)
+						return MessageBox.Show(wnd, strText, strTitle, mbb, mbi, mbdb, g_mboRtl);
+					return MessageBox.Show(wnd, strText, strTitle, mbb, mbi, mbdb);
+				}
+				catch(Exception) { Debug.Assert(false); }
 			}
-
-			try
-			{
-				if(StrUtil.RightToLeft)
-					return MessageBox.Show(wnd, strText, strTitle, mbb, mbi, mbdb, g_mboRtl);
-				return MessageBox.Show(wnd, strText, strTitle, mbb, mbi, mbdb);
-			}
-			catch(Exception) { Debug.Assert(false); }
 
 			if(StrUtil.RightToLeft)
 				return MessageBox.Show(strText, strTitle, mbb, mbi, mbdb, g_mboRtl);
