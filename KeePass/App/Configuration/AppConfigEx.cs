@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -281,9 +281,9 @@ namespace KeePass.App.Configuration
 
 			// aceApp.TriggerSystem = Program.TriggerSystem;
 
-			SearchUtil.PrepareForSerialize(aceSearch.LastUsedProfile);
+			SearchUtil.PrepareSerialize(aceSearch.LastUsedProfile);
 			foreach(SearchParameters sp in aceSearch.UserProfiles)
-				SearchUtil.PrepareForSerialize(sp);
+				SearchUtil.PrepareSerialize(sp);
 
 			const int m = 64; // Maximum number of compatibility items
 			List<string> l = aceApp.PluginCompatibility;

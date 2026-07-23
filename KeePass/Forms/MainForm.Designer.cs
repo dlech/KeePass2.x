@@ -292,7 +292,7 @@
 			this.m_ctxTrayLock = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_ctxTrayFileExit = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_timerMain = new System.Windows.Forms.Timer(this.components);
-			this.m_tabMain = new System.Windows.Forms.TabControl();
+			this.m_tabMain = new KeePass.UI.CustomTabControlEx();
 			this.m_splitHorizontal = new KeePass.UI.CustomSplitContainerEx();
 			this.m_splitVertical = new KeePass.UI.CustomSplitContainerEx();
 			this.m_tvGroups = new KeePass.UI.CustomTreeViewEx();
@@ -2458,7 +2458,6 @@
 			this.m_tabMain.Location = new System.Drawing.Point(0, 49);
 			this.m_tabMain.Name = "m_tabMain";
 			this.m_tabMain.SelectedIndex = 0;
-			this.m_tabMain.ShowToolTips = true;
 			this.m_tabMain.Size = new System.Drawing.Size(654, 22);
 			this.m_tabMain.TabIndex = 2;
 			this.m_tabMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnTabMainMouseClick);
@@ -2709,7 +2708,7 @@
 		private System.Windows.Forms.ToolStripMenuItem m_ctxEntryAttachments;
 		private System.Windows.Forms.ToolStripSeparator m_ctxTraySep0;
 		private System.Windows.Forms.ToolStripMenuItem m_ctxTrayFileExit;
-		private System.Windows.Forms.TabControl m_tabMain;
+		private KeePass.UI.CustomTabControlEx m_tabMain;
 		private System.Windows.Forms.ToolStripButton m_tbSaveAll;
 		private System.Windows.Forms.ToolStripButton m_tbCloseTab;
 		private System.Windows.Forms.ToolStripSeparator m_menuFileSaveAsSep0;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1017,8 +1017,7 @@ namespace KeePass.Forms
 			UIUtil.SetEnabledFast((bEdit && !bMulti && (nStringsSel >= 1)),
 				m_ctxStrMoveTo, m_ctxStrMoveToTitle, m_ctxStrMoveToUserName,
 				m_ctxStrMoveToPassword, m_ctxStrMoveToUrl, m_ctxStrMoveToNotes);
-			UIUtil.SetEnabledFast((bEdit && !bMulti), m_ctxStrOtpGen,
-				m_ctxToolsOtpGen);
+			UIUtil.SetEnabledFast(!bMulti, m_ctxStrOtpGen, m_ctxToolsOtpGen);
 
 			m_btnBinDelete.Enabled = (bEdit && (nBinSel >= 1));
 			m_btnBinOpen.Enabled = (nBinSel == 1);
@@ -2635,9 +2634,10 @@ namespace KeePass.Forms
 
 			OtpGeneratorForm dlg = new OtpGeneratorForm();
 			dlg.InitEx(m_vStrings, m_pwDatabase);
+			dlg.ReadOnlyEx = (m_pwEditMode == PwEditMode.ViewReadOnlyEntry);
 
 			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
-				UpdateEntryStrings(false, true, true);
+				UpdateEntryStrings(false, false, true);
 		}
 
 		private void OnCtxToolsOtpGen(object sender, EventArgs e)

@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2026 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -325,7 +325,7 @@ already, KeePass brings it to the foreground.
 <ul>
 <li><i>File/URL:</i> Path of the database file to open. If it is a URL,
 the protocol (prefix) must be specified.</li>
-<li><i>I/O Connection - User Name / Password:</i> Optional credentials that are used
+<li><i>I/O Connection - User name / Password:</i> Optional credentials that are used
 for connecting to the target file system (for example FTP account user name /
 password). These credentials are not used to decrypt the database.</li>
 <li><i>Password / Key file / User account:</i> Optional credentials that are used
@@ -344,10 +344,21 @@ use the 'Database has unsaved changes' trigger condition.
 Synchronize the currently opened and active database with a file.
 <ul>
 <li><i>File/URL:</i> Path of the database file to synchronize with.
-If it is a URL, the protocol (prefix) must be specified.</li>
-<li><i>I/O Connection - User Name / Password:</i> Optional credentials that are used
+If it is a URL, the protocol (prefix) must be specified.
+Multiple file paths/URLs can be specified when enclosing each one in double
+quotation marks (if different I/O connection credentials are required, use
+multiple actions instead).</li>
+<li><i>I/O Connection - User name / Password:</i> Optional credentials that are used
 for connecting to the target file system (for example FTP account user name /
 password). These credentials are not used to decrypt the database.</li>
+<li><i>On error - Silent:</i> If this option is activated, KeePass does not show
+an error dialog when an error occurs during the synchronization,
+except when saving the active database fails.</li>
+<li><i>On error - Continue:</i> When synchronizing with multiple files, activating
+this option causes KeePass to continue with the synchronization even when an
+error occurs. The files that were not imported successfully are not overwritten
+(i.e. the data in these files does not get lost).
+The option has no effect on the execution of other trigger actions.</li>
 </ul></li>
 
 <li><b>Import into active database:</b><br />

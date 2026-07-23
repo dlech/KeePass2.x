@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -332,19 +332,21 @@ namespace KeePass.Util
 
 			string strTitle = GetReAskKeyTitle(strContext);
 
-			KeyPromptFormResult r;
-			DialogResult dr = KeyPromptForm.ShowDialog(pd.IOConnectionInfo,
-				false, strTitle, out r);
-			if((dr != DialogResult.OK) || (r == null)) return false;
+			for(int i = 0; i < Program.Config.Security.MasterKeyTries; ++i)
+			{
+				KeyPromptFormResult r;
+				DialogResult dr = KeyPromptForm.ShowDialog(pd.IOConnectionInfo,
+					false, strTitle, out r);
+				if((dr != DialogResult.OK) || (r == null)) return false;
 
-			CompositeKey ck = r.CompositeKey;
-			bool bEqual = ck.EqualsValue(pd.MasterKey);
+				if(r.CompositeKey.EqualsValue(pd.MasterKey)) return true;
 
-			if(!bEqual && bFailWithUI)
+				if(!bFailWithUI) return false;
 				MessageService.ShowWarning(KLRes.InvalidCompositeKey,
 					KLRes.InvalidCompositeKeyHint);
+			}
 
-			return bEqual;
+			return false;
 		}
 
 		internal static string GetReAskKeyTitle(string strContext)

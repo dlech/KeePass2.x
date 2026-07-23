@@ -18,6 +18,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <ApplicationManifest>Resources\App.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -864,6 +865,12 @@
     <Compile Include="UI\CustomRichTextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\CustomTabControlEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\CustomToolStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -912,8 +919,6 @@
     </Compile>
     <Compile Include="UI\StatusUtil.cs" />
     <Compile Include="UI\SuspendLayoutScope.cs" />
-    <Compile Include="UI\TabControlEx.cs">
-    </Compile>
     <Compile Include="UI\TaskbarList.cs" />
     <Compile Include="UI\ToolStripRendering\ProExtTsr.cs" />
     <Compile Include="UI\ToolStripRendering\SimpleColorTableEx.cs" />
@@ -1360,6 +1365,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\App.manifest" />
     <None Include="Resources\Nuvola\B16x16_Services.png" />
     <None Include="Resources\Images\B48x35_WritingHand.png" />
     <None Include="Resources\Icons\KeePass.ico" />

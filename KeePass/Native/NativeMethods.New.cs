@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ namespace KeePass.Native
 		internal static bool IsWindowEx(IntPtr hWnd)
 		{
 			if(hWnd == IntPtr.Zero) return false;
-			return (NativeLib.IsUnix() ? true : IsWindow(hWnd));
+			return (NativeLib.IsUnix() || IsWindow(hWnd));
 		}
 
 		internal static int GetWindowStyle(IntPtr hWnd)
@@ -268,32 +268,6 @@ namespace KeePass.Native
 			}
 
 			return false;
-		}
-
-		// Workaround for .NET/Windows TopMost/WS_EX_TOPMOST desynchronization bug;
-		// https://sourceforge.net/p/keepass/discussion/329220/thread/d45a3b38e8/
-		internal static void SyncTopMost(Form f)
-		{
-			if(f == null) { Debug.Assert(false); return; }
-			if(NativeLib.IsUnix()) return;
-
-			try
-			{
-				if(!f.TopMost) return; // Managed state
-
-				IntPtr h = f.Handle;
-				if(h == IntPtr.Zero) return;
-
-				int s = GetWindowLong(h, GWL_EXSTYLE); // Unmanaged state
-				if((s & WS_EX_TOPMOST) == 0)
-				{
-					f.TopMost = true; // Calls SetWindowPos (if TopLevel)
-#if DEBUG
-					Trace.WriteLine("Synchronized TopMost/WS_EX_TOPMOST.");
-#endif
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
 		}
 
 		internal static IntPtr FindWindow(string strTitle)
@@ -859,18 +833,18 @@ namespace KeePass.Native
 			if(!GetDesktopName(hDesk, out strAnsi, out strUni)) return null;
 			if((strAnsi == null) && (strUni == null)) return null;
 
+			StringComparison sc = StrUtil.CaseIgnoreCmp;
+
 			try
 			{
-				if((strAnsi != null) && (strAnsi.IndexOf(strName,
-					StringComparison.OrdinalIgnoreCase) >= 0))
+				if((strAnsi != null) && (strAnsi.IndexOf(strName, sc) >= 0))
 					return true;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
 			try
 			{
-				if((strUni != null) && (strUni.IndexOf(strName,
-					StringComparison.OrdinalIgnoreCase) >= 0))
+				if((strUni != null) && (strUni.IndexOf(strName, sc) >= 0))
 					return true;
 			}
 			catch(Exception) { Debug.Assert(false); }

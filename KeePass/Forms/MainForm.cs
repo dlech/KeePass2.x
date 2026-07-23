@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -379,7 +379,6 @@ namespace KeePass.Forms
 				UIUtil.SetEnabledFast(false, m_menuViewAlwaysOnTop);
 			}
 			UIUtil.SetChecked(m_menuViewAlwaysOnTop, mw.AlwaysOnTop);
-			EnsureAlwaysOnTopOpt();
 
 			m_mruList.Initialize(this, m_menuFileRecent, m_menuFileSyncRecent);
 			m_mruList.MarkOpened = true;
@@ -451,6 +450,8 @@ namespace KeePass.Forms
 			HotKeyManager.RegisterHotKey(AppDefs.GlobalHotKeyId.EntryMenu,
 				(Keys)Program.Config.Integration.HotKeyEntryMenu);
 
+			m_tabMain.ShowToolTipsEx = true;
+
 			m_statusMain.ShowItemToolTips = true;
 			m_statusPartInfo.AutoToolTip = true;
 			m_statusPartProgress.Visible = false;
@@ -508,6 +509,11 @@ namespace KeePass.Forms
 			Program.TriggerSystem.CheckTriggers();
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppInitPost);
 
+			UpdateCheckEx.EnsureConfigured(this);
+			if(Program.Config.Application.Start.CheckForUpdate)
+				UpdateCheckEx.Run(false, null);
+			// UpdateCheck.StartAsync(PwDefs.VersionUrl, m_statusPartInfo);
+
 			if(Program.CommandLineArgs.FileName != null)
 				OpenDatabase(IocFromCommandLine(), KeyUtil.KeyFromCommandLine(
 					Program.CommandLineArgs), false);
@@ -518,14 +524,9 @@ namespace KeePass.Forms
 					OpenDatabase(ioLastFile, null, false);
 			}
 
-			UpdateCheckEx.EnsureConfigured(this);
-			if(Program.Config.Application.Start.CheckForUpdate)
-				UpdateCheckEx.Run(false, null);
-			// UpdateCheck.StartAsync(PwDefs.VersionUrl, m_statusPartInfo);
-
 			ResetDefaultFocus(null);
 
-			MinimizeToTrayAtStartIfEnabled(true);
+			MinimizeAtStartIfEnabled(true);
 
 			m_bFormLoaded = true;
 			NotifyUserActivity(); // Initialize locking timeout
@@ -552,7 +553,8 @@ namespace KeePass.Forms
 				UpdateUI(false, null, false, null, true, pg, false);
 			}
 
-			MinimizeToTrayAtStartIfEnabled(false);
+			EnsureAlwaysOnTopOpt();
+			MinimizeAtStartIfEnabled(false);
 
 			// Workaround for .NET bug: the active control is correct,
 			// but it's not focused;
@@ -836,10 +838,7 @@ namespace KeePass.Forms
 
 			PwDocument ds = m_docMgr.ActiveDocument;
 			if(!IsFileLocked(ds)) // Lock
-			{
-				LockAllDocuments();
-				if(m_bCleanedUp) return; // Exited instead of locking
-			}
+				LockAllDocuments(); // May exit instead of locking
 			else // Unlock
 			{
 				PwDatabase pd = ds.Database;
@@ -849,11 +848,9 @@ namespace KeePass.Forms
 				if(pd.IsOpen)
 				{
 					ds.LockedIoc = new IOConnectionInfo(); // Clear lock
-					RestoreWindowState(pd);
+					RestoreViewState(true);
 				}
 			}
-
-			if(this.Visible) UpdateUIState(false);
 		}
 
 		private void OnFileExit(object sender, EventArgs e)
@@ -1011,17 +1008,11 @@ namespace KeePass.Forms
 			GlobalWindowManager.CloseAllWindows();
 
 			m_docMgr.RememberActiveDocument();
-			if(!CloseAllDocuments(true))
-			{
-				e.Cancel = true;
-				UpdateUI(true, null, true, null, true, null, false);
-				return;
-			}
 
 			// When shutting down, it can happen that only OnFormClosing
 			// is called without the form actually being closed afterwards,
 			// thus we must update the UI in this case now
-			if(bSystem) UpdateUI(true, null, true, null, true, null, false);
+			if(!CloseAllDocuments(true, bSystem)) e.Cancel = true;
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -1431,10 +1422,11 @@ namespace KeePass.Forms
 		private void OnViewAlwaysOnTop(object sender, EventArgs e)
 		{
 			Debug.Assert(m_bFormLoaded); // The following toggles!
-			bool bTop = !Program.Config.MainWindow.AlwaysOnTop;
 
+			bool bTop = !Program.Config.MainWindow.AlwaysOnTop;
 			Program.Config.MainWindow.AlwaysOnTop = bTop;
 			UIUtil.SetChecked(m_menuViewAlwaysOnTop, bTop);
+
 			EnsureAlwaysOnTopOpt();
 		}
 
@@ -1486,7 +1478,9 @@ namespace KeePass.Forms
 			}
 			else if((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
 			{
-				NativeMethods.SyncTopMost(this);
+				// Workaround for .NET/Windows TopMost/WS_EX_TOPMOST desynchronization bug;
+				// https://sourceforge.net/p/keepass/discussion/329220/thread/d45a3b38e8/
+				EnsureAlwaysOnTopOpt();
 
 				if(Program.Config.MainWindow.EntryListAutoResizeColumns &&
 					(m_lvEntries.View == View.Details))
@@ -1606,6 +1600,8 @@ namespace KeePass.Forms
 			}
 
 			GlobalMutexPool.Refresh();
+
+			UpdateCheckEx.ShowDeferredReport();
 		}
 
 		private void OnToolsPlugins(object sender, EventArgs e)
@@ -2067,7 +2063,7 @@ namespace KeePass.Forms
 		{
 			if(m_uTabChangeBlocked != 0) return;
 
-			SaveWindowState();
+			SaveViewState();
 
 			TabPage tbSelect = m_tabMain.SelectedTab;
 			if(tbSelect == null) return;
@@ -2159,13 +2155,16 @@ namespace KeePass.Forms
 				//	if(f != null) f.Activate();
 				//	// SystemSounds.Beep.Play(); // Do not beep!
 				// }
-				// // else EnsureAlwaysOnTopOpt();
 
 				Form fTop = GlobalWindowManager.TopWindow;
 				if((fTop != null) && (fTop != this))
 					fTop.Activate();
-				else
+				else if(GlobalWindowManager.WindowCount == 0)
 				{
+					// Workaround for .NET/Windows TopMost/WS_EX_TOPMOST desynchronization bug;
+					// https://sourceforge.net/p/keepass/discussion/329220/thread/d45a3b38e8/
+					EnsureAlwaysOnTopOpt();
+
 					if(MonoWorkarounds.IsRequired(1760))
 					{
 						Control c = UIUtil.GetActiveControl(this);

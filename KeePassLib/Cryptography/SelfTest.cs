@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1179,30 +1179,30 @@ namespace KeePassLib.Cryptography
 		{
 #if DEBUG
 			string[] vSeps = new string[] { "ax", "b", "c" };
-			const string str1 = "axbqrstcdeax";
-			List<string> v1 = StrUtil.SplitWithSep(str1, vSeps, true);
 
-			if(v1.Count != 9) throw new InvalidOperationException("StrUtil-1");
-			if(v1[0].Length > 0) throw new InvalidOperationException("StrUtil-2");
-			if(!v1[1].Equals("ax")) throw new InvalidOperationException("StrUtil-3");
-			if(v1[2].Length > 0) throw new InvalidOperationException("StrUtil-4");
-			if(!v1[3].Equals("b")) throw new InvalidOperationException("StrUtil-5");
-			if(!v1[4].Equals("qrst")) throw new InvalidOperationException("StrUtil-6");
-			if(!v1[5].Equals("c")) throw new InvalidOperationException("StrUtil-7");
-			if(!v1[6].Equals("de")) throw new InvalidOperationException("StrUtil-8");
-			if(!v1[7].Equals("ax")) throw new InvalidOperationException("StrUtil-9");
-			if(v1[8].Length > 0) throw new InvalidOperationException("StrUtil-10");
+			const string str1 = "axbqrstcdeax";
+			List<string> l1 = StrUtil.SplitWithSep(str1, vSeps, true);
+			if(l1.Count != 9) throw new InvalidOperationException("StrUtil-1");
+			if(l1[0] != "") throw new InvalidOperationException("StrUtil-2");
+			if(l1[1] != "ax") throw new InvalidOperationException("StrUtil-3");
+			if(l1[2] != "") throw new InvalidOperationException("StrUtil-4");
+			if(l1[3] != "b") throw new InvalidOperationException("StrUtil-5");
+			if(l1[4] != "qrst") throw new InvalidOperationException("StrUtil-6");
+			if(l1[5] != "c") throw new InvalidOperationException("StrUtil-7");
+			if(l1[6] != "de") throw new InvalidOperationException("StrUtil-8");
+			if(l1[7] != "ax") throw new InvalidOperationException("StrUtil-9");
+			if(l1[8] != "") throw new InvalidOperationException("StrUtil-10");
 
 			const string str2 = "12ab56";
-			List<string> v2 = StrUtil.SplitWithSep(str2, new string[] { "AB" }, false);
-			if(v2.Count != 3) throw new InvalidOperationException("StrUtil-11");
-			if(!v2[0].Equals("12")) throw new InvalidOperationException("StrUtil-12");
-			if(!v2[1].Equals("AB")) throw new InvalidOperationException("StrUtil-13");
-			if(!v2[2].Equals("56")) throw new InvalidOperationException("StrUtil-14");
+			List<string> l2 = StrUtil.SplitWithSep(str2, new string[] { "AB" }, false);
+			if(l2.Count != 3) throw new InvalidOperationException("StrUtil-11");
+			if(l2[0] != "12") throw new InvalidOperationException("StrUtil-12");
+			if(l2[1] != "AB") throw new InvalidOperationException("StrUtil-13");
+			if(l2[2] != "56") throw new InvalidOperationException("StrUtil-14");
 
-			List<string> v3 = StrUtil.SplitWithSep("pqrs", vSeps, false);
-			if(v3.Count != 1) throw new InvalidOperationException("StrUtil-15");
-			if(!v3[0].Equals("pqrs")) throw new InvalidOperationException("StrUtil-16");
+			List<string> l3 = StrUtil.SplitWithSep("pqrs", vSeps, false);
+			if(l3.Count != 1) throw new InvalidOperationException("StrUtil-15");
+			if(l3[0] != "pqrs") throw new InvalidOperationException("StrUtil-16");
 
 			if(StrUtil.VersionToString(0x000F000E000D000CUL) != "15.14.13.12")
 				throw new InvalidOperationException("StrUtil-V1");
@@ -1362,10 +1362,10 @@ namespace KeePassLib.Cryptography
 			string strRel = "..\\..\\Documents\\KeePass\\NewDatabase.kdbx";
 
 			str = UrlUtil.MakeRelativePath(strBase, strDoc);
-			if(!str.Equals(strRel)) throw new InvalidOperationException("UrlUtil-R1");
+			if(str != strRel) throw new InvalidOperationException("UrlUtil-R1");
 
 			str = UrlUtil.MakeAbsolutePath(strBase, strRel);
-			if(!str.Equals(strDoc)) throw new InvalidOperationException("UrlUtil-R2");
+			if(str != strDoc) throw new InvalidOperationException("UrlUtil-R2");
 
 			str = UrlUtil.GetQuotedAppPath(" \"Test\" \"%1\" ");
 			if(str != "Test") throw new InvalidOperationException("UrlUtil-Q1");

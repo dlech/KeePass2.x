@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -3183,7 +3183,7 @@ namespace KeePass.UI
 				{
 					bool b = NativeMethods.PlaySound(strWav, IntPtr.Zero,
 						NativeMethods.SND_FILENAME | NativeMethods.SND_ASYNC |
-						NativeMethods.SND_NODEFAULT);
+						NativeMethods.SND_NODEFAULT | NativeMethods.SND_SYSTEM);
 					Debug.Assert(b);
 					return b;
 				}
@@ -4069,6 +4069,41 @@ namespace KeePass.UI
 
 			return Program.Translation.CombineToSentence(StrUtil.TrimDots(
 				str, true), KPRes.AlwaysP.Replace("{PARAM}", strDefault));
+		}
+
+		internal static bool GetTopMost(Form f)
+		{
+			if(f == null) { Debug.Assert(false); return false; }
+
+			// On .NET/Windows, the managed state (Form.TopMost property) and
+			// the unmanaged state (WS_EX_TOPMOST bit) can desynchronize;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/d45a3b38e8/
+			try
+			{
+				if(!NativeLib.IsUnix())
+				{
+					IntPtr h = f.Handle;
+					if(h != IntPtr.Zero)
+					{
+						int s = NativeMethods.GetWindowLong(h,
+							NativeMethods.GWL_EXSTYLE);
+						return ((s & NativeMethods.WS_EX_TOPMOST) != 0);
+					}
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return f.TopMost;
+		}
+
+		internal static void SetTopMost(Form f, bool bTopMost)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			// Setting TopMost to false can result in problems when
+			// uiAccess="true", thus do it only when necessary;
+			// https://sourceforge.net/p/keepass/feature-requests/2964/
+			if(GetTopMost(f) != bTopMost) f.TopMost = bTopMost;
 		}
 	}
 }

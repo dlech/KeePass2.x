@@ -1,6 +1,6 @@
 /*
   ShInstUtil
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ uint64_t GetFileVersion64(const tstring& strFilePath);
 void CheckDotNetInstalled();
 
 void CreateLink(const tstring& strLinkFilePath, const tstring& strTargetFilePath);
-void UpdateLinks(bool bInstall, bool bAllUsers);
+void UpdateLinks(bool bInstall, bool bAllUsers, bool bPrograms = true,
+	bool bDesktop = true);
 
 #endif // ___SHINSTUTIL_H___

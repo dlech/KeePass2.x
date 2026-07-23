@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace KeePass.DataExchange
 	{
 		private sealed class GxiContext // Immutable
 		{
-			private PwDatabase m_pd;
+			private readonly PwDatabase m_pd;
 			public PwDatabase Database { get { return m_pd; } }
 
 			private PwGroup m_pg;
@@ -48,15 +48,15 @@ namespace KeePass.DataExchange
 			private PwEntry m_pe;
 			public PwEntry Entry { get { return m_pe; } }
 
-			private Dictionary<string, string> m_dStringKeyRepl;
+			private readonly Dictionary<string, string> m_dStringKeyRepl;
 			public Dictionary<string, string> StringKeyRepl { get { return m_dStringKeyRepl; } }
-			private Dictionary<string, string> m_dStringValueRepl;
+			private readonly Dictionary<string, string> m_dStringValueRepl;
 			public Dictionary<string, string> StringValueRepl { get { return m_dStringValueRepl; } }
-			private Dictionary<string, string> m_dStringKeyRepl2;
+			private readonly Dictionary<string, string> m_dStringKeyRepl2;
 			public Dictionary<string, string> StringKeyRepl2 { get { return m_dStringKeyRepl2; } }
-			private Dictionary<string, string> m_dStringValueRepl2;
+			private readonly Dictionary<string, string> m_dStringValueRepl2;
 			public Dictionary<string, string> StringValueRepl2 { get { return m_dStringValueRepl2; } }
-			private Dictionary<string, string> m_dBinaryKeyRepl;
+			private readonly Dictionary<string, string> m_dBinaryKeyRepl;
 			public Dictionary<string, string> BinaryKeyRepl { get { return m_dBinaryKeyRepl; } }
 
 			public GxiContext(GxiProfile p, PwDatabase pd, PwGroup pg, PwEntry pe)

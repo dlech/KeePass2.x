@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -47,8 +47,8 @@ namespace KeePass.Util.Spr
 	/// </summary>
 	public static partial class SprEngine
 	{
-		private const uint MaxRecursionDepth = 12;
 		private const StringComparison ScMethod = StringComparison.OrdinalIgnoreCase;
+		private const uint MaxRecursionDepth = 12;
 
 		// Important notes for plugin developers subscribing to the following events:
 		// * If possible, prefer subscribing to FilterCompile instead of
@@ -240,36 +240,36 @@ namespace KeePass.Util.Spr
 			if(((ctx.Flags & SprCompileFlags.DateTime) != SprCompileFlags.None) &&
 				(str.IndexOf(@"{DT_", SprEngine.ScMethod) >= 0))
 			{
-				DateTime dtNow = DateTime.UtcNow;
-				str = Fill(str, @"{DT_UTC_YEAR}", dtNow.Year.ToString("D4"),
+				DateTime dt = ctx.Time;
+				str = Fill(str, @"{DT_UTC_YEAR}", dt.Year.ToString("D4"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_MONTH}", dtNow.Month.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_MONTH}", dt.Month.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_DAY}", dtNow.Day.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_DAY}", dt.Day.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_HOUR}", dtNow.Hour.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_HOUR}", dt.Hour.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_MINUTE}", dtNow.Minute.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_MINUTE}", dt.Minute.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_SECOND}", dtNow.Second.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_SECOND}", dt.Second.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_SIMPLE}", dtNow.ToString("yyyyMMddHHmmss"),
+				str = Fill(str, @"{DT_UTC_SIMPLE}", dt.ToString("yyyyMMddHHmmss"),
 					ctx, null);
 
-				dtNow = dtNow.ToLocalTime();
-				str = Fill(str, @"{DT_YEAR}", dtNow.Year.ToString("D4"),
+				dt = dt.ToLocalTime();
+				str = Fill(str, @"{DT_YEAR}", dt.Year.ToString("D4"),
 					ctx, null);
-				str = Fill(str, @"{DT_MONTH}", dtNow.Month.ToString("D2"),
+				str = Fill(str, @"{DT_MONTH}", dt.Month.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_DAY}", dtNow.Day.ToString("D2"),
+				str = Fill(str, @"{DT_DAY}", dt.Day.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_HOUR}", dtNow.Hour.ToString("D2"),
+				str = Fill(str, @"{DT_HOUR}", dt.Hour.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_MINUTE}", dtNow.Minute.ToString("D2"),
+				str = Fill(str, @"{DT_MINUTE}", dt.Minute.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_SECOND}", dtNow.Second.ToString("D2"),
+				str = Fill(str, @"{DT_SECOND}", dt.Second.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_SIMPLE}", dtNow.ToString("yyyyMMddHHmmss"),
+				str = Fill(str, @"{DT_SIMPLE}", dt.ToString("yyyyMMddHHmmss"),
 					ctx, null);
 			}
 
@@ -993,7 +993,7 @@ namespace KeePass.Util.Spr
 					psi.UseShellExecute = bShellExec;
 
 					string strO = GetParam(d, "o", (bShellExec ? "0" : "1"));
-					bool bStdOut = strO.Equals("1", sc);
+					bool bStdOut = (strO == "1");
 					if(bStdOut) psi.RedirectStandardOutput = true;
 
 					string strWS = GetParam(d, "ws", "n");
@@ -1012,7 +1012,7 @@ namespace KeePass.Util.Spr
 					if(!string.IsNullOrEmpty(strVerb))
 						psi.Verb = strVerb;
 
-					bool bWait = GetParam(d, "w", "1").Equals("1", sc);
+					bool bWait = (GetParam(d, "w", "1") == "1");
 
 					if(!FileDialogsEx.ConfirmRunFile(strCmdOrg, strApp, strArgs,
 						Program.Config.UI, "ShowCmdPlhConfirmDialog"))

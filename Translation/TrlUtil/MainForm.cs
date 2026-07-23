@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -858,7 +858,7 @@ namespace TrlUtil
 				ListViewItem lvi = m_lvStrings.Items[j];
 				foreach(ListViewItem.ListViewSubItem lvsi in lvi.SubItems)
 				{
-					if(lvsi.Text.IndexOf(strFind, StrUtil.CaseIgnoreCmp) >= 0)
+					if(StrUtil.ContainsTolerant(lvsi.Text, strFind))
 					{
 						UIUtil.SetFocusedItem(m_lvStrings, lvi, false);
 						m_lvStrings.SelectedItems.Clear();
@@ -885,7 +885,7 @@ namespace TrlUtil
 			{
 				int j = ((iOffset + i) % vNodes.Count);
 
-				if(vValues[j].IndexOf(strFind, StrUtil.CaseIgnoreCmp) >= 0)
+				if(StrUtil.ContainsTolerant(vValues[j], strFind))
 				{
 					m_tvControls.SelectedNode = vNodes[j];
 					return true;
@@ -1086,12 +1086,10 @@ namespace TrlUtil
 					// Check case-sensitive words
 					foreach(string strWord in vCaseSensWords)
 					{
-						bool bWordEn = (strEn.IndexOf(strWord) >= 0);
-						if(!bWordEn)
-						{
-							Debug.Assert(strEn.IndexOf(strWord, StrUtil.CaseIgnoreCmp) < 0);
-						}
-						if(bWordEn && (strTrl.IndexOf(strWord) < 0))
+						bool bWordEn = strEn.Contains(strWord);
+						Debug.Assert(bWordEn || (strEn.IndexOf(strWord,
+							StrUtil.CaseIgnoreCmp) < 0));
+						if(bWordEn && !strTrl.Contains(strWord))
 							lErrors.Add("The English string" + np + "\"" + strEn + "\"" + np +
 								"contains the case-sensitive word '" + strWord +
 								"', but the translated string does not:" + np +

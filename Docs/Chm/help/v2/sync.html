@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2026 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -143,16 +143,23 @@ Here are the most important properties of the synchronization algorithm:</p>
 <li>In order to decide which copy of an object is the latest one,
 KeePass mainly uses the last modification time of the object
 (which KeePass updates automatically each time the object is changed).</li>
+
 <li>The synchronization is performed on entry level. This e.g. means that
 a combination of user name / password is always consistent
 (synchronization on field level will not be implemented, because
 combinations could become inconsistent with this).</li>
+
 <li>In case of parallel updates and collisions, KeePass tries to store
 all information in an appropriate place. For example, when you have an
 entry E in a database A, make a copy B of A, change E in B, change E in A,
 and synchronize A and B, then E in A is treated as current and the changes
 made to E in B are stored as a history entry of E (see the tab page 'History'
 in the entry dialog), i.e. the changes made in B are not lost.</li>
+
+<li>History entries are merged, without performing deletions. However, history
+entries may be deleted by the automatic history maintenance (based on the
+number of history entries or their size, configurable in 'File' &rarr;
+'Database Settings' &rarr; tab 'Advanced').</li>
 </ul>
 
 <br />

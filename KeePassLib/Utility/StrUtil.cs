@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -182,6 +182,9 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public static class StrUtil
 	{
+		private const CompareOptions c_coTolerant = (CompareOptions.IgnoreCase |
+			CompareOptions.IgnoreNonSpace);
+
 		public static readonly StringComparison CaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
 
 		public static StringComparer CaseIgnoreComparer
@@ -394,7 +397,7 @@ namespace KeePassLib.Utility
 			int nPos = 0;
 			while(nPos < str.Length)
 			{
-				nPos = str.IndexOf(strFind, nPos, StringComparison.OrdinalIgnoreCase);
+				nPos = str.IndexOf(strFind, nPos, StrUtil.CaseIgnoreCmp);
 				if(nPos < 0) break;
 
 				str = str.Remove(nPos, strFind.Length);
@@ -2084,13 +2087,12 @@ namespace KeePassLib.Utility
 			int cc = str.Length;
 			if(cc == 0) return string.Empty;
 
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(cc);
 
 			for(int i = 0; i < cc; ++i)
 			{
 				char ch = str[i];
-				if(char.IsWhiteSpace(ch)) continue;
-				sb.Append(ch);
+				if(!char.IsWhiteSpace(ch)) sb.Append(ch);
 			}
 
 			return sb.ToString();
@@ -2213,6 +2215,30 @@ namespace KeePassLib.Utility
 			byte[] pb = new byte[cb + cbNull];
 			enc.GetBytes(str, 0, str.Length, pb, 0);
 			return pb;
+		}
+
+		// Cf. ContainsTolerant
+		public static bool EqualsTolerant(string str1, string str2)
+		{
+			return (CultureInfo.CurrentCulture.CompareInfo.Compare(
+				str1, str2, c_coTolerant) == 0);
+		}
+
+		// Cf. EqualsTolerant
+		public static bool ContainsTolerant(string strHaystack, string strNeedle)
+		{
+			if(strHaystack == null) { Debug.Assert(false); return (strNeedle == null); }
+			if(strNeedle == null) { Debug.Assert(false); strNeedle = string.Empty; }
+
+			return (CultureInfo.CurrentCulture.CompareInfo.IndexOf(
+				strHaystack, strNeedle, c_coTolerant) >= 0);
+		}
+
+		internal static bool GetIgnoreCase(StringComparison sc)
+		{
+			return ((sc == StringComparison.CurrentCultureIgnoreCase) ||
+				(sc == StringComparison.InvariantCultureIgnoreCase) ||
+				(sc == StringComparison.OrdinalIgnoreCase));
 		}
 	}
 }

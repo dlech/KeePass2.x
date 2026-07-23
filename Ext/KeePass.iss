@@ -13,13 +13,13 @@
 #define MyAppHelpName "KeePass.chm"
 #define MyAppId "KeePassPasswordSafe2"
 
-#define KeeVersionStr "2.60"
-#define KeeVersionStrWithMinor "2.60"
-#define KeeVersionStrWithMinorPath "2.60"
-#define KeeVersionWin "2.60.0.0"
-#define KeeVersionWinShort "2.60"
+#define KeeVersionStr "2.61"
+#define KeeVersionStrWithMinor "2.61"
+#define KeeVersionStrWithMinorPath "2.61"
+#define KeeVersionWin "2.61.0.0"
+#define KeeVersionWinShort "2.61"
 
-#define KeeDevPeriod "2003-2025"
+#define KeeDevPeriod "2003-2026"
 
 [Setup]
 AppName={#MyAppName}

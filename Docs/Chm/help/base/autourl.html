@@ -18,7 +18,7 @@
 	<meta name="DC.type" content="Text" />
 	<meta name="DC.format" content="text/html" />
 	<meta name="DC.language" content="en" />
-	<meta name="DC.rights" content="Copyright (C) 2003-2025 Dominik Reichl" />
+	<meta name="DC.rights" content="Copyright (C) 2003-2026 Dominik Reichl" />
 
 	<meta name="robots" content="index, follow" />
 
@@ -205,14 +205,14 @@ When double-clicking the URL field of the entry in the main window, the
 specified command line (in the URL override field) will be run.</p>
 
 <p><b>Using a different browser:</b><br />
-If your default browser is Firefox and you want to open a specific site with
-Internet Explorer, specify the following in the URL override field:</p>
+If your default browser is Mozilla Firefox and you want to open a specific site
+with Microsoft Edge, specify the following in the URL override field:</p>
 
-<p><code>cmd://{INTERNETEXPLORER} &quot;{URL}&quot;</code></p>
+<p><code>cmd://{EDGE} &quot;{URL}&quot;</code></p>
 
-<p>KeePass will open Internet Explorer and pass the data from the URL field
-as the parameter. This uses a <a href="#subst">placeholder</a> to find Internet
-Explorer.</p>
+<p>KeePass will open Microsoft Edge and pass the data from the URL field
+as the parameter. This uses a <a href="#subst">placeholder</a> to find
+Microsoft Edge.</p>
 
 <p><b>Globally changing the URL behavior:</b><br />
 If you want to change the <i>default</i> URL action for a URL scheme
@@ -220,8 +220,8 @@ If you want to change the <i>default</i> URL action for a URL scheme
 you can define a URL scheme override
 in 'Tools' &rarr; 'Options' &rarr; tab 'Integration' &rarr; 'URL Overrides'.
 This for example allows to specify a browser as default for websites
-(in the dialog you can find several overrides for browsers like Internet Explorer,
-Mozilla Firefox, Opera and Google Chrome).</p>
+(in the dialog, you can find several overrides for browsers like Microsoft Edge
+and Mozilla Firefox).</p>
 
 <p>URL scheme overrides can also be used to define new protocols. For example,
 if you want to define a protocol <code>kdbx://</code> that opens another KeePass database,

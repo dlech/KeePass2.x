@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ namespace KeePass.Native
 		internal const int WM_KEYUP = 0x0101;
 		internal const int WM_SYSKEYDOWN = 0x0104;
 		internal const int WM_SYSKEYUP = 0x0105;
+		internal const int WM_PASTE = 0x0302;
 		internal const int WM_DRAWCLIPBOARD = 0x0308;
 		internal const int WM_CHANGECBCHAIN = 0x030D;
 		internal const int WM_HOTKEY = 0x0312;
@@ -70,6 +71,8 @@ namespace KeePass.Native
 		internal const uint SMTO_BLOCK = 0x0001;
 		internal const uint SMTO_ABORTIFHUNG = 0x0002;
 		internal const uint SMTO_NOTIMEOUTIFNOTHUNG = 0x0008;
+
+		internal const uint ASFW_ANY = 0xFFFFFFFF;
 
 		internal const uint INPUT_MOUSE = 0;
 		internal const uint INPUT_KEYBOARD = 1;
@@ -166,7 +169,7 @@ namespace KeePass.Native
 		internal const int PBT_APMQUERYSUSPEND = 0x0000;
 		internal const int PBT_APMSUSPEND = 0x0004;
 
-		internal const uint INVALID_FILE_ATTRIBUTES = 0xFFFFFFFFU;
+		internal const uint INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF;
 
 		internal const uint FSCTL_LOCK_VOLUME = 589848;
 		internal const uint FSCTL_UNLOCK_VOLUME = 589852;
@@ -248,6 +251,7 @@ namespace KeePass.Native
 		internal const uint SND_ASYNC = 0x0001;
 		internal const uint SND_NODEFAULT = 0x0002;
 		internal const uint SND_FILENAME = 0x00020000;
+		internal const uint SND_SYSTEM = 0x00200000;
 
 		internal const int LOGPIXELSX = 88;
 		internal const int LOGPIXELSY = 90;

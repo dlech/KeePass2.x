@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -60,6 +60,11 @@ namespace KeePass.Forms
 		private PwDatabase m_pd = null;
 
 		private uint m_uBlockUIUpdate = 0;
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue(false)]
+		public bool ReadOnlyEx { get; set; }
 
 		public OtpGeneratorForm()
 		{
@@ -129,11 +134,16 @@ namespace KeePass.Forms
 			foreach(string str in m_vTotpAlg) m_cmbTotpAlg.Items.Add(str);
 			m_cmbTotpAlg.SelectedIndex = 0;
 
-			UIUtil.SetText(m_lblHotpUsage, KPRes.OtpUsage.Replace(@"{PARAM}", EntryUtil.HotpPlh));
-			UIUtil.SetText(m_lblTotpUsage, KPRes.OtpUsage.Replace(@"{PARAM}", EntryUtil.TotpPlh));
+			UIUtil.SetButtonImage(m_btnHotpCopy, Properties.Resources.B16x16_EditCopy, true);
+			UIUtil.SetButtonImage(m_btnTotpCopy, Properties.Resources.B16x16_EditCopy, true);
+			UIUtil.SetToolTip(m_ttRect, m_btnHotpCopy, KPRes.Copy, true);
+			UIUtil.SetToolTip(m_ttRect, m_btnTotpCopy, KPRes.Copy, true);
 
-			UIUtil.SetText(m_lnkHotpPlh, KPRes.HelpPlh.Replace(@"{PARAM}", EntryUtil.HotpPlh));
-			UIUtil.SetText(m_lnkTotpPlh, KPRes.HelpPlh.Replace(@"{PARAM}", EntryUtil.TotpPlh));
+			UIUtil.SetText(m_lblHotpUsage, KPRes.OtpUsage.Replace("{PARAM}", EntryUtil.HotpPlh));
+			UIUtil.SetText(m_lblTotpUsage, KPRes.OtpUsage.Replace("{PARAM}", EntryUtil.TotpPlh));
+
+			UIUtil.SetText(m_lnkHotpPlh, KPRes.HelpPlh.Replace("{PARAM}", EntryUtil.HotpPlh));
+			UIUtil.SetText(m_lnkTotpPlh, KPRes.HelpPlh.Replace("{PARAM}", EntryUtil.TotpPlh));
 
 			LoadSettings(m_d, false, true);
 
@@ -145,6 +155,47 @@ namespace KeePass.Forms
 			m_tbTotpLength.TextChanged += this.OnOtpParamChanged;
 			m_tbTotpPeriod.TextChanged += this.OnOtpParamChanged;
 			m_cmbTotpAlg.TextChanged += this.OnOtpParamChanged;
+
+			EventHandler<CancelEventArgs> ehPasteSecret = ((senderE, eE) =>
+			{
+				try
+				{
+					CustomTextBoxEx tb = (senderE as CustomTextBoxEx);
+					if(tb == null) { Debug.Assert(false); return; }
+
+					ComboBox cmb;
+					if(tb == m_tbHotpSecret) cmb = m_cmbHotpSecretEnc;
+					else if(tb == m_tbTotpSecret) cmb = m_cmbTotpSecretEnc;
+					else { Debug.Assert(false); return; }
+
+					string strEnc = m_vSecretEncs[cmb.SelectedIndex].Key;
+					if((strEnc == EntryUtil.OtpSecretHex) ||
+						(strEnc == EntryUtil.OtpSecretBase32) ||
+						(strEnc == EntryUtil.OtpSecretBase64))
+					{
+						string str = (ClipboardUtil.GetText() ?? string.Empty);
+						string strF = StrUtil.RemoveWhiteSpace(str);
+						if(str != strF)
+						{
+							tb.SelectedText = strF;
+							eE.Cancel = true;
+						}
+					}
+					else { Debug.Assert(strEnc == EntryUtil.OtpSecret); }
+				}
+				catch(Exception) { Debug.Assert(false); }
+			});
+			m_tbHotpSecret.PasteEx += ehPasteSecret;
+			m_tbTotpSecret.PasteEx += ehPasteSecret;
+
+			if(this.ReadOnlyEx)
+			{
+				m_tbHotpSecret.ReadOnly = m_tbHotpCounter.ReadOnly =
+					m_tbTotpSecret.ReadOnly = m_tbTotpLength.ReadOnly =
+					m_tbTotpPeriod.ReadOnly = true;
+				UIUtil.SetEnabledFast(false, m_cmbHotpSecretEnc, m_cmbTotpSecretEnc,
+					m_cmbTotpAlg, m_btnImportOtpAuthUri, m_btnOK);
+			}
 
 			--m_uBlockUIUpdate;
 			UpdateUI();
@@ -233,8 +284,9 @@ namespace KeePass.Forms
 
 			GAction<Control, string> f = delegate(Control c, string strError)
 			{
-				c.BackColor = (string.IsNullOrEmpty(strError) ?
-					AppDefs.ColorControlNormal : AppDefs.ColorEditError);
+				if(!this.ReadOnlyEx)
+					c.BackColor = (string.IsNullOrEmpty(strError) ?
+						AppDefs.ColorControlNormal : AppDefs.ColorEditError);
 				UIUtil.SetToolTip(m_ttRect, c, (strError ?? string.Empty), true);
 			};
 
@@ -336,17 +388,20 @@ namespace KeePass.Forms
 			SaveSettings(pe.Strings);
 
 			bool bDbModPre = ((m_pd != null) && m_pd.Modified);
-			SprContext ctx = new SprContext(pe, m_pd, SprCompileFlags.HmacOtp);
+			SprContext ctx = new SprContext(pe, m_pd, (SprCompileFlags.HmacOtp |
+				SprCompileFlags.OtpNonActive));
 
 			Predicate<Control> fValid = delegate(Control c)
 			{
-				return (c.BackColor != AppDefs.ColorEditError);
+				// Read-only => no color
+				return ((c.BackColor != AppDefs.ColorEditError) || this.ReadOnlyEx);
 			};
 
 			for(int iType = 0; iType < 2; ++iType)
 			{
 				string strPlh = ((iType == 0) ? EntryUtil.HotpPlh : EntryUtil.TotpPlh);
 				Label lbl = ((iType == 0) ? m_lblHotpPreviewValue : m_lblTotpPreviewValue);
+				Button btn = ((iType == 0) ? m_btnHotpCopy : m_btnTotpCopy);
 
 				Control[] vValidatable;
 				if(iType == 0)
@@ -359,12 +414,14 @@ namespace KeePass.Forms
 				if(Array.TrueForAll(vValidatable, fValid))
 				{
 					try { strPreview = SprEngine.Compile(strPlh, ctx); }
-					catch(Exception) { Debug.Assert(false); }
+					catch(Exception) { Debug.Assert(this.ReadOnlyEx); }
 				}
-				if(string.IsNullOrEmpty(strPreview) || (strPreview == strPlh))
-					strPreview = "\u2014"; // \u2013
+				bool bPreview = (!string.IsNullOrEmpty(strPreview) &&
+					(strPreview != strPlh));
+				if(!bPreview) strPreview = "\u2014"; // \u2013
 
 				UIUtil.SetText(lbl, strPreview);
+				UIUtil.SetEnabled(btn, bPreview);
 			}
 
 			if(m_pd != null) m_pd.Modified = bDbModPre;
@@ -419,6 +476,28 @@ namespace KeePass.Forms
 		{
 			AppHelp.ShowHelp(AppDefs.HelpTopics.Placeholders,
 				AppDefs.HelpTopics.PlaceholdersOtp);
+		}
+
+		private void OnBtnHotpCopy(object sender, EventArgs e)
+		{
+			ClipboardUtil.Copy(m_lblHotpPreviewValue.Text, false, false, null,
+				null, this.Handle);
+
+			if(!this.ReadOnlyEx)
+			{
+				string strCounter = m_tbHotpCounter.Text;
+				if(string.IsNullOrEmpty(strCounter)) strCounter = "0";
+				ulong c;
+				if(ulong.TryParse(strCounter, out c))
+					m_tbHotpCounter.Text = (c + 1).ToString();
+				else { Debug.Assert(false); }
+			}
+		}
+
+		private void OnBtnTotpCopy(object sender, EventArgs e)
+		{
+			ClipboardUtil.Copy(m_lblTotpPreviewValue.Text, false, false, null,
+				null, this.Handle);
 		}
 	}
 }
