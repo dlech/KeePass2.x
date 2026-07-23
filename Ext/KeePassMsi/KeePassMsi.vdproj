@@ -195,6 +195,48 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_4DDAA0B0D3E3448FB4C1BF81420F7FDB"
+            {
+            "Name" = "8:ShInstUtil.exe"
+            "Condition" = "8:"
+            "Object" = "8:_B354F7D87A064AA0BBC71E3926639333"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:-C:MsiInstall -AllUsers:[ALLUSERS]"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_C3740982_B4A0_4645_8D16_F4A64C9F61B1"
+            "InstallerClass" = "11:FALSE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_57B7DDAA48974DF8935BC90A65811189"
+            {
+            "Name" = "8:ShInstUtil.exe"
+            "Condition" = "8:"
+            "Object" = "8:_B354F7D87A064AA0BBC71E3926639333"
+            "FileType" = "3:2"
+            "InstallAction" = "3:3"
+            "Arguments" = "8:-C:MsiUninstall -AllUsers:[ALLUSERS]"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_D79496BE_49C1_4868_887D_06D5693F8527"
+            "InstallerClass" = "11:FALSE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_C0BE504A1F624BC8A11675B2788DF80D"
+            {
+            "Name" = "8:ShInstUtil.exe"
+            "Condition" = "8:"
+            "Object" = "8:_B354F7D87A064AA0BBC71E3926639333"
+            "FileType" = "3:2"
+            "InstallAction" = "3:4"
+            "Arguments" = "8:-C:MsiUninstall -AllUsers:[ALLUSERS]"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_2C42BC03_479B_4CF5_B872_562CFC9AC2E5"
+            "InstallerClass" = "11:FALSE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -342,7 +384,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.59.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass.XmlSerializers, Version=2.60.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8C05ADB649434D7892E36709EBDED4CC"
@@ -493,7 +535,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.59.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.60.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C4F8814F844C43EE8C9F5B662182B11A"
@@ -564,7 +606,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.59.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:KeePass, Version=2.60.0.0, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_FD15DCE9D96DECA1BB580526A7A931C7"
@@ -674,17 +716,6 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_C5518630440D4460BD3C92160ACB1712"
-                    {
-                    "Name" = "8:KeePass"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_71CA578B76DC40C6A8B7FBD159CDBC1A"
-                        "Folders"
-                        {
-                        }
-                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_CD17966DB7404B60877D38C1EE806E5B"
@@ -713,16 +744,16 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:KeePass 2.59"
-        "ProductCode" = "8:{FBB2D312-7A6C-4CF9-A9B1-F7DADB0200CE}"
-        "PackageCode" = "8:{76030544-5455-4475-BB92-5FBFCA2D6CF4}"
+        "ProductName" = "8:KeePass 2.60"
+        "ProductCode" = "8:{7C096F52-C65F-4B26-9663-FD293907B241}"
+        "PackageCode" = "8:{662F2ACE-17FB-4E39-8074-5C8CBD7FEF65}"
         "UpgradeCode" = "8:{F2F19898-4F86-4940-9BFA-426574CE03E1}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.59.0"
+        "ProductVersion" = "8:2.60.0"
         "Manufacturer" = "8:Dominik Reichl"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://keepass.info/"
@@ -835,48 +866,6 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B9061F34EC304CA08E34DD695F741D2D"
-            {
-            "Name" = "8:KeePass User Manual"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_2A0C1DA9803A47F5842BC63F7CC0FEBC"
-            "Folder" = "8:_C5518630440D4460BD3C92160ACB1712"
-            "WorkingFolder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D4CD5274BA6C4E25937C7C422285FBCB"
-            {
-            "Name" = "8:KeePass"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_C4F8814F844C43EE8C9F5B662182B11A"
-            "Folder" = "8:_CD17966DB7404B60877D38C1EE806E5B"
-            "WorkingFolder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
-            "Icon" = "8:_46CD3E3687454981A64BCF41FB207030"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E64C38ED6AED4249B632955704092C33"
-            {
-            "Name" = "8:KeePass"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_C4F8814F844C43EE8C9F5B662182B11A"
-            "Folder" = "8:_C5518630440D4460BD3C92160ACB1712"
-            "WorkingFolder" = "8:_02F929C52C1D41D29CB593270C6D1DC6"
-            "Icon" = "8:_46CD3E3687454981A64BCF41FB207030"
-            "Feature" = "8:"
-            }
         }
         "UserInterface"
         {

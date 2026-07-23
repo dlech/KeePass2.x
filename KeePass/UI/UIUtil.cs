@@ -512,13 +512,12 @@ namespace KeePass.UI
 				if(img == null)
 				{
 					Debug.Assert(false);
-					img = UIUtil.CreateColorBitmap24(nWidth, nHeight, Color.White);
+					img = CreateColorBitmap24(nWidth, nHeight, Color.White);
 				}
-
 				if((img.Width != nWidth) || (img.Height != nHeight))
 				{
 					Debug.Assert(false);
-					img = new Bitmap(img, new Size(nWidth, nHeight));
+					img = GfxUtil.ScaleImage(img, nWidth, nHeight, ScaleTransformFlags.UIIcon);
 				}
 
 				lImages.Add(img);
@@ -1368,6 +1367,18 @@ namespace KeePass.UI
 			}
 		}
 
+		internal static void SelectAllItems(ListView lv)
+		{
+			if((lv == null) || !lv.MultiSelect) { Debug.Assert(false); return; }
+
+			lv.BeginUpdate();
+			try
+			{
+				foreach(ListViewItem lvi in lv.Items) lvi.Selected = true;
+			}
+			finally { lv.EndUpdate(); }
+		}
+
 		internal static void DeselectAllItems(ListView lv)
 		{
 			if(lv == null) { Debug.Assert(false); return; }
@@ -1379,8 +1390,13 @@ namespace KeePass.UI
 			int[] v = new int[n];
 			lvsic.CopyTo(v, 0);
 
-			for(int i = n - 1; i >= 0; --i)
-				lv.Items[v[i]].Selected = false;
+			lv.BeginUpdate();
+			try
+			{
+				for(int i = n - 1; i >= 0; --i)
+					lv.Items[v[i]].Selected = false;
+			}
+			finally { lv.EndUpdate(); }
 		}
 
 		public static void SetWebBrowserDocument(WebBrowser wb, string strDocumentText)

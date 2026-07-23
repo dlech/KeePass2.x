@@ -1,5 +1,5 @@
 /*
-  KeePass Password Safe - The Open-Source Password Manager
+  ShInstUtil
   Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
@@ -17,96 +17,34 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef ___SH_INST_UTIL_H___
-#define ___SH_INST_UTIL_H___
+#ifndef ___SHINSTUTIL_H___
+#define ___SHINSTUTIL_H___
 
 #pragma once
 
-#ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN
-#endif
+#include "Framework.h"
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#ifndef WINVER
-#define WINVER 0x0501
-#endif
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501
-#endif						
-#ifndef _WIN32_WINDOWS
-#define _WIN32_WINDOWS 0x0410
-#endif
-#ifndef _WIN32_IE
-#define _WIN32_IE 0x0600
-#endif
-
-#ifndef MMNOMIDI
-#define MMNOMIDI
-#endif
-#ifndef MMNOAUX
-#define MMNOAUX
-#endif
-#ifndef MMNOMIXER
-#define MMNOMIXER
-#endif
-
-#if (_MSC_VER >= 1400) // Manifest linking
-#if defined(_M_IX86)
-#pragma comment(linker, "/manifestdependency:\"type='win32' " \
-	"name='Microsoft.Windows.Common-Controls' " \
-	"version='6.0.0.0' " \
-	"processorArchitecture='x86' " \
-	"publicKeyToken='6595b64144ccf1df' " \
-	"language='*'\"")
-#elif defined(_M_AMD64)
-#pragma comment(linker, "/manifestdependency:\"type='win32' " \
-	"name='Microsoft.Windows.Common-Controls' " \
-	"version='6.0.0.0' " \
-	"processorArchitecture='amd64' " \
-	"publicKeyToken='6595b64144ccf1df' " \
-	"language='*'\"")
-#elif defined(_M_IA64)
-#pragma comment(linker, "/manifestdependency:\"type='win32' " \
-	"name='Microsoft.Windows.Common-Controls' " \
-	"version='6.0.0.0' " \
-	"processorArchitecture='ia64' " \
-	"publicKeyToken='6595b64144ccf1df' " \
-	"language='*'\"")
-#endif
-#endif // (_MSC_VER >= 1400)
-
-#include <windows.h>
-#include <commctrl.h>
-#include <shellapi.h>
-
-#include <tchar.h>
-
-#include <string>
-#include <vector>
-#include <algorithm>
-
-typedef std::basic_string<TCHAR> std_string;
-
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	LPTSTR lpCmdLine, int nCmdShow);
-
-bool StrEndsWith(const std_string& strText, const std_string& strEnd);
-void EnsureTerminatingSeparator(std_string& strPath);
+bool IsDirectorySeparator(TCHAR tch);
+tstring EnsureTerminatingSeparator(const tstring& str);
+tstring GetFileDirectory(const tstring& str);
 
 void UpdateNativeImage(bool bInstall);
+void UpdateNativeImage(bool bInstall, bool bArm64);
+
 void RegisterPreLoad(bool bRegister);
 
-std_string GetNetInstallRoot();
-std_string GetKeePassExePath();
+tstring GetKnownFolderPath(REFKNOWNFOLDERID rfid);
+tstring GetDotNetInstallRoot(bool bArm64);
+tstring GetKeePassExePath();
 
-std_string FindNGen();
-void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
-	ULONGLONG& ullVersion);
-ULONGLONG SiuGetFileVersion(const std_string& strFilePath);
+tstring FindNGen(bool bArm64);
+void FindNGenRec(const tstring& strPath, tstring& strNGenPath, uint64_t& uVersion);
+
+uint64_t GetFileVersion64(const tstring& strFilePath);
 
 void CheckDotNetInstalled();
 
-#endif // ___SH_INST_UTIL_H___
+void CreateLink(const tstring& strLinkFilePath, const tstring& strTargetFilePath);
+void UpdateLinks(bool bInstall, bool bAllUsers);
+
+#endif // ___SHINSTUTIL_H___

@@ -120,13 +120,8 @@ namespace KeePass.App.Configuration
 			set { m_bSearchKeyFiles = value; }
 		}
 
-		private bool m_bSearchKeyFilesOnRemovable = false;
 		[DefaultValue(false)]
-		public bool SearchKeyFilesOnRemovableMedia
-		{
-			get { return m_bSearchKeyFilesOnRemovable; }
-			set { m_bSearchKeyFilesOnRemovable = value; }
-		}
+		public bool SearchKeyFilesOnRemovableMedia { get; set; }
 
 		private bool m_bSingleInstance = true;
 		[DefaultValue(true)]
@@ -144,29 +139,14 @@ namespace KeePass.App.Configuration
 			set { m_bMatchByTitle = value; }
 		}
 
-		private bool m_bMatchByUrlInTitle = false;
 		[DefaultValue(false)]
-		public bool AutoTypeMatchByUrlInTitle
-		{
-			get { return m_bMatchByUrlInTitle; }
-			set { m_bMatchByUrlInTitle = value; }
-		}
+		public bool AutoTypeMatchByUrlInTitle { get; set; }
 
-		private bool m_bMatchByUrlHostInTitle = false;
 		[DefaultValue(false)]
-		public bool AutoTypeMatchByUrlHostInTitle
-		{
-			get { return m_bMatchByUrlHostInTitle; }
-			set { m_bMatchByUrlHostInTitle = value; }
-		}
+		public bool AutoTypeMatchByUrlHostInTitle { get; set; }
 
-		private bool m_bMatchByTagInTitle = false;
 		[DefaultValue(false)]
-		public bool AutoTypeMatchByTagInTitle
-		{
-			get { return m_bMatchByTagInTitle; }
-			set { m_bMatchByTagInTitle = value; }
-		}
+		public bool AutoTypeMatchByTagInTitle { get; set; }
 
 		private bool m_bMatchNormDashes = true;
 		[DefaultValue(true)]
@@ -176,21 +156,11 @@ namespace KeePass.App.Configuration
 			set { m_bMatchNormDashes = value; }
 		}
 
-		private bool m_bExpiredCanMatch = false;
 		[DefaultValue(false)]
-		public bool AutoTypeExpiredCanMatch
-		{
-			get { return m_bExpiredCanMatch; }
-			set { m_bExpiredCanMatch = value; }
-		}
+		public bool AutoTypeExpiredCanMatch { get; set; }
 
-		private bool m_bAutoTypeAlwaysShowSelDlg = false;
 		[DefaultValue(false)]
-		public bool AutoTypeAlwaysShowSelDialog
-		{
-			get { return m_bAutoTypeAlwaysShowSelDlg; }
-			set { m_bAutoTypeAlwaysShowSelDlg = value; }
-		}
+		public bool AutoTypeAlwaysShowSelDialog { get; set; }
 
 		private bool m_bPrependInitSeqIE = true;
 		[DefaultValue(true)]
@@ -216,29 +186,14 @@ namespace KeePass.App.Configuration
 			set { m_bAdjustKeybLayout = value; }
 		}
 
-		private bool m_bAllowInterleaved = false;
 		[DefaultValue(false)]
-		public bool AutoTypeAllowInterleaved
-		{
-			get { return m_bAllowInterleaved; }
-			set { m_bAllowInterleaved = value; }
-		}
+		public bool AutoTypeAllowInterleaved { get; set; }
 
-		private bool m_bCancelOnWindowChange = false;
 		[DefaultValue(false)]
-		public bool AutoTypeCancelOnWindowChange
-		{
-			get { return m_bCancelOnWindowChange; }
-			set { m_bCancelOnWindowChange = value; }
-		}
+		public bool AutoTypeCancelOnWindowChange { get; set; }
 
-		private bool m_bCancelOnTitleChange = false;
 		[DefaultValue(false)]
-		public bool AutoTypeCancelOnTitleChange
-		{
-			get { return m_bCancelOnTitleChange; }
-			set { m_bCancelOnTitleChange = value; }
-		}
+		public bool AutoTypeCancelOnTitleChange { get; set; }
 
 		private int m_iInterKeyDelay = -1;
 		[DefaultValue(-1)]

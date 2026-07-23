@@ -83,29 +83,29 @@ namespace KeePass.Native
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 		internal struct CHARFORMAT2
 		{
-			public UInt32 cbSize;
-			public UInt32 dwMask;
-			public UInt32 dwEffects;
-			public Int32 yHeight;
-			public Int32 yOffset;
-			public UInt32 crTextColor;
-			public Byte bCharSet;
-			public Byte bPitchAndFamily;
+			public uint cbSize;
+			public uint dwMask;
+			public uint dwEffects;
+			public int yHeight;
+			public int yOffset;
+			public uint crTextColor;
+			public byte bCharSet;
+			public byte bPitchAndFamily;
 
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
 			public string szFaceName;
 
-			public UInt16 wWeight;
-			public UInt16 sSpacing;
-			public Int32 crBackColor;
-			public Int32 lcid;
-			public UInt32 dwReserved;
-			public Int16 sStyle;
-			public Int16 wKerning;
-			public Byte bUnderlineType;
-			public Byte bAnimation;
-			public Byte bRevAuthor;
-			public Byte bReserved1;
+			public ushort wWeight;
+			public ushort sSpacing;
+			public int crBackColor;
+			public int lcid;
+			public uint dwReserved;
+			public short sStyle;
+			public short wKerning;
+			public byte bUnderlineType;
+			public byte bAnimation;
+			public byte bRevAuthor;
+			public byte bReserved1;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -113,27 +113,27 @@ namespace KeePass.Native
 		{
 			public IntPtr hwnd;
 			public IntPtr hwndInsertAfter;
-			public Int32 x;
-			public Int32 y;
-			public Int32 cx;
-			public Int32 cy;
-			public UInt32 flags;
+			public int x;
+			public int y;
+			public int cx;
+			public int cy;
+			public uint flags;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct POINT
 		{
-			public Int32 x;
-			public Int32 y;
+			public int x;
+			public int y;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct RECT
 		{
-			public Int32 Left;
-			public Int32 Top;
-			public Int32 Right;
-			public Int32 Bottom;
+			public int Left;
+			public int Top;
+			public int Right;
+			public int Bottom;
 
 			public RECT(Rectangle rect)
 			{
@@ -147,7 +147,7 @@ namespace KeePass.Native
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct COMBOBOXINFO
 		{
-			public Int32 cbSize;
+			public int cbSize;
 			public RECT rcItem;
 			public RECT rcButton;
 
@@ -162,17 +162,17 @@ namespace KeePass.Native
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct MARGINS
 		{
-			public Int32 Left;
-			public Int32 Right;
-			public Int32 Top;
-			public Int32 Bottom;
+			public int Left;
+			public int Right;
+			public int Top;
+			public int Bottom;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct COPYDATASTRUCT
 		{
 			public IntPtr dwData;
-			public Int32 cbData;
+			public int cbData;
 			public IntPtr lpData;
 		}
 
@@ -191,18 +191,20 @@ namespace KeePass.Native
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct HDITEM
 		{
-			public UInt32 mask;
-			public Int32 cxy;
+			public uint mask;
+			public int cxy;
 
 			[MarshalAs(UnmanagedType.LPTStr)]
 			public string pszText;
 
 			public IntPtr hbm;
-			public Int32 cchTextMax;
-			public Int32 fmt;
+			public int cchTextMax;
+			public int fmt;
 			public IntPtr lParam;
-			public Int32 iImage;
-			public Int32 iOrder;
+			public int iImage;
+			public int iOrder;
+			public uint type;
+			public IntPtr pvFilter;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -211,6 +213,16 @@ namespace KeePass.Native
 			public IntPtr hwndFrom;
 			public IntPtr idFrom;
 			public uint code;
+		}
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		internal struct NMLVEMPTYMARKUP
+		{
+			public NMHDR hdr;
+			public uint dwFlags;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = L_MAX_URL_LENGTH)]
+			public string szMarkup;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -295,24 +307,7 @@ namespace KeePass.Native
 			// public StringBuilder pszSubsetTitle;
 			public IntPtr pszSubsetTitle;
 			public uint cchSubsetTitle;
-
-			[Conditional("DEBUG")]
-			internal void AssertSize()
-			{
-				if(IntPtr.Size == 4)
-				{
-					Debug.Assert(Marshal.SizeOf(this) == 96);
-				}
-				else if(IntPtr.Size == 8)
-				{
-					Debug.Assert(Marshal.SizeOf(this) == 152);
-				}
-				else { Debug.Assert(false); }
-			}
 		} */
-
-		internal const uint PROCESSENTRY32SizeUni32 = 556;
-		internal const uint PROCESSENTRY32SizeUni64 = 568;
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 		internal struct PROCESSENTRY32
@@ -332,15 +327,12 @@ namespace KeePass.Native
 			public string szExeFile;
 		}
 
-		internal const uint ACTCTXSize32 = 32;
-		internal const uint ACTCTXSize64 = 56;
-
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 		internal struct ACTCTX
 		{
 			public uint cbSize;
 			public uint dwFlags;
-			[MarshalAs(UnmanagedType.LPTStr)] // Not LPWStr, see source code
+			[MarshalAs(UnmanagedType.LPTStr)] // Not LPWStr, see header file
 			public string lpSource;
 			public ushort wProcessorArchitecture;
 			public ushort wLangId;
@@ -353,8 +345,6 @@ namespace KeePass.Native
 			public IntPtr hModule;
 		}
 
-		internal const int ICONDIRSize = 6;
-
 		// https://msdn.microsoft.com/en-us/library/ms997538.aspx
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		internal struct ICONDIR
@@ -363,8 +353,6 @@ namespace KeePass.Native
 			public ushort idType;
 			public ushort idCount;
 		}
-
-		internal const int ICONDIRENTRYSize = 16;
 
 		// https://msdn.microsoft.com/en-us/library/ms997538.aspx
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -379,8 +367,6 @@ namespace KeePass.Native
 			public uint dwBytesInRes;
 			public uint dwImageOffset;
 		}
-
-		internal const int BITMAPINFOHEADERSize = 40;
 
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		internal struct BITMAPINFOHEADER

@@ -56,20 +56,20 @@ namespace KeePassLib
 		/// e.g. 2.19 = 0x02130000.
 		/// It is highly recommended to use <c>FileVersion64</c> instead.
 		/// </summary>
-		public static readonly uint Version32 = 0x023B0000;
+		public static readonly uint Version32 = 0x023C0000;
 
 		/// <summary>
 		/// Version, encoded as 64-bit unsigned integer
 		/// (component-wise, 16 bits per component).
 		/// </summary>
-		public static readonly ulong FileVersion64 = 0x0002003B00000000UL;
+		public static readonly ulong FileVersion64 = 0x0002003C00000000UL;
 
 		/// <summary>
 		/// Version, encoded as string.
 		/// </summary>
-		public static readonly string VersionString = "2.59";
+		public static readonly string VersionString = "2.60";
 
-		public static readonly string Copyright = @"Copyright © 2003-2025 Dominik Reichl";
+		public static readonly string Copyright = "Copyright © 2003-2025 Dominik Reichl";
 
 		/// <summary>
 		/// Product website URL. Terminated by a forward slash.
@@ -331,13 +331,8 @@ namespace KeePassLib
 			set { m_bSearchInUserNames = value; }
 		}
 
-		private bool m_bSearchInPasswords = false;
 		[DefaultValue(false)]
-		public bool SearchInPasswords
-		{
-			get { return m_bSearchInPasswords; }
-			set { m_bSearchInPasswords = value; }
-		}
+		public bool SearchInPasswords { get; set; }
 
 		private bool m_bSearchInUrls = true;
 		[DefaultValue(true)]
@@ -363,13 +358,8 @@ namespace KeePassLib
 			set { m_bSearchInOther = value; }
 		}
 
-		private bool m_bSearchInStringNames = false;
 		[DefaultValue(false)]
-		public bool SearchInStringNames
-		{
-			get { return m_bSearchInStringNames; }
-			set { m_bSearchInStringNames = value; }
-		}
+		public bool SearchInStringNames { get; set; }
 
 		private bool m_bSearchInTags = true;
 		[DefaultValue(true)]
@@ -379,37 +369,17 @@ namespace KeePassLib
 			set { m_bSearchInTags = value; }
 		}
 
-		private bool m_bSearchInUuids = false;
 		[DefaultValue(false)]
-		public bool SearchInUuids
-		{
-			get { return m_bSearchInUuids; }
-			set { m_bSearchInUuids = value; }
-		}
+		public bool SearchInUuids { get; set; }
 
-		private bool m_bSearchInGroupPaths = false;
 		[DefaultValue(false)]
-		public bool SearchInGroupPaths
-		{
-			get { return m_bSearchInGroupPaths; }
-			set { m_bSearchInGroupPaths = value; }
-		}
+		public bool SearchInGroupPaths { get; set; }
 
-		private bool m_bSearchInGroupNames = false;
 		[DefaultValue(false)]
-		public bool SearchInGroupNames
-		{
-			get { return m_bSearchInGroupNames; }
-			set { m_bSearchInGroupNames = value; }
-		}
+		public bool SearchInGroupNames { get; set; }
 
-		private bool m_bSearchInHistory = false;
 		[DefaultValue(false)]
-		public bool SearchInHistory
-		{
-			get { return m_bSearchInHistory; }
-			set { m_bSearchInHistory = value; }
-		}
+		public bool SearchInHistory { get; set; }
 
 #if KeePassUAP
 		private StringComparison m_scType = StringComparison.OrdinalIgnoreCase;
@@ -426,13 +396,8 @@ namespace KeePassLib
 			set { m_scType = value; }
 		}
 
-		private bool m_bExcludeExpired = false;
 		[DefaultValue(false)]
-		public bool ExcludeExpired
-		{
-			get { return m_bExcludeExpired; }
-			set { m_bExcludeExpired = value; }
-		}
+		public bool ExcludeExpired { get; set; }
 
 		private bool m_bRespectEntrySearchingDisabled = true;
 		[DefaultValue(true)]
@@ -472,32 +437,29 @@ namespace KeePassLib
 			{
 				SearchParameters sp = new SearchParameters();
 
-				Debug.Assert(sp.m_strName.Length == 0);
-				Debug.Assert(sp.m_strText.Length == 0);
-				Debug.Assert(sp.m_sm == PwSearchMode.Simple);
-				sp.m_bSearchInTitles = false;
-				sp.m_bSearchInUserNames = false;
-				Debug.Assert(!sp.m_bSearchInPasswords);
-				sp.m_bSearchInUrls = false;
-				sp.m_bSearchInNotes = false;
-				sp.m_bSearchInOther = false;
-				Debug.Assert(!sp.m_bSearchInStringNames);
-				sp.m_bSearchInTags = false;
-				Debug.Assert(!sp.m_bSearchInUuids);
-				Debug.Assert(!sp.m_bSearchInGroupPaths);
-				Debug.Assert(!sp.m_bSearchInGroupNames);
-				Debug.Assert(!sp.m_bSearchInHistory);
-				// Debug.Assert(sp.m_scType == StringComparison.InvariantCultureIgnoreCase);
-				Debug.Assert(!sp.m_bExcludeExpired);
-				Debug.Assert(sp.m_bRespectEntrySearchingDisabled);
+				Debug.Assert(sp.Name == string.Empty);
+				Debug.Assert(sp.SearchString == string.Empty);
+				Debug.Assert(sp.SearchMode == PwSearchMode.Simple);
+				sp.SearchInTitles = false;
+				sp.SearchInUserNames = false;
+				Debug.Assert(!sp.SearchInPasswords);
+				sp.SearchInUrls = false;
+				sp.SearchInNotes = false;
+				sp.SearchInOther = false;
+				Debug.Assert(!sp.SearchInStringNames);
+				sp.SearchInTags = false;
+				Debug.Assert(!sp.SearchInUuids);
+				Debug.Assert(!sp.SearchInGroupPaths);
+				Debug.Assert(!sp.SearchInGroupNames);
+				Debug.Assert(!sp.SearchInHistory);
+				// Debug.Assert(sp.ComparisonMode == StringComparison.InvariantCultureIgnoreCase);
+				Debug.Assert(!sp.ExcludeExpired);
+				Debug.Assert(sp.RespectEntrySearchingDisabled);
 
 				return sp;
 			}
 		}
 
-		/// <summary>
-		/// Construct a new search parameters object.
-		/// </summary>
 		public SearchParameters()
 		{
 		}

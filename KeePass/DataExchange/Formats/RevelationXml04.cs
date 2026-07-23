@@ -163,9 +163,10 @@ namespace KeePass.DataExchange.Formats
 			string str = XmlUtil.SafeInnerText(xn);
 
 			double dtUnix;
-			if(!double.TryParse(str, out dtUnix)) { Debug.Assert(false); }
-			else return TimeUtil.ConvertUnixTime(dtUnix);
+			if(StrUtil.TryParseDoubleInvariant(str, out dtUnix))
+				return TimeUtil.ConvertUnixTime(dtUnix);
 
+			Debug.Assert(false);
 			return DateTime.UtcNow;
 		}
 	}

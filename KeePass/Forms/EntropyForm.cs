@@ -100,9 +100,7 @@ namespace KeePass.Forms
 			int cBits = Math.Min((int)m_fBits, 256); // Max. of SHA-256
 
 			m_pbGenerated.Value = (cBits * 100) / 256;
-
-			Debug.Assert(!m_lblStatus.AutoSize); // For RTL support
-			m_lblStatus.Text = KPRes.BitsEx.Replace(@"{PARAM}", cBits.ToString());
+			m_pbGenerated.ProgressText = KPRes.BitsEx.Replace("{PARAM}", cBits.ToString());
 		}
 
 		private void OnRandomMouseMove(object sender, MouseEventArgs e)

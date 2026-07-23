@@ -91,21 +91,21 @@ namespace KeePass.Ecas
 			}
 		}
 
-		public static string GetParamString(List<string> vParams, int iIndex)
+		public static string GetParamString(List<string> lParams, int iIndex)
 		{
-			return GetParamString(vParams, iIndex, string.Empty);
+			return GetParamString(lParams, iIndex, string.Empty);
 		}
 
-		public static string GetParamString(List<string> vParams, int iIndex,
+		public static string GetParamString(List<string> lParams, int iIndex,
 			bool bSprCompile)
 		{
-			return GetParamString(vParams, iIndex, bSprCompile, false);
+			return GetParamString(lParams, iIndex, bSprCompile, false);
 		}
 
-		public static string GetParamString(List<string> vParams, int iIndex,
+		public static string GetParamString(List<string> lParams, int iIndex,
 			bool bSprCompile, bool bSprForCommandLine)
 		{
-			string str = GetParamString(vParams, iIndex, string.Empty);
+			string str = GetParamString(lParams, iIndex, string.Empty);
 
 			if(bSprCompile && !string.IsNullOrEmpty(str))
 			{
@@ -125,42 +125,42 @@ namespace KeePass.Ecas
 			return str;
 		}
 
-		public static string GetParamString(List<string> vParams, int iIndex,
+		public static string GetParamString(List<string> lParams, int iIndex,
 			string strDefault)
 		{
-			if(vParams == null) { Debug.Assert(false); return strDefault; }
+			if(lParams == null) { Debug.Assert(false); return strDefault; }
 			if(iIndex < 0) { Debug.Assert(false); return strDefault; }
-			if(iIndex >= vParams.Count) return strDefault; // No assert
+			if(iIndex >= lParams.Count) return strDefault; // No assert
 
-			return vParams[iIndex];
+			return lParams[iIndex];
 		}
 
-		public static bool GetParamBool(List<string> vParams, int iIndex)
+		public static bool GetParamBool(List<string> lParams, int iIndex)
 		{
-			string str = GetParamString(vParams, iIndex, string.Empty);
+			string str = GetParamString(lParams, iIndex, string.Empty);
 			return StrUtil.StringToBool(str);
 		}
 
-		public static uint GetParamUInt(List<string> vParams, int iIndex)
+		public static uint GetParamUInt(List<string> lParams, int iIndex)
 		{
-			return GetParamUInt(vParams, iIndex, 0);
+			return GetParamUInt(lParams, iIndex, 0);
 		}
 
-		public static uint GetParamUInt(List<string> vParams, int iIndex,
+		public static uint GetParamUInt(List<string> lParams, int iIndex,
 			uint uDefault)
 		{
-			string str = GetParamString(vParams, iIndex, string.Empty);
+			string str = GetParamString(lParams, iIndex, string.Empty);
 			uint u;
 			if(uint.TryParse(str, out u)) return u;
 			return uDefault;
 		}
 
-		public static uint GetParamEnum(List<string> vParams, int iIndex,
+		public static uint GetParamEnum(List<string> lParams, int iIndex,
 			uint uDefault, EcasEnum enumItems)
 		{
 			if(enumItems == null) { Debug.Assert(false); return uDefault; }
 
-			string str = GetParamString(vParams, iIndex, null);
+			string str = GetParamString(lParams, iIndex, null);
 			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return uDefault; }
 
 			uint uID;
@@ -170,6 +170,22 @@ namespace KeePass.Ecas
 			if(enumItems.GetItemString(uID, null) == null) { Debug.Assert(false); return uDefault; }
 
 			return uID;
+		}
+
+		public static string GetParamPath(List<string> lParams, int iIndex,
+			bool bSprCompile)
+		{
+			string str = GetParamString(lParams, iIndex, bSprCompile);
+			if(str == null) return null;
+
+			int n = str.Length;
+			if((n >= 2) && (str[0] == '\"') && (str[n - 1] == '\"'))
+			{
+				string strV = str.Substring(1, n - 2);
+				if(strV.IndexOf('\"') < 0) return strV;
+			}
+
+			return str;
 		}
 
 		public static void ParametersToDataGridView(DataGridView dg,

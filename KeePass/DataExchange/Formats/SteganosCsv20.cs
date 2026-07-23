@@ -163,9 +163,9 @@ namespace KeePass.DataExchange.Formats
 						StrUtil.AddTags(pe.Tags, StrUtil.StringToTags(strValue));
 					else if(strName == strMapLastMod)
 					{
-						double dUnix;
-						if(double.TryParse(strValue, out dUnix))
-							pe.LastModificationTime = TimeUtil.ConvertUnixTime(dUnix);
+						double dtUnix;
+						if(StrUtil.TryParseDoubleInvariant(strValue, out dtUnix))
+							pe.LastModificationTime = TimeUtil.ConvertUnixTime(dtUnix);
 						else { Debug.Assert(false); }
 					}
 					else if(strName == strMapEMail)

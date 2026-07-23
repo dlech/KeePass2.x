@@ -29,6 +29,7 @@ using KeePass.Util;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Security;
 using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
@@ -161,13 +162,15 @@ namespace KeePass.DataExchange.Formats
 			ImportString(jo, "password", pe, PwDefs.PasswordField, pd);
 
 			// https://bitwarden.com/help/authenticator-keys/
-			string strOtp = jo.GetValue<string>("totp");
-			if((strOtp != null) && strOtp.StartsWith(EntryUtil.OtpAuthScheme + ":",
-				StrUtil.CaseIgnoreCmp))
+			string strOtp = (jo.GetValue<string>("totp") ?? string.Empty);
+			if(strOtp.StartsWith(EntryUtil.OtpAuthScheme + ":", StrUtil.CaseIgnoreCmp))
 			{
 				try { EntryUtil.ImportOtpAuth(pe, strOtp, pd); }
 				catch(Exception) { Debug.Assert(false); }
 			}
+			else if((strOtp.Length != 0) && StrUtil.IsBase32String(strOtp))
+				pe.Strings.Set(EntryUtil.TotpPrefix + EntryUtil.OtpSecretBase32,
+					new ProtectedString(true, strOtp));
 			else // Null, Steam URI, ...
 			{
 				ImportString(jo, "totp", pe, "TOTP", pd);

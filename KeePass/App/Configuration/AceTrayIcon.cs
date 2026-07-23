@@ -43,28 +43,13 @@ namespace KeePass.App.Configuration
 
 		// Not available through the options dialog, see documentation;
 		// 'ShowOnlyIfTrayed' was used by KeePass <= 2.41
-		private bool m_bOnlyIfTrayedEx = false;
 		[DefaultValue(false)]
-		public bool ShowOnlyIfTrayedEx
-		{
-			get { return m_bOnlyIfTrayedEx; }
-			set { m_bOnlyIfTrayedEx = value; }
-		}
+		public bool ShowOnlyIfTrayedEx { get; set; }
 
-		private bool m_bGrayIcon = false;
 		[DefaultValue(false)]
-		public bool GrayIcon
-		{
-			get { return m_bGrayIcon; }
-			set { m_bGrayIcon = value; }
-		}
+		public bool GrayIcon { get; set; }
 
-		private bool m_bSingleClickDefault = false;
 		[DefaultValue(false)]
-		public bool SingleClickDefault
-		{
-			get { return m_bSingleClickDefault; }
-			set { m_bSingleClickDefault = value; }
-		}
+		public bool SingleClickDefault { get; set; }
 	}
 }

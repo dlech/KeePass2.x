@@ -58,13 +58,8 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private bool m_bHelpUseLocal = false;
 		[DefaultValue(false)]
-		public bool HelpUseLocal
-		{
-			get { return m_bHelpUseLocal; }
-			set { m_bHelpUseLocal = value; }
-		}
+		public bool HelpUseLocal { get; set; }
 
 		private string m_strHelpUrl = string.Empty;
 		[DefaultValue("")]
@@ -202,37 +197,17 @@ namespace KeePass.App.Configuration
 			set { m_bTransactedConfigWrites = value; }
 		}
 
-		private bool m_bFileTxExtra = false;
 		[DefaultValue(false)]
-		public bool FileTxExtra
-		{
-			get { return m_bFileTxExtra; }
-			set { m_bFileTxExtra = value; }
-		}
+		public bool FileTxExtra { get; set; }
 
-		private bool m_bFileLocks = false;
 		[DefaultValue(false)]
-		public bool UseFileLocks
-		{
-			get { return m_bFileLocks; }
-			set { m_bFileLocks = value; }
-		}
+		public bool UseFileLocks { get; set; }
 
-		private bool m_bSaveForceSync = false;
 		[DefaultValue(false)]
-		public bool SaveForceSync
-		{
-			get { return m_bSaveForceSync; }
-			set { m_bSaveForceSync = value; }
-		}
+		public bool SaveForceSync { get; set; }
 
-		private bool m_bAutoSaveAfterEntryEdit = false;
 		[DefaultValue(false)]
-		public bool AutoSaveAfterEntryEdit
-		{
-			get { return m_bAutoSaveAfterEntryEdit; }
-			set { m_bAutoSaveAfterEntryEdit = value; }
-		}
+		public bool AutoSaveAfterEntryEdit { get; set; }
 
 		private AceCloseDb m_fc = new AceCloseDb();
 		public AceCloseDb FileClosing
@@ -415,7 +390,7 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		internal bool IsPluginCompat(string strHash)
+		internal bool IsPluginCompatible(string strHash)
 		{
 			if(string.IsNullOrEmpty(strHash)) { Debug.Assert(false); return false; }
 
@@ -424,7 +399,7 @@ namespace KeePass.App.Configuration
 			return m_lPluginCompat.Contains(str);
 		}
 
-		internal void SetPluginCompat(string strHash)
+		internal void SetPluginCompatible(string strHash)
 		{
 			if(string.IsNullOrEmpty(strHash)) { Debug.Assert(false); return; }
 
@@ -455,29 +430,14 @@ namespace KeePass.App.Configuration
 			set { m_bOpenLastDb = value; }
 		}
 
-		private bool m_bCheckForUpdate = false;
 		// [DefaultValue(false)] // Avoid user confusion with 'Configured' setting
-		public bool CheckForUpdate
-		{
-			get { return m_bCheckForUpdate; }
-			set { m_bCheckForUpdate = value; }
-		}
+		public bool CheckForUpdate { get; set; }
 
-		private bool m_bCheckForUpdateCfg = false;
 		[DefaultValue(false)]
-		public bool CheckForUpdateConfigured
-		{
-			get { return m_bCheckForUpdateCfg; }
-			set { m_bCheckForUpdateCfg = value; }
-		}
+		public bool CheckForUpdateConfigured { get; set; }
 
-		private bool m_bMinimizedAndLocked = false;
 		[DefaultValue(false)]
-		public bool MinimizedAndLocked
-		{
-			get { return m_bMinimizedAndLocked; }
-			set { m_bMinimizedAndLocked = value; }
-		}
+		public bool MinimizedAndLocked { get; set; }
 
 		private bool m_bPlgDeleteOld = true;
 		[DefaultValue(true)]
@@ -487,13 +447,8 @@ namespace KeePass.App.Configuration
 			set { m_bPlgDeleteOld = value; }
 		}
 
-		private bool m_bClearPlgCache = false;
 		[DefaultValue(false)]
-		public bool PluginCacheClearOnce
-		{
-			get { return m_bClearPlgCache; }
-			set { m_bClearPlgCache = value; }
-		}
+		public bool PluginCacheClearOnce { get; set; }
 	}
 
 	public sealed class AceOpenDb
@@ -502,21 +457,11 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private bool m_bShowExpiredEntries = false;
 		[DefaultValue(false)]
-		public bool ShowExpiredEntries
-		{
-			get { return m_bShowExpiredEntries; }
-			set { m_bShowExpiredEntries = value; }
-		}
+		public bool ShowExpiredEntries { get; set; }
 
-		private bool m_bShowSoonToExpireEntries = false;
 		[DefaultValue(false)]
-		public bool ShowSoonToExpireEntries
-		{
-			get { return m_bShowSoonToExpireEntries; }
-			set { m_bShowSoonToExpireEntries = value; }
-		}
+		public bool ShowSoonToExpireEntries { get; set; }
 	}
 
 	public sealed class AceCloseDb
@@ -525,13 +470,8 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private bool m_bAutoSave = false;
 		[DefaultValue(false)]
-		public bool AutoSave
-		{
-			get { return m_bAutoSave; }
-			set { m_bAutoSave = value; }
-		}
+		public bool AutoSave { get; set; }
 	}
 
 	public sealed class AceMru

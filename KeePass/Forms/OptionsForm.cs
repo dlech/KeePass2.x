@@ -524,6 +524,8 @@ namespace KeePass.Forms
 			m_lvGuiOptions.Groups.Add(lvg);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindSearchInPasswords",
 				lvg, KPRes.QuickSearchInPwFields);
+			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindSearchInGroupPaths",
+				lvg, KPRes.QuickSearchInGroupPaths);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindExcludeExpired",
 				lvg, KPRes.QuickSearchExclExpired);
 			m_cdxGuiOptions.CreateItem(Program.Config.MainWindow, "QuickFindDerefData",

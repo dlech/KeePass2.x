@@ -155,7 +155,7 @@ namespace KeePass.Ecas
 			uint uCompareType = EcasUtil.GetParamEnum(e.Parameters, 0,
 				EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
 
-			string strFilter = EcasUtil.GetParamString(e.Parameters, 1, true);
+			string strFilter = EcasUtil.GetParamPath(e.Parameters, 1, true);
 			if(string.IsNullOrEmpty(strFilter)) return true;
 
 			// Must prefer IOC (e.g. for SavingDatabaseFile)

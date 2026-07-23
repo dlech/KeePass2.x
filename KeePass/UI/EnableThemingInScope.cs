@@ -118,13 +118,9 @@ namespace KeePass.UI
 
 				NativeMethods.ACTCTX ctx = new NativeMethods.ACTCTX();
 				ctx.cbSize = (uint)Marshal.SizeOf(typeof(NativeMethods.ACTCTX));
-				Debug.Assert(((IntPtr.Size == 4) && (ctx.cbSize ==
-					NativeMethods.ACTCTXSize32)) || ((IntPtr.Size == 8) &&
-					(ctx.cbSize == NativeMethods.ACTCTXSize64)));
-
+				ctx.dwFlags = NativeMethods.ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID;
 				ctx.lpSource = strMfLoc;
 				ctx.lpAssemblyDirectory = strInstDir;
-				ctx.dwFlags = NativeMethods.ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID;
 
 				m_nhCtx = NativeMethods.CreateActCtx(ref ctx);
 				if(NativeMethods.IsInvalidHandleValue(m_nhCtx.Value))

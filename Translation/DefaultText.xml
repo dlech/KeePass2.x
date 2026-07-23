@@ -343,8 +343,8 @@
 		<Data Name="ClipboardClearDesc">
 			<Value>Copying sensitive data to the clipboard starts a countdown. After the specified time, the clipboard is cleared.</Value>
 		</Data>
-		<Data Name="ClipboardClearInSeconds">
-			<Value>Clipboard will be cleared in [PARAM] seconds</Value>
+		<Data Name="ClipboardClearInSeconds2">
+			<Value>Clipboard will be cleared in {PARAM} second(s)</Value>
 		</Data>
 		<Data Name="ClipboardClearOnExit">
 			<Value>Clear clipboard when closing KeePass</Value>
@@ -1222,6 +1222,12 @@
 		<Data Name="GroupCannotStoreEntries">
 			<Value>The selected group cannot store any entries.</Value>
 		</Data>
+		<Data Name="GroupName">
+			<Value>Group Name</Value>
+		</Data>
+		<Data Name="GroupPath">
+			<Value>Group Path</Value>
+		</Data>
 		<Data Name="GroupsSkipped">
 			<Value>{PARAM} groups skipped</Value>
 		</Data>
@@ -2023,6 +2029,9 @@
 		<Data Name="PickIcon">
 			<Value>Pick an icon.</Value>
 		</Data>
+		<Data Name="Placeholders">
+			<Value>Placeholders</Value>
+		</Data>
 		<Data Name="PlhSprConfirm">
 			<Value>Show confirmation dialog when evaluating/replacing a '{PARAM}' placeholder</Value>
 		</Data>
@@ -2193,6 +2202,9 @@
 		</Data>
 		<Data Name="QuickSearchExclExpired">
 			<Value>Exclude expired entries in quick searches</Value>
+		</Data>
+		<Data Name="QuickSearchInGroupPaths">
+			<Value>Search for group paths in quick searches</Value>
 		</Data>
 		<Data Name="QuickSearchInPwFields">
 			<Value>Search for passwords in quick searches</Value>
@@ -2403,6 +2415,9 @@
 		</Data>
 		<Data Name="SecDeskSwitchBack">
 			<Value>Click [OK] to switch back to the secure desktop.</Value>
+		</Data>
+		<Data Name="Security">
+			<Value>Security</Value>
 		</Data>
 		<Data Name="SelectAll">
 			<Value>Select All</Value>
@@ -3084,9 +3099,6 @@
 		</Data>
 		<Data Name="UnknownKdf">
 			<Value>Unknown key derivation function!</Value>
-		</Data>
-		<Data Name="UserAccountKeyError">
-			<Value>The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.</Value>
 		</Data>
 		<Data Name="UserAgent">
 			<Value>User agent</Value>

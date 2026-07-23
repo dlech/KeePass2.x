@@ -219,10 +219,10 @@ namespace KeePass.Plugins
 							KPRes.Plugin1x + MessageService.NewParagraph + KPRes.Plugin1xHint);
 					else exShowStd = exBif;
 				}
-				catch(Exception exLoad)
+				catch(Exception ex)
 				{
-					if(PwDefs.DebugMode) MessageService.ShowWarning(strFile, exLoad);
-					else exShowStd = exLoad;
+					if(PwDefs.DebugMode) MessageService.ShowWarning(strFile, ex);
+					else exShowStd = ex;
 				}
 
 				if(exShowStd != null)
@@ -238,25 +238,27 @@ namespace KeePass.Plugins
 			if(slStatus != null)
 				slStatus.SetText(KPRes.PluginLoadFailed, LogStatusType.Info);
 
-			string strMsg = KPRes.PluginIncompatible + MessageService.NewLine +
-				strPath + MessageService.NewParagraph + KPRes.PluginUpdateHint;
+			bool bShowExcp = PwDefs.DebugMode;
+			string strExcpS = ((ex != null) ? StrUtil.FormatException(ex, false) : null);
+			string strExcpF = ((ex != null) ? StrUtil.FormatException(ex, true) : null);
+
+			string strMsg = strPath + MessageService.NewParagraph + KPRes.PluginLoadFailed;
+			if(!string.IsNullOrEmpty(strExcpS))
+				strMsg += MessageService.NewParagraph + strExcpS;
 			if(NativeLib.IsUnix())
 				strMsg += MessageService.NewParagraph + KPRes.PluginMonoComplete;
 
-			bool bShowExcp = PwDefs.DebugMode;
-			string strExcp = ((ex != null) ? StrUtil.FormatException(ex) : null);
-
 			VistaTaskDialog vtd = new VistaTaskDialog();
 			vtd.Content = strMsg;
-			vtd.ExpandedByDefault = ((strExcp != null) && bShowExcp);
-			vtd.ExpandedInformation = strExcp;
+			vtd.ExpandedByDefault = (!string.IsNullOrEmpty(strExcpF) && bShowExcp);
+			vtd.ExpandedInformation = strExcpF;
 			vtd.WindowTitle = PwDefs.ShortProductName;
 			vtd.SetIcon(VtdIcon.Warning);
 
 			if(!vtd.ShowDialog())
 			{
 				if(!bShowExcp) MessageService.ShowWarning(strMsg);
-				else MessageService.ShowWarning(strPath, ex);
+				else MessageService.ShowWarning(strMsg, ex);
 			}
 		}
 
@@ -484,11 +486,15 @@ namespace KeePass.Plugins
 			AceApplication aceApp = Program.Config.Application;
 			// bool? ob = aceApp.GetPluginCompat(strHash);
 			// if(ob.HasValue) return ob.Value;
-			if(aceApp.IsPluginCompat(strHash)) return;
+			if(aceApp.IsPluginCompatible(strHash)) return;
 
-			CheckCompatibilityPriv(p);
+			try { CheckCompatibilityPriv(p); }
+			catch(Exception ex)
+			{
+				throw new ExtendedException(null, ex, KPRes.PluginUpdateHint);
+			}
 
-			aceApp.SetPluginCompat(strHash);
+			aceApp.SetPluginCompatible(strHash);
 		}
 
 		/* private static void CheckCompatibilityRefl(string strFile)

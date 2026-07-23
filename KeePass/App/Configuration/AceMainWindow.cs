@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
@@ -30,7 +29,6 @@ using System.Xml.Serialization;
 using KeePass.Resources;
 using KeePass.UI;
 
-using KeePassLib;
 using KeePassLib.Security;
 
 namespace KeePass.App.Configuration
@@ -96,13 +94,8 @@ namespace KeePass.App.Configuration
 			set { m_sizeH = value; }
 		}
 
-		private bool m_bMax = false;
 		[DefaultValue(false)]
-		public bool Maximized
-		{
-			get { return m_bMax; }
-			set { m_bMax = value; }
-		}
+		public bool Maximized { get; set; }
 
 		private double m_dSplitterHorz = double.Epsilon;
 		public double SplitterHorizontalFrac
@@ -126,30 +119,15 @@ namespace KeePass.App.Configuration
 			set { m_layout = value; }
 		}
 
-		private bool m_bTop = false;
 		[DefaultValue(false)]
-		public bool AlwaysOnTop
-		{
-			get { return m_bTop; }
-			set { m_bTop = value; }
-		}
+		public bool AlwaysOnTop { get; set; }
 
-		private bool m_bCloseMin = false;
 		[DefaultValue(false)]
-		public bool CloseButtonMinimizesWindow
-		{
-			get { return m_bCloseMin; }
-			set { m_bCloseMin = value; }
-		}
+		public bool CloseButtonMinimizesWindow { get; set; }
 
 		// For backward compatibility only; use EscAction instead
-		private bool m_bEscMin = false;
 		[DefaultValue(false)]
-		public bool EscMinimizesToTray
-		{
-			get { return m_bEscMin; }
-			set { m_bEscMin = value; }
-		}
+		public bool EscMinimizesToTray { get; set; }
 
 		private AceEscAction m_aEsc = AceEscAction.Lock;
 		[DefaultValue(AceEscAction.Lock)]
@@ -159,61 +137,26 @@ namespace KeePass.App.Configuration
 			set { m_aEsc = value; }
 		}
 
-		private bool m_bMinToTray = false;
 		[DefaultValue(false)]
-		public bool MinimizeToTray
-		{
-			get { return m_bMinToTray; }
-			set { m_bMinToTray = value; }
-		}
+		public bool MinimizeToTray { get; set; }
 
-		private bool m_bFullPath = false;
 		[DefaultValue(false)]
-		public bool ShowFullPathInTitle
-		{
-			get { return m_bFullPath; }
-			set { m_bFullPath = value; }
-		}
+		public bool ShowFullPathInTitle { get; set; }
 
-		// private bool m_bFullPathOnTab = false;
 		// [DefaultValue(false)]
-		// public bool ShowFullPathOnTab
-		// {
-		//	get { return m_bFullPathOnTab; }
-		//	set { m_bFullPathOnTab = value; }
-		// }
+		// public bool ShowFullPathOnTab { get; set; }
 
-		// private bool m_bDbNameOnTab = false;
 		// [DefaultValue(false)]
-		// public bool ShowDatabaseNameOnTab
-		// {
-		//	get { return m_bDbNameOnTab; }
-		//	set { m_bDbNameOnTab = value; }
-		// }
+		// public bool ShowDatabaseNameOnTab { get; set; }
 
-		private bool m_bDropToBackAfterCopy = false;
 		[DefaultValue(false)]
-		public bool DropToBackAfterClipboardCopy
-		{
-			get { return m_bDropToBackAfterCopy; }
-			set { m_bDropToBackAfterCopy = value; }
-		}
+		public bool DropToBackAfterClipboardCopy { get; set; }
 
-		private bool m_bMinAfterCopy = false;
 		[DefaultValue(false)]
-		public bool MinimizeAfterClipboardCopy
-		{
-			get { return m_bMinAfterCopy; }
-			set { m_bMinAfterCopy = value; }
-		}
+		public bool MinimizeAfterClipboardCopy { get; set; }
 
-		private bool m_bMinAfterAutoType = false;
 		[DefaultValue(false)]
-		public bool MinimizeAfterAutoType
-		{
-			get { return m_bMinAfterAutoType; }
-			set { m_bMinAfterAutoType = value; }
-		}
+		public bool MinimizeAfterAutoType { get; set; }
 
 		private bool m_bMinAfterLocking = true;
 		[DefaultValue(true)]
@@ -223,74 +166,42 @@ namespace KeePass.App.Configuration
 			set { m_bMinAfterLocking = value; }
 		}
 
-		private bool m_bMinAfterOpeningDb = false;
 		[DefaultValue(false)]
-		public bool MinimizeAfterOpeningDatabase
+		public bool MinimizeAfterOpeningDatabase { get; set; }
+
+		[DefaultValue(false)]
+		public bool QuickFindSearchInPasswords { get; set; }
+
+		private bool m_bQuickFindSearchInGroupPaths = true;
+		[DefaultValue(true)]
+		public bool QuickFindSearchInGroupPaths
 		{
-			get { return m_bMinAfterOpeningDb; }
-			set { m_bMinAfterOpeningDb = value; }
+			get { return m_bQuickFindSearchInGroupPaths; }
+			set { m_bQuickFindSearchInGroupPaths = value; }
 		}
 
-		private bool m_bQuickFindSearchInPasswords = false;
 		[DefaultValue(false)]
-		public bool QuickFindSearchInPasswords
-		{
-			get { return m_bQuickFindSearchInPasswords; }
-			set { m_bQuickFindSearchInPasswords = value; }
-		}
+		public bool QuickFindExcludeExpired { get; set; }
 
-		private bool m_bQuickFindExcludeExpired = false;
 		[DefaultValue(false)]
-		public bool QuickFindExcludeExpired
-		{
-			get { return m_bQuickFindExcludeExpired; }
-			set { m_bQuickFindExcludeExpired = value; }
-		}
+		public bool QuickFindDerefData { get; set; }
 
-		private bool m_bQuickFindDerefData = false;
 		[DefaultValue(false)]
-		public bool QuickFindDerefData
-		{
-			get { return m_bQuickFindDerefData; }
-			set { m_bQuickFindDerefData = value; }
-		}
+		public bool FocusResultsAfterQuickFind { get; set; }
 
-		private bool m_bFocusResAfterQuickFind = false;
-		[DefaultValue(false)]
-		public bool FocusResultsAfterQuickFind
-		{
-			get { return m_bFocusResAfterQuickFind; }
-			set { m_bFocusResAfterQuickFind = value; }
-		}
-
-		private bool m_bFocusQuickFindOnRestore = false;
 		/// <summary>
 		/// Focus the quick search box when restoring the main
 		/// window. Here 'restoring' actually means unminimizing,
 		/// i.e. restoring or maximizing the window.
 		/// </summary>
 		[DefaultValue(false)]
-		public bool FocusQuickFindOnRestore
-		{
-			get { return m_bFocusQuickFindOnRestore; }
-			set { m_bFocusQuickFindOnRestore = value; }
-		}
+		public bool FocusQuickFindOnRestore { get; set; }
 
-		private bool m_bFocusQuickFindOnUntray = false;
 		[DefaultValue(false)]
-		public bool FocusQuickFindOnUntray
-		{
-			get { return m_bFocusQuickFindOnUntray; }
-			set { m_bFocusQuickFindOnUntray = value; }
-		}
+		public bool FocusQuickFindOnUntray { get; set; }
 
-		private bool m_bCopyUrls = false;
 		[DefaultValue(false)]
-		public bool CopyUrlsInsteadOfOpening
-		{
-			get { return m_bCopyUrls; }
-			set { m_bCopyUrls = value; }
-		}
+		public bool CopyUrlsInsteadOfOpening { get; set; }
 
 		private bool m_bEntrySelGroupSel = true;
 		[DefaultValue(true)]
@@ -300,17 +211,12 @@ namespace KeePass.App.Configuration
 			set { m_bEntrySelGroupSel = value; }
 		}
 
-		private bool m_bDisableSaveIfNotModified = false;
 		/// <summary>
 		/// Disable 'Save' button (instead of graying it out) if the database
 		/// hasn't been modified.
 		/// </summary>
 		[DefaultValue(false)]
-		public bool DisableSaveIfNotModified
-		{
-			get { return m_bDisableSaveIfNotModified; }
-			set { m_bDisableSaveIfNotModified = value; }
-		}
+		public bool DisableSaveIfNotModified { get; set; }
 
 		private bool m_bHideCloseDbTb = true;
 		[DefaultValue(true)]
@@ -378,13 +284,8 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private bool m_bAutoResizeColumns = false;
 		[DefaultValue(false)]
-		public bool EntryListAutoResizeColumns
-		{
-			get { return m_bAutoResizeColumns; }
-			set { m_bAutoResizeColumns = value; }
-		}
+		public bool EntryListAutoResizeColumns { get; set; }
 
 		private bool m_bAlternatingBgColor = true;
 		[DefaultValue(true)]
@@ -394,29 +295,14 @@ namespace KeePass.App.Configuration
 			set { m_bAlternatingBgColor = value; }
 		}
 
-		private int m_argbAltBgColor = 0;
 		[DefaultValue(0)]
-		public int EntryListAlternatingBgColor
-		{
-			get { return m_argbAltBgColor; }
-			set { m_argbAltBgColor = value; }
-		}
+		public int EntryListAlternatingBgColor { get; set; }
 
-		private bool m_bResolveFieldRefs = false;
 		[DefaultValue(false)]
-		public bool EntryListShowDerefData
-		{
-			get { return m_bResolveFieldRefs; }
-			set { m_bResolveFieldRefs = value; }
-		}
+		public bool EntryListShowDerefData { get; set; }
 
-		private bool m_bResolveFieldRefsAsync = false;
 		[DefaultValue(false)]
-		public bool EntryListShowDerefDataAsync
-		{
-			get { return m_bResolveFieldRefsAsync; }
-			set { m_bResolveFieldRefsAsync = value; }
-		}
+		public bool EntryListShowDerefDataAsync { get; set; }
 
 		private bool m_bDerefDataWithRefs = true;
 		[DefaultValue(true)]
@@ -426,12 +312,8 @@ namespace KeePass.App.Configuration
 			set { m_bDerefDataWithRefs = value; }
 		}
 
-		// private bool m_bGridLines = false;
-		// public bool ShowGridLines
-		// {
-		//	get { return m_bGridLines; }
-		//	set { m_bGridLines = value; }
-		// }
+		// [DefaultValue(false)]
+		// public bool ShowGridLines { get; set; }
 
 		private ListSorter m_pListSorter = null;
 		public ListSorter ListSorting
@@ -456,13 +338,8 @@ namespace KeePass.App.Configuration
 			set { m_iLgMain = value; }
 		}
 
-		private bool m_bShowEntriesOfSubGroups = false;
 		[DefaultValue(false)]
-		public bool ShowEntriesOfSubGroups
-		{
-			get { return m_bShowEntriesOfSubGroups; }
-			set { m_bShowEntriesOfSubGroups = value; }
-		}
+		public bool ShowEntriesOfSubGroups { get; set; }
 
 		public AceColumn FindColumn(AceColumnType t)
 		{
@@ -588,6 +465,8 @@ namespace KeePass.App.Configuration
 		LastPasswordModTime,
 		AutoTypeEnabled,
 		AutoTypeSequences,
+		GroupPath,
+		GroupName,
 
 		Count // Virtual identifier representing the number of types
 	}
@@ -683,6 +562,8 @@ namespace KeePass.App.Configuration
 					str = KPRes.AutoType + " - " + KPRes.Enabled; break;
 				case AceColumnType.AutoTypeSequences:
 					str = KPRes.AutoType + " - " + KPRes.Sequences; break;
+				case AceColumnType.GroupPath: str = KPRes.GroupPath; break;
+				case AceColumnType.GroupName: str = KPRes.GroupName; break;
 				default: Debug.Assert(false); break;
 			};
 

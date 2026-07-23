@@ -115,13 +115,11 @@ namespace KeePass.Ecas
 
 		private static bool IsMatchFileExists(EcasCondition c, EcasContext ctx)
 		{
-			string strFile = EcasUtil.GetParamString(c.Parameters, 0, true);
+			string strFile = EcasUtil.GetParamPath(c.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strFile)) return true;
 
 			try
 			{
-				// return File.Exists(strFile);
-
 				IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
 				return IOConnection.FileExists(ioc);
 			}

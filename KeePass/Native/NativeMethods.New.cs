@@ -36,6 +36,52 @@ namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
+		[Conditional("DEBUG")]
+		internal static void Test()
+		{
+#if DEBUG
+			AssertSize<INPUT32>(28, -1);
+			AssertSize<SpecializedKeyboardINPUT64>(40);
+			AssertSize<CHARFORMAT2>(84, 84, 116, 116);
+			AssertSize<WINDOWPOS>(28, 40);
+			AssertSize<POINT>(8);
+			AssertSize<RECT>(16);
+			AssertSize<COMBOBOXINFO>(52, 64);
+			AssertSize<MARGINS>(16);
+			AssertSize<COPYDATASTRUCT>(12, 24);
+			AssertSize<SCROLLINFO>(28);
+			AssertSize<HDITEM>(44, 64);
+			AssertSize<NMHDR>(12, 24);
+			AssertSize<NMLVEMPTYMARKUP>(4184, 4200);
+			AssertSize<LASTINPUTINFO>(8);
+			AssertSize<SHFILEINFO>(352, 360, 692, 696);
+			AssertSize<PROCESSENTRY32>(296, 304, 556, 568);
+			AssertSize<ACTCTX>(32, 56);
+			AssertSize<ICONDIR>(6);
+			AssertSize<ICONDIRENTRY>(16);
+			AssertSize<BITMAPINFOHEADER>(40);
+#endif
+		}
+
+#if DEBUG
+		private static void AssertSize<T>(int cb)
+		{
+			AssertSize<T>(cb, cb, cb, cb);
+		}
+
+		private static void AssertSize<T>(int cb32, int cb64)
+		{
+			AssertSize<T>(cb32, cb64, cb32, cb64);
+		}
+
+		private static void AssertSize<T>(int cb32A, int cb64A, int cb32W, int cb64W)
+		{
+			bool bA = (Marshal.SystemDefaultCharSize == 1);
+			int cbE = ((IntPtr.Size == 4) ? (bA ? cb32A : cb32W) : (bA ? cb64A : cb64W));
+			Debug.Assert((cbE == -1) || (Marshal.SizeOf(typeof(T)) == cbE));
+		}
+#endif
+
 		internal static string GetWindowText(IntPtr hWnd, bool bTrim)
 		{
 			// cc may be greater than the actual length;
@@ -169,10 +215,8 @@ namespace KeePass.Native
 
 		internal static bool IsWindowEx(IntPtr hWnd)
 		{
-			if(!NativeLib.IsUnix()) // Windows
-				return IsWindow(hWnd);
-
-			return true;
+			if(hWnd == IntPtr.Zero) return false;
+			return (NativeLib.IsUnix() ? true : IsWindow(hWnd));
 		}
 
 		internal static int GetWindowStyle(IntPtr hWnd)
@@ -188,6 +232,8 @@ namespace KeePass.Native
 
 		internal static bool SetForegroundWindowEx(IntPtr hWnd)
 		{
+			if(!IsWindowEx(hWnd)) return false;
+
 			if(!NativeLib.IsUnix())
 				return SetForegroundWindow(hWnd);
 
@@ -197,8 +243,6 @@ namespace KeePass.Native
 
 		internal static bool EnsureForegroundWindow(IntPtr hWnd)
 		{
-			if(!IsWindowEx(hWnd)) return false;
-
 			IntPtr hWndInit = GetForegroundWindowHandle();
 
 			if(!SetForegroundWindowEx(hWnd))
@@ -318,7 +362,7 @@ namespace KeePass.Native
 				if(!strText.Equals("Start", StrUtil.CaseIgnoreCmp)) return false;
 
 				uint uProcessId;
-				NativeMethods.GetWindowThreadProcessId(hWnd, out uProcessId);
+				GetWindowThreadProcessId(hWnd, out uProcessId);
 
 				p = Process.GetProcessById((int)uProcessId);
 				string strExe = UrlUtil.GetFileName(p.MainModule.FileName).Trim();
@@ -363,11 +407,7 @@ namespace KeePass.Native
 
 		public static bool IsInvalidHandleValue(IntPtr p)
 		{
-			long h = p.ToInt64();
-			if(h == -1) return true;
-			if(h == 0xFFFFFFFF) return true;
-
-			return false;
+			return (p == KeePassLib.Native.NativeMethods.INVALID_HANDLE_VALUE);
 		}
 
 		public static int GetHeaderHeight(ListView lv)
@@ -840,10 +880,10 @@ namespace KeePass.Native
 
 		private static bool? IsKeyDownMessage(ref Message m)
 		{
-			if(m.Msg == NativeMethods.WM_KEYDOWN) return true;
-			if(m.Msg == NativeMethods.WM_KEYUP) return false;
-			if(m.Msg == NativeMethods.WM_SYSKEYDOWN) return true;
-			if(m.Msg == NativeMethods.WM_SYSKEYUP) return false;
+			if(m.Msg == WM_KEYDOWN) return true;
+			if(m.Msg == WM_KEYUP) return false;
+			if(m.Msg == WM_SYSKEYDOWN) return true;
+			if(m.Msg == WM_SYSKEYUP) return false;
 			return null;
 		}
 
@@ -861,7 +901,7 @@ namespace KeePass.Native
 			return true;
 		}
 
-		/* internal static string GetKeyboardLayoutNameEx()
+		internal static string GetKeyboardLayoutNameEx()
 		{
 			StringBuilder sb = new StringBuilder(KL_NAMELENGTH + 1);
 			if(GetKeyboardLayoutName(sb))
@@ -872,7 +912,7 @@ namespace KeePass.Native
 			else { Debug.Assert(false); }
 
 			return null;
-		} */
+		}
 
 		/// <summary>
 		/// PRIMARYLANGID macro.

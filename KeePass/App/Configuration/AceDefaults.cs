@@ -33,24 +33,19 @@ namespace KeePass.App.Configuration
 {
 	public sealed class AceKeyAssoc
 	{
-		private string m_strDb = string.Empty;
+		private string m_strDatabase = string.Empty;
 		public string DatabasePath
 		{
-			get { return m_strDb; }
+			get { return m_strDatabase; }
 			set
 			{
 				if(value == null) throw new ArgumentNullException("value");
-				m_strDb = value;
+				m_strDatabase = value;
 			}
 		}
 
-		private bool m_bPassword = false;
 		[DefaultValue(false)]
-		public bool Password
-		{
-			get { return m_bPassword; }
-			set { m_bPassword = value; }
-		}
+		public bool Password { get; set; }
 
 		private string m_strKey = string.Empty;
 		[DefaultValue("")]
@@ -76,13 +71,8 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private bool m_bUserAcc = false;
 		[DefaultValue(false)]
-		public bool UserAccount
-		{
-			get { return m_bUserAcc; }
-			set { m_bUserAcc = value; }
-		}
+		public bool UserAccount { get; set; }
 
 		public AceKeyAssoc() { }
 	}
@@ -101,12 +91,7 @@ namespace KeePass.App.Configuration
 			set { m_nNewEntryExpireDays = value; }
 		}
 
-		private uint m_uDefaultOptionsTab = 0;
-		public uint OptionsTabIndex
-		{
-			get { return m_uDefaultOptionsTab; }
-			set { m_uDefaultOptionsTab = value; }
-		}
+		public uint OptionsTabIndex { get; set; }
 
 		private const string DefaultTanChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
 		private string m_strTanChars = DefaultTanChars;
@@ -198,37 +183,17 @@ namespace KeePass.App.Configuration
 			}
 		}
 
-		private bool m_bExportMasterKeySpec = false;
 		[DefaultValue(false)]
-		public bool ExportMasterKeySpec
-		{
-			get { return m_bExportMasterKeySpec; }
-			set { m_bExportMasterKeySpec = value; }
-		}
+		public bool ExportMasterKeySpec { get; set; }
 
-		private bool m_bExportParentGroups = false;
 		[DefaultValue(false)]
-		public bool ExportParentGroups
-		{
-			get { return m_bExportParentGroups; }
-			set { m_bExportParentGroups = value; }
-		}
+		public bool ExportParentGroups { get; set; }
 
-		private bool m_bExportPostOpen = false;
 		[DefaultValue(false)]
-		public bool ExportPostOpen
-		{
-			get { return m_bExportPostOpen; }
-			set { m_bExportPostOpen = value; }
-		}
+		public bool ExportPostOpen { get; set; }
 
-		private bool m_bExportPostShow = false;
 		[DefaultValue(false)]
-		public bool ExportPostShow
-		{
-			get { return m_bExportPostShow; }
-			set { m_bExportPostShow = value; }
-		}
+		public bool ExportPostShow { get; set; }
 
 		private string m_strWinFavsBaseName = string.Empty;
 		[DefaultValue("")]

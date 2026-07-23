@@ -776,27 +776,21 @@ namespace KeePass.Util
 		// Cf. other overload
 		internal static string GetHiddenString(ProtectedString ps, bool bHide)
 		{
-			if(bHide)
-			{
-				if(((ps == null) || ps.IsEmpty) && Program.Config.UI.Hiding.UnhideEmptyData)
-					return string.Empty;
-				return PwDefs.HiddenPassword;
-			}
+			if(!bHide) return ((ps == null) ? string.Empty : ps.ReadString());
 
-			return ((ps == null) ? string.Empty : ps.ReadString());
+			if(((ps == null) || ps.IsEmpty) && Program.Config.UI.Hiding.UnhideEmptyData)
+				return string.Empty;
+			return PwDefs.HiddenPassword;
 		}
 
 		// Cf. other overload
 		internal static string GetHiddenString(string str, bool bHide)
 		{
-			if(bHide)
-			{
-				if(string.IsNullOrEmpty(str) && Program.Config.UI.Hiding.UnhideEmptyData)
-					return string.Empty;
-				return PwDefs.HiddenPassword;
-			}
+			if(!bHide) return (str ?? string.Empty);
 
-			return (str ?? string.Empty);
+			if(string.IsNullOrEmpty(str) && Program.Config.UI.Hiding.UnhideEmptyData)
+				return string.Empty;
+			return PwDefs.HiddenPassword;
 		}
 
 		public static string CreateSummaryList(PwGroup pgItems, bool bStartWithNewPar)

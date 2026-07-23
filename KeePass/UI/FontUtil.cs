@@ -185,49 +185,6 @@ namespace KeePass.UI
 			return true;
 		}
 
-		/* private const string FontPartsSeparator = @"/:/";
-
-		public static Font FontIDToFont(string strFontID)
-		{
-			Debug.Assert(strFontID != null); if(strFontID == null) return null;
-
-			string[] vParts = strFontID.Split(new string[] { FontPartsSeparator },
-				StringSplitOptions.None);
-			if((vParts == null) || (vParts.Length != 6)) return null;
-
-			float fSize;
-			if(!float.TryParse(vParts[1], out fSize)) { Debug.Assert(false); return null; }
-
-			FontStyle fs = FontStyle.Regular;
-			if(vParts[2] == "1") fs |= FontStyle.Bold;
-			if(vParts[3] == "1") fs |= FontStyle.Italic;
-			if(vParts[4] == "1") fs |= FontStyle.Underline;
-			if(vParts[5] == "1") fs |= FontStyle.Strikeout;
-
-			return FontUtil.CreateFont(vParts[0], fSize, fs);
-		}
-
-		public static string FontToFontID(Font f)
-		{
-			Debug.Assert(f != null); if(f == null) return string.Empty;
-
-			StringBuilder sb = new StringBuilder();
-
-			sb.Append(f.Name);
-			sb.Append(FontPartsSeparator);
-			sb.Append(f.SizeInPoints.ToString());
-			sb.Append(FontPartsSeparator);
-			sb.Append(f.Bold ? "1" : "0");
-			sb.Append(FontPartsSeparator);
-			sb.Append(f.Italic ? "1" : "0");
-			sb.Append(FontPartsSeparator);
-			sb.Append(f.Underline ? "1" : "0");
-			sb.Append(FontPartsSeparator);
-			sb.Append(f.Strikeout ? "1" : "0");
-
-			return sb.ToString();
-		} */
-
 		private static void AppendFontStyleFlag(StringBuilder sb, ref FontStyle fs,
 			FontStyle fsFlag, string strFlag)
 		{

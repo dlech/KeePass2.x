@@ -153,6 +153,8 @@ namespace KeePass.Forms
 
 			m_lvFields.Columns.Add(KPRes.Field);
 
+			m_lvFields.ItemDeleteButton = m_btnFieldDel;
+
 			AddCsvField(CsvFieldType.Title, null, null);
 			AddCsvField(CsvFieldType.UserName, null, null);
 			AddCsvField(CsvFieldType.Password, null, null);
@@ -407,6 +409,7 @@ namespace KeePass.Forms
 				m_lvFields.Items.RemoveAt(lvsic[i]);
 
 			EnableControlsEx();
+			UIUtil.SetFocus(m_lvFields, this);
 		}
 
 		private void OnFieldsSelectedIndexChanged(object sender, EventArgs e)
@@ -473,10 +476,9 @@ namespace KeePass.Forms
 			string strName = (bName ? m_tbFieldName.Text : null);
 			string strFormat = (bFormat ? m_cmbFieldFormat.Text : null);
 
+			UIUtil.DeselectAllItems(m_lvFields);
 			AddCsvField(t, strName, strFormat);
 			ProcessResize();
-			for(int i = 0; i < (m_lvFields.Items.Count - 1); ++i)
-				m_lvFields.Items[i].Selected = false;
 			m_lvFields.EnsureVisible(m_lvFields.Items.Count - 1);
 			UIUtil.SetFocusedItem(m_lvFields, m_lvFields.Items[
 				m_lvFields.Items.Count - 1], true);

@@ -128,6 +128,7 @@ namespace KeePass.App
 
 			public static readonly string Security = "base/security";
 			internal const string SecurityDictProt = "secdictprotect";
+			internal const string SecurityMalData = "secmaldata";
 			internal const string SecurityOptEx = "secoptex";
 			internal const string SecurityOptAdm = "secoptadm";
 
@@ -144,6 +145,7 @@ namespace KeePass.App
 			public static readonly string SetupMono = "mono";
 
 			internal const string FaqTech = "base/faq_tech";
+			internal const string FaqTechHotKey = "athotkey";
 			internal const string FaqTechGuiDark = "guidark";
 			internal const string FaqTechGuiFont = "guifont";
 

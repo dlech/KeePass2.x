@@ -48,28 +48,10 @@ namespace KeePass.Util
 			List<uint> lPids = new List<uint>();
 			if(KeePassLib.Native.NativeLib.IsUnix()) return lPids;
 
+			IntPtr hSnap = KeePassLib.Native.NativeMethods.INVALID_HANDLE_VALUE;
 			try
 			{
-				uint pidThis = (uint)Process.GetCurrentProcess().Id;
-
-				uint uEntrySize = (uint)Marshal.SizeOf(typeof(
-					NativeMethods.PROCESSENTRY32));
-				if(Marshal.SystemDefaultCharSize >= 2)
-				{
-					if(IntPtr.Size == 4)
-					{
-						Debug.Assert(uEntrySize ==
-							NativeMethods.PROCESSENTRY32SizeUni32);
-					}
-					else if(IntPtr.Size == 8)
-					{
-						Debug.Assert(uEntrySize ==
-							NativeMethods.PROCESSENTRY32SizeUni64);
-					}
-					else { Debug.Assert(false); }
-				}
-
-				IntPtr hSnap = NativeMethods.CreateToolhelp32Snapshot(
+				hSnap = NativeMethods.CreateToolhelp32Snapshot(
 					NativeMethods.ToolHelpFlags.SnapProcess, 0);
 				if(NativeMethods.IsInvalidHandleValue(hSnap))
 				{
@@ -77,14 +59,17 @@ namespace KeePass.Util
 					return lPids;
 				}
 
+				uint uEntrySize = (uint)Marshal.SizeOf(typeof(
+					NativeMethods.PROCESSENTRY32));
+				uint pidThis = (uint)Process.GetCurrentProcess().Id;
+
 				for(int i = 0; i < int.MaxValue; ++i)
 				{
 					NativeMethods.PROCESSENTRY32 pe = new NativeMethods.PROCESSENTRY32();
 					pe.dwSize = uEntrySize;
 
-					bool b;
-					if(i == 0) b = NativeMethods.Process32First(hSnap, ref pe);
-					else b = NativeMethods.Process32Next(hSnap, ref pe);
+					bool b = ((i == 0) ? NativeMethods.Process32First(hSnap, ref pe) :
+						NativeMethods.Process32Next(hSnap, ref pe));
 					if(!b) break;
 
 					if(pe.th32ProcessID == pidThis) continue;
@@ -101,42 +86,41 @@ namespace KeePass.Util
 
 					lPids.Add(pe.th32ProcessID);
 				}
-
-				if(!NativeMethods.CloseHandle(hSnap)) { Debug.Assert(false); }
 			}
 			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				if(!NativeMethods.IsInvalidHandleValue(hSnap))
+				{
+					if(!NativeMethods.CloseHandle(hSnap)) { Debug.Assert(false); }
+				}
+			}
 
 			return lPids;
 		}
 
-		private static char[] m_vTrimChars = null;
+		private static char[] g_vTrimChars = null;
 		private static string GetExeName(string strPath)
 		{
 			if(strPath == null) { Debug.Assert(false); return string.Empty; }
 
-			if(m_vTrimChars == null)
-				m_vTrimChars = new char[] { '\r', '\n', ' ', '\t', '\"', '\'' };
+			if(g_vTrimChars == null)
+				g_vTrimChars = new char[] { '\r', '\n', ' ', '\t', '\"', '\'' };
 
-			string str = strPath.Trim(m_vTrimChars);
-			str = UrlUtil.GetFileName(str);
-
-			return str;
+			return UrlUtil.GetFileName(strPath.Trim(g_vTrimChars));
 		}
 
 		public void TerminateNewChildsAsync(int nDelayMs)
 		{
-			List<uint> lPids = GetChildPids();
-
-			foreach(uint uPid in lPids)
+			foreach(uint uPid in GetChildPids())
 			{
 				if(m_lPids.IndexOf(uPid) < 0)
 				{
 					CpsTermInfo ti = new CpsTermInfo(uPid, m_strChildExeName,
 						nDelayMs);
 
-					ParameterizedThreadStart pts = new ParameterizedThreadStart(
-						ChildProcessesSnapshot.DelayedTerminatePid);
-					Thread th = new Thread(pts);
+					Thread th = new Thread(new ParameterizedThreadStart(
+						ChildProcessesSnapshot.DelayedTerminatePid));
 					th.Start(ti);
 				}
 			}

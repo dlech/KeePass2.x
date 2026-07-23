@@ -119,7 +119,7 @@ namespace KeePass.Forms
 
 			UIUtil.ConfigureToolTip(m_ttRect);
 
-			UIUtil.EnableAutoCompletion(m_cmbName, true);
+			UIUtil.EnableAutoCompletion(m_cmbName, false);
 
 			UIUtil.PrepareStandardMultilineControl(m_rtbValue, true, true);
 			m_ctxValue.Attach(m_rtbValue, this);

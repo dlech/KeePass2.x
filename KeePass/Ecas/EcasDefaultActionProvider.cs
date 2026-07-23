@@ -258,7 +258,7 @@ namespace KeePass.Ecas
 
 		private static void ExecuteShellCmd(EcasAction a, EcasContext ctx)
 		{
-			string strCmd = EcasUtil.GetParamString(a.Parameters, 0);
+			string strCmd = EcasUtil.GetParamPath(a.Parameters, 0, false);
 			string strArgs = EcasUtil.GetParamString(a.Parameters, 1, true, true);
 			bool bWait = EcasUtil.GetParamBool(a.Parameters, 2);
 			uint uWindowStyle = EcasUtil.GetParamUInt(a.Parameters, 3);
@@ -355,7 +355,7 @@ namespace KeePass.Ecas
 
 		private static void OpenDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
+			string strPath = EcasUtil.GetParamPath(a.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strPath)) return;
 
 			string strIOUserName = EcasUtil.GetParamString(a.Parameters, 1, true);
@@ -373,7 +373,7 @@ namespace KeePass.Ecas
 			int iKeyFile, int iUserAccount, IOConnectionInfo ioc)
 		{
 			string strPassword = EcasUtil.GetParamString(a.Parameters, iPassword, true);
-			string strKeyFile = EcasUtil.GetParamString(a.Parameters, iKeyFile, true);
+			string strKeyFile = EcasUtil.GetParamPath(a.Parameters, iKeyFile, true);
 			bool bUserAccount = EcasUtil.GetParamBool(a.Parameters, iUserAccount);
 
 			byte[] pbPasswordUtf8 = null;
@@ -391,7 +391,7 @@ namespace KeePass.Ecas
 
 		private static void SyncDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
+			string strPath = EcasUtil.GetParamPath(a.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strPath)) return;
 
 			string strIOUserName = EcasUtil.GetParamString(a.Parameters, 1, true);
@@ -435,7 +435,7 @@ namespace KeePass.Ecas
 			PwDatabase pd = Program.MainForm.ActiveDatabase;
 			if((pd == null) || !pd.IsOpen) return;
 
-			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
+			string strPath = EcasUtil.GetParamPath(a.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strPath)) return;
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
 
@@ -475,7 +475,7 @@ namespace KeePass.Ecas
 
 		private static void ExportDatabaseFile(EcasAction a, EcasContext ctx)
 		{
-			string strPath = EcasUtil.GetParamString(a.Parameters, 0, true);
+			string strPath = EcasUtil.GetParamPath(a.Parameters, 0, true);
 			// if(string.IsNullOrEmpty(strPath)) return; // Allow no-file exports
 			string strFormat = EcasUtil.GetParamString(a.Parameters, 1, true);
 			if(string.IsNullOrEmpty(strFormat)) return;
@@ -530,7 +530,7 @@ namespace KeePass.Ecas
 
 		private static void ActivateDatabaseTab(EcasAction a, EcasContext ctx)
 		{
-			string strName = EcasUtil.GetParamString(a.Parameters, 0, true);
+			string strName = EcasUtil.GetParamPath(a.Parameters, 0, true);
 			bool bEmptyName = string.IsNullOrEmpty(strName);
 
 			uint uSel = EcasUtil.GetParamUInt(a.Parameters, 1, 0);

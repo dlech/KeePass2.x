@@ -292,7 +292,13 @@ namespace KeePass.Forms
 			CopyMenuItemText(m_tbViewsShowAll, m_menuFindAll, null);
 			CopyMenuItemText(m_tbViewsShowExpired, m_menuFindExp, null);
 
-			UIUtil.EnableAutoCompletion(m_tbQuickFind, false);
+			// UIUtil.EnableAutoCompletion(m_tbQuickFind, false); // KPB 2349
+			UIUtil.SetCueBanner(m_tbQuickFind, (WinUtil.IsAtLeastWindowsVista ?
+				string.Empty : " ") + KPRes.Search);
+			m_cmbQuickFind = m_tbQuickFind.ComboBox;
+			if(m_cmbQuickFind != null)
+				m_cmbQuickFind.SelectionChangeCommitted += this.OnQuickFindSelectionChangeCommitted;
+			else { Debug.Assert(false); }
 
 			bool bVisible = Program.Config.MainWindow.ToolBar.Show;
 			m_toolMain.Visible = bVisible;
@@ -354,6 +360,7 @@ namespace KeePass.Forms
 			ctxHeader.Items.Add(tsmiCfgCol);
 			m_lvEntries.HeaderContextMenuStrip = ctxHeader;
 
+			m_lvEntries.SupportSelectAll = false;
 			m_lvEntries.UseAlternatingItemStyles = true;
 
 			m_pListSorter = Program.Config.MainWindow.ListSorting;
@@ -420,10 +427,6 @@ namespace KeePass.Forms
 				m_splitVertical.SplitterDistanceFrac = dSplitPos;
 			}
 			catch(Exception) { Debug.Assert(false); }
-
-			string strSearchTr = ((WinUtil.IsAtLeastWindowsVista ?
-				string.Empty : " ") + KPRes.Search);
-			UIUtil.SetCueBanner(m_tbQuickFind, strSearchTr);
 
 #if DEBUG
 			Program.Config.CustomConfig.SetBool("TestItem1", true);
@@ -977,10 +980,7 @@ namespace KeePass.Forms
 		private void OnEntrySelectAll(object sender, EventArgs e)
 		{
 			++m_uBlockEntrySelectionEvent;
-			foreach(ListViewItem lvi in m_lvEntries.Items)
-			{
-				lvi.Selected = true;
-			}
+			UIUtil.SelectAllItems(m_lvEntries);
 			--m_uBlockEntrySelectionEvent;
 
 			ResetDefaultFocus(m_lvEntries);
@@ -991,19 +991,19 @@ namespace KeePass.Forms
 		{
 			if(UIIsInteractionBlocked()) { e.Cancel = true; return; }
 
+			bool bSystem = ((e.CloseReason == CloseReason.TaskManagerClosing) ||
+				(e.CloseReason == CloseReason.WindowsShutDown));
+			if(bSystem) SaveConfig();
+
 			if(!m_bForceExitOnce) // If not executed by 'File' -> 'Exit'
 			{
-				if((e.CloseReason != CloseReason.TaskManagerClosing) &&
-					(e.CloseReason != CloseReason.WindowsShutDown))
+				if(Program.Config.MainWindow.CloseButtonMinimizesWindow && !bSystem)
 				{
-					if(Program.Config.MainWindow.CloseButtonMinimizesWindow)
-					{
-						SaveWindowPositionAndSize();
+					SaveWindowPositionAndSize();
 
-						e.Cancel = true;
-						UIUtil.SetWindowState(this, FormWindowState.Minimized);
-						return;
-					}
+					e.Cancel = true;
+					UIUtil.SetWindowState(this, FormWindowState.Minimized);
+					return;
 				}
 			}
 			m_bForceExitOnce = false; // Reset (flag works once only)
@@ -1021,9 +1021,7 @@ namespace KeePass.Forms
 			// When shutting down, it can happen that only OnFormClosing
 			// is called without the form actually being closed afterwards,
 			// thus we must update the UI in this case now
-			if((e.CloseReason == CloseReason.TaskManagerClosing) ||
-				(e.CloseReason == CloseReason.WindowsShutDown))
-				UpdateUI(true, null, true, null, true, null, false);
+			if(bSystem) UpdateUI(true, null, true, null, true, null, false);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -1160,57 +1158,13 @@ namespace KeePass.Forms
 			}
 		}
 
-		private void OnQuickFindSelectedIndexChanged(object sender, EventArgs e)
+		private void OnQuickFindSelectionChangeCommitted(object sender, EventArgs e)
 		{
-			if(m_uBlockQuickFind != 0) return;
-			++m_uBlockQuickFind;
+			if(!m_tbQuickFind.DroppedDown) return; // Allow selecting every item
 
-			string strSearch = m_tbQuickFind.Text; // Text, not selected index!
-
-			lock(m_objQuickFindSync)
-			{
-				int iNow = Environment.TickCount;
-				if(((iNow - m_iLastQuickFindTicks) <= 1000) &&
-					(strSearch == m_strLastQuickSearch))
-				{
-					--m_uBlockQuickFind;
-					return;
-				}
-
-				m_iLastQuickFindTicks = iNow;
-				m_strLastQuickSearch = strSearch;
-			}
-
-			// Lookup in combobox for the current search
-			int nExistsAlready = -1;
-			for(int i = 0; i < m_tbQuickFind.Items.Count; ++i)
-			{
-				string strItemText = (string)m_tbQuickFind.Items[i];
-				if(strItemText.Equals(strSearch, StrUtil.CaseIgnoreCmp))
-				{
-					nExistsAlready = i;
-					break;
-				}
-			}
-
-			// Update the history items in the combobox
-			if(nExistsAlready >= 0)
-				m_tbQuickFind.Items.RemoveAt(nExistsAlready);
-			else if(m_tbQuickFind.Items.Count >= 8)
-				m_tbQuickFind.Items.RemoveAt(m_tbQuickFind.Items.Count - 1);
-
-			m_tbQuickFind.Items.Insert(0, strSearch);
-
-			// if(bDoSetText) m_tbQuickFind.Text = strSearch;
-			m_tbQuickFind.SelectedIndex = 0;
-			m_tbQuickFind.Select(0, strSearch.Length);
-
-			// Asynchronous invocation allows to cleanly process
-			// an Enter keypress before blocking the UI
-			BeginInvoke(new PerformSearchQuickDelegate(this.PerformSearchQuick),
-				strSearch, false, true);
-
-			--m_uBlockQuickFind;
+			string str = (m_tbQuickFind.SelectedItem as string);
+			if(!string.IsNullOrEmpty(str)) PerformSearchQuickAsync(str);
+			else { Debug.Assert(false); }
 		}
 
 		private void OnQuickFindKeyDown(object sender, KeyEventArgs e)
@@ -1218,7 +1172,7 @@ namespace KeePass.Forms
 			if(e.KeyCode == Keys.Return) // Return == Enter
 			{
 				UIUtil.SetHandled(e, true);
-				OnQuickFindSelectedIndexChanged(sender, e);
+				PerformSearchQuickAsync(m_tbQuickFind.Text);
 			}
 		}
 
@@ -1869,7 +1823,7 @@ namespace KeePass.Forms
 			if((pe != null) && (pe.ParentGroup != null) &&
 				(pe.ParentGroup.Name == strLink))
 			{
-				ShowSelectedEntryParentGroup();
+				ShowParentGroup(pe);
 				ResetDefaultFocus(m_lvEntries);
 			}
 			else if(strEntryUrl == strLink)
@@ -2500,7 +2454,7 @@ namespace KeePass.Forms
 
 		private void OnFindParentGroup(object sender, EventArgs e)
 		{
-			ShowSelectedEntryParentGroup();
+			ShowParentGroup(null);
 		}
 
 		private void OnFindLastMod(object sender, EventArgs e)

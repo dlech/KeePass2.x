@@ -138,6 +138,7 @@ namespace KeePass.DataExchange
 			l.Add(new ChromeCsv66());
 			l.Add(new MozillaBookmarksHtml100());
 			l.Add(new MozillaBookmarksJson100());
+			l.Add(new FirefoxCsv143());
 			l.Add(new PwExporterXml105());
 
 #if DEBUG

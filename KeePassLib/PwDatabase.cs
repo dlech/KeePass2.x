@@ -1783,8 +1783,8 @@ namespace KeePassLib
 					return m_vCustomIcons[nIndex].GetImage(w, h);
 				return m_vCustomIcons[nIndex].GetImage(); // No assert
 			}
-			else { Debug.Assert(false); }
 
+			Debug.Assert(false);
 			return null;
 		}
 #endif

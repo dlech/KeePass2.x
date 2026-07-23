@@ -30,12 +30,7 @@ namespace KeePass.App.Configuration
 		{
 		}
 
-		private bool m_bEnabled = false;
 		[DefaultValue(false)]
-		public bool Enabled
-		{
-			get { return m_bEnabled; }
-			set { m_bEnabled = value; }
-		}
+		public bool Enabled { get; set; }
 	}
 }

@@ -45,6 +45,12 @@ namespace KeePass.Resources
 		}
 
 		[Obsolete]
+		public static string ClipboardClearInSeconds
+		{
+			get { return KPRes.ClipboardClearInSeconds2.Replace("{PARAM}", "[PARAM]"); }
+		}
+
+		[Obsolete]
 		public static string CreateNewDatabase
 		{
 			get { return KPRes.CreateNewDatabase2; }

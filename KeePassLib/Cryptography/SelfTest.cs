@@ -76,6 +76,8 @@ namespace KeePassLib.Cryptography
 			Debug.Assert((int)PwIcon.Warning == 2);
 			Debug.Assert((int)PwIcon.BlackBerry == 68);
 
+			Debug.Assert(NativeMethods.INVALID_HANDLE_VALUE.ToInt64() == -1);
+
 			Random r = CryptoRandom.NewWeakRandom();
 
 			TestFipsComplianceProblems(); // Must be the first test

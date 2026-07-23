@@ -6,7 +6,6 @@ RMDIR /S /Q KeePass
 RMDIR /S /Q KeePass_Distrib
 RMDIR /S /Q KeePassLib
 RMDIR /S /Q KeePassMsi
-RMDIR /S /Q ShInstUtil
 
 DEL /A:H ..\Ext\KeePassMsi\KeePassMsi.suo
 RMDIR /S /Q ..\Ext\KeePassMsi\.vs
@@ -29,9 +28,12 @@ RMDIR /S /Q ..\KeePassLibN\Release
 RMDIR /S /Q ..\KeePassLibN\x64
 
 DEL ..\ShInstUtil\ShInstUtil.aps
-DEL ..\ShInstUtil\ShInstUtil.ncb
-DEL /A:H ..\ShInstUtil\ShInstUtil.suo
-DEL /Q ..\ShInstUtil\*.user
+DEL ..\ShInstUtil\ShInstUtil.vcxproj.user
+RMDIR /S /Q ..\ShInstUtil\.vs
+RMDIR /S /Q ..\ShInstUtil\Debug
+RMDIR /S /Q ..\ShInstUtil\Release
+RMDIR /S /Q ..\ShInstUtil\ShInstUtil
+RMDIR /S /Q ..\ShInstUtil\x64
 
 DEL ..\Translation\KeePass.config.xml
 DEL ..\Translation\KeePass.exe

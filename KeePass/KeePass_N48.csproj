@@ -427,6 +427,7 @@
     <Compile Include="DataExchange\Formats\DataVaultCsv47.cs" />
     <Compile Include="DataExchange\Formats\DesktopKnoxXml32.cs" />
     <Compile Include="DataExchange\Formats\EnpassTxt5.cs" />
+    <Compile Include="DataExchange\Formats\FirefoxCsv143.cs" />
     <Compile Include="DataExchange\Formats\FlexWalletXml17.cs" />
     <Compile Include="DataExchange\Formats\GenericCsv.cs" />
     <Compile Include="DataExchange\Formats\HandySafeProXml12.cs" />

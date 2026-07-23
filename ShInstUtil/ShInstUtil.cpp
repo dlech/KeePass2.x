@@ -1,5 +1,5 @@
 /*
-  KeePass Password Safe - The Open-Source Password Manager
+  ShInstUtil
   Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
@@ -19,27 +19,26 @@
 
 #include "ShInstUtil.h"
 
-#pragma warning(push)
-#pragma warning(disable: 4996) // SCL warning
-#include <boost/smart_ptr.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#pragma warning(pop)
+#include "Utility/CommandLineArgs.h"
 
-static const std_string g_strNGenInstall = _T("ngen_install");
-static const std_string g_strNGenUninstall = _T("ngen_uninstall");
-static const std_string g_strNetCheck = _T("net_check");
-static const std_string g_strPreLoadRegister = _T("preload_register");
-static const std_string g_strPreLoadUnregister = _T("preload_unregister");
+#pragma comment(lib, "ComCtl32.lib")
+#pragma comment(lib, "Version.lib")
 
-static LPCTSTR g_lpPathTrimChars = _T("\"' \t\r\n");
+#pragma comment(linker, "/manifestdependency:\"type='win32' " \
+	"name='Microsoft.Windows.Common-Controls' version='6.0.0.0' " \
+	"processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	LPTSTR lpCmdLine, int nCmdShow)
+using namespace std;
+
+int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR lpCmdLine, _In_ int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hInstance);
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	UNREFERENCED_PARAMETER(nCmdShow);
+
+	const HRESULT hrCom = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
 	INITCOMMONCONTROLSEX icc;
 	ZeroMemory(&icc, sizeof(INITCOMMONCONTROLSEX));
@@ -47,60 +46,100 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	icc.dwICC = ICC_STANDARD_CLASSES;
 	InitCommonControlsEx(&icc);
 
-	std_string strCmdLine = GetCommandLine();
-	boost::trim_if(strCmdLine, boost::is_any_of(g_lpPathTrimChars));
-	std::transform(strCmdLine.begin(), strCmdLine.end(), strCmdLine.begin(), _totlower);
+	CCommandLineArgs cla;
 
-	if(StrEndsWith(strCmdLine, g_strNGenInstall))
-	{
-		UpdateNativeImage(false);
-		Sleep(200);
+	LPCTSTR lpAllUsers = cla[_T("AllUsers")];
+	const bool bAllUsers = ((lpAllUsers != nullptr) &&
+		((_tcscmp(lpAllUsers, _T("1")) == 0) || (_tcscmp(lpAllUsers, _T("2")) == 0)));
+
+	LPCTSTR lpCommand = cla[_T("C")];
+	if(lpCommand == nullptr) { }
+	else if(_tcsicmp(lpCommand, _T("NGenInstall")) == 0)
 		UpdateNativeImage(true);
-	}
-
-	if(StrEndsWith(strCmdLine, g_strNGenUninstall))
+	else if(_tcsicmp(lpCommand, _T("NGenUninstall")) == 0)
 		UpdateNativeImage(false);
-
-	if(StrEndsWith(strCmdLine, g_strPreLoadRegister))
-	{
-		RegisterPreLoad(false); // Remove old value in 32-bit reg. view on 64-bit systems
+	else if(_tcsicmp(lpCommand, _T("PreLoadRegister")) == 0)
 		RegisterPreLoad(true);
+	else if(_tcsicmp(lpCommand, _T("PreLoadUnregister")) == 0)
+		RegisterPreLoad(false);
+	else if(_tcsicmp(lpCommand, _T("DotNetCheck")) == 0)
+		CheckDotNetInstalled();
+	else if(_tcsicmp(lpCommand, _T("MsiInstall")) == 0)
+	{
+		if(bAllUsers)
+		{
+			UpdateNativeImage(true);
+			RegisterPreLoad(true);
+		}
+		UpdateLinks(true, bAllUsers);
+	}
+	else if(_tcsicmp(lpCommand, _T("MsiUninstall")) == 0)
+	{
+		if(bAllUsers)
+		{
+			UpdateNativeImage(false);
+			RegisterPreLoad(false);
+		}
+		UpdateLinks(false, bAllUsers);
 	}
 
-	if(StrEndsWith(strCmdLine, g_strPreLoadUnregister))
-		RegisterPreLoad(false);
-
-	if(StrEndsWith(strCmdLine, g_strNetCheck))
-		CheckDotNetInstalled();
+	if(SUCCEEDED(hrCom)) CoUninitialize();
 
 	return 0;
 }
 
-bool StrEndsWith(const std_string& strText, const std_string& strEnd)
+bool IsDirectorySeparator(TCHAR tch)
 {
-	if(strEnd.size() == 0) return true;
-	if(strEnd.size() > strText.size()) return false;
-	return (strText.substr(strText.size() - strEnd.size()) == strEnd);
+	return ((tch == _T('\\')) || (tch == _T('/')));
 }
 
-void EnsureTerminatingSeparator(std_string& strPath)
+tstring EnsureTerminatingSeparator(const tstring& str)
 {
-	if(strPath.size() == 0) return;
-	if(strPath[strPath.size() - 1] == _T('\\')) return;
+	if(str.size() == 0) { assert(false); return tstring(); }
 
-	strPath += _T("\\");
+	if(IsDirectorySeparator(str[str.size() - 1])) return str;
+
+	return (str + _T("\\"));
+}
+
+tstring GetFileDirectory(const tstring& str)
+{
+	if(str.size() == 0) { assert(false); return tstring(); }
+
+	for(size_t i = str.size() - 1; i != 0; --i)
+	{
+		if(IsDirectorySeparator(str[i])) return str.substr(0, i);
+	}
+
+	return tstring();
 }
 
 void UpdateNativeImage(bool bInstall)
 {
-	const std_string strNGen = FindNGen();
+	if(bInstall)
+	{
+		UpdateNativeImage(false);
+		Sleep(200);
+	}
+
+	UpdateNativeImage(bInstall, false);
+	UpdateNativeImage(bInstall, true);
+}
+
+void UpdateNativeImage(bool bInstall, bool bArm64)
+{
+	const tstring strNGen = FindNGen(bArm64);
 	if(strNGen.size() == 0) return;
 
-	const std_string strKeePassExe = GetKeePassExePath();
-	if(strKeePassExe.size() == 0) return;
+	const tstring strKeePass = GetKeePassExePath();
+	if(strKeePass.size() == 0) { assert(false); return; }
 
-	std_string strParam = (bInstall ? _T("") : _T("un"));
-	strParam += (_T("install \"") + strKeePassExe) + _T("\"");
+	// When updating using the MSI file and changing the installation directory,
+	// the 'Uninstall' custom action is not executed; thus, uninstall *all* native
+	// KeePass images
+	assert(strKeePass.find(_T("\\KeePass.exe")) != tstring::npos);
+	const tstring strArgs = (bInstall ? (_T("install \"") + strKeePass + _T("\"")) :
+		tstring(_T("uninstall KeePass")));
 
 	SHELLEXECUTEINFO sei;
 	ZeroMemory(&sei, sizeof(SHELLEXECUTEINFO));
@@ -108,7 +147,7 @@ void UpdateNativeImage(bool bInstall)
 	sei.fMask = SEE_MASK_NOCLOSEPROCESS;
 	sei.lpVerb = _T("open");
 	sei.lpFile = strNGen.c_str();
-	sei.lpParameters = strParam.c_str();
+	sei.lpParameters = strArgs.c_str();
 	sei.nShow = SW_HIDE;
 	ShellExecuteEx(&sei);
 
@@ -121,106 +160,108 @@ void UpdateNativeImage(bool bInstall)
 
 void RegisterPreLoad(bool bRegister)
 {
-	LPCTSTR lpKey = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+	HKEY hRoot = HKEY_LOCAL_MACHINE;
+	LPCTSTR lpKey = _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
 	LPCTSTR lpName = _T("KeePass 2 PreLoad");
 
-	const std_string strExe = GetKeePassExePath();
+	const tstring strExe = GetKeePassExePath();
 	if(strExe.size() == 0) return;
-	const std_string strValue = (_T("\"") + strExe) + _T("\" --preload");
-
-	HKEY hRoot = HKEY_LOCAL_MACHINE;
-	HKEY h = NULL;
-	LSTATUS l;
+	const tstring strValue = _T("\"") + strExe + _T("\" --preload");
 
 	if(bRegister)
 	{
-		l = RegOpenKeyEx(hRoot, lpKey, 0, KEY_WRITE | KEY_WOW64_64KEY, &h);
-		if((l != ERROR_SUCCESS) || (h == NULL))
-			l = RegCreateKeyEx(hRoot, lpKey, 0, NULL, 0, KEY_WRITE |
-				KEY_WOW64_64KEY, NULL, &h, NULL);
-		if((l == ERROR_SUCCESS) && (h != NULL))
+		HKEY h = NULL;
+		LSTATUS r = RegOpenKeyEx(hRoot, lpKey, 0, KEY_WRITE | KEY_WOW64_64KEY, &h);
+		if((r != ERROR_SUCCESS) || (h == NULL))
+			r = RegCreateKeyEx(hRoot, lpKey, 0, nullptr, 0, KEY_WRITE | KEY_WOW64_64KEY,
+				nullptr, &h, nullptr);
+		if((r == ERROR_SUCCESS) && (h != NULL))
 		{
-			RegSetValueEx(h, lpName, 0, REG_SZ, (const BYTE*)strValue.c_str(),
-				static_cast<DWORD>((strValue.size() + 1) * sizeof(TCHAR)));
+			RegSetValueEx(h, lpName, 0, REG_SZ, reinterpret_cast<const BYTE*>(
+				strValue.c_str()), static_cast<DWORD>((strValue.size() + 1) * sizeof(TCHAR)));
 			RegCloseKey(h);
 		}
 	}
 	else // Unregister
 	{
-		for(size_t i = 0; i < 2; ++i)
+		for(int i = 0; i < 2; ++i)
 		{
-			l = RegOpenKeyEx(hRoot, lpKey, 0, KEY_WRITE |
+			HKEY h = NULL;
+			const LSTATUS r = RegOpenKeyEx(hRoot, lpKey, 0, KEY_WRITE |
 				((i == 0) ? KEY_WOW64_64KEY : KEY_WOW64_32KEY), &h);
-			if((l == ERROR_SUCCESS) && (h != NULL))
+			if((r == ERROR_SUCCESS) && (h != NULL))
 			{
 				RegDeleteValue(h, lpName);
 				RegCloseKey(h);
-				h = NULL;
 			}
 		}
 	}
 }
 
-std_string GetNetInstallRoot()
+tstring GetKnownFolderPath(REFKNOWNFOLDERID rfid)
 {
-	std_string str;
+	static_assert((sizeof(TCHAR) == sizeof(WCHAR)), "Unsupported TCHAR size!");
+	tstring str;
 
-	HKEY hNet = NULL;
-	LONG lRes = RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Microsoft\\.NETFramework"),
-		0, KEY_READ | KEY_WOW64_64KEY, &hNet);
-	if((lRes != ERROR_SUCCESS) || (hNet == NULL)) return str;
+	PWSTR psz = nullptr;
+	if(SUCCEEDED(SHGetKnownFolderPath(rfid, 0, NULL, &psz)) && (psz != nullptr))
+		str = psz;
+	if(psz != nullptr) CoTaskMemFree(psz);
 
-	const DWORD cbData = 2050;
-	BYTE pbData[cbData];
-	ZeroMemory(pbData, cbData * sizeof(BYTE));
-	DWORD dwData = cbData - 2;
-	lRes = RegQueryValueEx(hNet, _T("InstallRoot"), NULL, NULL, pbData, &dwData);
-	if(lRes == ERROR_SUCCESS) str = (LPCTSTR)(LPTSTR)pbData;
-
-	RegCloseKey(hNet);
 	return str;
 }
 
-std_string GetKeePassExePath()
+tstring GetDotNetInstallRoot(bool bArm64)
 {
-	const DWORD cbData = 2050;
-	TCHAR tszName[cbData];
-	ZeroMemory(tszName, cbData * sizeof(TCHAR));
+	HKEY h = NULL;
+	LSTATUS r = RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Microsoft\\.NETFramework"),
+		0, KEY_READ | KEY_WOW64_64KEY, &h);
+	if((r != ERROR_SUCCESS) || (h == NULL)) return tstring();
 
-	GetModuleFileName(NULL, tszName, cbData - 2);
+	LPCTSTR lpName = (bArm64 ? _T("InstallRootArm64") : _T("InstallRoot"));
 
-	for(int i = static_cast<int>(_tcslen(tszName)) - 1; i >= 0; --i)
-	{
-		if(tszName[i] == _T('\\')) break;
-		else tszName[i] = 0;
-	}
+	constexpr DWORD cbBuffer = MAX_PATH * 4 * sizeof(TCHAR);
+	BYTE ab[cbBuffer] = { 0 };
+	DWORD cb = cbBuffer - sizeof(TCHAR);
+	r = RegQueryValueEx(h, lpName, nullptr, nullptr, ab, &cb);
 
-	std_string strPath = tszName;
-	boost::trim_if(strPath, boost::is_any_of(g_lpPathTrimChars));
-	if(strPath.size() == 0) return strPath;
+	RegCloseKey(h);
 
-	return (strPath + _T("KeePass.exe"));
+	return ((r == ERROR_SUCCESS) ? tstring(reinterpret_cast<LPCTSTR>(ab)) : tstring());
 }
 
-std_string FindNGen()
+tstring GetKeePassExePath()
 {
-	std_string strNGen;
+	constexpr DWORD ccBuffer = MAX_PATH * 4;
+	TCHAR tsz[ccBuffer] = { _T('\0') };
 
-	std_string strRoot = GetNetInstallRoot();
-	if(strRoot.size() == 0) return strNGen;
-	EnsureTerminatingSeparator(strRoot);
+	const DWORD cc = GetModuleFileName(NULL, tsz, ccBuffer);
+	if((cc == 0) || (cc == ccBuffer)) { assert(false); return tstring(); }
+	assert(cc == _tcslen(tsz));
 
-	ULONGLONG ullVersion = 0;
-	FindNGenRec(strRoot, strNGen, ullVersion);
+	tstring str = GetFileDirectory(tstring(tsz));
+	if(str.size() != 0) str = EnsureTerminatingSeparator(str);
+	else { assert(false); }
 
-	return strNGen;
+	return (str + _T("KeePass.exe"));
 }
 
-void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
-	ULONGLONG& ullVersion)
+tstring FindNGen(bool bArm64)
 {
-	const std_string strSearch = strPath + _T("*.*");
-	const std_string strNGen = _T("ngen.exe");
+	tstring strRoot = GetDotNetInstallRoot(bArm64);
+	if(strRoot.size() == 0) return tstring();
+	strRoot = EnsureTerminatingSeparator(strRoot);
+
+	tstring strNGenPath;
+	uint64_t uVersion = 0;
+	FindNGenRec(strRoot, strNGenPath, uVersion);
+
+	return strNGenPath;
+}
+
+void FindNGenRec(const tstring& strPath, tstring& strNGenPath, uint64_t& uVersion)
+{
+	const tstring strSearch = strPath + _T("*.*");
 
 	WIN32_FIND_DATA wfd;
 	ZeroMemory(&wfd, sizeof(WIN32_FIND_DATA));
@@ -229,18 +270,20 @@ void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
 
 	do
 	{
-		if((wfd.cFileName[0] == _T('\0')) || (_tcsicmp(wfd.cFileName, _T(".")) == 0) ||
-			(_tcsicmp(wfd.cFileName, _T("..")) == 0)) { }
+		LPCTSTR lpName = wfd.cFileName;
+
+		if((lpName[0] == _T('\0')) || (_tcscmp(lpName, _T(".")) == 0) ||
+			(_tcscmp(lpName, _T("..")) == 0)) { }
 		else if((wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
-			FindNGenRec((strPath + wfd.cFileName) + _T("\\"), strNGenPath, ullVersion);
-		else if(_tcsicmp(wfd.cFileName, strNGen.c_str()) == 0)
+			FindNGenRec((strPath + lpName) + _T("\\"), strNGenPath, uVersion);
+		else if(_tcsicmp(lpName, _T("ngen.exe")) == 0)
 		{
-			const std_string strFullPath = strPath + strNGen;
-			const ULONGLONG ullThisVer = SiuGetFileVersion(strFullPath);
-			if(ullThisVer >= ullVersion)
+			const tstring strFullPath = strPath + lpName;
+			const uint64_t uThis = GetFileVersion64(strFullPath);
+			if(uThis >= uVersion)
 			{
 				strNGenPath = strFullPath;
-				ullVersion = ullThisVer;
+				uVersion = uThis;
 			}
 		}
 	}
@@ -249,58 +292,126 @@ void FindNGenRec(const std_string& strPath, std_string& strNGenPath,
 	FindClose(hFind);
 }
 
-ULONGLONG SiuGetFileVersion(const std_string& strFilePath)
+uint64_t GetFileVersion64(const tstring& strFilePath)
 {
-	DWORD dwDummy = 0;
-	const DWORD dwVerSize = GetFileVersionInfoSize(
-		strFilePath.c_str(), &dwDummy);
-	if(dwVerSize == 0) return 0;
+	DWORD dwHandle = 0;
+	const DWORD cb = GetFileVersionInfoSize(strFilePath.c_str(), &dwHandle);
+	if(cb == 0) return 0;
 
-	boost::scoped_array<BYTE> vVerInfo(new BYTE[dwVerSize]);
-	if(vVerInfo.get() == NULL) return 0; // Out of memory
+	vector<uint8_t> v(cb);
+	if(GetFileVersionInfo(strFilePath.c_str(), dwHandle, cb, v.data()) == FALSE)
+		return 0;
 
-	if(GetFileVersionInfo(strFilePath.c_str(), 0, dwVerSize,
-		vVerInfo.get()) == FALSE) return 0;
+	VS_FIXEDFILEINFO* pffi = nullptr;
+	UINT cbFixed = 0;
+	if((VerQueryValue(v.data(), _T("\\"), reinterpret_cast<LPVOID*>(&pffi),
+		&cbFixed) == FALSE) || (pffi == nullptr))
+		return 0;
+	assert(cbFixed == sizeof(VS_FIXEDFILEINFO));
 
-	VS_FIXEDFILEINFO* pFileInfo = NULL;
-	UINT uFixedInfoLen = 0;
-	if(VerQueryValue(vVerInfo.get(), _T("\\"), (LPVOID*)&pFileInfo,
-		&uFixedInfoLen) == FALSE) return 0;
-	if(pFileInfo == NULL) return 0;
-
-	return ((static_cast<ULONGLONG>(pFileInfo->dwFileVersionMS) <<
-		32) | static_cast<ULONGLONG>(pFileInfo->dwFileVersionLS));
+	return ((static_cast<uint64_t>(pffi->dwFileVersionMS) << 32) | pffi->dwFileVersionLS);
 }
 
 void CheckDotNetInstalled()
 {
-	OSVERSIONINFO osv;
-	ZeroMemory(&osv, sizeof(OSVERSIONINFO));
-	osv.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&osv);
-	if(osv.dwMajorVersion >= 6) return; // .NET ships with Vista and higher
+	if(IsWindows7OrGreater()) return; // .NET 3.5 is included in Windows 7 and later
+	if(FindNGen(false).size() != 0) return;
 
-	const std_string strNGen = FindNGen();
-	if(strNGen.size() == 0)
+	tstring strMsg = _T("KeePass 2.x requires the Microsoft .NET Framework 3.5 or later. ");
+	strMsg += _T("This framework currently does not seem to be installed on your ");
+	strMsg += _T("computer. Without this framework, KeePass will not run.\r\n\r\n");
+	strMsg += _T("The Microsoft .NET Framework is available as free download from the ");
+	strMsg += _T("Microsoft website.\r\n\r\n");
+	strMsg += _T("Do you want to visit the Microsoft website now?");
+
+	const int r = MessageBox(NULL, strMsg.c_str(), _T("KeePass Setup"),
+		MB_ICONQUESTION | MB_YESNO);
+	if(r == IDYES)
 	{
-		std_string strMsg = _T("KeePass 2.x requires the Microsoft .NET Framework 3.5 or higher. ");
-		strMsg += _T("This framework currently does not seem to be installed ");
-		strMsg += _T("on your computer. Without this framework, KeePass will not run.\r\n\r\n");
-		strMsg += _T("The Microsoft .NET Framework is available as free download from the ");
-		strMsg += _T("Microsoft website.\r\n\r\n");
-		strMsg += _T("Do you want to visit the Microsoft website now?");
+		SHELLEXECUTEINFO sei;
+		ZeroMemory(&sei, sizeof(SHELLEXECUTEINFO));
+		sei.cbSize = sizeof(SHELLEXECUTEINFO);
+		sei.lpVerb = _T("open");
+		sei.lpFile = _T("https://dotnet.microsoft.com/en-us/download/dotnet-framework");
+		sei.nShow = SW_SHOW;
+		ShellExecuteEx(&sei);
+	}
+}
 
-		const int nRes = MessageBox(NULL, strMsg.c_str(), _T("KeePass Setup"),
-			MB_ICONQUESTION | MB_YESNO);
-		if(nRes == IDYES)
+void CreateLink(const tstring& strLinkFilePath, const tstring& strTargetFilePath)
+{
+	if(strLinkFilePath.size() == 0) { assert(false); return; }
+	if(strTargetFilePath.size() == 0) { assert(false); return; }
+
+	IShellLink* psl = nullptr;
+	if(FAILED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER,
+		IID_PPV_ARGS(&psl))) || (psl == nullptr))
+		return;
+
+	psl->SetPath(strTargetFilePath.c_str());
+
+	const tstring strWD = GetFileDirectory(strTargetFilePath);
+	psl->SetWorkingDirectory(strWD.c_str());
+
+	IPersistFile* ppf = nullptr;
+	if(SUCCEEDED(psl->QueryInterface(IID_PPV_ARGS(&ppf))) && (ppf != nullptr))
+	{
+		static_assert((sizeof(OLECHAR) == sizeof(TCHAR)), "Unsupported OLECHAR size!");
+		ppf->Save(strLinkFilePath.c_str(), TRUE);
+
+		ppf->Release();
+	}
+	else { assert(false); }
+
+	psl->Release();
+}
+
+void UpdateLinks(bool bInstall, bool bAllUsers)
+{
+	const tstring strPrograms = GetKnownFolderPath(bAllUsers ?
+		FOLDERID_CommonPrograms : FOLDERID_Programs);
+	const tstring strDesktop = GetKnownFolderPath(bAllUsers ?
+		FOLDERID_PublicDesktop : FOLDERID_Desktop);
+
+	const tstring strExe = GetKeePassExePath();
+	const tstring strChm = EnsureTerminatingSeparator(GetFileDirectory(strExe)) +
+		_T("KeePass.chm");
+
+	if(strPrograms.size() != 0)
+	{
+		const tstring strLnkDirectory = EnsureTerminatingSeparator(strPrograms) +
+			_T("KeePass");
+		const tstring strLnkExe = EnsureTerminatingSeparator(strLnkDirectory) +
+			_T("KeePass.lnk");
+		const tstring strLnkChm = EnsureTerminatingSeparator(strLnkDirectory) +
+			_T("KeePass User Manual.lnk");
+
+		if(bInstall)
 		{
-			SHELLEXECUTEINFO sei;
-			ZeroMemory(&sei, sizeof(SHELLEXECUTEINFO));
-			sei.cbSize = sizeof(SHELLEXECUTEINFO);
-			sei.lpVerb = _T("open");
-			sei.lpFile = _T("https://msdn.microsoft.com/en-us/netframework/aa569263.aspx");
-			sei.nShow = SW_SHOW;
-			ShellExecuteEx(&sei);
+			SHCreateDirectoryEx(NULL, strLnkDirectory.c_str(), nullptr);
+			CreateLink(strLnkExe, strExe);
+			CreateLink(strLnkChm, strChm);
+		}
+		else
+		{
+			DeleteFile(strLnkExe.c_str());
+			DeleteFile(strLnkChm.c_str());
+			RemoveDirectory(strLnkDirectory.c_str());
 		}
 	}
+	else { assert(false); }
+
+	if(strDesktop.size() != 0)
+	{
+		const tstring strLnkExe = EnsureTerminatingSeparator(strDesktop) +
+			_T("KeePass.lnk");
+
+		if(bInstall)
+		{
+			SHCreateDirectoryEx(NULL, strDesktop.c_str(), nullptr);
+			CreateLink(strLnkExe, strExe);
+		}
+		else DeleteFile(strLnkExe.c_str());
+	}
+	else { assert(false); }
 }

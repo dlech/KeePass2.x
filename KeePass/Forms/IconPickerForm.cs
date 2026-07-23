@@ -114,6 +114,8 @@ namespace KeePass.Forms
 			}
 			else { Debug.Assert(false); }
 
+			m_lvCustomIcons.ItemDeleteButton = m_btnCustomDelete;
+
 			RecreateCustomIconList(m_puDefaultCustomIcon);
 			CreateCustomContextMenu();
 
@@ -237,19 +239,25 @@ namespace KeePass.Forms
 				lvi.ImageIndex = i;
 				lvi.Tag = ci;
 
-				Image img = ci.GetImage();
 				if(bMulti)
 					lvi.ToolTipText = ci.Name;
-				else if(img != null)
+				else
 				{
 					if(sb.Length != 0) sb.Remove(0, sb.Length);
 
 					if(ci.Name.Length != 0) sb.AppendLine(ci.Name);
-					sb.Append(img.Width);
-					sb.Append(" \u00D7 ");
-					sb.Append(img.Height);
-					sb.AppendLine(" px");
+
+					Image img = ci.GetImage();
+					if((img != null) && ci.IsImageValid)
+					{
+						sb.Append(img.Width);
+						sb.Append(" \u00D7 ");
+						sb.Append(img.Height);
+						sb.AppendLine(" px");
+					}
+
 					sb.Append(StrUtil.FormatDataSizeKB((ulong)ci.ImageDataPng.Length));
+
 #if DEBUG
 					if(ci.LastModificationTime.HasValue)
 					{
@@ -456,7 +464,7 @@ namespace KeePass.Forms
 			sbBuffer.Append(strEnding);
 		}
 
-		private void OnBtnCustomRemove(object sender, EventArgs e)
+		private void OnBtnCustomDelete(object sender, EventArgs e)
 		{
 			ListView.SelectedListViewItemCollection lvsic = m_lvCustomIcons.SelectedItems;
 			if(lvsic.Count == 0) { Debug.Assert(false); return; }
@@ -475,6 +483,7 @@ namespace KeePass.Forms
 
 			RecreateCustomIconList(PwUuid.Zero);
 			EnableControlsEx();
+			UIUtil.SetFocus(m_lvCustomIcons, this);
 		}
 
 		private void OnIconsItemActivate(object sender, EventArgs e)
@@ -567,7 +576,12 @@ namespace KeePass.Forms
 			try
 			{
 				Image img = ci.GetImage();
-				if(img == null) { Debug.Assert(false); return; }
+				if((img == null) || !ci.IsImageValid)
+				{
+					Debug.Assert(false);
+					File.WriteAllBytes(strFile, ci.ImageDataPng);
+					return;
+				}
 
 				// string strExt = UrlUtil.GetExtension(strFile);
 				ImageFormat fmt = ImageFormat.Png;

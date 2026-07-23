@@ -318,21 +318,21 @@
             this.m_ctxGroupFind,
             this.m_ctxGroupFindProfiles});
 			this.m_ctxGroupList.Name = "m_ctxGroupList";
-			this.m_ctxGroupList.Size = new System.Drawing.Size(180, 48);
+			this.m_ctxGroupList.Size = new System.Drawing.Size(181, 48);
 			this.m_ctxGroupList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxGroupListOpening);
 			// 
 			// m_ctxGroupFind
 			// 
 			this.m_ctxGroupFind.Image = global::KeePass.Properties.Resources.B16x16_XMag;
 			this.m_ctxGroupFind.Name = "m_ctxGroupFind";
-			this.m_ctxGroupFind.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupFind.Size = new System.Drawing.Size(180, 22);
 			this.m_ctxGroupFind.Text = "&Find in This Group...";
 			this.m_ctxGroupFind.Click += new System.EventHandler(this.OnFindInGroup);
 			// 
 			// m_ctxGroupFindProfiles
 			// 
 			this.m_ctxGroupFindProfiles.Name = "m_ctxGroupFindProfiles";
-			this.m_ctxGroupFindProfiles.Size = new System.Drawing.Size(179, 22);
+			this.m_ctxGroupFindProfiles.Size = new System.Drawing.Size(180, 22);
 			this.m_ctxGroupFindProfiles.Text = "&Search Profiles";
 			this.m_ctxGroupFindProfiles.DropDownOpening += new System.EventHandler(this.OnCtxGroupFindProfilesOpening);
 			// 
@@ -349,42 +349,42 @@
             this.m_ctxEntrySep2,
             this.m_ctxEntryRearrange});
 			this.m_ctxPwList.Name = "m_ctxPwList";
-			this.m_ctxPwList.Size = new System.Drawing.Size(162, 154);
+			this.m_ctxPwList.Size = new System.Drawing.Size(163, 154);
 			this.m_ctxPwList.Opening += new System.ComponentModel.CancelEventHandler(this.OnCtxPwListOpening);
 			// 
 			// m_ctxEntryUrl
 			// 
 			this.m_ctxEntryUrl.Name = "m_ctxEntryUrl";
-			this.m_ctxEntryUrl.Size = new System.Drawing.Size(161, 22);
+			this.m_ctxEntryUrl.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryUrl.Text = "<URL(s)>";
 			// 
 			// m_ctxEntryOtherData
 			// 
 			this.m_ctxEntryOtherData.Name = "m_ctxEntryOtherData";
-			this.m_ctxEntryOtherData.Size = new System.Drawing.Size(161, 22);
+			this.m_ctxEntryOtherData.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryOtherData.Text = "<OtherData>";
 			// 
 			// m_ctxEntryAttachments
 			// 
 			this.m_ctxEntryAttachments.Name = "m_ctxEntryAttachments";
-			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(161, 22);
+			this.m_ctxEntryAttachments.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryAttachments.Text = "<Attachments>";
 			// 
 			// m_ctxEntrySep0
 			// 
 			this.m_ctxEntrySep0.Name = "m_ctxEntrySep0";
-			this.m_ctxEntrySep0.Size = new System.Drawing.Size(158, 6);
+			this.m_ctxEntrySep0.Size = new System.Drawing.Size(159, 6);
 			// 
 			// m_ctxEntryAutoTypeAdv
 			// 
 			this.m_ctxEntryAutoTypeAdv.Name = "m_ctxEntryAutoTypeAdv";
-			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(161, 22);
+			this.m_ctxEntryAutoTypeAdv.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryAutoTypeAdv.Text = "<AutoTypeAdv>";
 			// 
 			// m_ctxEntrySep1
 			// 
 			this.m_ctxEntrySep1.Name = "m_ctxEntrySep1";
-			this.m_ctxEntrySep1.Size = new System.Drawing.Size(158, 6);
+			this.m_ctxEntrySep1.Size = new System.Drawing.Size(159, 6);
 			// 
 			// m_ctxEntryEditQuick
 			// 
@@ -392,40 +392,40 @@
             this.m_ctxEntryTagAdd,
             this.m_ctxEntryTagRemove});
 			this.m_ctxEntryEditQuick.Name = "m_ctxEntryEditQuick";
-			this.m_ctxEntryEditQuick.Size = new System.Drawing.Size(161, 22);
+			this.m_ctxEntryEditQuick.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryEditQuick.Text = "<EditQuick>";
 			// 
 			// m_ctxEntryTagAdd
 			// 
 			this.m_ctxEntryTagAdd.Name = "m_ctxEntryTagAdd";
-			this.m_ctxEntryTagAdd.Size = new System.Drawing.Size(151, 22);
+			this.m_ctxEntryTagAdd.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntryTagAdd.Text = "<AddTag>";
 			this.m_ctxEntryTagAdd.DropDownOpening += new System.EventHandler(this.OnEntryTagAddOpening);
 			// 
 			// m_ctxEntryTagRemove
 			// 
 			this.m_ctxEntryTagRemove.Name = "m_ctxEntryTagRemove";
-			this.m_ctxEntryTagRemove.Size = new System.Drawing.Size(151, 22);
+			this.m_ctxEntryTagRemove.Size = new System.Drawing.Size(152, 22);
 			this.m_ctxEntryTagRemove.Text = "<RemoveTag>";
 			this.m_ctxEntryTagRemove.DropDownOpening += new System.EventHandler(this.OnEntryTagRemoveOpening);
 			// 
 			// m_ctxEntrySep2
 			// 
 			this.m_ctxEntrySep2.Name = "m_ctxEntrySep2";
-			this.m_ctxEntrySep2.Size = new System.Drawing.Size(158, 6);
+			this.m_ctxEntrySep2.Size = new System.Drawing.Size(159, 6);
 			// 
 			// m_ctxEntryRearrange
 			// 
 			this.m_ctxEntryRearrange.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_ctxEntryMoveToGroup});
 			this.m_ctxEntryRearrange.Name = "m_ctxEntryRearrange";
-			this.m_ctxEntryRearrange.Size = new System.Drawing.Size(161, 22);
+			this.m_ctxEntryRearrange.Size = new System.Drawing.Size(162, 22);
 			this.m_ctxEntryRearrange.Text = "<Rearrange>";
 			// 
 			// m_ctxEntryMoveToGroup
 			// 
 			this.m_ctxEntryMoveToGroup.Name = "m_ctxEntryMoveToGroup";
-			this.m_ctxEntryMoveToGroup.Size = new System.Drawing.Size(165, 22);
+			this.m_ctxEntryMoveToGroup.Size = new System.Drawing.Size(166, 22);
 			this.m_ctxEntryMoveToGroup.Text = "<MoveToGroup>";
 			this.m_ctxEntryMoveToGroup.DropDownOpening += new System.EventHandler(this.OnEntryMoveToGroupOpening);
 			// 
@@ -1016,7 +1016,7 @@
 			// 
 			this.m_menuEntryCopyUserName.Image = global::KeePass.Properties.Resources.B16x16_Personal;
 			this.m_menuEntryCopyUserName.Name = "m_menuEntryCopyUserName";
-			this.m_menuEntryCopyUserName.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryCopyUserName.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryCopyUserName.Text = "Copy &User Name";
 			this.m_menuEntryCopyUserName.Click += new System.EventHandler(this.OnEntryCopyUserName);
 			// 
@@ -1024,7 +1024,7 @@
 			// 
 			this.m_menuEntryCopyPassword.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Info;
 			this.m_menuEntryCopyPassword.Name = "m_menuEntryCopyPassword";
-			this.m_menuEntryCopyPassword.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryCopyPassword.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryCopyPassword.Text = "<>";
 			this.m_menuEntryCopyPassword.Click += new System.EventHandler(this.OnEntryCopyPassword);
 			// 
@@ -1034,7 +1034,7 @@
             this.m_menuEntryOpenUrl,
             this.m_menuEntryCopyUrl});
 			this.m_menuEntryUrl.Name = "m_menuEntryUrl";
-			this.m_menuEntryUrl.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryUrl.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryUrl.Text = "UR&L(s)";
 			// 
 			// m_menuEntryOpenUrl
@@ -1056,44 +1056,44 @@
 			// m_menuEntryOtherData
 			// 
 			this.m_menuEntryOtherData.Name = "m_menuEntryOtherData";
-			this.m_menuEntryOtherData.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryOtherData.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryOtherData.Text = "&Other Data";
 			// 
 			// m_menuEntryAttachments
 			// 
 			this.m_menuEntryAttachments.Name = "m_menuEntryAttachments";
-			this.m_menuEntryAttachments.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryAttachments.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryAttachments.Text = "Attach&ments";
 			// 
 			// m_menuEntrySep0
 			// 
 			this.m_menuEntrySep0.Name = "m_menuEntrySep0";
-			this.m_menuEntrySep0.Size = new System.Drawing.Size(172, 6);
+			this.m_menuEntrySep0.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_menuEntryPerformAutoType
 			// 
 			this.m_menuEntryPerformAutoType.Image = global::KeePass.Properties.Resources.B16x16_KTouch;
 			this.m_menuEntryPerformAutoType.Name = "m_menuEntryPerformAutoType";
-			this.m_menuEntryPerformAutoType.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryPerformAutoType.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryPerformAutoType.Text = "Perform Auto-&Type";
 			this.m_menuEntryPerformAutoType.Click += new System.EventHandler(this.OnEntryPerformAutoType);
 			// 
 			// m_menuEntryAutoTypeAdv
 			// 
 			this.m_menuEntryAutoTypeAdv.Name = "m_menuEntryAutoTypeAdv";
-			this.m_menuEntryAutoTypeAdv.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryAutoTypeAdv.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryAutoTypeAdv.Text = "Per&form Auto-Type";
 			// 
 			// m_menuEntrySep1
 			// 
 			this.m_menuEntrySep1.Name = "m_menuEntrySep1";
-			this.m_menuEntrySep1.Size = new System.Drawing.Size(172, 6);
+			this.m_menuEntrySep1.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_menuEntryAdd
 			// 
 			this.m_menuEntryAdd.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Import;
 			this.m_menuEntryAdd.Name = "m_menuEntryAdd";
-			this.m_menuEntryAdd.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryAdd.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryAdd.Text = "&Add Entry...";
 			this.m_menuEntryAdd.Click += new System.EventHandler(this.OnEntryAdd);
 			// 
@@ -1101,7 +1101,7 @@
 			// 
 			this.m_menuEntryEdit.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Sign;
 			this.m_menuEntryEdit.Name = "m_menuEntryEdit";
-			this.m_menuEntryEdit.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryEdit.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryEdit.Text = "<>";
 			this.m_menuEntryEdit.Click += new System.EventHandler(this.OnEntryEdit);
 			// 
@@ -1119,14 +1119,14 @@
             this.m_menuEntryEditQuickSep2,
             this.m_menuEntryOtpGenSettings});
 			this.m_menuEntryEditQuick.Name = "m_menuEntryEditQuick";
-			this.m_menuEntryEditQuick.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryEditQuick.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryEditQuick.Text = "<>";
 			// 
 			// m_menuEntryIcon
 			// 
 			this.m_menuEntryIcon.Image = global::KeePass.Properties.Resources.B16x16_Spreadsheet;
 			this.m_menuEntryIcon.Name = "m_menuEntryIcon";
-			this.m_menuEntryIcon.Size = new System.Drawing.Size(204, 22);
+			this.m_menuEntryIcon.Size = new System.Drawing.Size(205, 22);
 			this.m_menuEntryIcon.Text = "&Icon...";
 			this.m_menuEntryIcon.Click += new System.EventHandler(this.OnEntryMassSetIcon);
 			// 
@@ -1142,7 +1142,7 @@
             this.m_menuEntryColorSep1,
             this.m_menuEntryColorCustom});
 			this.m_menuEntryColor.Name = "m_menuEntryColor";
-			this.m_menuEntryColor.Size = new System.Drawing.Size(204, 22);
+			this.m_menuEntryColor.Size = new System.Drawing.Size(205, 22);
 			this.m_menuEntryColor.Text = "&Color";
 			// 
 			// m_menuEntryColorStandard
@@ -1200,14 +1200,14 @@
 			// m_menuEntryEditQuickSep0
 			// 
 			this.m_menuEntryEditQuickSep0.Name = "m_menuEntryEditQuickSep0";
-			this.m_menuEntryEditQuickSep0.Size = new System.Drawing.Size(201, 6);
+			this.m_menuEntryEditQuickSep0.Size = new System.Drawing.Size(202, 6);
 			// 
 			// m_menuEntryTagAdd
 			// 
 			this.m_menuEntryTagAdd.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_menuEntryTagNew});
 			this.m_menuEntryTagAdd.Name = "m_menuEntryTagAdd";
-			this.m_menuEntryTagAdd.Size = new System.Drawing.Size(204, 22);
+			this.m_menuEntryTagAdd.Size = new System.Drawing.Size(205, 22);
 			this.m_menuEntryTagAdd.Text = "&Add Tag";
 			this.m_menuEntryTagAdd.DropDownOpening += new System.EventHandler(this.OnEntryTagAddOpening);
 			// 
@@ -1215,27 +1215,27 @@
 			// 
 			this.m_menuEntryTagNew.Image = global::KeePass.Properties.Resources.B16x16_KNotes;
 			this.m_menuEntryTagNew.Name = "m_menuEntryTagNew";
-			this.m_menuEntryTagNew.Size = new System.Drawing.Size(128, 22);
+			this.m_menuEntryTagNew.Size = new System.Drawing.Size(129, 22);
 			this.m_menuEntryTagNew.Text = "&New Tag...";
 			this.m_menuEntryTagNew.Click += new System.EventHandler(this.OnEntrySelectedNewTag);
 			// 
 			// m_menuEntryTagRemove
 			// 
 			this.m_menuEntryTagRemove.Name = "m_menuEntryTagRemove";
-			this.m_menuEntryTagRemove.Size = new System.Drawing.Size(204, 22);
+			this.m_menuEntryTagRemove.Size = new System.Drawing.Size(205, 22);
 			this.m_menuEntryTagRemove.Text = "&Remove Tag";
 			this.m_menuEntryTagRemove.DropDownOpening += new System.EventHandler(this.OnEntryTagRemoveOpening);
 			// 
 			// m_menuEntryEditQuickSep1
 			// 
 			this.m_menuEntryEditQuickSep1.Name = "m_menuEntryEditQuickSep1";
-			this.m_menuEntryEditQuickSep1.Size = new System.Drawing.Size(201, 6);
+			this.m_menuEntryEditQuickSep1.Size = new System.Drawing.Size(202, 6);
 			// 
 			// m_menuEntryExpiresNow
 			// 
 			this.m_menuEntryExpiresNow.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEntryExpiresNow.Name = "m_menuEntryExpiresNow";
-			this.m_menuEntryExpiresNow.Size = new System.Drawing.Size(204, 22);
+			this.m_menuEntryExpiresNow.Size = new System.Drawing.Size(205, 22);
 			this.m_menuEntryExpiresNow.Text = "&Expires: Now";
 			this.m_menuEntryExpiresNow.Click += new System.EventHandler(this.OnEntryExpiresNow);
 			// 
@@ -1243,20 +1243,20 @@
 			// 
 			this.m_menuEntryExpiresNever.Image = global::KeePass.Properties.Resources.B16x16_History_Clear;
 			this.m_menuEntryExpiresNever.Name = "m_menuEntryExpiresNever";
-			this.m_menuEntryExpiresNever.Size = new System.Drawing.Size(204, 22);
+			this.m_menuEntryExpiresNever.Size = new System.Drawing.Size(205, 22);
 			this.m_menuEntryExpiresNever.Text = "Expires: &Never";
 			this.m_menuEntryExpiresNever.Click += new System.EventHandler(this.OnEntryExpiresNever);
 			// 
 			// m_menuEntryEditQuickSep2
 			// 
 			this.m_menuEntryEditQuickSep2.Name = "m_menuEntryEditQuickSep2";
-			this.m_menuEntryEditQuickSep2.Size = new System.Drawing.Size(201, 6);
+			this.m_menuEntryEditQuickSep2.Size = new System.Drawing.Size(202, 6);
 			// 
 			// m_menuEntryOtpGenSettings
 			// 
 			this.m_menuEntryOtpGenSettings.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Gen;
 			this.m_menuEntryOtpGenSettings.Name = "m_menuEntryOtpGenSettings";
-			this.m_menuEntryOtpGenSettings.Size = new System.Drawing.Size(204, 22);
+			this.m_menuEntryOtpGenSettings.Size = new System.Drawing.Size(205, 22);
 			this.m_menuEntryOtpGenSettings.Text = "&OTP Generator Settings...";
 			this.m_menuEntryOtpGenSettings.Click += new System.EventHandler(this.OnEntryOtpGenSettings);
 			// 
@@ -1264,7 +1264,7 @@
 			// 
 			this.m_menuEntryDuplicate.Image = global::KeePass.Properties.Resources.B16x16_KGPG_Key2;
 			this.m_menuEntryDuplicate.Name = "m_menuEntryDuplicate";
-			this.m_menuEntryDuplicate.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryDuplicate.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryDuplicate.Text = "<>";
 			this.m_menuEntryDuplicate.Click += new System.EventHandler(this.OnEntryDuplicate);
 			// 
@@ -1272,26 +1272,26 @@
 			// 
 			this.m_menuEntryDelete.Image = global::KeePass.Properties.Resources.B16x16_DeleteEntry;
 			this.m_menuEntryDelete.Name = "m_menuEntryDelete";
-			this.m_menuEntryDelete.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryDelete.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryDelete.Text = "<>";
 			this.m_menuEntryDelete.Click += new System.EventHandler(this.OnEntryDelete);
 			// 
 			// m_menuEntrySep2
 			// 
 			this.m_menuEntrySep2.Name = "m_menuEntrySep2";
-			this.m_menuEntrySep2.Size = new System.Drawing.Size(172, 6);
+			this.m_menuEntrySep2.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_menuEntrySelectAll
 			// 
 			this.m_menuEntrySelectAll.Name = "m_menuEntrySelectAll";
-			this.m_menuEntrySelectAll.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntrySelectAll.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntrySelectAll.Text = "&Select All";
 			this.m_menuEntrySelectAll.Click += new System.EventHandler(this.OnEntrySelectAll);
 			// 
 			// m_menuEntrySep3
 			// 
 			this.m_menuEntrySep3.Name = "m_menuEntrySep3";
-			this.m_menuEntrySep3.Size = new System.Drawing.Size(172, 6);
+			this.m_menuEntrySep3.Size = new System.Drawing.Size(173, 6);
 			// 
 			// m_menuEntryRearrange
 			// 
@@ -1304,7 +1304,7 @@
             this.m_menuEntryMoveToGroup,
             this.m_menuEntryMoveToPreviousParent});
 			this.m_menuEntryRearrange.Name = "m_menuEntryRearrange";
-			this.m_menuEntryRearrange.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryRearrange.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryRearrange.Text = "&Rearrange";
 			// 
 			// m_menuEntryMoveToTop
@@ -1367,7 +1367,7 @@
             this.m_menuEntryCompareMark,
             this.m_menuEntryCompare1});
 			this.m_menuEntryCompare.Name = "m_menuEntryCompare";
-			this.m_menuEntryCompare.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryCompare.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryCompare.Text = "&Compare";
 			this.m_menuEntryCompare.DropDownOpening += new System.EventHandler(this.OnEntryCompareOpening);
 			// 
@@ -1410,7 +1410,7 @@
             this.m_menuEntryPrint,
             this.m_menuEntryExport});
 			this.m_menuEntryDX.Name = "m_menuEntryDX";
-			this.m_menuEntryDX.Size = new System.Drawing.Size(175, 22);
+			this.m_menuEntryDX.Size = new System.Drawing.Size(176, 22);
 			this.m_menuEntryDX.Text = "Data E&xchange";
 			this.m_menuEntryDX.DropDownOpening += new System.EventHandler(this.OnEntryDXOpening);
 			// 
@@ -1822,14 +1822,14 @@
 			// m_menuViewTanSimpleList
 			// 
 			this.m_menuViewTanSimpleList.Name = "m_menuViewTanSimpleList";
-			this.m_menuViewTanSimpleList.Size = new System.Drawing.Size(295, 22);
+			this.m_menuViewTanSimpleList.Size = new System.Drawing.Size(296, 22);
 			this.m_menuViewTanSimpleList.Text = "Use &Simple List View for TAN-Only Groups";
 			this.m_menuViewTanSimpleList.Click += new System.EventHandler(this.OnViewTanSimpleListClick);
 			// 
 			// m_menuViewTanIndices
 			// 
 			this.m_menuViewTanIndices.Name = "m_menuViewTanIndices";
-			this.m_menuViewTanIndices.Size = new System.Drawing.Size(295, 22);
+			this.m_menuViewTanIndices.Size = new System.Drawing.Size(296, 22);
 			this.m_menuViewTanIndices.Text = "Show TAN &Indices in Entry Titles";
 			this.m_menuViewTanIndices.Click += new System.EventHandler(this.OnViewTanIndicesClick);
 			// 
@@ -1866,7 +1866,7 @@
             this.m_menuToolsSep2,
             this.m_menuToolsOptions});
 			this.m_menuTools.Name = "m_menuTools";
-			this.m_menuTools.Size = new System.Drawing.Size(46, 20);
+			this.m_menuTools.Size = new System.Drawing.Size(47, 20);
 			this.m_menuTools.Text = "&Tools";
 			// 
 			// m_menuToolsPwGenerator
@@ -2310,7 +2310,6 @@
 			// 
 			this.m_tbQuickFind.Name = "m_tbQuickFind";
 			this.m_tbQuickFind.Size = new System.Drawing.Size(121, 25);
-			this.m_tbQuickFind.SelectedIndexChanged += new System.EventHandler(this.OnQuickFindSelectedIndexChanged);
 			this.m_tbQuickFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnQuickFindKeyUp);
 			this.m_tbQuickFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnQuickFindKeyDown);
 			// 

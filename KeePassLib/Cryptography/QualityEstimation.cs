@@ -716,16 +716,10 @@ namespace KeePassLib.Cryptography
 			if(nZeros < strNumber.Length)
 			{
 				string strNonZero = strNumber.Substring(nZeros);
-
-#if KeePassLibSD
-				try { dblCost += Log2(double.Parse(strNonZero)); }
-				catch(Exception) { Debug.Assert(false); return; }
-#else
 				double d;
-				if(double.TryParse(strNonZero, out d))
+				if(StrUtil.TryParseDoubleInvariant(strNonZero, out d))
 					dblCost += Log2(d);
 				else { Debug.Assert(false); return; }
-#endif
 			}
 
 			vPatterns[i].Add(new QePatternInstance(i, strNumber.Length,

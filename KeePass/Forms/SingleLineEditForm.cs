@@ -118,7 +118,7 @@ namespace KeePass.Forms
 					m_cmbEdit.Items.Add(strItem);
 				m_cmbEdit.EndUpdate();
 
-				UIUtil.EnableAutoCompletion(m_cmbEdit, false);
+				// UIUtil.EnableAutoCompletion(m_cmbEdit, false); // KPB 2349
 			}
 
 			m_cEdit.Text = m_strDefaultText;

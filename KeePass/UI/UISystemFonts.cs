@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -121,14 +122,15 @@ namespace KeePass.UI
 
 		private static Font KdeCreateFont(string strDef)
 		{
-			string[] v = strDef.Split(new char[] { ',' });
+			string[] v = strDef.Split(',');
 			if((v == null) || (v.Length < 6)) { Debug.Assert(false); return null; }
 
 			for(int i = 0; i < v.Length; ++i)
 				v[i] = v[i].Trim();
 
 			float fSize;
-			if(!float.TryParse(v[1], out fSize)) { Debug.Assert(false); return null; }
+			if(!float.TryParse(v[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo,
+				out fSize)) { Debug.Assert(false); return null; }
 
 			FontStyle fs = FontStyle.Regular;
 			if(v[4] == "75") fs |= FontStyle.Bold;
@@ -139,7 +141,7 @@ namespace KeePass.UI
 
 		private static void GnomeLoadFonts(string strHome)
 		{
-			string strConfig = strHome + @".gconf/desktop/gnome/interface/%gconf.xml";
+			string strConfig = strHome + ".gconf/desktop/gnome/interface/%gconf.xml";
 			if(!File.Exists(strConfig)) return;
 
 			XmlDocument xd = XmlUtilEx.LoadXmlDocument(strConfig, StrUtil.Utf8);

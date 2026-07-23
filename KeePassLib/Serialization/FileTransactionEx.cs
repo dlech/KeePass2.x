@@ -373,8 +373,7 @@ namespace KeePassLib.Serialization
 
 		private bool TxfMoveWithTx()
 		{
-			IntPtr hTx = new IntPtr((int)NativeMethods.INVALID_HANDLE_VALUE);
-			Debug.Assert(hTx.ToInt64() == NativeMethods.INVALID_HANDLE_VALUE);
+			IntPtr hTx = NativeMethods.INVALID_HANDLE_VALUE;
 			try
 			{
 				string strTx = PwDefs.ShortProductName + " TxF - " +
@@ -385,7 +384,7 @@ namespace KeePassLib.Serialization
 
 				hTx = NativeMethods.CreateTransaction(IntPtr.Zero,
 					IntPtr.Zero, 0, 0, 0, 0, strTx);
-				if(hTx.ToInt64() == NativeMethods.INVALID_HANDLE_VALUE)
+				if(hTx == NativeMethods.INVALID_HANDLE_VALUE)
 				{
 					Debug.Assert(false, (new Win32Exception()).Message);
 					return false;
@@ -411,7 +410,7 @@ namespace KeePassLib.Serialization
 			catch(Exception) { Debug.Assert(false); }
 			finally
 			{
-				if(hTx.ToInt64() != NativeMethods.INVALID_HANDLE_VALUE)
+				if(hTx != NativeMethods.INVALID_HANDLE_VALUE)
 				{
 					try { if(!NativeMethods.CloseHandle(hTx)) { Debug.Assert(false); } }
 					catch(Exception) { Debug.Assert(false); }

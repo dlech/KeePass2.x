@@ -40,6 +40,8 @@ namespace KeePass.UI
 		{
 			if(Program.DesignMode) return;
 
+			Debug.Assert(this.TabStop); // Cf. OnTabStopChanged
+
 			this.DoubleBuffered = true;
 		}
 
@@ -252,6 +254,18 @@ namespace KeePass.UI
 		protected override void OnPaintBackground(PaintEventArgs pevent)
 		{
 			// base.OnPaintBackground(pevent);
+		}
+
+		protected override void OnTabStopChanged(EventArgs e)
+		{
+			if(!Program.DesignMode && AccessibilityEx.Enabled && !this.TabStop)
+			{
+				Debug.Assert(!this.IsHandleCreated); // Only designer code is expected
+				this.TabStop = true; // Raises event
+				return;
+			}
+
+			base.OnTabStopChanged(e);
 		}
 	}
 }
