@@ -66,6 +66,7 @@ namespace KeePass.Forms
 			this.Icon = AppIcons.Default;
 			this.Text = m_strTitle;
 
+			UIUtil.Configure(m_wbMain, true, false);
 			UIUtil.SetWebBrowserDocument(m_wbMain, m_strDocHtml);
 
 			m_uBlockEvents = 0;

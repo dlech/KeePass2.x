@@ -159,7 +159,7 @@ namespace KeePass.UI
 					// if(this.FontSizeMaximum > 0.0f)
 					//	dlg.MaxSize = (int)Math.Round(this.FontSizeMaximum);
 
-					if(dlg.ShowDialog() == DialogResult.OK)
+					if(UIUtil.ShowDialog(dlg) == DialogResult.OK)
 					{
 						m_af = new AceFont(dlg.Font, true);
 						UpdateUI();

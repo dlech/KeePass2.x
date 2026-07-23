@@ -57,8 +57,7 @@ namespace KeePass.Forms
 			StatusProgressForm dlg = new StatusProgressForm();
 			dlg.InitEx(strTitle, bCanCancel, bMarqueeProgress, fOwner);
 
-			if(fOwner != null) dlg.Show(fOwner);
-			else dlg.Show();
+			UIUtil.Show(dlg, fOwner);
 
 			dlg.StartLogging(strInitialOp, false);
 
@@ -71,6 +70,7 @@ namespace KeePass.Forms
 
 			dlg.EndLogging();
 			dlg.CloseEx();
+
 			UIUtil.DestroyForm(dlg);
 		}
 

@@ -424,7 +424,7 @@ namespace KeePass.Util
 
 		public static bool IsValidAutoTypeWindow(IntPtr hWnd, bool bBeepIfNot)
 		{
-			bool bValid = !GlobalWindowManager.HasWindowMW(hWnd);
+			bool bValid = !GlobalWindowManager.HasWindowEx(hWnd);
 
 			if(!bValid && bBeepIfNot) SystemSounds.Beep.Play();
 
@@ -504,9 +504,8 @@ namespace KeePass.Util
 				AutoTypeCtxForm dlg = new AutoTypeCtxForm();
 				dlg.InitEx(lCtxs, ilIcons);
 
-				bool bOK = (dlg.ShowDialog() == DialogResult.OK);
-				AutoTypeCtx ctx = (bOK ? dlg.SelectedCtx : null);
-				UIUtil.DestroyForm(dlg);
+				AutoTypeCtx ctx = ((UIUtil.ShowDialogAndDestroy(dlg) ==
+					DialogResult.OK) ? dlg.SelectedCtx : null);
 
 				if(ctx != null)
 				{

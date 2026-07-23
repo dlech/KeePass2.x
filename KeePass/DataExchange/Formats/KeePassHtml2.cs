@@ -54,20 +54,13 @@ namespace KeePass.DataExchange.Formats
 			dlg.InitEx(pwExportInfo.DataGroup, pwExportInfo.ContextDatabase, il,
 				false, -1);
 
-			bool bResult = false;
-			try
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 			{
-				if(dlg.ShowDialog() == DialogResult.OK)
-				{
-					byte[] pb = StrUtil.Utf8.GetBytes(dlg.GeneratedHtml);
-					sOutput.Write(pb, 0, pb.Length);
-
-					bResult = true;
-				}
+				MemUtil.Write(sOutput, StrUtil.Utf8.GetBytes(dlg.GeneratedHtml));
+				return true;
 			}
-			finally { UIUtil.DestroyForm(dlg); }
 
-			return bResult;
+			return false;
 		}
 
 		internal static StringBuilder HtmlPart1ToHead(bool bRtl, string strTitle)

@@ -58,7 +58,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
+			if(m_pwDatabase == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			GlobalWindowManager.AddWindow(this, this);
 

@@ -218,10 +218,7 @@ namespace KeePassLib.Serialization
 			DateTime? otCreation = null;
 			SimpleStat sStat = null;
 
-			bool bBaseExists;
-			try { bBaseExists = IOConnection.FileExists(m_iocBase, true); }
-			catch(Exception ex) { throw new ExtendedException(m_iocBase.Path, ex); }
-
+			bool bBaseExists = IOConnection.FileExists(m_iocBase, false);
 			if(bBaseExists && m_iocBase.IsLocalFile())
 			{
 				// FileAttributes faBase = FileAttributes.Normal;

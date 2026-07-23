@@ -57,18 +57,6 @@ namespace KeePass.UI
 			base.Dispose(disposing);
 		}
 
-#if DEBUG
-		protected override void OnHandleCreated(EventArgs e)
-		{
-			// The ShowToolTips property should not be used, because it
-			// can result in problems when uiAccess="true";
-			// https://sourceforge.net/p/keepass/feature-requests/2964/
-			Debug.Assert(!this.ShowToolTips);
-
-			base.OnHandleCreated(e);
-		}
-#endif
-
 		private void UpdateToolTipEx(Point? opt)
 		{
 			if(m_tt == null) return;

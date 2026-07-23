@@ -319,6 +319,10 @@ namespace KeePass.Native
 
 		internal const uint SPI_GETSCREENREADER = 0x0046;
 
+		internal const uint TOKEN_QUERY = 0x0008;
+
+		internal const uint TokenUIAccess = 26;
+
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 

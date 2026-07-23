@@ -61,14 +61,13 @@ namespace KeePass.DataExchange
 			ExchangeDataForm dlg = new ExchangeDataForm();
 			dlg.InitEx(false, pd, pd.RootGroup);
 
-			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return null;
+			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return null;
 
 			FileFormatProvider ffp = dlg.ResultFormat;
 			if(ffp == null)
 			{
 				Debug.Assert(false);
 				MessageService.ShowWarning(KPRes.ImportFailed);
-				UIUtil.DestroyForm(dlg);
 				return null;
 			}
 
@@ -78,7 +77,6 @@ namespace KeePass.DataExchange
 			foreach(string strFile in dlg.ResultFiles)
 				lConnections.Add(IOConnectionInfo.FromPath(strFile));
 
-			UIUtil.DestroyForm(dlg);
 			return Import(pd, ffp, lConnections.ToArray(), false, null, false, fParent);
 		}
 
@@ -195,10 +193,9 @@ namespace KeePass.DataExchange
 					else
 					{
 						ImportMethodForm imf = new ImportMethodForm();
-						if(UIUtil.ShowDialogNotValue(imf, DialogResult.OK))
+						if(UIUtil.ShowDialogAndDestroy(imf) != DialogResult.OK)
 							continue;
 						mm = imf.MergeMethod;
-						UIUtil.DestroyForm(imf);
 					}
 
 					try
@@ -335,10 +332,9 @@ namespace KeePass.DataExchange
 				IOConnectionForm iocf = new IOConnectionForm();
 				iocf.InitEx(false, null, true, true);
 
-				if(UIUtil.ShowDialogNotValue(iocf, DialogResult.OK)) return null;
+				if(UIUtil.ShowDialogAndDestroy(iocf) != DialogResult.OK) return null;
 
 				lConnections.Add(iocf.IOConnectionInfo);
-				UIUtil.DestroyForm(iocf);
 			}
 
 			return Synchronize(pd, uiOps, lConnections.ToArray(), false, fParent,

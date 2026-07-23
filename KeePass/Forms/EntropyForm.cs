@@ -46,10 +46,7 @@ namespace KeePass.Forms
 		private Bitmap m_bmpRandom = null;
 
 		private byte[] m_pbEntropy = null;
-		public byte[] GeneratedEntropy
-		{
-			get { return m_pbEntropy; }
-		}
+		public byte[] GeneratedEntropy { get { return m_pbEntropy; } }
 
 		public static byte[] CollectEntropyIfEnabled(PwProfile pp)
 		{
@@ -57,11 +54,8 @@ namespace KeePass.Forms
 			if(!pp.CollectUserEntropy) return null;
 
 			EntropyForm ef = new EntropyForm();
-			if(UIUtil.ShowDialogNotValue(ef, DialogResult.OK)) return null;
-
-			byte[] pb = ef.GeneratedEntropy;
-			UIUtil.DestroyForm(ef);
-			return pb;
+			return ((UIUtil.ShowDialogAndDestroy(ef) == DialogResult.OK) ?
+				ef.GeneratedEntropy : null);
 		}
 
 		public EntropyForm()

@@ -163,6 +163,7 @@ namespace KeePass.Forms
 		private uint m_uWindowStateAutoBlocked = 0;
 		private uint m_uMainTimerBlocked = 0;
 		private bool m_bHasBlockedShowWindow = false;
+		private bool m_bUiawReactivateAlwaysOnTop = false;
 
 		private bool m_bUpdateUIStateOnce = false;
 		private int m_nLastSelChUpdateUIStateTicks = 0;
@@ -2419,11 +2420,9 @@ namespace KeePass.Forms
 
 			IOConnectionForm dlg = new IOConnectionForm();
 			dlg.InitEx(bSave, ioc, bCanRememberCred, bTestConnection);
-			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return null;
 
-			IOConnectionInfo iocResult = dlg.IOConnectionInfo;
-			UIUtil.DestroyForm(dlg);
-			return iocResult;
+			return ((UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK) ?
+				dlg.IOConnectionInfo : null);
 		}
 
 		internal IOConnectionInfo CompleteConnectionInfoUsingMru(IOConnectionInfo ioc)
@@ -2482,17 +2481,14 @@ namespace KeePass.Forms
 			{
 				if(bOpenLocal)
 				{
-					OpenFileDialogEx ofdDb = UIUtil.CreateOpenFileDialog(KPRes.OpenDatabaseFile,
+					OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(KPRes.OpenDatabaseFile,
 						UIUtil.CreateFileTypeFilter(AppDefs.FileExtension.FileExt,
 						KPRes.KdbxFiles, true), 1, null, false,
 						AppDefs.FileDialogContext.Database);
 
-					GlobalWindowManager.AddDialog(ofdDb.FileDialog);
-					DialogResult dr = ofdDb.ShowDialog();
-					GlobalWindowManager.RemoveDialog(ofdDb.FileDialog);
-					if(dr != DialogResult.OK) return;
+					if(ofd.ShowDialog() != DialogResult.OK) return;
 
-					ioc = IOConnectionInfo.FromPath(ofdDb.FileName);
+					ioc = IOConnectionInfo.FromPath(ofd.FileName);
 				}
 				else
 				{
@@ -3653,82 +3649,72 @@ namespace KeePass.Forms
 				if(args.Cancel) return;
 			}
 
-			DialogResult dr;
 			IOConnectionInfo ioc = iocTo;
-
 			if((ioc != null) && (ioc.Path.Length > 0))
 			{
-				dr = DialogResult.OK; // Caller (plugin) specified target file
+				// Caller (plugin) specified target file
 			}
 			else if(bOnline)
 			{
 				IOConnectionForm iocf = new IOConnectionForm();
 				iocf.InitEx(true, pd.IOConnectionInfo, true, true);
 
-				dr = iocf.ShowDialog();
+				if(UIUtil.ShowDialogAndDestroy(iocf) != DialogResult.OK) return;
+
 				ioc = iocf.IOConnectionInfo;
-				UIUtil.DestroyForm(iocf);
 			}
 			else
 			{
-				SaveFileDialogEx sfdDb = UIUtil.CreateSaveFileDialog(KPRes.SaveDatabase,
+				SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.SaveDatabase,
 					UrlUtil.GetFileName(pd.IOConnectionInfo.Path),
 					UIUtil.CreateFileTypeFilter(AppDefs.FileExtension.FileExt,
 					KPRes.KdbxFiles, true), 1, AppDefs.FileExtension.FileExt,
 					AppDefs.FileDialogContext.Database);
 
-				GlobalWindowManager.AddDialog(sfdDb.FileDialog);
-				dr = sfdDb.ShowDialog();
-				GlobalWindowManager.RemoveDialog(sfdDb.FileDialog);
+				if(sfd.ShowDialog() != DialogResult.OK) return;
 
-				if(dr == DialogResult.OK)
-					ioc = IOConnectionInfo.FromPath(sfdDb.FileName);
+				ioc = IOConnectionInfo.FromPath(sfd.FileName);
 			}
 
-			if(dr == DialogResult.OK)
+			EcasPropertyDictionary dProps = new EcasPropertyDictionary();
+			dProps.Set(EcasProperty.IOConnectionInfo, ioc);
+			dProps.Set(EcasProperty.Database, pd);
+			Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavingDatabaseFile, dProps);
+
+			UIBlockInteraction(true);
+
+			ShutdownBlocker sdb = new ShutdownBlocker(this.Handle, KPRes.SavingDatabase);
+			ShowWarningsLogger swLogger = CreateShowWarningsLogger();
+			swLogger.StartLogging(KPRes.SavingDatabase, true);
+			m_sCancellable.Push(swLogger);
+
+			bool bSuccess = true;
+			try
 			{
-				EcasPropertyDictionary dProps = new EcasPropertyDictionary();
-				dProps.Set(EcasProperty.IOConnectionInfo, ioc);
-				dProps.Set(EcasProperty.Database, pd);
-				Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavingDatabaseFile,
-					dProps);
-
-				UIBlockInteraction(true);
-
-				ShutdownBlocker sdb = new ShutdownBlocker(this.Handle, KPRes.SavingDatabase);
-				ShowWarningsLogger swLogger = CreateShowWarningsLogger();
-				swLogger.StartLogging(KPRes.SavingDatabase, true);
-				m_sCancellable.Push(swLogger);
-
-				bool bSuccess = true;
-				try
-				{
-					PreSavingEx(pd, ioc);
-					pd.SaveAs(ioc, !bCopy, swLogger);
-					PostSavingEx(!bCopy, pd, ioc, swLogger);
-				}
-				catch(Exception exSaveAs)
-				{
-					MessageService.ShowSaveWarning(ioc, exSaveAs, true);
-					bSuccess = false;
-				}
-
-				m_sCancellable.Pop();
-				swLogger.EndLogging();
-				sdb.Dispose();
-
-				// Immediately after the UIBlockInteraction call the form might
-				// be closed and UpdateUIState might crash, if the order of the
-				// two methods is swapped; so first update state, then unblock
-				UpdateUIState(false);
-				UIBlockInteraction(false);
-
-				if(this.FileSaved != null)
-					this.FileSaved(sender, new FileSavedEventArgs(bSuccess, pd, eventGuid));
-				if(bSuccess)
-					Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavedDatabaseFile,
-						dProps);
+				PreSavingEx(pd, ioc);
+				pd.SaveAs(ioc, !bCopy, swLogger);
+				PostSavingEx(!bCopy, pd, ioc, swLogger);
 			}
+			catch(Exception exSaveAs)
+			{
+				MessageService.ShowSaveWarning(ioc, exSaveAs, true);
+				bSuccess = false;
+			}
+
+			m_sCancellable.Pop();
+			swLogger.EndLogging();
+			sdb.Dispose();
+
+			// Immediately after the UIBlockInteraction call the form might
+			// be closed and UpdateUIState might crash, if the order of the
+			// two methods is swapped; so first update state, then unblock
+			UpdateUIState(false);
+			UIBlockInteraction(false);
+
+			if(this.FileSaved != null)
+				this.FileSaved(sender, new FileSavedEventArgs(bSuccess, pd, eventGuid));
+			if(bSuccess)
+				Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavedDatabaseFile, dProps);
 		}
 
 		private void PreSavingEx(PwDatabase pd, IOConnectionInfo ioc)
@@ -3981,10 +3967,8 @@ namespace KeePass.Forms
 			using(FolderBrowserDialog fbd = UIUtil.CreateFolderBrowserDialog(
 				KPRes.AttachmentsSave))
 			{
-				GlobalWindowManager.AddDialog(fbd);
-				if(fbd.ShowDialog() == DialogResult.OK)
+				if(UIUtil.ShowDialog(fbd) == DialogResult.OK)
 					EntryUtil.SaveEntryAttachments(v, fbd.SelectedPath);
-				GlobalWindowManager.RemoveDialog(fbd);
 			}
 		}
 
@@ -5835,9 +5819,8 @@ namespace KeePass.Forms
 				dlg.InitialTab = eftInit;
 				dlg.MultipleValuesEntryContext = mvec;
 
-				bool bOK = (dlg.ShowDialog() == DialogResult.OK);
+				bool bOK = (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK);
 				bMod = (bOK && dlg.HasModifiedEntry);
-				UIUtil.DestroyForm(dlg);
 
 				// Check bOK instead of bMod (dialog mod. check ignores multi states)
 				if(bOK && (mvec != null))
@@ -5928,10 +5911,9 @@ namespace KeePass.Forms
 			sf.InitEx(pd, pgRoot);
 			sf.InitProfile = strProfile;
 
-			if(sf.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(sf) == DialogResult.OK)
 				ShowSearchResults(sf.SearchResultsGroup, sf.SearchResultParameters,
 					pgRoot, true);
-			UIUtil.DestroyForm(sf);
 		}
 
 		private static string[] g_vProfileCmdTexts = null;
@@ -6171,9 +6153,8 @@ namespace KeePass.Forms
 				dlg.InitEx(KPRes.TagNew, KPRes.TagAddNew, KPRes.Name + ":",
 					Properties.Resources.B48x48_KMag, string.Empty, null);
 
-				if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return;
+				if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
 				strTag = dlg.ResultString;
-				UIUtil.DestroyForm(dlg);
 			}
 
 			AddOrRemoveTagsToFromSelectedEntries(strTag, true);
@@ -6418,12 +6399,36 @@ namespace KeePass.Forms
 		private bool m_bSettingTopMost = false;
 		private void EnsureAlwaysOnTopOpt()
 		{
+			if(!m_bFormLoaded) return; // Initial application in OnFormShown
 			if(m_bSettingTopMost) { Debug.Assert(false); return; }
 
 			m_bSettingTopMost = true;
 			try { UIUtil.SetTopMost(this, Program.Config.MainWindow.AlwaysOnTop); }
 			catch(Exception) { Debug.Assert(false); }
 			finally { m_bSettingTopMost = false; }
+		}
+
+		private void UiawDeactivateAlwaysOnTop()
+		{
+			Debug.Assert(!m_bUiawReactivateAlwaysOnTop); // Nesting is not supported
+
+			AceMainWindow mw = Program.Config.MainWindow;
+			if(!UIUtil.IsUIAccessWorkaroundRequired() || !mw.AlwaysOnTop) return;
+
+			mw.AlwaysOnTop = false;
+			m_bUiawReactivateAlwaysOnTop = true;
+
+			EnsureAlwaysOnTopOpt();
+		}
+
+		private void UiawReactivateAlwaysOnTop()
+		{
+			if(!m_bUiawReactivateAlwaysOnTop) return;
+
+			Program.Config.MainWindow.AlwaysOnTop = true;
+			m_bUiawReactivateAlwaysOnTop = false;
+
+			EnsureAlwaysOnTopOpt();
 		}
 
 		private bool IsPrimaryControlActive()
@@ -6681,7 +6686,7 @@ namespace KeePass.Forms
 				m_ilCurrentIcons, fInit);
 			dlg.FlagsEx = ((dlg.FlagsEx | flAdd) & ~flRemove);
 			dlg.DatabaseEx = pd;
-			UIUtil.ShowDialogAndDestroy(dlg, this);
+			UIUtil.ShowDialogAndDestroy(dlg);
 
 			PwGroup pg = (dlg.ResultGroup as PwGroup);
 			PwEntry pe = (dlg.ResultItem as PwEntry);

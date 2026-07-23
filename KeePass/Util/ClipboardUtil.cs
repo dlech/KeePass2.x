@@ -267,16 +267,16 @@ namespace KeePass.Util
 
 		public static void ClearIfOwner()
 		{
-			// Handle-based detection doesn't work well, because a control
-			// or dialog that stored the data may not exist anymore and
-			// thus GetClipboardOwner returns null
+			// Handle-based detection doesn't work well, because the window
+			// that stored the data may not exist anymore and thus
+			// GetClipboardOwner returns null
 			/* bool bOwnHandle = false;
 			try
 			{
 				if(!NativeLib.IsUnix())
 				{
 					IntPtr h = NativeMethods.GetClipboardOwner();
-					bOwnHandle = GlobalWindowManager.HasWindowMW(h);
+					bOwnHandle = GlobalWindowManager.HasWindowEx(h);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); } */

@@ -4,6 +4,8 @@
 	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
 		<security>
 			<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+				<!-- uiAccess should be disabled for security reasons. -->
+				<!-- https://keepass.info/help/base/autotype.html#req -->
 				<requestedExecutionLevel level="asInvoker" uiAccess="false" />
 			</requestedPrivileges>
 		</security>

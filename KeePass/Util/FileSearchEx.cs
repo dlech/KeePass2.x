@@ -119,7 +119,7 @@ namespace KeePass.Util
 		public static void FindDatabaseFiles(MainForm mf, string strRootPath)
 		{
 			if(mf == null) { Debug.Assert(false); return; }
-			Debug.Assert(GlobalWindowManager.TopWindow == null); // mf should be parent
+			Debug.Assert(mf == GlobalWindowManager.TopWindowEx);
 
 			VistaTaskDialog dlg = new VistaTaskDialog();
 			dlg.CommandLinks = true;
@@ -297,7 +297,7 @@ namespace KeePass.Util
 			ListViewForm dlg = new ListViewForm();
 			dlg.InitEx(KPRes.SearchGroupName, strSub, null,
 				Properties.Resources.B48x48_XMag, lItems, null, fInit);
-			UIUtil.ShowDialogAndDestroy(dlg, mf);
+			UIUtil.ShowDialogAndDestroy(dlg);
 
 			return (dlg.ResultItem as string);
 		}

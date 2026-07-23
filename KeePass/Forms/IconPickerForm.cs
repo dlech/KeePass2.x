@@ -49,17 +49,10 @@ namespace KeePass.Forms
 		private CustomContextMenuStripEx m_ctxCustom = null;
 
 		private uint m_uChosenIcon = 0;
+		public uint ChosenIconId { get { return m_uChosenIcon; } }
+
 		private PwUuid m_puChosenCustomIcon = PwUuid.Zero;
-
-		public uint ChosenIconId
-		{
-			get { return m_uChosenIcon; }
-		}
-
-		public PwUuid ChosenCustomIconUuid
-		{
-			get { return m_puChosenCustomIcon; }
-		}
+		public PwUuid ChosenCustomIconUuid { get { return m_puChosenCustomIcon; } }
 
 		public IconPickerForm()
 		{
@@ -531,7 +524,7 @@ namespace KeePass.Forms
 				using(FolderBrowserDialog fbd = UIUtil.CreateFolderBrowserDialog(
 					KPRes.ExportToPrompt))
 				{
-					if(fbd.ShowDialog() != DialogResult.OK) return;
+					if(UIUtil.ShowDialog(fbd) != DialogResult.OK) return;
 					strDir = UrlUtil.EnsureTerminatingSeparator(fbd.SelectedPath, false);
 				}
 

@@ -137,17 +137,28 @@ the above methods.</p>
 alt="" /> Requirements and Limitations</h2>
 
 <p><b>Rights:</b><br />
-For auto-type to work, KeePass must be running with the same or higher
-rights as the target application. Especially, if the target application
-is running with administrative rights, KeePass must be running with
-administrative rights, too. For details, see
+For auto-type to work, KeePass must be running at the same or at a higher UI
+privilege level as the target window. For details, see
 <!-- https://msdn.microsoft.com/en-us/library/bb625963.aspx -->
 <!-- https://docs.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10) -->
 <a href="https://learn.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10)"
-target="_blank">Windows Integrity Mechanism Design</a>.
-An example are certain Windows Security credential prompt dialogs.
-Another example are certain instances of VMware Workstation that run on
-a higher integrity level.</p>
+target="_blank">Windows Integrity Mechanism Design</a>.</p>
+
+<p>When auto-type does not seem to be sending anything (e.g. into certain
+'Windows Security' dialogs or into certain instances of VMware Workstation),
+consider running KeePass as administrator (which grants KeePass a higher UI
+privilege level). In order to do this, you can right-click on a KeePass shortcut
+or on the 'KeePass.exe' file &rarr; command 'Run as administrator'.
+Alternatively, consider using a different data transfer method (clipboard,
+integration <a href="https://keepass.info/plugins.html" target="_blank">plugin</a>, ...).</p>
+
+<p>KeePass intentionally does not support
+<a href="https://learn.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10)#uiaccess-for-ui-automation-applications"
+target="_blank">UIAccess</a>, because in the case of KeePass, this would be a
+security vulnerability: under certain circumstances, privilege escalation
+attacks would be possible (a malware running with standard user rights could run
+code with administrator rights). Running KeePass as administrator does not allow
+such privilege escalation attacks.</p>
 
 <p><b>Remote Desktops and Virtual Machines:</b><br />
 KeePass does not know the keyboard layout that has been selected in

@@ -30,9 +30,6 @@ using KeePass.Ecas;
 using KeePass.Resources;
 using KeePass.UI;
 
-using KeePassLib;
-using KeePassLib.Utility;
-
 namespace KeePass.Forms
 {
 	public partial class EcasActionForm : Form

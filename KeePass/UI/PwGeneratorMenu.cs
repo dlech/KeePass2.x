@@ -233,10 +233,8 @@ namespace KeePass.UI
 			PwGeneratorForm pgf = new PwGeneratorForm();
 			pgf.InitEx(prf, true, false);
 
-			if(pgf.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(pgf) == DialogResult.OK)
 				GenerateAndSetPassword(pgf.SelectedProfile);
-
-			UIUtil.DestroyForm(pgf);
 		}
 
 		private void OnGenDeriveFromPrevious(object sender, EventArgs e)

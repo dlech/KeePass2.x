@@ -307,7 +307,7 @@ namespace KeePass.Native
 
 					if(GetWindowTextLength(hWnd) == 0) continue;
 
-					if(bSkipOwnWindows && GlobalWindowManager.HasWindowMW(hWnd))
+					if(bSkipOwnWindows && GlobalWindowManager.HasWindowEx(hWnd))
 						continue;
 
 					// Skip the taskbar window (required for Windows 7,

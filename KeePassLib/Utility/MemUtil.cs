@@ -689,7 +689,7 @@ namespace KeePassLib.Utility
 			if(pbData == null) { Debug.Assert(false); return; }
 
 			Debug.Assert(pbData.Length >= 0);
-			if(pbData.Length > 0) s.Write(pbData, 0, pbData.Length);
+			if(pbData.Length != 0) s.Write(pbData, 0, pbData.Length);
 		}
 
 		public static byte[] Compress(byte[] pbData)

@@ -231,6 +231,7 @@ namespace KeePass.Forms
 
 				SearchParameters sp = new SearchParameters();
 				sp.SearchString = m_tbFilter.Text;
+				sp.RespectEntrySearchingDisabled = false;
 				sp.SearchInPasswords = true;
 
 				PwObjectList<PwEntry> lResults = new PwObjectList<PwEntry>();

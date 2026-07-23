@@ -52,9 +52,8 @@ namespace KeePass.Forms
 				FieldPickerForm dlg = new FieldPickerForm();
 				dlg.InitEx(strTitle, strText, lFields);
 
-				if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
-					return dlg.SelectedField;
-				return null;
+				return ((UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK) ?
+					dlg.SelectedField : null);
 			}
 		}
 

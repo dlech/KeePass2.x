@@ -934,6 +934,7 @@ namespace KeePass
 			try
 			{
 				MainForm mf = g_formMain;
+				Debug.Assert((mf == null) || mf.IsHandleCreated);
 				if(mf != null) return mf.Handle;
 			}
 			catch(Exception) { Debug.Assert(false); }

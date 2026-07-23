@@ -53,11 +53,10 @@ namespace KeePass.DataExchange.Formats
 				KPRes.PasswordPrompt, Properties.Resources.B48x48_KGPG_Key2,
 				string.Empty, null);
 			dlg.FlagsEx |= SlfFlags.Sensitive;
-			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return;
-			string strPassword = dlg.ResultString;
-			UIUtil.DestroyForm(dlg);
 
-			byte[] pbPassword = Encoding.Default.GetBytes(strPassword);
+			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
+
+			byte[] pbPassword = Encoding.Default.GetBytes(dlg.ResultString);
 
 			using(BinaryReader br = new BinaryReader(sInput, Encoding.Default))
 			{

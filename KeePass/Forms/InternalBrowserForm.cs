@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -55,6 +54,10 @@ namespace KeePass.Forms
 			GlobalWindowManager.AddWindow(this);
 
 			this.Icon = AppIcons.Default;
+
+			// Configure the web browser here to avoid UIAccess + TopMost bug;
+			// https://sourceforge.net/p/keepass/feature-requests/2964/
+			m_webBrowser.ScriptErrorsSuppressed = true;
 
 			if(m_strInitialUrl.Length > 0)
 				m_webBrowser.Navigate(m_strInitialUrl);

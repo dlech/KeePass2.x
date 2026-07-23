@@ -380,7 +380,7 @@ namespace KeePass.Plugins
 					using(FolderBrowserDialog dlg = UIUtil.CreateFolderBrowserDialog(
 						KPRes.Plugin))
 					{
-						if(dlg.ShowDialog() != DialogResult.OK) return;
+						if(UIUtil.ShowDialog(dlg) != DialogResult.OK) return;
 						strDir = dlg.SelectedPath;
 					}
 				}

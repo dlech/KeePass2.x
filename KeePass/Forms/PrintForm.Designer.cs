@@ -117,16 +117,12 @@
 			// 
 			// m_wbMain
 			// 
-			this.m_wbMain.AllowWebBrowserDrop = false;
 			this.m_wbMain.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_wbMain.IsWebBrowserContextMenuEnabled = false;
 			this.m_wbMain.Location = new System.Drawing.Point(3, 22);
 			this.m_wbMain.MinimumSize = new System.Drawing.Size(20, 20);
 			this.m_wbMain.Name = "m_wbMain";
-			this.m_wbMain.ScriptErrorsSuppressed = true;
 			this.m_wbMain.Size = new System.Drawing.Size(587, 412);
 			this.m_wbMain.TabIndex = 1;
-			this.m_wbMain.WebBrowserShortcutsEnabled = false;
 			// 
 			// m_lblPreviewHint
 			// 

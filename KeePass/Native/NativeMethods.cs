@@ -541,5 +541,17 @@ namespace KeePass.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool SystemParametersInfoI32(uint uiAction,
 			uint uiParam, ref int pvParam, uint fWinIni);
+
+		[DllImport("AdvApi32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool OpenProcessToken(IntPtr hProcess,
+			uint dwDesiredAccess, ref IntPtr phToken);
+
+		[DllImport("AdvApi32.dll", EntryPoint = "GetTokenInformation",
+			SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GetTokenInformationUInt32(IntPtr hToken,
+			uint uTokenInformationClass, ref uint puTokenInformation,
+			uint dwTokenInformationLength, ref uint pdwReturnLength);
 	}
 }
