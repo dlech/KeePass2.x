@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,11 +53,10 @@ namespace KeePass.DataExchange.Formats
 				KPRes.PasswordPrompt, Properties.Resources.B48x48_KGPG_Key2,
 				string.Empty, null);
 			dlg.FlagsEx |= SlfFlags.Sensitive;
-			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return;
-			string strPassword = dlg.ResultString;
-			UIUtil.DestroyForm(dlg);
 
-			byte[] pbPassword = Encoding.Default.GetBytes(strPassword);
+			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
+
+			byte[] pbPassword = Encoding.Default.GetBytes(dlg.ResultString);
 
 			using(BinaryReader br = new BinaryReader(sInput, Encoding.Default))
 			{

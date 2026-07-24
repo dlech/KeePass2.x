@@ -76,7 +76,6 @@ namespace KeePassLib.Resources
 			m_strUnknownError = TryGetEx(dictNew, "UnknownError", m_strUnknownError);
 			m_strUnknownHeaderId = TryGetEx(dictNew, "UnknownHeaderId", m_strUnknownHeaderId);
 			m_strUnknownKdf = TryGetEx(dictNew, "UnknownKdf", m_strUnknownKdf);
-			m_strUserAccountKeyError = TryGetEx(dictNew, "UserAccountKeyError", m_strUserAccountKeyError);
 			m_strUserAgent = TryGetEx(dictNew, "UserAgent", m_strUserAgent);
 		}
 
@@ -131,7 +130,6 @@ namespace KeePassLib.Resources
 			"UnknownError",
 			"UnknownHeaderId",
 			"UnknownKdf",
-			"UserAccountKeyError",
 			"UserAgent"
 		};
 
@@ -688,17 +686,6 @@ namespace KeePassLib.Resources
 		public static string UnknownKdf
 		{
 			get { return m_strUnknownKdf; }
-		}
-
-		private static string m_strUserAccountKeyError =
-			@"The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.";
-		/// <summary>
-		/// Look up a localized string similar to
-		/// 'The operating system did not grant KeePass read/write access to the user profile folder, where the protected user key is stored.'.
-		/// </summary>
-		public static string UserAccountKeyError
-		{
-			get { return m_strUserAccountKeyError; }
 		}
 
 		private static string m_strUserAgent =

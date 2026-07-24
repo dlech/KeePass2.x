@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -145,10 +145,10 @@ namespace KeePass.UI
 			string strExeConfig = WinUtil.GetExecutable() + ".config";
 			if(File.Exists(strExeConfig))
 			{
-				string strCM = "System.Configuration.ConfigurationManager, ";
-				strCM += "System.Configuration, Version=";
-				strCM += Environment.Version.Major.ToString() + ".0.0.0, ";
-				strCM += "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+				string strCM = "System.Configuration.ConfigurationManager, " +
+					"System.Configuration, Version=" +
+					Environment.Version.Major.ToString() + ".0.0.0, " +
+					"Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 
 				Type tCM = Type.GetType(strCM, false);
 				if(tCM != null)
@@ -159,13 +159,8 @@ namespace KeePass.UI
 					{
 						NameValueCollection nvc = (pi.GetValue(null, null) as
 							NameValueCollection);
-						if(nvc != null)
-						{
-							Debug.Assert(string.Equals(nvc.Get(
-								"EnableWindowsFormsHighDpiAutoResizing"),
-								"true", StrUtil.CaseIgnoreCmp));
-						}
-						else { Debug.Assert(false); }
+						Debug.Assert((nvc != null) && (nvc.Get(
+							"EnableWindowsFormsHighDpiAutoResizing") == "true"));
 					}
 					else { Debug.Assert(false); }
 				}

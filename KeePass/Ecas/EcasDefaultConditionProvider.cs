@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -115,17 +115,15 @@ namespace KeePass.Ecas
 
 		private static bool IsMatchFileExists(EcasCondition c, EcasContext ctx)
 		{
-			string strFile = EcasUtil.GetParamString(c.Parameters, 0, true);
+			string strFile = EcasUtil.GetParamPath(c.Parameters, 0, true);
 			if(string.IsNullOrEmpty(strFile)) return true;
 
 			try
 			{
-				// return File.Exists(strFile);
-
 				IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-				return IOConnection.FileExists(ioc);
+				return IOConnection.FileExists(ioc, false);
 			}
-			catch(Exception) { }
+			catch(Exception) { Debug.Assert(false); }
 
 			return false;
 		}

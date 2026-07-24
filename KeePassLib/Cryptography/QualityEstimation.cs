@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -716,16 +716,10 @@ namespace KeePassLib.Cryptography
 			if(nZeros < strNumber.Length)
 			{
 				string strNonZero = strNumber.Substring(nZeros);
-
-#if KeePassLibSD
-				try { dblCost += Log2(double.Parse(strNonZero)); }
-				catch(Exception) { Debug.Assert(false); return; }
-#else
 				double d;
-				if(double.TryParse(strNonZero, out d))
+				if(StrUtil.TryParseDoubleInvariant(strNonZero, out d))
 					dblCost += Log2(d);
 				else { Debug.Assert(false); return; }
-#endif
 			}
 
 			vPatterns[i].Add(new QePatternInstance(i, strNumber.Length,

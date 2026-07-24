@@ -51,7 +51,7 @@
 			this.m_cbIgnoreGroupSettings = new System.Windows.Forms.CheckBox();
 			this.m_cbDerefData = new System.Windows.Forms.CheckBox();
 			this.m_cbExcludeExpired = new System.Windows.Forms.CheckBox();
-			this.m_cbCaseSensitive = new System.Windows.Forms.CheckBox();
+			this.m_cbMatchCase = new System.Windows.Forms.CheckBox();
 			this.m_lblProfile = new System.Windows.Forms.Label();
 			this.m_cmbProfiles = new System.Windows.Forms.ComboBox();
 			this.m_btnProfileAdd = new System.Windows.Forms.Button();
@@ -63,6 +63,7 @@
 			this.m_lblMode = new System.Windows.Forms.Label();
 			this.m_ttMain = new System.Windows.Forms.ToolTip(this.components);
 			this.m_btnHelp = new System.Windows.Forms.Button();
+			this.m_cbMatchDiacritics = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_grpSearchIn.SuspendLayout();
 			this.m_grpOptions.SuspendLayout();
@@ -80,7 +81,7 @@
 			// m_btnOK
 			// 
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnOK.Location = new System.Drawing.Point(206, 468);
+			this.m_btnOK.Location = new System.Drawing.Point(206, 491);
 			this.m_btnOK.Name = "m_btnOK";
 			this.m_btnOK.Size = new System.Drawing.Size(75, 23);
 			this.m_btnOK.TabIndex = 9;
@@ -91,7 +92,7 @@
 			// m_btnCancel
 			// 
 			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btnCancel.Location = new System.Drawing.Point(287, 468);
+			this.m_btnCancel.Location = new System.Drawing.Point(287, 491);
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 10;
@@ -257,13 +258,14 @@
 			// 
 			// m_grpOptions
 			// 
+			this.m_grpOptions.Controls.Add(this.m_cbMatchDiacritics);
 			this.m_grpOptions.Controls.Add(this.m_cbIgnoreGroupSettings);
 			this.m_grpOptions.Controls.Add(this.m_cbDerefData);
 			this.m_grpOptions.Controls.Add(this.m_cbExcludeExpired);
-			this.m_grpOptions.Controls.Add(this.m_cbCaseSensitive);
+			this.m_grpOptions.Controls.Add(this.m_cbMatchCase);
 			this.m_grpOptions.Location = new System.Drawing.Point(13, 344);
 			this.m_grpOptions.Name = "m_grpOptions";
-			this.m_grpOptions.Size = new System.Drawing.Size(348, 113);
+			this.m_grpOptions.Size = new System.Drawing.Size(348, 136);
 			this.m_grpOptions.TabIndex = 7;
 			this.m_grpOptions.TabStop = false;
 			this.m_grpOptions.Text = "Options";
@@ -271,42 +273,42 @@
 			// m_cbIgnoreGroupSettings
 			// 
 			this.m_cbIgnoreGroupSettings.AutoSize = true;
-			this.m_cbIgnoreGroupSettings.Location = new System.Drawing.Point(10, 65);
+			this.m_cbIgnoreGroupSettings.Location = new System.Drawing.Point(10, 111);
 			this.m_cbIgnoreGroupSettings.Name = "m_cbIgnoreGroupSettings";
 			this.m_cbIgnoreGroupSettings.Size = new System.Drawing.Size(177, 17);
-			this.m_cbIgnoreGroupSettings.TabIndex = 2;
+			this.m_cbIgnoreGroupSettings.TabIndex = 4;
 			this.m_cbIgnoreGroupSettings.Text = "&Ignore search settings of groups";
 			this.m_cbIgnoreGroupSettings.UseVisualStyleBackColor = true;
 			// 
 			// m_cbDerefData
 			// 
 			this.m_cbDerefData.AutoSize = true;
-			this.m_cbDerefData.Location = new System.Drawing.Point(10, 88);
+			this.m_cbDerefData.Location = new System.Drawing.Point(10, 65);
 			this.m_cbDerefData.Name = "m_cbDerefData";
 			this.m_cbDerefData.Size = new System.Drawing.Size(175, 17);
-			this.m_cbDerefData.TabIndex = 3;
+			this.m_cbDerefData.TabIndex = 2;
 			this.m_cbDerefData.Text = "Resol&ve field references in data";
 			this.m_cbDerefData.UseVisualStyleBackColor = true;
 			// 
 			// m_cbExcludeExpired
 			// 
 			this.m_cbExcludeExpired.AutoSize = true;
-			this.m_cbExcludeExpired.Location = new System.Drawing.Point(10, 42);
+			this.m_cbExcludeExpired.Location = new System.Drawing.Point(10, 88);
 			this.m_cbExcludeExpired.Name = "m_cbExcludeExpired";
 			this.m_cbExcludeExpired.Size = new System.Drawing.Size(135, 17);
-			this.m_cbExcludeExpired.TabIndex = 1;
+			this.m_cbExcludeExpired.TabIndex = 3;
 			this.m_cbExcludeExpired.Text = "&Exclude expired entries";
 			this.m_cbExcludeExpired.UseVisualStyleBackColor = true;
 			// 
-			// m_cbCaseSensitive
+			// m_cbMatchCase
 			// 
-			this.m_cbCaseSensitive.AutoSize = true;
-			this.m_cbCaseSensitive.Location = new System.Drawing.Point(10, 19);
-			this.m_cbCaseSensitive.Name = "m_cbCaseSensitive";
-			this.m_cbCaseSensitive.Size = new System.Drawing.Size(94, 17);
-			this.m_cbCaseSensitive.TabIndex = 0;
-			this.m_cbCaseSensitive.Text = "&Case-sensitive";
-			this.m_cbCaseSensitive.UseVisualStyleBackColor = true;
+			this.m_cbMatchCase.AutoSize = true;
+			this.m_cbMatchCase.Location = new System.Drawing.Point(10, 19);
+			this.m_cbMatchCase.Name = "m_cbMatchCase";
+			this.m_cbMatchCase.Size = new System.Drawing.Size(82, 17);
+			this.m_cbMatchCase.TabIndex = 0;
+			this.m_cbMatchCase.Text = "Match &case";
+			this.m_cbMatchCase.UseVisualStyleBackColor = true;
 			// 
 			// m_lblProfile
 			// 
@@ -398,7 +400,7 @@
 			// 
 			// m_btnHelp
 			// 
-			this.m_btnHelp.Location = new System.Drawing.Point(12, 468);
+			this.m_btnHelp.Location = new System.Drawing.Point(12, 491);
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Size = new System.Drawing.Size(75, 23);
 			this.m_btnHelp.TabIndex = 8;
@@ -406,13 +408,23 @@
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.OnBtnHelp);
 			// 
+			// m_cbMatchDiacritics
+			// 
+			this.m_cbMatchDiacritics.AutoSize = true;
+			this.m_cbMatchDiacritics.Location = new System.Drawing.Point(10, 42);
+			this.m_cbMatchDiacritics.Name = "m_cbMatchDiacritics";
+			this.m_cbMatchDiacritics.Size = new System.Drawing.Size(100, 17);
+			this.m_cbMatchDiacritics.TabIndex = 1;
+			this.m_cbMatchDiacritics.Text = "Match diacritics";
+			this.m_cbMatchDiacritics.UseVisualStyleBackColor = true;
+			// 
 			// SearchForm
 			// 
 			this.AcceptButton = this.m_btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
-			this.ClientSize = new System.Drawing.Size(374, 503);
+			this.ClientSize = new System.Drawing.Size(374, 526);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_lblMode);
 			this.Controls.Add(this.m_rbModeXPath);
@@ -463,7 +475,7 @@
 		private System.Windows.Forms.CheckBox m_cbUserName;
 		private System.Windows.Forms.CheckBox m_cbTitle;
 		private System.Windows.Forms.GroupBox m_grpOptions;
-		private System.Windows.Forms.CheckBox m_cbCaseSensitive;
+		private System.Windows.Forms.CheckBox m_cbMatchCase;
 		private System.Windows.Forms.CheckBox m_cbStringsOther;
 		private System.Windows.Forms.CheckBox m_cbExcludeExpired;
 		private System.Windows.Forms.CheckBox m_cbGroupName;
@@ -485,5 +497,6 @@
 		private System.Windows.Forms.CheckBox m_cbHistory;
 		private System.Windows.Forms.ToolTip m_ttMain;
 		private System.Windows.Forms.Button m_btnHelp;
+		private System.Windows.Forms.CheckBox m_cbMatchDiacritics;
 	}
 }

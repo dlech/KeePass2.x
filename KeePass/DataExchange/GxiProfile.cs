@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,10 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Text;
 
 using KeePassLib.Utility;
 
@@ -133,13 +131,8 @@ namespace KeePass.DataExchange
 			}
 		}
 
-		private bool m_bStringKeyUseName = false;
 		[DefaultValue(false)]
-		public bool StringKeyUseName
-		{
-			get { return m_bStringKeyUseName; }
-			set { m_bStringKeyUseName = value; }
-		}
+		public bool StringKeyUseName { get; set; }
 
 		private string m_strStringKeyRepl = string.Empty;
 		[DefaultValue("")]
@@ -201,13 +194,8 @@ namespace KeePass.DataExchange
 			}
 		}
 
-		private bool m_bStringKeyUseName2 = false;
 		[DefaultValue(false)]
-		public bool StringKeyUseName2
-		{
-			get { return m_bStringKeyUseName2; }
-			set { m_bStringKeyUseName2 = value; }
-		}
+		public bool StringKeyUseName2 { get; set; }
 
 		private string m_strStringKeyRepl2 = string.Empty;
 		[DefaultValue("")]
@@ -269,13 +257,8 @@ namespace KeePass.DataExchange
 			}
 		}
 
-		private bool m_bBinaryKeyUseName = false;
 		[DefaultValue(false)]
-		public bool BinaryKeyUseName
-		{
-			get { return m_bBinaryKeyUseName; }
-			set { m_bBinaryKeyUseName = value; }
-		}
+		public bool BinaryKeyUseName { get; set; }
 
 		private string m_strBinaryKeyRepl = string.Empty;
 		[DefaultValue("")]
@@ -376,12 +359,7 @@ namespace KeePass.DataExchange
 			set { m_bStringKeyToStd = value; }
 		}
 
-		private bool m_bStringKeyToStdFuzzy = false;
 		[DefaultValue(false)]
-		public bool StringKeyToStdFuzzy
-		{
-			get { return m_bStringKeyToStdFuzzy; }
-			set { m_bStringKeyToStdFuzzy = value; }
-		}
+		public bool StringKeyToStdFuzzy { get; set; }
 	}
 }

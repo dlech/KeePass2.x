@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -328,7 +328,6 @@ namespace KeePass.Util.SendInputExt
 			pInput[0].KeyboardInput.Time = 0;
 			pInput[0].KeyboardInput.ExtraInfo = NativeMethods.GetMessageExtraInfo();
 
-			Debug.Assert(Marshal.SizeOf(typeof(NativeMethods.INPUT32)) == 28);
 			if(NativeMethods.SendInput32(1, pInput,
 				Marshal.SizeOf(typeof(NativeMethods.INPUT32))) != 1)
 				return false;
@@ -368,7 +367,6 @@ namespace KeePass.Util.SendInputExt
 			pInput[0].Time = 0;
 			pInput[0].ExtraInfo = NativeMethods.GetMessageExtraInfo();
 
-			Debug.Assert(Marshal.SizeOf(typeof(NativeMethods.SpecializedKeyboardINPUT64)) == 40);
 			if(NativeMethods.SendInput64Special(1, pInput,
 				Marshal.SizeOf(typeof(NativeMethods.SpecializedKeyboardINPUT64))) != 1)
 				return false;

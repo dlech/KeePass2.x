@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ namespace KeePass.Ecas
 			uint uCompareType = EcasUtil.GetParamEnum(e.Parameters, 0,
 				EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
 
-			string strFilter = EcasUtil.GetParamString(e.Parameters, 1, true);
+			string strFilter = EcasUtil.GetParamPath(e.Parameters, 1, true);
 			if(string.IsNullOrEmpty(strFilter)) return true;
 
 			// Must prefer IOC (e.g. for SavingDatabaseFile)

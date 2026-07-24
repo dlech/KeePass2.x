@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ namespace KeePass.Forms
 		private string m_strCustomTitle = null;
 
 		private uint m_uUIAutoBlocked = 0;
+		private bool m_bUpdateAvailableBanner = false;
 		private bool m_bDisposed = false;
 
 		private readonly List<string> m_lKeyFileNames = new List<string>();
@@ -553,6 +554,37 @@ namespace KeePass.Forms
 
 					--m_uUIAutoBlocked;
 					UpdateUIState();
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private void OnTimerMainTick(object sender, EventArgs e)
+		{
+			try
+			{
+				if(UpdateCheckEx.DeferredUpdateReportAvailable && !m_bUpdateAvailableBanner)
+				{
+					m_bUpdateAvailableBanner = true;
+
+					int h = m_btnOK.Height;
+					this.Height += h;
+
+					LinkLabel ll = new LinkLabel();
+					ll.Text = KPRes.UpdateAvailable;
+					ll.TextAlign = ContentAlignment.MiddleLeft;
+					ll.BackColor = (UIUtil.IsDarkTheme ? Color.FromArgb(64, 64, 0) :
+						Color.FromArgb(255, 255, 128));
+					ll.Padding = new Padding(DpiUtil.ScaleIntX(4), 0, 0, 0);
+					ll.Size = new Size(this.ClientSize.Width, h);
+					ll.Dock = DockStyle.Bottom;
+
+					ll.LinkClicked += ((senderLC, eLC) =>
+					{
+						this.DialogResult = DialogResult.Cancel;
+					});
+
+					this.Controls.Add(ll);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }

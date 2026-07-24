@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -295,10 +295,9 @@ namespace KeePass.Util
 				str = ReplaceNewPasswordPlaceholder(str, ctx, uRecursionLevel);
 
 			if((ctx.Flags & SprCompileFlags.HmacOtp) != SprCompileFlags.None)
-			{
 				str = ReplaceHmacOtpPlaceholder(str, ctx);
+			if((ctx.Flags & SprCompileFlags.OtpNonActive) != SprCompileFlags.None)
 				str = ReplaceTimeOtpPlaceholder(str, ctx);
-			}
 
 			if((ctx.Flags & SprCompileFlags.PickChars) != SprCompileFlags.None)
 				str = ReplacePickField(str, ctx);
@@ -504,7 +503,7 @@ namespace KeePass.Util
 
 			string strValue = string.Empty;
 			if((pbSecret != null) && (pbSecret.Length != 0))
-				strValue = HmacOtp.GenerateTimeOtp(pbSecret, null, uPeriod,
+				strValue = HmacOtp.GenerateTimeOtp(pbSecret, ctx.Time, uPeriod,
 					uLength, strAlg);
 
 			return StrUtil.ReplaceCaseInsensitive(strText, EntryUtil.TotpPlh, strValue);
@@ -776,27 +775,21 @@ namespace KeePass.Util
 		// Cf. other overload
 		internal static string GetHiddenString(ProtectedString ps, bool bHide)
 		{
-			if(bHide)
-			{
-				if(((ps == null) || ps.IsEmpty) && Program.Config.UI.Hiding.UnhideEmptyData)
-					return string.Empty;
-				return PwDefs.HiddenPassword;
-			}
+			if(!bHide) return ((ps == null) ? string.Empty : ps.ReadString());
 
-			return ((ps == null) ? string.Empty : ps.ReadString());
+			if(((ps == null) || ps.IsEmpty) && Program.Config.UI.Hiding.UnhideEmptyData)
+				return string.Empty;
+			return PwDefs.HiddenPassword;
 		}
 
 		// Cf. other overload
 		internal static string GetHiddenString(string str, bool bHide)
 		{
-			if(bHide)
-			{
-				if(string.IsNullOrEmpty(str) && Program.Config.UI.Hiding.UnhideEmptyData)
-					return string.Empty;
-				return PwDefs.HiddenPassword;
-			}
+			if(!bHide) return (str ?? string.Empty);
 
-			return (str ?? string.Empty);
+			if(string.IsNullOrEmpty(str) && Program.Config.UI.Hiding.UnhideEmptyData)
+				return string.Empty;
+			return PwDefs.HiddenPassword;
 		}
 
 		public static string CreateSummaryList(PwGroup pgItems, bool bStartWithNewPar)
@@ -1002,6 +995,8 @@ namespace KeePass.Util
 			PwGroup pg = pd.RootGroup;
 			if(pg == null) { Debug.Assert(false); return null; }
 
+			DateTime dt = DateTime.UtcNow;
+
 			ulong cEntries = pg.GetEntriesCount(true);
 			ulong cEntriesDone = 0;
 			Dictionary<string, List<PwEntry>> d =
@@ -1019,6 +1014,8 @@ namespace KeePass.Util
 				if(!pe.GetSearchingEnabled()) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
+				ctx.Time = dt; // For time stability across all entries
+
 				char[] v = pe.Strings.GetSafe(PwDefs.PasswordField).ReadChars();
 				char[] vCmp = SprEngine.Compile(v, ctx);
 				if(vCmp.Length != 0)
@@ -1136,6 +1133,8 @@ namespace KeePass.Util
 			IStatusLogger sl, uint uPrePct, List<PwEntry> lEntries,
 			List<char[]> lPasswords, bool bExclTans)
 		{
+			DateTime dt = DateTime.UtcNow;
+
 			ulong cEntries = pg.GetEntriesCount(true);
 			ulong cEntriesDone = 0;
 
@@ -1152,6 +1151,8 @@ namespace KeePass.Util
 				if(bExclTans && PwDefs.IsTanEntry(pe)) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
+				ctx.Time = dt; // For time stability across all entries
+
 				char[] v = pe.Strings.GetSafe(PwDefs.PasswordField).ReadChars();
 				char[] vCmp = SprEngine.Compile(v, ctx);
 				if(vCmp.Length != 0)
@@ -1568,6 +1569,8 @@ namespace KeePass.Util
 			PwGroup pg = pd.RootGroup;
 			if(pg == null) { Debug.Assert(false); return null; }
 
+			DateTime dt = DateTime.UtcNow;
+
 			ulong cEntries = pg.GetEntriesCount(true);
 			ulong cEntriesDone = 0;
 			List<KeyValuePair<PwEntry, ulong>> l = new List<KeyValuePair<PwEntry, ulong>>();
@@ -1586,6 +1589,8 @@ namespace KeePass.Util
 				if(PwDefs.IsTanEntry(pe)) return true;
 
 				SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
+				ctx.Time = dt; // For time stability across all entries
+
 				char[] v = pe.Strings.GetSafe(PwDefs.PasswordField).ReadChars();
 				char[] vCmp = SprEngine.Compile(v, ctx);
 				if(vCmp.Length != 0)

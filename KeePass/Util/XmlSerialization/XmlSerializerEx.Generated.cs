@@ -389,6 +389,9 @@ namespace KeePass.Util.XmlSerialization
 					case "QuickFindSearchInPasswords":
 						o.QuickFindSearchInPasswords = ReadBoolean(xr);
 						break;
+					case "QuickFindSearchInGroupPaths":
+						o.QuickFindSearchInGroupPaths = ReadBoolean(xr);
+						break;
 					case "QuickFindExcludeExpired":
 						o.QuickFindExcludeExpired = ReadBoolean(xr);
 						break;
@@ -2210,14 +2213,17 @@ namespace KeePass.Util.XmlSerialization
 					case "ComparisonMode":
 						o.ComparisonMode = ReadStringComparison(xr);
 						break;
+					case "MatchDiacritics":
+						o.MatchDiacritics = ReadBoolean(xr);
+						break;
+					case "DataTransformation":
+						o.DataTransformation = ReadString(xr);
+						break;
 					case "ExcludeExpired":
 						o.ExcludeExpired = ReadBoolean(xr);
 						break;
 					case "RespectEntrySearchingDisabled":
 						o.RespectEntrySearchingDisabled = ReadBoolean(xr);
-						break;
-					case "DataTransformation":
-						o.DataTransformation = ReadString(xr);
 						break;
 					default:
 						Debug.Assert(false);
@@ -3009,6 +3015,8 @@ namespace KeePass.Util.XmlSerialization
 				m_dictAceColumnType["LastPasswordModTime"] = KeePass.App.Configuration.AceColumnType.LastPasswordModTime;
 				m_dictAceColumnType["AutoTypeEnabled"] = KeePass.App.Configuration.AceColumnType.AutoTypeEnabled;
 				m_dictAceColumnType["AutoTypeSequences"] = KeePass.App.Configuration.AceColumnType.AutoTypeSequences;
+				m_dictAceColumnType["GroupPath"] = KeePass.App.Configuration.AceColumnType.GroupPath;
+				m_dictAceColumnType["GroupName"] = KeePass.App.Configuration.AceColumnType.GroupName;
 				m_dictAceColumnType["Count"] = KeePass.App.Configuration.AceColumnType.Count;
 			}
 

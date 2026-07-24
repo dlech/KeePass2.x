@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using KeePass.Util.Spr;
 
 using KeePassLib;
 using KeePassLib.Interfaces;
+using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
@@ -34,9 +35,11 @@ namespace KeePass.Util
 	{
 		internal const string StrTrfDeref = "Deref";
 
-		internal static void PrepareForSerialize(SearchParameters sp)
+		internal static void PrepareSerialize(SearchParameters sp)
 		{
 			if(sp == null) { Debug.Assert(false); return; }
+
+			AdjustCulture(sp, false);
 
 			sp.DataTransformation = GetTransformation(sp);
 		}
@@ -45,7 +48,22 @@ namespace KeePass.Util
 		{
 			if(sp == null) { Debug.Assert(false); return; }
 
+			AdjustCulture(sp, true);
+
 			SetTransformation(sp, sp.DataTransformation);
+		}
+
+		private static void AdjustCulture(SearchParameters sp, bool bDeserializing)
+		{
+			// The SearchForm class currently only supports the current culture
+
+			StringComparison sc = sp.ComparisonMode;
+			Debug.Assert(bDeserializing || (sc == StringComparison.CurrentCulture) ||
+				(sc == StringComparison.CurrentCultureIgnoreCase));
+
+			sp.ComparisonMode = (StrUtil.GetIgnoreCase(sc) ?
+				StringComparison.CurrentCultureIgnoreCase :
+				StringComparison.CurrentCulture);
 		}
 
 		internal static string GetTransformation(SearchParameters spIn)

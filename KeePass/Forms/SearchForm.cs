@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ using KeePass.UI;
 using KeePass.Util;
 
 using KeePassLib;
-using KeePassLib.Collections;
 using KeePassLib.Interfaces;
 using KeePassLib.Utility;
 
@@ -132,8 +131,8 @@ namespace KeePass.Forms
 				m_cbTitle, m_cbUserName, m_cbPassword, m_cbUrl, m_cbNotes,
 				m_cbStringsOther, m_cbStringName, m_cbTags, m_cbUuid,
 				m_cbGroupPath, m_cbGroupName, m_cbHistory,
-				m_cbCaseSensitive, m_cbExcludeExpired, m_cbIgnoreGroupSettings,
-				m_cbDerefData
+				m_cbMatchCase, m_cbMatchDiacritics, m_cbDerefData,
+				m_cbExcludeExpired, m_cbIgnoreGroupSettings
 			};
 			foreach(CheckBox cb in v) cb.CheckedChanged += this.OnProfilePropertyChanged;
 
@@ -244,16 +243,14 @@ namespace KeePass.Forms
 			m_cbGroupName.Checked = sp.SearchInGroupNames;
 			m_cbHistory.Checked = sp.SearchInHistory;
 
-			StringComparison sc = sp.ComparisonMode;
-			m_cbCaseSensitive.Checked = ((sc != StringComparison.CurrentCultureIgnoreCase) &&
-				(sc != StringComparison.InvariantCultureIgnoreCase) &&
-				(sc != StringComparison.OrdinalIgnoreCase));
+			m_cbMatchCase.Checked = !StrUtil.GetIgnoreCase(sp.ComparisonMode);
+			m_cbMatchDiacritics.Checked = sp.MatchDiacritics;
+
+			m_cbDerefData.Checked = (SearchUtil.GetTransformation(sp) ==
+				SearchUtil.StrTrfDeref);
 
 			m_cbExcludeExpired.Checked = sp.ExcludeExpired;
 			m_cbIgnoreGroupSettings.Checked = !sp.RespectEntrySearchingDisabled;
-
-			string strTrf = SearchUtil.GetTransformation(sp);
-			m_cbDerefData.Checked = (strTrf == SearchUtil.StrTrfDeref);
 
 			--m_uBlockProfileAuto;
 		}
@@ -288,15 +285,17 @@ namespace KeePass.Forms
 			sp.SearchInGroupNames = m_cbGroupName.Checked;
 			sp.SearchInHistory = m_cbHistory.Checked;
 
-			sp.ComparisonMode = (m_cbCaseSensitive.Checked ?
-				StringComparison.InvariantCulture :
-				StringComparison.InvariantCultureIgnoreCase);
-
-			sp.ExcludeExpired = m_cbExcludeExpired.Checked;
-			sp.RespectEntrySearchingDisabled = !m_cbIgnoreGroupSettings.Checked;
+			// Cf. SearchUtil.AdjustCulture (used via AppConfigEx.OnLoad)
+			sp.ComparisonMode = (m_cbMatchCase.Checked ?
+				StringComparison.CurrentCulture :
+				StringComparison.CurrentCultureIgnoreCase);
+			sp.MatchDiacritics = m_cbMatchDiacritics.Checked;
 
 			SearchUtil.SetTransformation(sp, (m_cbDerefData.Checked ?
 				SearchUtil.StrTrfDeref : string.Empty));
+
+			sp.ExcludeExpired = m_cbExcludeExpired.Checked;
+			sp.RespectEntrySearchingDisabled = !m_cbIgnoreGroupSettings.Checked;
 
 			return sp;
 		}
@@ -306,6 +305,7 @@ namespace KeePass.Forms
 			++m_uBlockProfileAuto;
 
 			bool bCustom = (m_cmbProfiles.Text == ProfileCustom);
+			bool bRegular = m_rbModeRegular.Checked;
 			bool bXPath = m_rbModeXPath.Checked;
 
 			m_btnProfileDelete.Enabled = !bCustom;
@@ -323,8 +323,11 @@ namespace KeePass.Forms
 			m_cbGroupName.Enabled = !bGroupPath;
 			if(bGroupPath) m_cbGroupName.Checked = true;
 
-			m_cbCaseSensitive.Enabled = !bXPath;
-			if(bXPath) m_cbCaseSensitive.Checked = true;
+			m_cbMatchCase.Enabled = !bXPath;
+			if(bXPath) m_cbMatchCase.Checked = true;
+
+			m_cbMatchDiacritics.Enabled = (!bRegular && !bXPath);
+			if(bRegular || bXPath) m_cbMatchDiacritics.Checked = true;
 
 			m_cbDerefData.Enabled = !bXPath;
 			if(bXPath) m_cbDerefData.Checked = false;
@@ -366,27 +369,24 @@ namespace KeePass.Forms
 				KPRes.ProfileSavePrompt, Properties.Resources.B48x48_KMag,
 				string.Empty, lNames.ToArray());
 
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
+
+			string strName = dlg.ResultString;
+			if(string.IsNullOrEmpty(strName) || (strName == ProfileCustom))
+				MessageService.ShowWarning(KPRes.FieldNameInvalid);
+			else
 			{
-				string strName = dlg.ResultString;
+				SearchParameters sp = GetSearchParameters();
+				sp.Name = strName;
 
-				if(string.IsNullOrEmpty(strName) || (strName == ProfileCustom))
-					MessageService.ShowWarning(KPRes.FieldNameInvalid);
-				else
-				{
-					SearchParameters sp = GetSearchParameters();
-					sp.Name = strName;
+				AceSearch aceSearch = Program.Config.Search;
+				int i = aceSearch.FindProfileIndex(strName);
+				if(i >= 0) aceSearch.UserProfiles[i] = sp;
+				else aceSearch.UserProfiles.Add(sp);
 
-					AceSearch aceSearch = Program.Config.Search;
-					int i = aceSearch.FindProfileIndex(strName);
-					if(i >= 0) aceSearch.UserProfiles[i] = sp;
-					else aceSearch.UserProfiles.Add(sp);
-
-					UpdateProfilesList(strName);
-					UpdateUIState();
-				}
+				UpdateProfilesList(strName);
+				UpdateUIState();
 			}
-			UIUtil.DestroyForm(dlg);
 		}
 
 		private void OnBtnProfileDelete(object sender, EventArgs e)

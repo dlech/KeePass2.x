@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -403,8 +403,13 @@ namespace KeePass.App.Configuration
 		[DefaultValue(false)]
 		public bool UnhideButtonAlsoUnhidesSource { get; set; }
 
-		[DefaultValue(false)]
-		public bool UnhideEmptyData { get; set; }
+		private bool m_bUnhideEmptyData = true;
+		[DefaultValue(true)]
+		public bool UnhideEmptyData
+		{
+			get { return m_bUnhideEmptyData; }
+			set { m_bUnhideEmptyData = value; }
+		}
 	}
 
 	public sealed class AceFont

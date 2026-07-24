@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -121,14 +122,15 @@ namespace KeePass.UI
 
 		private static Font KdeCreateFont(string strDef)
 		{
-			string[] v = strDef.Split(new char[] { ',' });
+			string[] v = strDef.Split(',');
 			if((v == null) || (v.Length < 6)) { Debug.Assert(false); return null; }
 
 			for(int i = 0; i < v.Length; ++i)
 				v[i] = v[i].Trim();
 
 			float fSize;
-			if(!float.TryParse(v[1], out fSize)) { Debug.Assert(false); return null; }
+			if(!float.TryParse(v[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo,
+				out fSize)) { Debug.Assert(false); return null; }
 
 			FontStyle fs = FontStyle.Regular;
 			if(v[4] == "75") fs |= FontStyle.Bold;
@@ -139,15 +141,15 @@ namespace KeePass.UI
 
 		private static void GnomeLoadFonts(string strHome)
 		{
-			string strConfig = strHome + @".gconf/desktop/gnome/interface/%gconf.xml";
+			string strConfig = strHome + ".gconf/desktop/gnome/interface/%gconf.xml";
 			if(!File.Exists(strConfig)) return;
 
 			XmlDocument xd = XmlUtilEx.LoadXmlDocument(strConfig, StrUtil.Utf8);
 
 			foreach(XmlNode xn in xd.DocumentElement.ChildNodes)
 			{
-				if(string.Equals(xn.Name, "entry") &&
-					string.Equals(xn.Attributes.GetNamedItem("name").Value, "font_name"))
+				if((xn.Name == "entry") &&
+					(xn.Attributes.GetNamedItem("name").Value == "font_name"))
 				{
 					m_fontUI = GnomeCreateFont(xn.FirstChild.InnerText);
 					break;

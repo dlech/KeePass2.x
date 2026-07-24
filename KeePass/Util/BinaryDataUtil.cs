@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -122,18 +122,18 @@ namespace KeePass.Util
 			{
 				DataViewerForm dvf = new DataViewerForm();
 				dvf.InitEx(strName, pbData);
+
 				UIUtil.ShowDialogAndDestroy(dvf);
 			}
 			else if(h == BinaryDataHandler.InternalEditor)
 			{
 				DataEditorForm def = new DataEditorForm();
 				def.InitEx(strName, pbData);
-				def.ShowDialog();
+
+				UIUtil.ShowDialogAndDestroy(def);
 
 				if(def.EditedBinaryData != null)
 					pbModData = def.EditedBinaryData;
-
-				UIUtil.DestroyForm(def);
 			}
 			else if(h == BinaryDataHandler.ExternalApp)
 				pbModData = OpenExternal(strName, pbData, opt);

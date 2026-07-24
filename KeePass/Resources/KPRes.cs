@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,6 +42,12 @@ namespace KeePass.Resources
 		public static string ChangeMasterKeyIntroShort
 		{
 			get { return string.Empty; }
+		}
+
+		[Obsolete]
+		public static string ClipboardClearInSeconds
+		{
+			get { return KPRes.ClipboardClearInSeconds2.Replace("{PARAM}", "[PARAM]"); }
 		}
 
 		[Obsolete]

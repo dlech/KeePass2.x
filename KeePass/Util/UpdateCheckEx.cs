@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ using KeePass.Resources;
 using KeePass.UI;
 
 using KeePassLib;
+using KeePassLib.Delegates;
 using KeePassLib.Interfaces;
 using KeePassLib.Serialization;
 using KeePassLib.Utility;
@@ -108,6 +109,13 @@ namespace KeePass.Util
 			new Dictionary<string, string>();
 
 		private static readonly string CompMain = PwDefs.ShortProductName;
+
+		private static volatile GAction g_fDeferredReport = null;
+		internal static bool DeferredUpdateReportAvailable
+		{
+			// Currently, report available implies update available
+			get { return (g_fDeferredReport != null); }
+		}
 
 		private sealed class UpdateCheckParams
 		{
@@ -195,7 +203,11 @@ namespace KeePass.Util
 				if(sl != null) { sl.EndLogging(); sl = null; }
 
 				if(bUpdAvail || p.ForceUI)
-					ShowUpdateDialogAsync(lInst, p.ForceUI);
+				{
+					GAction f = (() => { ShowUpdateDialogAsync(lInst, p.ForceUI); });
+					if(p.ForceUI) f();
+					else g_fDeferredReport = f;
+				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 			finally
@@ -574,6 +586,18 @@ namespace KeePass.Util
 			if(string.IsNullOrEmpty(strKey)) { Debug.Assert(false); return; }
 
 			g_dFileSigKeys[strUrl.ToLowerInvariant()] = strKey;
+		}
+
+		internal static void ShowDeferredReport()
+		{
+			GAction f = g_fDeferredReport;
+			if((f == null) || (GlobalWindowManager.WindowCount != 0)) return;
+
+			MainForm mf = Program.MainForm;
+			if((mf == null) || mf.UIIsInteractionBlocked()) return;
+
+			g_fDeferredReport = null;
+			f();
 		}
 
 		public static void EnsureConfigured(Form fParent)

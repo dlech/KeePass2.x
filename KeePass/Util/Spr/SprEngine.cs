@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
+using KeePass.App;
 using KeePass.App.Configuration;
 using KeePass.Forms;
 using KeePass.Resources;
@@ -46,8 +47,8 @@ namespace KeePass.Util.Spr
 	/// </summary>
 	public static partial class SprEngine
 	{
-		private const uint MaxRecursionDepth = 12;
 		private const StringComparison ScMethod = StringComparison.OrdinalIgnoreCase;
+		private const uint MaxRecursionDepth = 12;
 
 		// Important notes for plugin developers subscribing to the following events:
 		// * If possible, prefer subscribing to FilterCompile instead of
@@ -239,36 +240,36 @@ namespace KeePass.Util.Spr
 			if(((ctx.Flags & SprCompileFlags.DateTime) != SprCompileFlags.None) &&
 				(str.IndexOf(@"{DT_", SprEngine.ScMethod) >= 0))
 			{
-				DateTime dtNow = DateTime.UtcNow;
-				str = Fill(str, @"{DT_UTC_YEAR}", dtNow.Year.ToString("D4"),
+				DateTime dt = ctx.Time;
+				str = Fill(str, @"{DT_UTC_YEAR}", dt.Year.ToString("D4"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_MONTH}", dtNow.Month.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_MONTH}", dt.Month.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_DAY}", dtNow.Day.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_DAY}", dt.Day.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_HOUR}", dtNow.Hour.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_HOUR}", dt.Hour.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_MINUTE}", dtNow.Minute.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_MINUTE}", dt.Minute.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_SECOND}", dtNow.Second.ToString("D2"),
+				str = Fill(str, @"{DT_UTC_SECOND}", dt.Second.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_UTC_SIMPLE}", dtNow.ToString("yyyyMMddHHmmss"),
+				str = Fill(str, @"{DT_UTC_SIMPLE}", dt.ToString("yyyyMMddHHmmss"),
 					ctx, null);
 
-				dtNow = dtNow.ToLocalTime();
-				str = Fill(str, @"{DT_YEAR}", dtNow.Year.ToString("D4"),
+				dt = dt.ToLocalTime();
+				str = Fill(str, @"{DT_YEAR}", dt.Year.ToString("D4"),
 					ctx, null);
-				str = Fill(str, @"{DT_MONTH}", dtNow.Month.ToString("D2"),
+				str = Fill(str, @"{DT_MONTH}", dt.Month.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_DAY}", dtNow.Day.ToString("D2"),
+				str = Fill(str, @"{DT_DAY}", dt.Day.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_HOUR}", dtNow.Hour.ToString("D2"),
+				str = Fill(str, @"{DT_HOUR}", dt.Hour.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_MINUTE}", dtNow.Minute.ToString("D2"),
+				str = Fill(str, @"{DT_MINUTE}", dt.Minute.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_SECOND}", dtNow.Second.ToString("D2"),
+				str = Fill(str, @"{DT_SECOND}", dt.Second.ToString("D2"),
 					ctx, null);
-				str = Fill(str, @"{DT_SIMPLE}", dtNow.ToString("yyyyMMddHHmmss"),
+				str = Fill(str, @"{DT_SIMPLE}", dt.ToString("yyyyMMddHHmmss"),
 					ctx, null);
 			}
 
@@ -650,8 +651,8 @@ namespace KeePass.Util.Spr
 
 			if(chScan == 'T') sp.SearchInTitles = true;
 			else if(chScan == 'U') sp.SearchInUserNames = true;
-			else if(chScan == 'A') sp.SearchInUrls = true;
 			else if(chScan == 'P') sp.SearchInPasswords = true;
+			else if(chScan == 'A') sp.SearchInUrls = true;
 			else if(chScan == 'N') sp.SearchInNotes = true;
 			else if(chScan == 'I') sp.SearchInUuids = true;
 			else if(chScan == 'O') sp.SearchInOther = true;
@@ -679,12 +680,28 @@ namespace KeePass.Util.Spr
 
 			VistaTaskDialog dlg = new VistaTaskDialog();
 			dlg.Content = strText;
+			dlg.EnableHyperlinks = true;
+			dlg.FooterText = KPRes.MoreInfo + ": " +
+				VistaTaskDialog.CreateLink("p", KPRes.Placeholders) + ", " +
+				VistaTaskDialog.CreateLink("s", KPRes.Security) + ".";
 			if(piForSet != null)
 				dlg.VerificationText = UIUtil.GetDialogNoShowAgainText(null);
 			dlg.WindowTitle = PwDefs.ShortProductName;
 			dlg.SetIcon(VtdCustomIcon.Question);
+			dlg.SetFooterIcon(VtdIcon.Information);
 			dlg.AddButton((int)DialogResult.OK, KPRes.Yes, null);
 			dlg.AddButton((int)DialogResult.Cancel, KPRes.No, null);
+
+			dlg.LinkClicked += delegate(object sender, LinkClickedEventArgs e)
+			{
+				string str = (e.LinkText ?? string.Empty);
+				if(str.Equals("p", StrUtil.CaseIgnoreCmp))
+					AppHelp.ShowHelp(AppDefs.HelpTopics.Placeholders, null);
+				else if(str.Equals("s", StrUtil.CaseIgnoreCmp))
+					AppHelp.ShowHelp(AppDefs.HelpTopics.Security,
+						AppDefs.HelpTopics.SecurityMalData);
+				else { Debug.Assert(false); }
+			};
 
 			using(FocusRestoreScope frs = new FocusRestoreScope())
 			{
@@ -695,7 +712,11 @@ namespace KeePass.Util.Spr
 						piForSet.SetValue(oCfgContainer, false, null);
 					return b;
 				}
-				return MessageService.AskYesNo(strText);
+				return MessageService.AskYesNo(strText + MessageService.NewParagraph +
+					KPRes.MoreInfo + ":" + MessageService.NewLine +
+					AppHelp.GetOnlineUrl(AppDefs.HelpTopics.Placeholders, null) +
+					MessageService.NewLine + AppHelp.GetOnlineUrl(
+					AppDefs.HelpTopics.Security, AppDefs.HelpTopics.SecurityMalData));
 			}
 		}
 
@@ -972,7 +993,7 @@ namespace KeePass.Util.Spr
 					psi.UseShellExecute = bShellExec;
 
 					string strO = GetParam(d, "o", (bShellExec ? "0" : "1"));
-					bool bStdOut = strO.Equals("1", sc);
+					bool bStdOut = (strO == "1");
 					if(bStdOut) psi.RedirectStandardOutput = true;
 
 					string strWS = GetParam(d, "ws", "n");
@@ -991,7 +1012,7 @@ namespace KeePass.Util.Spr
 					if(!string.IsNullOrEmpty(strVerb))
 						psi.Verb = strVerb;
 
-					bool bWait = GetParam(d, "w", "1").Equals("1", sc);
+					bool bWait = (GetParam(d, "w", "1") == "1");
 
 					if(!FileDialogsEx.ConfirmRunFile(strCmdOrg, strApp, strArgs,
 						Program.Config.UI, "ShowCmdPlhConfirmDialog"))

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -61,14 +61,13 @@ namespace KeePass.DataExchange
 			ExchangeDataForm dlg = new ExchangeDataForm();
 			dlg.InitEx(false, pd, pd.RootGroup);
 
-			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return null;
+			if(UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return null;
 
 			FileFormatProvider ffp = dlg.ResultFormat;
 			if(ffp == null)
 			{
 				Debug.Assert(false);
 				MessageService.ShowWarning(KPRes.ImportFailed);
-				UIUtil.DestroyForm(dlg);
 				return null;
 			}
 
@@ -78,13 +77,20 @@ namespace KeePass.DataExchange
 			foreach(string strFile in dlg.ResultFiles)
 				lConnections.Add(IOConnectionInfo.FromPath(strFile));
 
-			UIUtil.DestroyForm(dlg);
 			return Import(pd, ffp, lConnections.ToArray(), false, null, false, fParent);
 		}
 
 		public static bool? Import(PwDatabase pd, FileFormatProvider fmtImp,
 			IOConnectionInfo[] vConnections, bool bSynchronize, IUIOperations uiOps,
 			bool bForceSave, Form fParent)
+		{
+			return Import(pd, fmtImp, vConnections, bSynchronize, uiOps, bForceSave,
+				fParent, false, false);
+		}
+
+		internal static bool? Import(PwDatabase pd, FileFormatProvider fmtImp,
+			IOConnectionInfo[] vConnections, bool bSynchronize, IUIOperations uiOps,
+			bool bForceSave, Form fParent, bool bOnErrorSilent, bool bOnErrorContinue)
 		{
 			if(pd == null) throw new ArgumentNullException("pd");
 			if(!pd.IsOpen) { Debug.Assert(false); return null; }
@@ -96,7 +102,7 @@ namespace KeePass.DataExchange
 
 			MainForm mf = Program.MainForm; // Null for KPScript
 			bool bUseTempDb = (fmtImp.SupportsUuids || fmtImp.RequiresKey);
-			bool bAllSuccess = true;
+			List<IOConnectionInfo> lSucceeded = new List<IOConnectionInfo>();
 
 			IStatusLogger dlgStatus;
 			if(Program.Config.UI.ShowImportStatusDialog ||
@@ -115,19 +121,21 @@ namespace KeePass.DataExchange
 				{
 					pd.Modified = true;
 					fmtImp.Import(pd, null, dlgStatus);
+					return true;
 				}
 				catch(Exception ex)
 				{
-					MessageService.ShowWarning(ex);
-					bAllSuccess = false;
+					if(!bOnErrorSilent) MessageService.ShowWarning(ex);
 				}
+				finally { dlgStatus.EndLogging(); }
 
-				dlgStatus.EndLogging();
-				return bAllSuccess;
+				return false;
 			}
 
 			foreach(IOConnectionInfo iocIn in vConnections)
 			{
+				if(iocIn == null) { Debug.Assert(false); continue; }
+
 				PwDatabase pdImp;
 
 				Stream s = null;
@@ -149,10 +157,7 @@ namespace KeePass.DataExchange
 						KeyPromptFormResult r;
 						DialogResult dr = KeyPromptForm.ShowDialog(iocIn, false, null, out r);
 						if((dr != DialogResult.OK) || (r == null))
-						{
-							bAllSuccess = false;
 							continue;
-						}
 
 						pdImp.MasterKey = r.CompositeKey;
 					}
@@ -167,14 +172,15 @@ namespace KeePass.DataExchange
 				}
 				catch(Exception ex)
 				{
-					Exception exR = ex;
-					if(bSynchronize && (ex is InvalidCompositeKeyException))
-						exR = new Exception(KLRes.InvalidCompositeKey +
-							MessageService.NewParagraph + KPRes.SynchronizingHint);
-					MessageService.ShowWarning(iocIn.GetDisplayName(),
-						KPRes.FileImportFailed, exR);
-
-					bAllSuccess = false;
+					if(!bOnErrorSilent)
+					{
+						Exception exR = ex;
+						if(bSynchronize && (ex is InvalidCompositeKeyException))
+							exR = new Exception(KLRes.InvalidCompositeKey +
+								MessageService.NewParagraph + KPRes.SynchronizingHint);
+						MessageService.ShowWarning(iocIn.GetDisplayName(),
+							KPRes.FileImportFailed, exR);
+					}
 					continue;
 				}
 				finally { if(s != null) s.Dispose(); }
@@ -187,13 +193,9 @@ namespace KeePass.DataExchange
 					else
 					{
 						ImportMethodForm imf = new ImportMethodForm();
-						if(UIUtil.ShowDialogNotValue(imf, DialogResult.OK))
-						{
-							bAllSuccess = false;
+						if(UIUtil.ShowDialogAndDestroy(imf) != DialogResult.OK)
 							continue;
-						}
 						mm = imf.MergeMethod;
-						UIUtil.DestroyForm(imf);
 					}
 
 					try
@@ -203,85 +205,77 @@ namespace KeePass.DataExchange
 					}
 					catch(Exception ex)
 					{
-						MessageService.ShowWarning(iocIn.GetDisplayName(),
-							KPRes.ImportFailed, ex);
-						bAllSuccess = false;
+						if(!bOnErrorSilent)
+							MessageService.ShowWarning(iocIn.GetDisplayName(),
+								KPRes.FileImportFailed, ex);
 						continue;
 					}
 				}
+
+				lSucceeded.Add(iocIn);
 			}
 
-			if(bSynchronize && bAllSuccess)
+			bool bAllSucceeded = (lSucceeded.Count == vConnections.Length);
+
+			if(bSynchronize && (bAllSucceeded || bOnErrorContinue))
 			{
 				if(uiOps == null) { Debug.Assert(false); throw new ArgumentNullException("uiOps"); }
 
 				dlgStatus.SetText(KPRes.Synchronizing + " (" +
 					KPRes.SavingDatabase + ")", LogStatusType.Info);
 
+				bool bMainCorrect = true;
 				if(mf != null)
 				{
 					try { mf.DocumentManager.ActiveDatabase = pd; }
-					catch(Exception) { Debug.Assert(false); }
+					catch(Exception) { Debug.Assert(false); bMainCorrect = false; }
 				}
 
-				if(uiOps.UIFileSave(bForceSave))
+				bool bMainSaved = (bMainCorrect && uiOps.UIFileSave(bForceSave));
+				if(!bMainSaved)
 				{
-					foreach(IOConnectionInfo ioc in vConnections)
+					if(!bOnErrorSilent)
+						MessageService.ShowWarning(pd.IOConnectionInfo.GetDisplayName(),
+							KPRes.SyncFailed); // Save failure probably displayed already
+					bAllSucceeded = false;
+				}
+
+				string strMain = pd.IOConnectionInfo.Path;
+				bool bMainSavedLocal = (bMainSaved && pd.IOConnectionInfo.IsLocalFile());
+
+				foreach(IOConnectionInfo iocOut in lSucceeded)
+				{
+					try
 					{
-						try
-						{
-							// dlgStatus.SetText(KPRes.Synchronizing + " (" +
-							//	KPRes.SavingDatabase + " " + ioc.GetDisplayName() +
-							//	")", LogStatusType.Info);
+						if(iocOut == null) { Debug.Assert(false); continue; }
 
-							string strSource = pd.IOConnectionInfo.Path;
-							if(!string.Equals(ioc.Path, strSource, StrUtil.CaseIgnoreCmp))
-							{
-								bool bSaveAs = true;
+						// dlgStatus.SetText(KPRes.Synchronizing + " (" +
+						//	KPRes.SavingDatabase + " " + iocOut.GetDisplayName() +
+						//	")", LogStatusType.Info);
 
-								if(pd.IOConnectionInfo.IsLocalFile() &&
-									ioc.IsLocalFile())
-								{
-									// Do not try to copy an encrypted file;
-									// https://sourceforge.net/p/keepass/discussion/329220/thread/9c9eb989/
-									// https://msdn.microsoft.com/en-us/library/windows/desktop/aa363851.aspx
-									if((long)(File.GetAttributes(strSource) &
-										FileAttributes.Encrypted) == 0)
-									{
-										File.Copy(strSource, ioc.Path, true);
-										bSaveAs = false;
-									}
-								}
+						if(string.Equals(iocOut.Path, strMain, StrUtil.CaseIgnoreCmp))
+							continue; // No assert (sync on save)
 
-								if(bSaveAs) pd.SaveAs(ioc, false, null);
-							}
-							// else { } // No assert (sync on save)
+						if(bMainSavedLocal)
+							IOConnection.CopyData(pd.IOConnectionInfo, iocOut);
+						else pd.SaveAs(iocOut, false, null);
 
-							if(mf != null)
-								mf.FileMruList.AddItem(ioc.GetDisplayName(),
-									ioc.CloneDeep());
-						}
-						catch(Exception ex)
-						{
-							MessageService.ShowWarning(
-								pd.IOConnectionInfo.GetDisplayName() +
-								MessageService.NewLine + ioc.GetDisplayName(),
-								KPRes.SyncFailed, ex);
-							bAllSuccess = false;
-							continue;
-						}
+						if(mf != null)
+							mf.FileMruList.AddItem(iocOut.GetDisplayName(),
+								iocOut.CloneDeep());
 					}
-				}
-				else
-				{
-					MessageService.ShowWarning(
-						pd.IOConnectionInfo.GetDisplayName(), KPRes.SyncFailed);
-					bAllSuccess = false;
+					catch(Exception ex)
+					{
+						if(!bOnErrorSilent)
+							MessageService.ShowWarning(iocOut.GetDisplayName(),
+								KLRes.FileSaveFailed, ex);
+						bAllSucceeded = false;
+					}
 				}
 			}
 
 			dlgStatus.EndLogging();
-			return bAllSuccess;
+			return bAllSucceeded;
 		}
 
 		public static bool? Import(PwDatabase pd, FileFormatProvider fmtImp,
@@ -338,31 +332,36 @@ namespace KeePass.DataExchange
 				IOConnectionForm iocf = new IOConnectionForm();
 				iocf.InitEx(false, null, true, true);
 
-				if(UIUtil.ShowDialogNotValue(iocf, DialogResult.OK)) return null;
+				if(UIUtil.ShowDialogAndDestroy(iocf) != DialogResult.OK) return null;
 
 				lConnections.Add(iocf.IOConnectionInfo);
-				UIUtil.DestroyForm(iocf);
 			}
 
-			return Import(pd, new KeePassKdbx2(), lConnections.ToArray(),
-				true, uiOps, false, fParent);
+			return Synchronize(pd, uiOps, lConnections.ToArray(), false, fParent,
+				false, false);
 		}
 
 		public static bool? Synchronize(PwDatabase pd, IUIOperations uiOps,
 			IOConnectionInfo iocSyncWith, bool bForceSave, Form fParent)
 		{
+			return Synchronize(pd, uiOps, new IOConnectionInfo[] { iocSyncWith },
+				bForceSave, fParent, false, false);
+		}
+
+		internal static bool? Synchronize(PwDatabase pd, IUIOperations uiOps,
+			IOConnectionInfo[] vSyncWith, bool bForceSave, Form fParent,
+			bool bOnErrorSilent, bool bOnErrorContinue)
+		{
 			if(pd == null) throw new ArgumentNullException("pd");
 			if(!pd.IsOpen) { Debug.Assert(false); return null; }
-			if(iocSyncWith == null) throw new ArgumentNullException("iocSyncWith");
+			if(vSyncWith == null) throw new ArgumentNullException("vSyncWith");
 			if(!AppPolicy.Try(AppPolicyId.Import)) return null;
 
 			Program.TriggerSystem.RaiseEvent(EcasEventIDs.SynchronizingDatabaseFile,
 				EcasProperty.Database, pd);
 
-			IOConnectionInfo[] vConnections = new IOConnectionInfo[1] { iocSyncWith };
-
-			bool? ob = Import(pd, new KeePassKdbx2(), vConnections,
-				true, uiOps, bForceSave, fParent);
+			bool? ob = Import(pd, new KeePassKdbx2(), vSyncWith, true, uiOps,
+				bForceSave, fParent, bOnErrorSilent, bOnErrorContinue);
 
 			// Always raise the post event, such that the event pair can
 			// for instance be used to turn off/on other triggers

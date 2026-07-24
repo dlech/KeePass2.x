@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -216,12 +216,8 @@ namespace KeePass.UI
 				fbf.InitEx(bSaveMode, strTitle, KPRes.SecDeskFileDialogHint, strContext);
 				fbf.SuggestedFile = (strSuggestedFileName ?? string.Empty);
 
-				try
-				{
-					DialogResult drF = fbf.ShowDialog();
-					return ((drF == DialogResult.OK) ? fbf.SelectedFile : null);
-				}
-				finally { UIUtil.DestroyForm(fbf); }
+				return ((UIUtil.ShowDialogAndDestroy(fbf) == DialogResult.OK) ?
+					fbf.SelectedFile : null);
 			}
 
 			if(bSaveMode)
@@ -229,14 +225,14 @@ namespace KeePass.UI
 				SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(strTitle,
 					strSuggestedFileName, strFilter, iFilterIndex, strDefaultExt,
 					strContext);
-				DialogResult drS = sfd.ShowDialog();
-				return ((drS == DialogResult.OK) ? sfd.FileName : null);
+
+				return ((sfd.ShowDialog() == DialogResult.OK) ? sfd.FileName : null);
 			}
 
 			OpenFileDialogEx ofd = UIUtil.CreateOpenFileDialog(strTitle,
 				strFilter, iFilterIndex, strDefaultExt, false, strContext);
-			DialogResult drO = ofd.ShowDialog();
-			return ((drO == DialogResult.OK) ? ofd.FileName : null);
+
+			return ((ofd.ShowDialog() == DialogResult.OK) ? ofd.FileName : null);
 		}
 
 		internal static string ShowKeyFileDialog(bool bSaveMode, string strTitle,
@@ -260,6 +256,7 @@ namespace KeePass.UI
 			SaveFileDialogEx sfd = UIUtil.CreateSaveFileDialog(KPRes.AttachmentSave,
 				strName, UIUtil.CreateFileTypeFilter(null, null, true), 1, null,
 				AppDefs.FileDialogContext.Attachments);
+
 			return ((sfd.ShowDialog() == DialogResult.OK) ? sfd.FileName : null);
 		}
 
@@ -399,16 +396,18 @@ namespace KeePass.UI
 		public DialogResult ShowDialog()
 		{
 			string strPrevWorkDir = PreShowDialog();
-			DialogResult dr = this.FileDialog.ShowDialog();
+			DialogResult dr = UIUtil.ShowDialog(this.FileDialog);
 			PostShowDialog(strPrevWorkDir, dr);
+
 			return dr;
 		}
 
 		public DialogResult ShowDialog(IWin32Window owner)
 		{
 			string strPrevWorkDir = PreShowDialog();
-			DialogResult dr = this.FileDialog.ShowDialog(owner);
+			DialogResult dr = UIUtil.ShowDialog(this.FileDialog, owner);
 			PostShowDialog(strPrevWorkDir, dr);
+
 			return dr;
 		}
 

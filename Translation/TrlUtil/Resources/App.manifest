@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+	<assemblyIdentity version="1.0.0.0" name="MyApplication.app" />
+	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+		<security>
+			<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+				<!-- uiAccess should be disabled for security reasons. -->
+				<!-- https://keepass.info/help/base/autotype.html#req -->
+				<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+			</requestedPrivileges>
+		</security>
+	</trustInfo>
+</assembly>

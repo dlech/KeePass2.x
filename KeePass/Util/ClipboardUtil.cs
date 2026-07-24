@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -267,16 +267,16 @@ namespace KeePass.Util
 
 		public static void ClearIfOwner()
 		{
-			// Handle-based detection doesn't work well, because a control
-			// or dialog that stored the data may not exist anymore and
-			// thus GetClipboardOwner returns null
+			// Handle-based detection doesn't work well, because the window
+			// that stored the data may not exist anymore and thus
+			// GetClipboardOwner returns null
 			/* bool bOwnHandle = false;
 			try
 			{
 				if(!NativeLib.IsUnix())
 				{
 					IntPtr h = NativeMethods.GetClipboardOwner();
-					bOwnHandle = GlobalWindowManager.HasWindowMW(h);
+					bOwnHandle = GlobalWindowManager.HasWindowEx(h);
 				}
 			}
 			catch(Exception) { Debug.Assert(false); } */

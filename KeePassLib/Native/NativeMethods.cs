@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ namespace KeePassLib.Native
 	{
 		internal const int MAX_PATH = 260;
 
-		internal const long INVALID_HANDLE_VALUE = -1;
+		internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
 		internal const uint MOVEFILE_REPLACE_EXISTING = 0x00000001;
 		internal const uint MOVEFILE_COPY_ALLOWED = 0x00000002;
@@ -182,6 +182,7 @@ namespace KeePassLib.Native
 					AuxProtectProcessWithDaclA64();
 				else { Debug.Assert(false); }
 			}
+			catch(DllNotFoundException) { }
 			catch(Exception) { Debug.Assert(false); }
 		}
 

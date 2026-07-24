@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -35,12 +34,8 @@ namespace KeePass.Forms
 {
 	public partial class ImportMethodForm : Form
 	{
-		PwMergeMethod m_mmSelected = PwMergeMethod.CreateNewUuids;
-
-		public PwMergeMethod MergeMethod
-		{
-			get { return m_mmSelected; }
-		}
+		private PwMergeMethod m_mmSelected = PwMergeMethod.CreateNewUuids;
+		public PwMergeMethod MergeMethod { get { return m_mmSelected; } }
 
 		public ImportMethodForm()
 		{
@@ -51,8 +46,6 @@ namespace KeePass.Forms
 		private void OnFormLoad(object sender, EventArgs e)
 		{
 			GlobalWindowManager.AddWindow(this);
-			try { if(this.Owner == null) this.Owner = Program.MainForm; }
-			catch(Exception) { Debug.Assert(false); }
 
 			BannerFactory.CreateBannerEx(this, m_bannerImage,
 				Properties.Resources.B48x48_Folder_Download, KPRes.ImportBehavior,

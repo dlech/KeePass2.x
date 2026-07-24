@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-
-using Microsoft.Win32;
 
 using KeePass.UI;
 using KeePass.Util.Spr;
@@ -105,13 +103,8 @@ namespace KeePass.Util
 			{
 				// Printing and disposing immediately seems to be supported;
 				// https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-print-with-a-webbrowser-control
-				using(WebBrowser wb = new WebBrowser())
+				using(WebBrowser wb = UIUtil.CreateWebBrowserHeadless())
 				{
-					wb.AllowWebBrowserDrop = false;
-					wb.IsWebBrowserContextMenuEnabled = false;
-					wb.ScriptErrorsSuppressed = true;
-					wb.WebBrowserShortcutsEnabled = false;
-
 					UIUtil.SetWebBrowserDocument(wb, strHtml);
 
 					wb.ShowPrintDialog();

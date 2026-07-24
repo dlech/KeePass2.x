@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -49,15 +49,13 @@ namespace KeePass.DataExchange.Formats
 		{
 			string strData = MemUtil.ReadString(sInput, Encoding.Unicode);
 
-			strData = strData.Replace(@"<WBR>", string.Empty);
-			strData = strData.Replace(@"&shy;", string.Empty);
+			strData = strData.Replace("<WBR>", string.Empty);
+			strData = strData.Replace("&shy;", string.Empty);
 
-			using(WebBrowser wb = new WebBrowser())
+			using(WebBrowser wb = UIUtil.CreateWebBrowserHeadless())
 			{
-				wb.Visible = false;
-				wb.ScriptErrorsSuppressed = true;
-
 				UIUtil.SetWebBrowserDocument(wb, strData);
+
 				ImportPriv(pdStorage, wb.Document.Body);
 			}
 		}

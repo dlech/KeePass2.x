@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -512,13 +512,12 @@ namespace KeePass.UI
 				if(img == null)
 				{
 					Debug.Assert(false);
-					img = UIUtil.CreateColorBitmap24(nWidth, nHeight, Color.White);
+					img = CreateColorBitmap24(nWidth, nHeight, Color.White);
 				}
-
 				if((img.Width != nWidth) || (img.Height != nHeight))
 				{
 					Debug.Assert(false);
-					img = new Bitmap(img, new Size(nWidth, nHeight));
+					img = GfxUtil.ScaleImage(img, nWidth, nHeight, ScaleTransformFlags.UIIcon);
 				}
 
 				lImages.Add(img);
@@ -1185,9 +1184,7 @@ namespace KeePass.UI
 		{
 			using(ColorDialog dlg = CreateColorDialog(clrDefault))
 			{
-				GlobalWindowManager.AddDialog(dlg);
-				DialogResult dr = dlg.ShowDialog();
-				GlobalWindowManager.RemoveDialog(dlg);
+				DialogResult dr = ShowDialog(dlg);
 
 				SaveCustomColors(dlg);
 
@@ -1368,6 +1365,18 @@ namespace KeePass.UI
 			}
 		}
 
+		internal static void SelectAllItems(ListView lv)
+		{
+			if((lv == null) || !lv.MultiSelect) { Debug.Assert(false); return; }
+
+			lv.BeginUpdate();
+			try
+			{
+				foreach(ListViewItem lvi in lv.Items) lvi.Selected = true;
+			}
+			finally { lv.EndUpdate(); }
+		}
+
 		internal static void DeselectAllItems(ListView lv)
 		{
 			if(lv == null) { Debug.Assert(false); return; }
@@ -1379,29 +1388,65 @@ namespace KeePass.UI
 			int[] v = new int[n];
 			lvsic.CopyTo(v, 0);
 
-			for(int i = n - 1; i >= 0; --i)
-				lv.Items[v[i]].Selected = false;
+			lv.BeginUpdate();
+			try
+			{
+				for(int i = n - 1; i >= 0; --i)
+					lv.Items[v[i]].Selected = false;
+			}
+			finally { lv.EndUpdate(); }
+		}
+
+		internal static void Configure(WebBrowser wb, bool bAllowNav, bool bAllowCopy)
+		{
+			if(wb == null) { Debug.Assert(false); return; }
+
+			// The handle should exist already, because creating it now (e.g.
+			// before a Form's Load event) can result in the control being
+			// invisible when both UIAccess and TopMost are active;
+			// https://sourceforge.net/p/keepass/feature-requests/2964/
+			Debug.Assert(wb.IsHandleCreated);
+
+			wb.AllowNavigation = bAllowNav;
+			wb.AllowWebBrowserDrop = false; // ActiveX
+			wb.IsWebBrowserContextMenuEnabled = bAllowCopy;
+			wb.ScriptErrorsSuppressed = true; // ActiveX
+			wb.WebBrowserShortcutsEnabled = bAllowCopy;
+		}
+
+		internal static WebBrowser CreateWebBrowserHeadless()
+		{
+			WebBrowser wb = new WebBrowser();
+			wb.ScriptErrorsSuppressed = true;
+			return wb;
 		}
 
 		public static void SetWebBrowserDocument(WebBrowser wb, string strDocumentText)
 		{
-			string strContent = (strDocumentText ?? string.Empty);
+			if(wb == null) { Debug.Assert(false); return; }
 
-			wb.AllowNavigation = true;
-			wb.DocumentText = strContent;
+			bool bNav = wb.AllowNavigation;
+			if(!bNav) wb.AllowNavigation = true;
+
+			string str = (strDocumentText ?? string.Empty);
+			wb.DocumentText = str;
 
 			// Wait for document being loaded
-			for(int i = 0; i < 50; ++i)
+			for(int i = 0; i < 100; ++i)
 			{
-				if(wb.DocumentText == strContent) break;
+				if(wb.DocumentText == str) break;
 
 				Thread.Sleep(20);
 				Application.DoEvents();
 			}
+
+			if(!bNav) wb.AllowNavigation = false;
 		}
 
 		public static string GetWebBrowserDocument(WebBrowser wb)
 		{
+			if(wb == null) { Debug.Assert(false); return null; }
+
 			return wb.DocumentText;
 		}
 
@@ -2852,39 +2897,76 @@ namespace KeePass.UI
 					}
 				}
 
-				if(bStdSetFocus) UIUtil.SetFocus(c, fParent, bToForegroundAndFocus);
+				if(bStdSetFocus) SetFocus(c, fParent, bToForegroundAndFocus);
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
 
-		/// <summary>
-		/// Show a modal dialog and destroy it afterwards.
-		/// </summary>
-		/// <param name="f">Form to show and destroy.</param>
-		/// <returns>Result from <c>ShowDialog</c>.</returns>
+		private static IWin32Window GetOwnerForDialog(IWin32Window wForcedOwner)
+		{
+			if(wForcedOwner != null)
+			{
+				Debug.Assert(wForcedOwner is Form);
+				return wForcedOwner;
+			}
+
+			return (IsUIAccessWorkaroundRequired() ? GlobalWindowManager.TopWindowEx :
+				null);
+		}
+
+		// Cf. Show and ShowDialog overloads
+		internal static void Show(Form f, IWin32Window wOwner)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			IWin32Window wO = GetOwnerForDialog(wOwner);
+			if(wO != null) f.Show(wO);
+			else f.Show();
+		}
+
+		public static DialogResult ShowDialog(Form f)
+		{
+			return ShowDialog(f, null);
+		}
+
+		// Cf. Show and ShowDialog overloads
+		internal static DialogResult ShowDialog(Form f, IWin32Window wOwner)
+		{
+			if(f == null) { Debug.Assert(false); return DialogResult.None; }
+
+			IWin32Window wO = GetOwnerForDialog(wOwner);
+			return ((wO != null) ? f.ShowDialog(wO) : f.ShowDialog());
+		}
+
+		public static DialogResult ShowDialog(CommonDialog dlg)
+		{
+			return ShowDialog(dlg, null);
+		}
+
+		// Cf. Show and ShowDialog overloads
+		internal static DialogResult ShowDialog(CommonDialog dlg, IWin32Window wOwner)
+		{
+			if(dlg == null) { Debug.Assert(false); return DialogResult.None; }
+
+			GlobalWindowManager.AddDialog(dlg);
+			try
+			{
+				IWin32Window wO = GetOwnerForDialog(wOwner);
+				return ((wO != null) ? dlg.ShowDialog(wO) : dlg.ShowDialog());
+			}
+			finally { GlobalWindowManager.RemoveDialog(dlg); }
+		}
+
 		public static DialogResult ShowDialogAndDestroy(Form f)
 		{
-			if(f == null) { Debug.Assert(false); return DialogResult.None; }
-
-			DialogResult dr = f.ShowDialog();
-			UIUtil.DestroyForm(f);
-			return dr;
-		}
-
-		internal static DialogResult ShowDialogAndDestroy(Form f, Form fParent)
-		{
-			if(f == null) { Debug.Assert(false); return DialogResult.None; }
-			if(fParent == null) return ShowDialogAndDestroy(f);
-
-			DialogResult dr = f.ShowDialog(fParent);
-			UIUtil.DestroyForm(f);
-			return dr;
+			try { return ShowDialog(f); }
+			finally { DestroyForm(f); }
 		}
 
 		/// <summary>
-		/// Show a modal dialog. If the result isn't the specified value, the
+		/// Show a modal dialog. If the result is not the specified value, the
 		/// dialog is disposed and <c>true</c> is returned. Otherwise, <c>false</c>
-		/// is returned (without disposing the dialog).
+		/// is returned, without disposing the dialog.
 		/// </summary>
 		/// <param name="f">Dialog to show.</param>
 		/// <param name="drNotValue">Comparison value.</param>
@@ -2893,9 +2975,9 @@ namespace KeePass.UI
 		{
 			if(f == null) { Debug.Assert(false); return true; }
 
-			if(f.ShowDialog() != drNotValue)
+			if(ShowDialog(f) != drNotValue)
 			{
-				UIUtil.DestroyForm(f);
+				DestroyForm(f);
 				return true;
 			}
 
@@ -2908,7 +2990,7 @@ namespace KeePass.UI
 
 			try
 			{
-				// f.Close(); // Don't trigger closing events
+				// f.Close(); // Do not trigger closing events
 				f.Dispose();
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -3167,7 +3249,7 @@ namespace KeePass.UI
 				{
 					bool b = NativeMethods.PlaySound(strWav, IntPtr.Zero,
 						NativeMethods.SND_FILENAME | NativeMethods.SND_ASYNC |
-						NativeMethods.SND_NODEFAULT);
+						NativeMethods.SND_NODEFAULT | NativeMethods.SND_SYSTEM);
 					Debug.Assert(b);
 					return b;
 				}
@@ -4053,6 +4135,46 @@ namespace KeePass.UI
 
 			return Program.Translation.CombineToSentence(StrUtil.TrimDots(
 				str, true), KPRes.AlwaysP.Replace("{PARAM}", strDefault));
+		}
+
+		internal static bool GetTopMost(Form f)
+		{
+			if(f == null) { Debug.Assert(false); return false; }
+
+			// On .NET/Windows, the managed state (Form.TopMost property) and
+			// the unmanaged state (WS_EX_TOPMOST bit) can desynchronize;
+			// https://sourceforge.net/p/keepass/discussion/329220/thread/d45a3b38e8/
+			try
+			{
+				Debug.Assert(f.IsHandleCreated);
+				if(!NativeLib.IsUnix() && f.IsHandleCreated)
+				{
+					int s = NativeMethods.GetWindowLong(f.Handle,
+						NativeMethods.GWL_EXSTYLE);
+					return ((s & NativeMethods.WS_EX_TOPMOST) != 0);
+				}
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return f.TopMost;
+		}
+
+		internal static void SetTopMost(Form f, bool bTopMost)
+		{
+			if(f == null) { Debug.Assert(false); return; }
+
+			// Setting TopMost to false can result in problems when
+			// uiAccess="true", thus do it only when necessary;
+			// https://sourceforge.net/p/keepass/feature-requests/2964/
+			if(GetTopMost(f) != bTopMost) f.TopMost = bTopMost;
+		}
+
+		internal static bool IsUIAccessWorkaroundRequired()
+		{
+			// When both UIAccess and TopMost are active, various issues occur
+			// (focus problems, invisible controls, etc.);
+			// https://sourceforge.net/p/keepass/feature-requests/2964/
+			return (Program.Config.MainWindow.AlwaysOnTop && WinUtil.HasUIAccess);
 		}
 	}
 }
