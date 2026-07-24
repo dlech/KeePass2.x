@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -203,17 +203,17 @@ namespace KeePass.Forms
 
 			m_ctxComponents.Items.Add(new ToolStripSeparator());
 
-			ToolStripMenuItem tsmiCopyVersion = new ToolStripMenuItem(
-				KPRes.CopyObject.Replace("{PARAM}", m_lvComponents.Columns[1].Text),
-				Properties.Resources.B16x16_EditCopy);
-			tsmiCopyVersion.Click += this.OnComponentCopyVersion;
-			m_ctxComponents.Items.Add(tsmiCopyVersion);
-
 			ToolStripMenuItem tsmiCopyPath = new ToolStripMenuItem(
 				KPRes.CopyObject.Replace("{PARAM}", KPRes.Path),
 				Properties.Resources.B16x16_EditCopyLink);
 			tsmiCopyPath.Click += this.OnComponentCopyTag;
 			m_ctxComponents.Items.Add(tsmiCopyPath);
+
+			ToolStripMenuItem tsmiCopyVersion = new ToolStripMenuItem(
+				KPRes.CopyObject.Replace("{PARAM}", m_lvComponents.Columns[1].Text),
+				Properties.Resources.B16x16_EditCopy);
+			tsmiCopyVersion.Click += this.OnComponentCopyVersion;
+			m_ctxComponents.Items.Add(tsmiCopyVersion);
 
 			m_ctxComponents.Opening += delegate(object sender, CancelEventArgs e)
 			{
@@ -222,8 +222,8 @@ namespace KeePass.Forms
 				bool bTag = (bSel && (lviSel.Tag != null));
 
 				tsmiShow.Enabled = bTag;
-				tsmiCopyVersion.Enabled = bSel;
 				tsmiCopyPath.Enabled = bTag;
+				tsmiCopyVersion.Enabled = bSel;
 			};
 
 			m_ctxComponents.ResumeLayout(true);

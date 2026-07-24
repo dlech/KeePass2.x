@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ namespace KeePass.Forms
 
 		private void OnFormLoad(object sender, EventArgs e)
 		{
-			Debug.Assert(m_pwDatabase != null); if(m_pwDatabase == null) throw new InvalidOperationException();
+			if(m_pwDatabase == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
 			GlobalWindowManager.AddWindow(this, this);
 
@@ -69,6 +69,8 @@ namespace KeePass.Forms
 			this.Text = KPRes.DatabaseMaintenance;
 
 			m_numHistoryDays.Value = m_pwDatabase.MaintenanceHistoryDays;
+
+			m_lvCustomData.ItemDeleteButton = m_btnCDDel;
 
 			m_sdCustomData = m_pwDatabase.CustomData.CloneDeep();
 			UIUtil.StrDictListInit(m_lvCustomData);
@@ -176,8 +178,9 @@ namespace KeePass.Forms
 		private void OnBtnCDDel(object sender, EventArgs e)
 		{
 			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData, false);
-			UIUtil.SetFocus(m_lvCustomData, this);
+
 			EnableControlsEx();
+			UIUtil.SetFocus(m_lvCustomData, this);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,14 +41,13 @@ namespace KeePass.UI
 				get { return m_dlg; }
 			}
 
-			public StatusProgressFormWrapper(Form fParent, string strTitle,
+			public StatusProgressFormWrapper(Form fOwner, string strTitle,
 				bool bCanCancel, bool bMarqueeProgress)
 			{
 				m_dlg = new StatusProgressForm();
-				m_dlg.InitEx(strTitle, bCanCancel, bMarqueeProgress, fParent);
+				m_dlg.InitEx(strTitle, bCanCancel, bMarqueeProgress, fOwner);
 
-				if(fParent != null) m_dlg.Show(fParent);
-				else m_dlg.Show();
+				UIUtil.Show(m_dlg, fOwner);
 			}
 
 			public void StartLogging(string strOperation, bool bWriteOperationToLog)
@@ -64,6 +63,7 @@ namespace KeePass.UI
 
 				m_dlg.EndLogging();
 				m_dlg.CloseEx();
+
 				UIUtil.DestroyForm(m_dlg);
 				m_dlg = null;
 			}

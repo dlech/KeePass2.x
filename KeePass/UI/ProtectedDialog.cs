@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -88,6 +88,10 @@ namespace KeePass.UI
 			objResult = null;
 
 			ProcessMessagesEx();
+
+			// GetActiveWindow may return null during MainForm.Load,
+			// GetForegroundWindow may return a window of a different application
+			// IntPtr hWndPrevious = NativeMethods.GetForegroundWindowHandle();
 
 			// Creating a window on the new desktop spawns a CtfMon.exe child
 			// process by default. On Windows Vista, this process is terminated
@@ -202,14 +206,20 @@ namespace KeePass.UI
 			if(dr == DialogResult.None)
 			{
 				Form f = m_fnConstruct(objConstructParam);
+				if(f == null) throw new ArgumentNullException("f");
 
 				try
 				{
-					dr = f.ShowDialog();
+					dr = UIUtil.ShowDialog(f);
 					objResult = m_fnResultBuilder(f); // Always
 				}
-				finally { if(f != null) UIUtil.DestroyForm(f); }
+				finally { UIUtil.DestroyForm(f); }
 			}
+
+			// Workaround for focus bug in Windows 11;
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/0a4a1a7ee7/
+			// NativeMethods.SetForegroundWindowEx(hWndPrevious);
+			GlobalWindowManager.ActivateTopWindowEx();
 
 			return dr;
 		}
@@ -306,7 +316,7 @@ namespace KeePass.UI
 				// bLangBar = ShowLangBar(true);
 
 				lock(stp) { stp.State = SecureThreadState.ShowingDialog; }
-				stp.DialogResult = f.ShowDialog(formBackPrimary);
+				stp.DialogResult = UIUtil.ShowDialog(f, formBackPrimary);
 				stp.ResultObject = m_fnResultBuilder(f); // Always
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -408,14 +418,14 @@ namespace KeePass.UI
 
 			r = null;
 
-			if(!bProtect)
+			if(!bProtect || !ProtectedDialog.IsSupported)
 			{
 				TForm tf = fnConstruct();
 				if(tf == null) { Debug.Assert(false); return DialogResult.None; }
 
 				try
 				{
-					DialogResult drDirect = tf.ShowDialog();
+					DialogResult drDirect = UIUtil.ShowDialog(tf);
 					r = fnResultBuilder(tf); // Always
 					return drDirect;
 				}

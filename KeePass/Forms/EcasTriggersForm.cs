@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -86,6 +86,8 @@ namespace KeePass.Forms
 			m_lvTriggers.Columns.Add(KPRes.Status, wStatus);
 
 			m_lvTriggers.SmallImageList = m_ilIcons;
+
+			m_lvTriggers.ItemDeleteButton = m_btnDelete;
 
 			m_cbEnableTriggers.Checked = m_ets.Enabled;
 			UpdateTriggerListEx(false);

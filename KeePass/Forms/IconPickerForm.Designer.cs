@@ -102,7 +102,7 @@
 			this.m_btnCustomDelete.TabIndex = 5;
 			this.m_btnCustomDelete.Text = "&Delete";
 			this.m_btnCustomDelete.UseVisualStyleBackColor = true;
-			this.m_btnCustomDelete.Click += new System.EventHandler(this.OnBtnCustomRemove);
+			this.m_btnCustomDelete.Click += new System.EventHandler(this.OnBtnCustomDelete);
 			// 
 			// m_btnCustomMore
 			// 

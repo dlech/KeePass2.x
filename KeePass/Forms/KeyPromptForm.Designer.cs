@@ -43,6 +43,7 @@
 			this.m_cmbKeyFile = new System.Windows.Forms.ComboBox();
 			this.m_btnExit = new System.Windows.Forms.Button();
 			this.m_tbPassword = new KeePass.UI.SecureTextBoxEx();
+			this.m_timerMain = new System.Windows.Forms.Timer(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -183,6 +184,12 @@
 			this.m_tbPassword.TabIndex = 3;
 			this.m_tbPassword.UseSystemPasswordChar = true;
 			// 
+			// m_timerMain
+			// 
+			this.m_timerMain.Enabled = true;
+			this.m_timerMain.Interval = 500;
+			this.m_timerMain.Tick += new System.EventHandler(this.OnTimerMainTick);
+			// 
 			// KeyPromptForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -235,5 +242,6 @@
 		private System.Windows.Forms.Label m_lblSeparator;
 		private System.Windows.Forms.ComboBox m_cmbKeyFile;
 		private System.Windows.Forms.Button m_btnExit;
+		private System.Windows.Forms.Timer m_timerMain;
 	}
 }

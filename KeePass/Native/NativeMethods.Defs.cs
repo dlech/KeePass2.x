@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ namespace KeePass.Native
 {
 	internal static partial class NativeMethods
 	{
-		private static readonly IntPtr FALSE_PTR = IntPtr.Zero;
-		private static readonly IntPtr TRUE_PTR = new IntPtr(1);
+		internal static readonly IntPtr FALSE_PTR = IntPtr.Zero;
+		internal static readonly IntPtr TRUE_PTR = new IntPtr(1);
 
 		internal const int WM_SETFOCUS = 0x0007;
 		internal const int WM_KILLFOCUS = 0x0008;
@@ -38,6 +38,7 @@ namespace KeePass.Native
 		internal const int WM_KEYUP = 0x0101;
 		internal const int WM_SYSKEYDOWN = 0x0104;
 		internal const int WM_SYSKEYUP = 0x0105;
+		internal const int WM_PASTE = 0x0302;
 		internal const int WM_DRAWCLIPBOARD = 0x0308;
 		internal const int WM_CHANGECBCHAIN = 0x030D;
 		internal const int WM_HOTKEY = 0x0312;
@@ -56,10 +57,10 @@ namespace KeePass.Native
 		internal const int WM_NOTIFY = 0x004E;
 
 		// See Control.ReflectMessageInternal;
-		// https://msdn.microsoft.com/en-us/library/eeah46xd.aspx
+		// https://learn.microsoft.com/en-us/cpp/mfc/tn062-message-reflection-for-windows-controls
 		internal const int WM_REFLECT = 0x2000;
 
-		internal const int WM_NOTIFY_REFLECT = (WM_NOTIFY + WM_REFLECT);
+		internal const int WM_NOTIFY_REFLECT = WM_NOTIFY + WM_REFLECT;
 
 		internal const int WM_GETTEXTLENGTH = 0x000E;
 		internal const int WM_GETICON = 0x007F;
@@ -70,6 +71,8 @@ namespace KeePass.Native
 		internal const uint SMTO_BLOCK = 0x0001;
 		internal const uint SMTO_ABORTIFHUNG = 0x0002;
 		internal const uint SMTO_NOTIMEOUTIFNOTHUNG = 0x0008;
+
+		internal const uint ASFW_ANY = 0xFFFFFFFF;
 
 		internal const uint INPUT_MOUSE = 0;
 		internal const uint INPUT_KEYBOARD = 1;
@@ -104,10 +107,12 @@ namespace KeePass.Native
 		internal const uint KEYEVENTF_KEYUP = 2;
 		internal const uint KEYEVENTF_UNICODE = 4;
 
-		// private const int KL_NAMELENGTH = 9;
-
 		internal const ushort LANG_CZECH = 0x05;
 		internal const ushort LANG_POLISH = 0x15;
+
+		private const int KL_NAMELENGTH = 9;
+		// https://learn.microsoft.com/en-us/globalization/windows-keyboard-layouts
+		internal const string KLID_FRENCH_STD_AZERTY = "0001040C";
 
 		// internal const uint GW_CHILD = 5;
 		internal const uint GW_HWNDNEXT = 2;
@@ -164,7 +169,7 @@ namespace KeePass.Native
 		internal const int PBT_APMQUERYSUSPEND = 0x0000;
 		internal const int PBT_APMSUSPEND = 0x0004;
 
-		internal const uint INVALID_FILE_ATTRIBUTES = 0xFFFFFFFFU;
+		internal const uint INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF;
 
 		internal const uint FSCTL_LOCK_VOLUME = 589848;
 		internal const uint FSCTL_UNLOCK_VOLUME = 589852;
@@ -246,6 +251,7 @@ namespace KeePass.Native
 		internal const uint SND_ASYNC = 0x0001;
 		internal const uint SND_NODEFAULT = 0x0002;
 		internal const uint SND_FILENAME = 0x00020000;
+		internal const uint SND_SYSTEM = 0x00200000;
 
 		internal const int LOGPIXELSX = 88;
 		internal const int LOGPIXELSY = 90;
@@ -270,8 +276,13 @@ namespace KeePass.Native
 
 		// internal const uint DI_NORMAL = 0x0003;
 
-		// internal const int LVN_FIRST = -100;
-		// internal const int LVN_LINKCLICK = LVN_FIRST - 84;
+		internal const int L_MAX_URL_LENGTH = 2048 + 32 + 4;
+
+		internal const uint EMF_CENTERED = 1;
+
+		private const uint LVN_FIRST = unchecked(0U - 100U);
+		internal const uint LVN_GETEMPTYMARKUP = LVN_FIRST - 87;
+		// internal const uint LVN_LINKCLICK = LVN_FIRST - 84;
 
 		// internal const uint LVGF_NONE = 0x00000000;
 		// internal const uint LVGF_HEADER = 0x00000001;
@@ -307,6 +318,10 @@ namespace KeePass.Native
 		internal const uint WDA_MONITOR = 0x00000001;
 
 		internal const uint SPI_GETSCREENREADER = 0x0046;
+
+		internal const uint TOKEN_QUERY = 0x0008;
+
+		internal const uint TokenUIAccess = 26;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

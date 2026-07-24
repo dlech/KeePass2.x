@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,9 +29,6 @@ using KeePass.App;
 using KeePass.Ecas;
 using KeePass.Resources;
 using KeePass.UI;
-
-using KeePassLib;
-using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
@@ -69,6 +66,12 @@ namespace KeePass.Forms
 			this.Text = strTitle;
 			this.Icon = AppIcons.Default;
 
+			m_tbName.Text = m_trigger.Name;
+			UIUtil.SetMultilineText(m_tbComments, m_trigger.Comments);
+			m_cbEnabled.Checked = m_trigger.Enabled;
+			m_cbInitiallyOn.Checked = m_trigger.InitiallyOn;
+			m_cbTurnOffAfterAction.Checked = m_trigger.TurnOffAfterAction;
+
 			m_lvEvents.SmallImageList = m_ilIcons;
 			m_lvConditions.SmallImageList = m_ilIcons;
 			m_lvActions.SmallImageList = m_ilIcons;
@@ -83,11 +86,9 @@ namespace KeePass.Forms
 			m_lvActions.Columns.Add(KPRes.Action, nColWidth);
 			m_lvActions.Columns.Add(string.Empty, nColWidth);
 
-			m_tbName.Text = m_trigger.Name;
-			UIUtil.SetMultilineText(m_tbComments, m_trigger.Comments);
-			m_cbEnabled.Checked = m_trigger.Enabled;
-			m_cbInitiallyOn.Checked = m_trigger.InitiallyOn;
-			m_cbTurnOffAfterAction.Checked = m_trigger.TurnOffAfterAction;
+			m_lvEvents.ItemDeleteButton = m_btnEventDelete;
+			m_lvConditions.ItemDeleteButton = m_btnConditionDelete;
+			m_lvActions.ItemDeleteButton = m_btnActionDelete;
 
 			AccessibilityEx.SetName(m_btnEventMoveUp, KPRes.MoveUp);
 			AccessibilityEx.SetName(m_btnEventMoveDown, KPRes.MoveDown);

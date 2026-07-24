@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -63,31 +63,18 @@ namespace KeePass.Forms
 			new KfcfInfo(0x0001000000000000, "1.0")
 		};
 
-		private bool m_bRecreateOnly = false;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[DefaultValue(false)]
-		internal bool RecreateOnly
-		{
-			get { return m_bRecreateOnly; }
-			set { m_bRecreateOnly = value; }
-		}
+		internal bool RecreateOnly { get; set; }
 
-		private bool m_bSecureDesktop = false;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[DefaultValue(false)]
-		public bool SecureDesktopMode
-		{
-			get { return m_bSecureDesktop; }
-			set { m_bSecureDesktop = value; }
-		}
+		public bool SecureDesktopMode { get; set; }
 
 		private string m_strResultFile = null;
-		public string ResultFile
-		{
-			get { return m_strResultFile; }
-		}
+		public string ResultFile { get { return m_strResultFile; } }
 
 		public KeyFileCreationForm()
 		{
@@ -117,7 +104,7 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultMono(m_tbRecKeyHash, false);
 			FontUtil.AssignDefaultMono(m_tbRecKey, false);
 
-			if(m_bRecreateOnly)
+			if(this.RecreateOnly)
 			{
 				m_rbRecreate.Checked = true;
 				m_rbCreate.Enabled = false;
@@ -201,7 +188,7 @@ namespace KeePass.Forms
 			strName += "." + AppDefs.FileExtension.KeyFile;
 
 			return FileDialogsEx.ShowKeyFileDialog(true, KPRes.KeyFileCreateTitle,
-				strName, false, m_bSecureDesktop);
+				strName, false, this.SecureDesktopMode);
 		}
 
 		private string CreateKeyFile()
@@ -210,10 +197,8 @@ namespace KeePass.Forms
 			if(m_cbNewEntropy.Checked)
 			{
 				EntropyForm dlg = new EntropyForm();
-				if(dlg.ShowDialog() == DialogResult.OK)
+				if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 					pbEntropy = dlg.GeneratedEntropy;
-				UIUtil.DestroyForm(dlg);
-
 				if(pbEntropy == null) return null;
 			}
 

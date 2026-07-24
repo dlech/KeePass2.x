@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -81,7 +81,8 @@ namespace KeePass.Forms
 				strLvgName = KPRes.CustomFields;
 			else if(c.Type == AceColumnType.PluginExt)
 				strLvgName = KPRes.PluginProvided;
-			else if((c.Type == AceColumnType.Size) || (c.Type == AceColumnType.LastPasswordModTime))
+			else if((c.Type == AceColumnType.Size) || (c.Type == AceColumnType.LastPasswordModTime) ||
+				(c.Type == AceColumnType.GroupPath) || (c.Type == AceColumnType.GroupName))
 				strLvgName = KPRes.More;
 
 			ListViewGroup lvgContainer = null;
@@ -94,6 +95,7 @@ namespace KeePass.Forms
 				lvgContainer = new ListViewGroup(strLvgName);
 				m_lvColumns.Groups.Add(lvgContainer);
 			}
+			Debug.Assert(lvgContainer == m_lvColumns.Groups[m_lvColumns.Groups.Count - 1]);
 
 			ListViewItem lvi = new ListViewItem(c.GetDisplayName());
 			lvi.Tag = c;
@@ -191,6 +193,8 @@ namespace KeePass.Forms
 
 			AddStdAceColumn(l, AceColumnType.Size);
 			AddStdAceColumn(l, AceColumnType.LastPasswordModTime);
+			AddStdAceColumn(l, AceColumnType.GroupPath);
+			AddStdAceColumn(l, AceColumnType.GroupName);
 
 			SortedDictionary<string, AceColumn> d =
 				new SortedDictionary<string, AceColumn>(StrUtil.CaseIgnoreComparer);

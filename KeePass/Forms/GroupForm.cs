@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -159,6 +158,8 @@ namespace KeePass.Forms
 			UIUtil.SetButtonImage(m_btnAutoTypeEdit,
 				Properties.Resources.B16x16_Wizard, true);
 
+			m_lvCustomData.ItemDeleteButton = m_btnCDDel;
+
 			m_sdCustomData = m_pwGroup.CustomData.CloneDeep();
 			UIUtil.StrDictListInit(m_lvCustomData);
 			UIUtil.StrDictListUpdate(m_lvCustomData, m_sdCustomData, false);
@@ -240,7 +241,7 @@ namespace KeePass.Forms
 			ipf.InitEx(m_ilClientIcons, (uint)PwIcon.Count, m_pwDatabase,
 				(uint)m_pwIconIndex, m_pwCustomIconID);
 
-			if(ipf.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(ipf) == DialogResult.OK)
 			{
 				m_pwIconIndex = (PwIcon)ipf.ChosenIconId;
 				m_pwCustomIconID = ipf.ChosenCustomIconUuid;
@@ -252,8 +253,6 @@ namespace KeePass.Forms
 					UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
 						(int)m_pwIconIndex], true);
 			}
-
-			UIUtil.DestroyForm(ipf);
 		}
 
 		private void OnAutoTypeInheritCheckedChanged(object sender, EventArgs e)
@@ -263,18 +262,15 @@ namespace KeePass.Forms
 
 		private void OnBtnAutoTypeEdit(object sender, EventArgs e)
 		{
-			// string strName = @"(" + KPRes.AutoType + @")";
-
 			AutoTypeConfig atConfig = new AutoTypeConfig();
 			atConfig.DefaultSequence = m_tbDefaultAutoTypeSeq.Text;
 
 			EditAutoTypeItemForm dlg = new EditAutoTypeItemForm();
 			dlg.InitEx(atConfig, -1, true, atConfig.DefaultSequence, null);
 
-			if(dlg.ShowDialog() == DialogResult.OK)
+			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
 				m_tbDefaultAutoTypeSeq.Text = atConfig.DefaultSequence;
 
-			UIUtil.DestroyForm(dlg);
 			EnableControlsEx();
 		}
 
@@ -286,8 +282,9 @@ namespace KeePass.Forms
 		private void OnBtnCDDel(object sender, EventArgs e)
 		{
 			UIUtil.StrDictListDeleteSel(m_lvCustomData, m_sdCustomData, false);
-			UIUtil.SetFocus(m_lvCustomData, this);
+
 			EnableControlsEx();
+			UIUtil.SetFocus(m_lvCustomData, this);
 		}
 	}
 }

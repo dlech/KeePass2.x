@@ -140,7 +140,7 @@ namespace KeePass.Resources
 			m_strClearMru = TryGetEx(dictNew, "ClearMru", m_strClearMru);
 			m_strClipboard = TryGetEx(dictNew, "Clipboard", m_strClipboard);
 			m_strClipboardClearDesc = TryGetEx(dictNew, "ClipboardClearDesc", m_strClipboardClearDesc);
-			m_strClipboardClearInSeconds = TryGetEx(dictNew, "ClipboardClearInSeconds", m_strClipboardClearInSeconds);
+			m_strClipboardClearInSeconds2 = TryGetEx(dictNew, "ClipboardClearInSeconds2", m_strClipboardClearInSeconds2);
 			m_strClipboardClearOnExit = TryGetEx(dictNew, "ClipboardClearOnExit", m_strClipboardClearOnExit);
 			m_strClipboardClearTime = TryGetEx(dictNew, "ClipboardClearTime", m_strClipboardClearTime);
 			m_strClipboardDataCopied = TryGetEx(dictNew, "ClipboardDataCopied", m_strClipboardDataCopied);
@@ -187,6 +187,7 @@ namespace KeePass.Resources
 			m_strConsiderDashesEq = TryGetEx(dictNew, "ConsiderDashesEq", m_strConsiderDashesEq);
 			m_strContact = TryGetEx(dictNew, "Contact", m_strContact);
 			m_strContainsOp = TryGetEx(dictNew, "ContainsOp", m_strContainsOp);
+			m_strContinue = TryGetEx(dictNew, "Continue", m_strContinue);
 			m_strCopiedEntryData = TryGetEx(dictNew, "CopiedEntryData", m_strCopiedEntryData);
 			m_strCopy = TryGetEx(dictNew, "Copy", m_strCopy);
 			m_strCopyAll = TryGetEx(dictNew, "CopyAll", m_strCopyAll);
@@ -433,6 +434,8 @@ namespace KeePass.Resources
 			m_strGradient = TryGetEx(dictNew, "Gradient", m_strGradient);
 			m_strGroup = TryGetEx(dictNew, "Group", m_strGroup);
 			m_strGroupCannotStoreEntries = TryGetEx(dictNew, "GroupCannotStoreEntries", m_strGroupCannotStoreEntries);
+			m_strGroupName = TryGetEx(dictNew, "GroupName", m_strGroupName);
+			m_strGroupPath = TryGetEx(dictNew, "GroupPath", m_strGroupPath);
 			m_strGroupsSkipped = TryGetEx(dictNew, "GroupsSkipped", m_strGroupsSkipped);
 			m_strGroupsSkipped1 = TryGetEx(dictNew, "GroupsSkipped1", m_strGroupsSkipped1);
 			m_strHelpPlh = TryGetEx(dictNew, "HelpPlh", m_strHelpPlh);
@@ -644,6 +647,7 @@ namespace KeePass.Resources
 			m_strOlder = TryGetEx(dictNew, "Older", m_strOlder);
 			m_strOldFormat = TryGetEx(dictNew, "OldFormat", m_strOldFormat);
 			m_strOn = TryGetEx(dictNew, "On", m_strOn);
+			m_strOnError = TryGetEx(dictNew, "OnError", m_strOnError);
 			m_strOpAborted = TryGetEx(dictNew, "OpAborted", m_strOpAborted);
 			m_strOpenCmd = TryGetEx(dictNew, "OpenCmd", m_strOpenCmd);
 			m_strOpenDatabase = TryGetEx(dictNew, "OpenDatabase", m_strOpenDatabase);
@@ -700,6 +704,7 @@ namespace KeePass.Resources
 			m_strPickField = TryGetEx(dictNew, "PickField", m_strPickField);
 			m_strPickFieldDesc = TryGetEx(dictNew, "PickFieldDesc", m_strPickFieldDesc);
 			m_strPickIcon = TryGetEx(dictNew, "PickIcon", m_strPickIcon);
+			m_strPlaceholders = TryGetEx(dictNew, "Placeholders", m_strPlaceholders);
 			m_strPlhSprConfirm = TryGetEx(dictNew, "PlhSprConfirm", m_strPlhSprConfirm);
 			m_strPlugin = TryGetEx(dictNew, "Plugin", m_strPlugin);
 			m_strPlugin1x = TryGetEx(dictNew, "Plugin1x", m_strPlugin1x);
@@ -757,6 +762,7 @@ namespace KeePass.Resources
 			m_strQuick = TryGetEx(dictNew, "Quick", m_strQuick);
 			m_strQuickSearchDerefData = TryGetEx(dictNew, "QuickSearchDerefData", m_strQuickSearchDerefData);
 			m_strQuickSearchExclExpired = TryGetEx(dictNew, "QuickSearchExclExpired", m_strQuickSearchExclExpired);
+			m_strQuickSearchInGroupPaths = TryGetEx(dictNew, "QuickSearchInGroupPaths", m_strQuickSearchInGroupPaths);
 			m_strQuickSearchInPwFields = TryGetEx(dictNew, "QuickSearchInPwFields", m_strQuickSearchInPwFields);
 			m_strQuickSearchQ = TryGetEx(dictNew, "QuickSearchQ", m_strQuickSearchQ);
 			m_strQuickSearchTb = TryGetEx(dictNew, "QuickSearchTb", m_strQuickSearchTb);
@@ -827,6 +833,7 @@ namespace KeePass.Resources
 			m_strSecDeskOtherSwitched = TryGetEx(dictNew, "SecDeskOtherSwitched", m_strSecDeskOtherSwitched);
 			m_strSecDeskPlaySound = TryGetEx(dictNew, "SecDeskPlaySound", m_strSecDeskPlaySound);
 			m_strSecDeskSwitchBack = TryGetEx(dictNew, "SecDeskSwitchBack", m_strSecDeskSwitchBack);
+			m_strSecurity = TryGetEx(dictNew, "Security", m_strSecurity);
 			m_strSelectAll = TryGetEx(dictNew, "SelectAll", m_strSelectAll);
 			m_strSelectColor = TryGetEx(dictNew, "SelectColor", m_strSelectColor);
 			m_strSelectDifferentGroup = TryGetEx(dictNew, "SelectDifferentGroup", m_strSelectDifferentGroup);
@@ -856,6 +863,7 @@ namespace KeePass.Resources
 			m_strShowMore = TryGetEx(dictNew, "ShowMore", m_strShowMore);
 			m_strShowTimeOtp = TryGetEx(dictNew, "ShowTimeOtp", m_strShowTimeOtp);
 			m_strShowWithFileManager = TryGetEx(dictNew, "ShowWithFileManager", m_strShowWithFileManager);
+			m_strSilent = TryGetEx(dictNew, "Silent", m_strSilent);
 			m_strSimilarPasswords = TryGetEx(dictNew, "SimilarPasswords", m_strSimilarPasswords);
 			m_strSimilarPasswordsGroup = TryGetEx(dictNew, "SimilarPasswordsGroup", m_strSimilarPasswordsGroup);
 			m_strSimilarPasswordsList2 = TryGetEx(dictNew, "SimilarPasswordsList2", m_strSimilarPasswordsList2);
@@ -942,6 +950,7 @@ namespace KeePass.Resources
 			m_strUnknown = TryGetEx(dictNew, "Unknown", m_strUnknown);
 			m_strUnsaved = TryGetEx(dictNew, "Unsaved", m_strUnsaved);
 			m_strUnsupportedByMono = TryGetEx(dictNew, "UnsupportedByMono", m_strUnsupportedByMono);
+			m_strUpdateAvailable = TryGetEx(dictNew, "UpdateAvailable", m_strUpdateAvailable);
 			m_strUpdateCheck = TryGetEx(dictNew, "UpdateCheck", m_strUpdateCheck);
 			m_strUpdateCheckEnableQ = TryGetEx(dictNew, "UpdateCheckEnableQ", m_strUpdateCheckEnableQ);
 			m_strUpdateCheckFailedNoDl = TryGetEx(dictNew, "UpdateCheckFailedNoDl", m_strUpdateCheckFailedNoDl);
@@ -1120,7 +1129,7 @@ namespace KeePass.Resources
 			"ClearMru",
 			"Clipboard",
 			"ClipboardClearDesc",
-			"ClipboardClearInSeconds",
+			"ClipboardClearInSeconds2",
 			"ClipboardClearOnExit",
 			"ClipboardClearTime",
 			"ClipboardDataCopied",
@@ -1167,6 +1176,7 @@ namespace KeePass.Resources
 			"ConsiderDashesEq",
 			"Contact",
 			"ContainsOp",
+			"Continue",
 			"CopiedEntryData",
 			"Copy",
 			"CopyAll",
@@ -1413,6 +1423,8 @@ namespace KeePass.Resources
 			"Gradient",
 			"Group",
 			"GroupCannotStoreEntries",
+			"GroupName",
+			"GroupPath",
 			"GroupsSkipped",
 			"GroupsSkipped1",
 			"HelpPlh",
@@ -1624,6 +1636,7 @@ namespace KeePass.Resources
 			"Older",
 			"OldFormat",
 			"On",
+			"OnError",
 			"OpAborted",
 			"OpenCmd",
 			"OpenDatabase",
@@ -1680,6 +1693,7 @@ namespace KeePass.Resources
 			"PickField",
 			"PickFieldDesc",
 			"PickIcon",
+			"Placeholders",
 			"PlhSprConfirm",
 			"Plugin",
 			"Plugin1x",
@@ -1737,6 +1751,7 @@ namespace KeePass.Resources
 			"Quick",
 			"QuickSearchDerefData",
 			"QuickSearchExclExpired",
+			"QuickSearchInGroupPaths",
 			"QuickSearchInPwFields",
 			"QuickSearchQ",
 			"QuickSearchTb",
@@ -1807,6 +1822,7 @@ namespace KeePass.Resources
 			"SecDeskOtherSwitched",
 			"SecDeskPlaySound",
 			"SecDeskSwitchBack",
+			"Security",
 			"SelectAll",
 			"SelectColor",
 			"SelectDifferentGroup",
@@ -1836,6 +1852,7 @@ namespace KeePass.Resources
 			"ShowMore",
 			"ShowTimeOtp",
 			"ShowWithFileManager",
+			"Silent",
 			"SimilarPasswords",
 			"SimilarPasswordsGroup",
 			"SimilarPasswordsList2",
@@ -1922,6 +1939,7 @@ namespace KeePass.Resources
 			"Unknown",
 			"Unsaved",
 			"UnsupportedByMono",
+			"UpdateAvailable",
 			"UpdateCheck",
 			"UpdateCheckEnableQ",
 			"UpdateCheckFailedNoDl",
@@ -3244,15 +3262,15 @@ namespace KeePass.Resources
 			get { return m_strClipboardClearDesc; }
 		}
 
-		private static string m_strClipboardClearInSeconds =
-			@"Clipboard will be cleared in [PARAM] seconds";
+		private static string m_strClipboardClearInSeconds2 =
+			@"Clipboard will be cleared in {PARAM} second(s)";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Clipboard will be cleared in [PARAM] seconds'.
+		/// 'Clipboard will be cleared in {PARAM} second(s)'.
 		/// </summary>
-		public static string ClipboardClearInSeconds
+		public static string ClipboardClearInSeconds2
 		{
-			get { return m_strClipboardClearInSeconds; }
+			get { return m_strClipboardClearInSeconds2; }
 		}
 
 		private static string m_strClipboardClearOnExit =
@@ -3759,6 +3777,17 @@ namespace KeePass.Resources
 		public static string ContainsOp
 		{
 			get { return m_strContainsOp; }
+		}
+
+		private static string m_strContinue =
+			@"Continue";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Continue'.
+		/// </summary>
+		public static string Continue
+		{
+			get { return m_strContinue; }
 		}
 
 		private static string m_strCopiedEntryData =
@@ -6467,6 +6496,28 @@ namespace KeePass.Resources
 			get { return m_strGroupCannotStoreEntries; }
 		}
 
+		private static string m_strGroupName =
+			@"Group Name";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Group Name'.
+		/// </summary>
+		public static string GroupName
+		{
+			get { return m_strGroupName; }
+		}
+
+		private static string m_strGroupPath =
+			@"Group Path";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Group Path'.
+		/// </summary>
+		public static string GroupPath
+		{
+			get { return m_strGroupPath; }
+		}
+
 		private static string m_strGroupsSkipped =
 			@"{PARAM} groups skipped";
 		/// <summary>
@@ -8788,6 +8839,17 @@ namespace KeePass.Resources
 			get { return m_strOn; }
 		}
 
+		private static string m_strOnError =
+			@"On error";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'On error'.
+		/// </summary>
+		public static string OnError
+		{
+			get { return m_strOnError; }
+		}
+
 		private static string m_strOpAborted =
 			@"Operation aborted.";
 		/// <summary>
@@ -9402,6 +9464,17 @@ namespace KeePass.Resources
 		public static string PickIcon
 		{
 			get { return m_strPickIcon; }
+		}
+
+		private static string m_strPlaceholders =
+			@"Placeholders";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Placeholders'.
+		/// </summary>
+		public static string Placeholders
+		{
+			get { return m_strPlaceholders; }
 		}
 
 		private static string m_strPlhSprConfirm =
@@ -10029,6 +10102,17 @@ namespace KeePass.Resources
 		public static string QuickSearchExclExpired
 		{
 			get { return m_strQuickSearchExclExpired; }
+		}
+
+		private static string m_strQuickSearchInGroupPaths =
+			@"Search for group paths in quick searches";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Search for group paths in quick searches'.
+		/// </summary>
+		public static string QuickSearchInGroupPaths
+		{
+			get { return m_strQuickSearchInGroupPaths; }
 		}
 
 		private static string m_strQuickSearchInPwFields =
@@ -10801,6 +10885,17 @@ namespace KeePass.Resources
 			get { return m_strSecDeskSwitchBack; }
 		}
 
+		private static string m_strSecurity =
+			@"Security";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Security'.
+		/// </summary>
+		public static string Security
+		{
+			get { return m_strSecurity; }
+		}
+
 		private static string m_strSelectAll =
 			@"Select All";
 		/// <summary>
@@ -11118,6 +11213,17 @@ namespace KeePass.Resources
 		public static string ShowWithFileManager
 		{
 			get { return m_strShowWithFileManager; }
+		}
+
+		private static string m_strSilent =
+			@"Silent";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'Silent'.
+		/// </summary>
+		public static string Silent
+		{
+			get { return m_strSilent; }
 		}
 
 		private static string m_strSimilarPasswords =
@@ -12064,6 +12170,17 @@ namespace KeePass.Resources
 		public static string UnsupportedByMono
 		{
 			get { return m_strUnsupportedByMono; }
+		}
+
+		private static string m_strUpdateAvailable =
+			@"An update (for KeePass, plugin, ...) is available!";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'An update (for KeePass, plugin, ...) is available!'.
+		/// </summary>
+		public static string UpdateAvailable
+		{
+			get { return m_strUpdateAvailable; }
 		}
 
 		private static string m_strUpdateCheck =

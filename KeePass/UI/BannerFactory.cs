@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -137,7 +137,8 @@ namespace KeePass.UI
 				bool bCaution = (strTitle == KeyUtil.GetReAskKeyTitle(KPRes.Export));
 				Debug.Assert(bCaution || !Environment.StackTrace.Contains("Export") ||
 					Environment.StackTrace.Contains("ExchangeDataForm") ||
-					Environment.StackTrace.Contains("KeyCreationForm"));
+					Environment.StackTrace.Contains("KeyCreationForm") ||
+					Environment.StackTrace.Contains("PrintForm"));
 
 				Color clrStart = Color.FromArgb(64, 64, 128);
 				Color clrEnd = Color.FromArgb(192, 192, 255);

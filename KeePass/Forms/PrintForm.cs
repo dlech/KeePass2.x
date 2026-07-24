@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -61,10 +61,7 @@ namespace KeePass.Forms
 		private Control m_cPreBlock = null;
 
 		private string m_strGeneratedHtml = string.Empty;
-		public string GeneratedHtml
-		{
-			get { return m_strGeneratedHtml; }
-		}
+		public string GeneratedHtml { get { return m_strGeneratedHtml; } }
 
 		private static string g_strCodeItS = null;
 		private static string g_strCodeItE = null;
@@ -266,14 +263,16 @@ namespace KeePass.Forms
 			--m_uBlockUpdateUIState;
 			UpdateUIState(); // May adjust some states
 			--m_uBlockPreviewRefresh;
-			UpdateWebBrowser(true);
+
+			UIUtil.Configure(m_wbMain, false, false);
+			UpdateWebBrowser(true, true);
 		}
 
 		private void OnBtnOK(object sender, EventArgs e)
 		{
 			if(m_bPrintMode)
 			{
-				UpdateWebBrowser(false);
+				UpdateWebBrowser(false, false);
 
 				try { m_wbMain.ShowPrintDialog(); } // Throws in Mono 1.2.6+
 				catch(NotImplementedException)
@@ -361,24 +360,19 @@ namespace KeePass.Forms
 			sb.AppendLine("<h1 style=\"text-align: center;\">&#8987;</h1>");
 			sb.AppendLine("</body></html>");
 
-			try { UIUtil.SetWebBrowserDocument(m_wbMain, sb.ToString()); }
-			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); } // Throws in Mono 2.0+
+			UIUtil.SetWebBrowserDocument(m_wbMain, sb.ToString());
 		} */
 
-		private void UpdateWebBrowser(bool bInitial)
+		private void UpdateWebBrowser(bool bInitial, bool bForce)
 		{
-			if(m_uBlockPreviewRefresh != 0) return;
+			if(m_uBlockPreviewRefresh != 0) { Debug.Assert(false); return; }
+			if(!bForce && (m_tabMain.SelectedTab == m_tabPreview)) return;
 
 			++m_uBlockPreviewRefresh;
 			if(!bInitial) UIBlockInteraction(true);
 			// ShowWaitDocument();
 
-			string strHtml = GenerateHtmlDocument(true);
-
-			try { UIUtil.SetWebBrowserDocument(m_wbMain, strHtml); }
-			catch(Exception) { Debug.Assert(NativeLib.IsUnix()); } // Throws in Mono 2.0+
-			try { m_wbMain.AllowNavigation = false; }
-			catch(Exception) { Debug.Assert(false); }
+			UIUtil.SetWebBrowserDocument(m_wbMain, GenerateHtmlDocument(true));
 
 			if(!bInitial) UIBlockInteraction(false);
 			--m_uBlockPreviewRefresh;
@@ -1064,7 +1058,7 @@ namespace KeePass.Forms
 
 		private void OnBtnConfigPage(object sender, EventArgs e)
 		{
-			UpdateWebBrowser(false);
+			UpdateWebBrowser(false, false);
 
 			try { m_wbMain.ShowPageSetupDialog(); } // Throws in Mono 1.2.6+
 			catch(NotImplementedException)
@@ -1076,7 +1070,7 @@ namespace KeePass.Forms
 
 		private void OnBtnPrintPreview(object sender, EventArgs e)
 		{
-			UpdateWebBrowser(false);
+			UpdateWebBrowser(false, false);
 
 			try { m_wbMain.ShowPrintPreviewDialog(); } // Throws in Mono 1.2.6+
 			catch(NotImplementedException)
@@ -1088,7 +1082,8 @@ namespace KeePass.Forms
 
 		private void OnTabSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if(m_tabMain.SelectedIndex == 0) UpdateWebBrowser(false);
+			if(m_tabMain.SelectedTab == m_tabPreview)
+				UpdateWebBrowser(false, true);
 		}
 
 		private void OnTabularCheckedChanged(object sender, EventArgs e)

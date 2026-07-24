@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -91,21 +91,21 @@ namespace KeePass.Ecas
 			}
 		}
 
-		public static string GetParamString(List<string> vParams, int iIndex)
+		public static string GetParamString(List<string> lParams, int iIndex)
 		{
-			return GetParamString(vParams, iIndex, string.Empty);
+			return GetParamString(lParams, iIndex, string.Empty);
 		}
 
-		public static string GetParamString(List<string> vParams, int iIndex,
+		public static string GetParamString(List<string> lParams, int iIndex,
 			bool bSprCompile)
 		{
-			return GetParamString(vParams, iIndex, bSprCompile, false);
+			return GetParamString(lParams, iIndex, bSprCompile, false);
 		}
 
-		public static string GetParamString(List<string> vParams, int iIndex,
+		public static string GetParamString(List<string> lParams, int iIndex,
 			bool bSprCompile, bool bSprForCommandLine)
 		{
-			string str = GetParamString(vParams, iIndex, string.Empty);
+			string str = GetParamString(lParams, iIndex, string.Empty);
 
 			if(bSprCompile && !string.IsNullOrEmpty(str))
 			{
@@ -125,42 +125,42 @@ namespace KeePass.Ecas
 			return str;
 		}
 
-		public static string GetParamString(List<string> vParams, int iIndex,
+		public static string GetParamString(List<string> lParams, int iIndex,
 			string strDefault)
 		{
-			if(vParams == null) { Debug.Assert(false); return strDefault; }
+			if(lParams == null) { Debug.Assert(false); return strDefault; }
 			if(iIndex < 0) { Debug.Assert(false); return strDefault; }
-			if(iIndex >= vParams.Count) return strDefault; // No assert
+			if(iIndex >= lParams.Count) return strDefault; // No assert
 
-			return vParams[iIndex];
+			return lParams[iIndex];
 		}
 
-		public static bool GetParamBool(List<string> vParams, int iIndex)
+		public static bool GetParamBool(List<string> lParams, int iIndex)
 		{
-			string str = GetParamString(vParams, iIndex, string.Empty);
+			string str = GetParamString(lParams, iIndex, string.Empty);
 			return StrUtil.StringToBool(str);
 		}
 
-		public static uint GetParamUInt(List<string> vParams, int iIndex)
+		public static uint GetParamUInt(List<string> lParams, int iIndex)
 		{
-			return GetParamUInt(vParams, iIndex, 0);
+			return GetParamUInt(lParams, iIndex, 0);
 		}
 
-		public static uint GetParamUInt(List<string> vParams, int iIndex,
+		public static uint GetParamUInt(List<string> lParams, int iIndex,
 			uint uDefault)
 		{
-			string str = GetParamString(vParams, iIndex, string.Empty);
+			string str = GetParamString(lParams, iIndex, string.Empty);
 			uint u;
 			if(uint.TryParse(str, out u)) return u;
 			return uDefault;
 		}
 
-		public static uint GetParamEnum(List<string> vParams, int iIndex,
+		public static uint GetParamEnum(List<string> lParams, int iIndex,
 			uint uDefault, EcasEnum enumItems)
 		{
 			if(enumItems == null) { Debug.Assert(false); return uDefault; }
 
-			string str = GetParamString(vParams, iIndex, null);
+			string str = GetParamString(lParams, iIndex, null);
 			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return uDefault; }
 
 			uint uID;
@@ -170,6 +170,49 @@ namespace KeePass.Ecas
 			if(enumItems.GetItemString(uID, null) == null) { Debug.Assert(false); return uDefault; }
 
 			return uID;
+		}
+
+		public static string GetParamPath(List<string> lParams, int iIndex,
+			bool bSprCompile)
+		{
+			string str = GetParamString(lParams, iIndex, bSprCompile);
+			if(str == null) return null;
+
+			string strT = str.Trim();
+			int nT = strT.Length;
+			if((nT >= 2) && (strT[0] == '\"') && (strT[nT - 1] == '\"'))
+			{
+				string strV = strT.Substring(1, nT - 2);
+				if(strV.IndexOf('\"') < 0) return strV;
+			}
+
+			return str; // Untrimmed
+		}
+
+		internal static string[] GetParamPaths(List<string> lParams, int iIndex,
+			bool bSprCompile)
+		{
+			string str = GetParamString(lParams, iIndex, bSprCompile);
+			if(str == null) return null;
+			if(str.Length == 0) return MemUtil.EmptyArray<string>();
+
+			// Unquoted paths containing spaces must be supported, thus do not
+			// split unquoted paths at spaces
+
+			string[] v = str.Split('\"');
+			if(v.Length == 1) return v;
+			if((v.Length & 1) == 0) return new string[] { str };
+
+			List<string> l = new List<string>(v.Length);
+			for(int i = 0; i < v.Length; ++i)
+			{
+				string strPath = v[i];
+				if((i & 1) == 0) strPath = strPath.Trim(); // Trim unquoted paths
+
+				if(strPath.Length != 0) l.Add(strPath);
+			}
+
+			return l.ToArray();
 		}
 
 		public static void ParametersToDataGridView(DataGridView dg,

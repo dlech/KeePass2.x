@@ -42,7 +42,7 @@
 			this.m_tbHotpCounter = new System.Windows.Forms.TextBox();
 			this.m_lblHotpCounter = new System.Windows.Forms.Label();
 			this.m_cmbHotpSecretEnc = new System.Windows.Forms.ComboBox();
-			this.m_tbHotpSecret = new System.Windows.Forms.TextBox();
+			this.m_tbHotpSecret = new KeePass.UI.CustomTextBoxEx();
 			this.m_lblHotpSecret = new System.Windows.Forms.Label();
 			this.m_tabTotp = new System.Windows.Forms.TabPage();
 			this.m_lnkTotpPlh = new System.Windows.Forms.LinkLabel();
@@ -59,11 +59,13 @@
 			this.m_tbTotpLength = new System.Windows.Forms.TextBox();
 			this.m_lblTotpLength = new System.Windows.Forms.Label();
 			this.m_cmbTotpSecretEnc = new System.Windows.Forms.ComboBox();
-			this.m_tbTotpSecret = new System.Windows.Forms.TextBox();
+			this.m_tbTotpSecret = new KeePass.UI.CustomTextBoxEx();
 			this.m_lblTotpSecret = new System.Windows.Forms.Label();
 			this.m_btnImportOtpAuthUri = new System.Windows.Forms.Button();
 			this.m_ttRect = new System.Windows.Forms.ToolTip(this.components);
 			this.m_tMain = new System.Windows.Forms.Timer(this.components);
+			this.m_btnHotpCopy = new System.Windows.Forms.Button();
+			this.m_btnTotpCopy = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.m_bannerImage)).BeginInit();
 			this.m_tabMain.SuspendLayout();
 			this.m_tabHotp.SuspendLayout();
@@ -113,6 +115,7 @@
 			// 
 			// m_tabHotp
 			// 
+			this.m_tabHotp.Controls.Add(this.m_btnHotpCopy);
 			this.m_tabHotp.Controls.Add(this.m_lblHotpCounterDefault);
 			this.m_tabHotp.Controls.Add(this.m_lnkHotpPlh);
 			this.m_tabHotp.Controls.Add(this.m_lblHotpUsage);
@@ -146,7 +149,7 @@
 			this.m_lnkHotpPlh.Location = new System.Drawing.Point(6, 216);
 			this.m_lnkHotpPlh.Name = "m_lnkHotpPlh";
 			this.m_lnkHotpPlh.Size = new System.Drawing.Size(19, 13);
-			this.m_lnkHotpPlh.TabIndex = 9;
+			this.m_lnkHotpPlh.TabIndex = 10;
 			this.m_lnkHotpPlh.TabStop = true;
 			this.m_lnkHotpPlh.Text = "<>";
 			this.m_lnkHotpPlh.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnPlhLinkClicked);
@@ -156,7 +159,7 @@
 			this.m_lblHotpUsage.Location = new System.Drawing.Point(6, 184);
 			this.m_lblHotpUsage.Name = "m_lblHotpUsage";
 			this.m_lblHotpUsage.Size = new System.Drawing.Size(358, 28);
-			this.m_lblHotpUsage.TabIndex = 8;
+			this.m_lblHotpUsage.TabIndex = 9;
 			this.m_lblHotpUsage.Text = "<>";
 			// 
 			// m_lblHotpPreviewValue
@@ -220,6 +223,7 @@
 			// 
 			// m_tabTotp
 			// 
+			this.m_tabTotp.Controls.Add(this.m_btnTotpCopy);
 			this.m_tabTotp.Controls.Add(this.m_lnkTotpPlh);
 			this.m_tabTotp.Controls.Add(this.m_lblTotpUsage);
 			this.m_tabTotp.Controls.Add(this.m_lblTotpPreviewValue);
@@ -250,7 +254,7 @@
 			this.m_lnkTotpPlh.Location = new System.Drawing.Point(6, 216);
 			this.m_lnkTotpPlh.Name = "m_lnkTotpPlh";
 			this.m_lnkTotpPlh.Size = new System.Drawing.Size(19, 13);
-			this.m_lnkTotpPlh.TabIndex = 15;
+			this.m_lnkTotpPlh.TabIndex = 16;
 			this.m_lnkTotpPlh.TabStop = true;
 			this.m_lnkTotpPlh.Text = "<>";
 			this.m_lnkTotpPlh.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnPlhLinkClicked);
@@ -260,7 +264,7 @@
 			this.m_lblTotpUsage.Location = new System.Drawing.Point(6, 184);
 			this.m_lblTotpUsage.Name = "m_lblTotpUsage";
 			this.m_lblTotpUsage.Size = new System.Drawing.Size(358, 28);
-			this.m_lblTotpUsage.TabIndex = 14;
+			this.m_lblTotpUsage.TabIndex = 15;
 			this.m_lblTotpUsage.Text = "<>";
 			// 
 			// m_lblTotpPreviewValue
@@ -397,6 +401,24 @@
 			this.m_tMain.Interval = 500;
 			this.m_tMain.Tick += new System.EventHandler(this.OnTimerMainTick);
 			// 
+			// m_btnHotpCopy
+			// 
+			this.m_btnHotpCopy.Location = new System.Drawing.Point(245, 140);
+			this.m_btnHotpCopy.Name = "m_btnHotpCopy";
+			this.m_btnHotpCopy.Size = new System.Drawing.Size(32, 23);
+			this.m_btnHotpCopy.TabIndex = 8;
+			this.m_btnHotpCopy.UseVisualStyleBackColor = true;
+			this.m_btnHotpCopy.Click += new System.EventHandler(this.OnBtnHotpCopy);
+			// 
+			// m_btnTotpCopy
+			// 
+			this.m_btnTotpCopy.Location = new System.Drawing.Point(245, 140);
+			this.m_btnTotpCopy.Name = "m_btnTotpCopy";
+			this.m_btnTotpCopy.Size = new System.Drawing.Size(32, 23);
+			this.m_btnTotpCopy.TabIndex = 14;
+			this.m_btnTotpCopy.UseVisualStyleBackColor = true;
+			this.m_btnTotpCopy.Click += new System.EventHandler(this.OnBtnTotpCopy);
+			// 
 			// OtpGeneratorForm
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -440,9 +462,9 @@
 		private System.Windows.Forms.TextBox m_tbHotpCounter;
 		private System.Windows.Forms.Label m_lblHotpCounter;
 		private System.Windows.Forms.ComboBox m_cmbHotpSecretEnc;
-		private System.Windows.Forms.TextBox m_tbHotpSecret;
+		private KeePass.UI.CustomTextBoxEx m_tbHotpSecret;
 		private System.Windows.Forms.ComboBox m_cmbTotpSecretEnc;
-		private System.Windows.Forms.TextBox m_tbTotpSecret;
+		private KeePass.UI.CustomTextBoxEx m_tbTotpSecret;
 		private System.Windows.Forms.Label m_lblTotpSecret;
 		private System.Windows.Forms.Label m_lblTotpAlg;
 		private System.Windows.Forms.Label m_lblTotpPeriodDefault;
@@ -465,5 +487,7 @@
 		private System.Windows.Forms.Label m_lblHotpCounterDefault;
 		private System.Windows.Forms.ToolTip m_ttRect;
 		private System.Windows.Forms.Timer m_tMain;
+		private System.Windows.Forms.Button m_btnHotpCopy;
+		private System.Windows.Forms.Button m_btnTotpCopy;
 	}
 }

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -47,23 +47,15 @@ namespace KeePass.Forms
 
 		private FileFormatProvider m_fmtCur = null; // Current selection
 		private FileFormatProvider m_fmtFinal = null; // Returned as result
-		public FileFormatProvider ResultFormat
-		{
-			get { return m_fmtFinal; }
-		}
+		public FileFormatProvider ResultFormat { get { return m_fmtFinal; } }
 
 		private string[] m_vFiles = null;
-		public string[] ResultFiles
-		{
-			get { return m_vFiles; }
-		}
+		public string[] ResultFiles { get { return m_vFiles; } }
 
-		private PwExportInfo m_piExport = null;
-		internal PwExportInfo ExportInfo
-		{
-			get { return m_piExport; }
-			set { m_piExport = value; }
-		}
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue((object)null)]
+		internal PwExportInfo ExportInfo { get; set; }
 
 		private sealed class FormatGroupEx
 		{
@@ -310,7 +302,7 @@ namespace KeePass.Forms
 			bool bFileReq = (bFormat && m_fmtCur.RequiresFile);
 			UIUtil.SetEnabledFast(bFileReq, m_lblFiles, m_tbFile, m_btnSelFile);
 
-			bool bExportExt = (m_bExport && (m_piExport != null));
+			bool bExportExt = (m_bExport && (this.ExportInfo != null));
 			UIUtil.SetEnabledFast((bExportExt && bFormat && m_fmtCur.RequiresKey),
 				m_cbExportMasterKeySpec, m_lblExportMasterKeySpec);
 
@@ -353,12 +345,13 @@ namespace KeePass.Forms
 			}
 			else vFiles = MemUtil.EmptyArray<string>();
 
-			if(m_piExport != null)
+			PwExportInfo pei = this.ExportInfo;
+			if(pei != null)
 			{
-				m_piExport.ExportMasterKeySpec = m_cbExportMasterKeySpec.Checked;
-				m_piExport.ExportParentGroups = m_cbExportParentGroups.Checked;
-				m_piExport.ExportPostOpen = m_cbExportPostOpen.Checked;
-				m_piExport.ExportPostShow = m_cbExportPostShow.Checked;
+				pei.ExportMasterKeySpec = m_cbExportMasterKeySpec.Checked;
+				pei.ExportParentGroups = m_cbExportParentGroups.Checked;
+				pei.ExportPostOpen = m_cbExportPostOpen.Checked;
+				pei.ExportPostShow = m_cbExportPostShow.Checked;
 			}
 
 			m_fmtFinal = m_fmtCur;

@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -121,8 +121,14 @@ namespace KeePass.Util
 		private static void WriteMutexFilePriv(string strPath)
 		{
 			byte[] pb = new byte[12];
-			MemUtil.Int64ToBytes(DateTime.UtcNow.ToBinary()).CopyTo(pb, 0);
-			MemUtil.Int32ToBytes(Process.GetCurrentProcess().Id).CopyTo(pb, 8);
+
+			MemUtil.Int64ToBytesEx(DateTime.UtcNow.ToBinary(), pb, 0);
+
+			using(Process p = Process.GetCurrentProcess())
+			{
+				MemUtil.Int32ToBytesEx(p.Id, pb, 8);
+			}
+
 			byte[] pbEnc = CryptoUtil.ProtectData(pb, GmpOptEnt,
 				DataProtectionScope.CurrentUser);
 			File.WriteAllBytes(strPath, pbEnc);

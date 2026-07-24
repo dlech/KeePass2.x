@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -135,6 +135,7 @@ namespace KeePassLib.Utility
 			return sb.ToString();
 		}
 
+		// Cf. StrUtil.IsBase32String.
 		/// <summary>
 		/// Decode Base32 strings according to RFC 4648.
 		/// </summary>
@@ -620,7 +621,7 @@ namespace KeePassLib.Utility
 			if(sSource == null) throw new ArgumentNullException("sSource");
 			if(sTarget == null) throw new ArgumentNullException("sTarget");
 
-			const int cbBuf = 4096;
+			const int cbBuf = 16 * 1024;
 			byte[] pbBuf = new byte[cbBuf];
 
 			while(true)
@@ -688,7 +689,7 @@ namespace KeePassLib.Utility
 			if(pbData == null) { Debug.Assert(false); return; }
 
 			Debug.Assert(pbData.Length >= 0);
-			if(pbData.Length > 0) s.Write(pbData, 0, pbData.Length);
+			if(pbData.Length != 0) s.Write(pbData, 0, pbData.Length);
 		}
 
 		public static byte[] Compress(byte[] pbData)

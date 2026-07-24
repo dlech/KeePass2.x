@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -182,6 +182,9 @@ namespace KeePassLib.Utility
 	/// </summary>
 	public static class StrUtil
 	{
+		private const CompareOptions c_coTolerant = (CompareOptions.IgnoreCase |
+			CompareOptions.IgnoreNonSpace);
+
 		public static readonly StringComparison CaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
 
 		public static StringComparer CaseIgnoreComparer
@@ -189,29 +192,24 @@ namespace KeePassLib.Utility
 			get { return StringComparer.OrdinalIgnoreCase; }
 		}
 
-		private static bool m_bRtl = false;
-		public static bool RightToLeft
-		{
-			get { return m_bRtl; }
-			set { m_bRtl = value; }
-		}
+		public static bool RightToLeft { get; set; }
 
-		private static UTF8Encoding m_encUtf8 = null;
+		private static UTF8Encoding g_encUtf8 = null;
 		public static UTF8Encoding Utf8
 		{
 			get
 			{
-				if(m_encUtf8 == null) m_encUtf8 = new UTF8Encoding(false, false);
-				return m_encUtf8;
+				if(g_encUtf8 == null) g_encUtf8 = new UTF8Encoding(false, false);
+				return g_encUtf8;
 			}
 		}
 
-		private static List<StrEncodingInfo> m_lEncs = null;
+		private static List<StrEncodingInfo> g_lEncs = null;
 		public static IEnumerable<StrEncodingInfo> Encodings
 		{
 			get
 			{
-				if(m_lEncs != null) return m_lEncs;
+				if(g_lEncs != null) return g_lEncs;
 
 				List<StrEncodingInfo> l = new List<StrEncodingInfo>();
 
@@ -250,14 +248,14 @@ namespace KeePassLib.Utility
 					4, new byte[] { 0x0, 0x0, 0xFE, 0xFF }));
 #endif
 
-				m_lEncs = l;
+				g_lEncs = l;
 				return l;
 			}
 		}
 
 		// public static string RtfPar
 		// {
-		//	// get { return (m_bRtl ? "\\rtlpar " : "\\par "); }
+		//	// get { return (this.RightToLeft ? "\\rtlpar " : "\\par "); }
 		//	get { return "\\par "; }
 		// }
 
@@ -394,7 +392,7 @@ namespace KeePassLib.Utility
 			int nPos = 0;
 			while(nPos < str.Length)
 			{
-				nPos = str.IndexOf(strFind, nPos, StringComparison.OrdinalIgnoreCase);
+				nPos = str.IndexOf(strFind, nPos, StrUtil.CaseIgnoreCmp);
 				if(nPos < 0) break;
 
 				str = str.Remove(nPos, strFind.Length);
@@ -453,18 +451,18 @@ namespace KeePassLib.Utility
 		//	Debug.Assert(sb != null); if(sb == null) throw new ArgumentNullException("sb");
 		//	Debug.Assert(strFontFace != null); if(strFontFace == null) throw new ArgumentNullException("strFontFace");
 		//	sb.Append("{\\rtf1");
-		//	if(m_bRtl) sb.Append("\\fbidis");
+		//	if(this.RightToLeft) sb.Append("\\fbidis");
 		//	sb.Append("\\ansi\\ansicpg");
 		//	sb.Append(Encoding.Default.CodePage);
 		//	sb.Append("\\deff0{\\fonttbl{\\f0\\fswiss MS Sans Serif;}{\\f1\\froman\\fcharset2 Symbol;}{\\f2\\fswiss ");
 		//	sb.Append(strFontFace);
 		//	sb.Append(";}{\\f3\\fswiss Arial;}}");
 		//	sb.Append("{\\colortbl\\red0\\green0\\blue0;}");
-		//	if(m_bRtl) sb.Append("\\rtldoc");
+		//	if(this.RightToLeft) sb.Append("\\rtldoc");
 		//	sb.Append("\\deflang1031\\pard\\plain\\f2\\cf0 ");
 		//	sb.Append("\\fs");
 		//	sb.Append((int)(fFontSize * 2));
-		//	if(m_bRtl) sb.Append("\\rtlpar\\qr\\rtlch ");
+		//	if(this.RightToLeft) sb.Append("\\rtlpar\\qr\\rtlch ");
 		// }
 
 		// /// <summary>
@@ -756,6 +754,12 @@ namespace KeePassLib.Utility
 #endif
 		}
 
+		internal static bool TryParseDoubleInvariant(string str, out double d)
+		{
+			return double.TryParse(str, NumberStyles.Float,
+				NumberFormatInfo.InvariantInfo, out d);
+		}
+
 		public static bool TryParseDateTime(string str, out DateTime dt)
 		{
 #if !KeePassLibSD
@@ -967,7 +971,8 @@ namespace KeePassLib.Utility
 					if((strPartX.Length <= 19) && (strPartY.Length <= 19))
 					{
 						ulong uX, uY;
-						if(ulong.TryParse(strPartX, out uX) && ulong.TryParse(strPartY, out uY))
+						if(TryParseULongInvariant(strPartX, out uX) &&
+							TryParseULongInvariant(strPartY, out uY))
 						{
 							if(uX < uY) return -1;
 							if(uX > uY) return 1;
@@ -979,7 +984,8 @@ namespace KeePassLib.Utility
 					else
 					{
 						double dX, dY;
-						if(double.TryParse(strPartX, out dX) && double.TryParse(strPartY, out dY))
+						if(TryParseDoubleInvariant(strPartX, out dX) &&
+							TryParseDoubleInvariant(strPartY, out dY))
 						{
 							if(dX < dY) return -1;
 							if(dX > dY) return 1;
@@ -1117,6 +1123,30 @@ namespace KeePassLib.Utility
 				if((bt == (byte)' ') || (bt == (byte)'\t') ||
 					(bt == (byte)'\r') || (bt == (byte)'\n'))
 					continue;
+
+				return false;
+			}
+
+			return true;
+		}
+
+		// Cf. MemUtil.ParseBase32.
+		internal static bool IsBase32String(string str)
+		{
+			if(str == null) throw new ArgumentNullException("str");
+
+			bool bPadding = false;
+
+			for(int i = 0; i < str.Length; ++i)
+			{
+				char ch = str[i];
+
+				if(ch == '=') { bPadding = true; continue; }
+				if(bPadding) return false;
+
+				if((ch >= 'A') && (ch <= 'Z')) continue;
+				if((ch >= 'a') && (ch <= 'z')) continue;
+				if((ch >= '2') && (ch <= '7')) continue;
 
 				return false;
 			}
@@ -1349,12 +1379,12 @@ namespace KeePassLib.Utility
 			return ((((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB");
 		}
 
-		private static readonly char[] m_vVersionSep = new char[] { '.', ',' };
+		private static readonly char[] g_vVersionSep = new char[] { '.', ',' };
 		public static ulong ParseVersion(string strVersion)
 		{
 			if(strVersion == null) { Debug.Assert(false); return 0; }
 
-			string[] vVer = strVersion.Split(m_vVersionSep);
+			string[] vVer = strVersion.Split(g_vVersionSep);
 			if((vVer == null) || (vVer.Length == 0)) { Debug.Assert(false); return 0; }
 
 			ushort uPart;
@@ -1424,7 +1454,8 @@ namespace KeePassLib.Utility
 			return sb.ToString();
 		}
 
-		private static readonly byte[] m_pbOptEnt = { 0xA5, 0x74, 0x2E, 0xEC };
+		// Domain separation tag for this class
+		private static readonly byte[] g_pbDomainSepTag = { 0xA5, 0x74, 0x2E, 0xEC };
 
 		public static string EncryptString(string strPlainText)
 		{
@@ -1433,7 +1464,7 @@ namespace KeePassLib.Utility
 			try
 			{
 				byte[] pbPlain = StrUtil.Utf8.GetBytes(strPlainText);
-				byte[] pbEnc = CryptoUtil.ProtectData(pbPlain, m_pbOptEnt,
+				byte[] pbEnc = CryptoUtil.ProtectData(pbPlain, g_pbDomainSepTag,
 					DataProtectionScope.CurrentUser);
 
 #if (!KeePassLibSD && !KeePassUAP)
@@ -1454,7 +1485,7 @@ namespace KeePassLib.Utility
 			try
 			{
 				byte[] pbEnc = Convert.FromBase64String(strCipherText);
-				byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc, m_pbOptEnt,
+				byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc, g_pbDomainSepTag,
 					DataProtectionScope.CurrentUser);
 
 				return StrUtil.Utf8.GetString(pbPlain, 0, pbPlain.Length);
@@ -1697,6 +1728,14 @@ namespace KeePassLib.Utility
 			return str;
 		}
 
+		private static readonly char[] g_vNewLine = new char[] { '\r', '\n' };
+		internal static bool IsMultiLine(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+
+			return (str.IndexOfAny(g_vNewLine) >= 0);
+		}
+
 		public static List<string> SplitSearchTerms(string strSearch)
 		{
 			List<string> l = new List<string>();
@@ -1915,7 +1954,7 @@ namespace KeePassLib.Utility
 			return null;
 		}
 
-		private static string[] m_vPrefSepChars = null;
+		private static string[] g_vPrefSepChars = null;
 		/// <summary>
 		/// Find a character that does not occur within a given text.
 		/// </summary>
@@ -1923,16 +1962,16 @@ namespace KeePassLib.Utility
 		{
 			if(strText == null) { Debug.Assert(false); return '@'; }
 
-			if(m_vPrefSepChars == null)
-				m_vPrefSepChars = new string[5] {
+			if(g_vPrefSepChars == null)
+				g_vPrefSepChars = new string[5] {
 					"@!$%#/\\:;,.*-_?",
 					PwCharSet.UpperCase, PwCharSet.LowerCase,
 					PwCharSet.Digits, PwCharSet.PrintableAsciiSpecial
 				};
 
-			for(int i = 0; i < m_vPrefSepChars.Length; ++i)
+			for(int i = 0; i < g_vPrefSepChars.Length; ++i)
 			{
-				foreach(char ch in m_vPrefSepChars[i])
+				foreach(char ch in g_vPrefSepChars[i])
 				{
 					if(strText.IndexOf(ch) < 0) return ch;
 				}
@@ -2044,13 +2083,12 @@ namespace KeePassLib.Utility
 			int cc = str.Length;
 			if(cc == 0) return string.Empty;
 
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(cc);
 
 			for(int i = 0; i < cc; ++i)
 			{
 				char ch = str[i];
-				if(char.IsWhiteSpace(ch)) continue;
-				sb.Append(ch);
+				if(!char.IsWhiteSpace(ch)) sb.Append(ch);
 			}
 
 			return sb.ToString();
@@ -2173,6 +2211,30 @@ namespace KeePassLib.Utility
 			byte[] pb = new byte[cb + cbNull];
 			enc.GetBytes(str, 0, str.Length, pb, 0);
 			return pb;
+		}
+
+		// Cf. ContainsTolerant
+		public static bool EqualsTolerant(string str1, string str2)
+		{
+			return (CultureInfo.CurrentCulture.CompareInfo.Compare(
+				str1, str2, c_coTolerant) == 0);
+		}
+
+		// Cf. EqualsTolerant
+		public static bool ContainsTolerant(string strHaystack, string strNeedle)
+		{
+			if(strHaystack == null) { Debug.Assert(false); return (strNeedle == null); }
+			if(strNeedle == null) { Debug.Assert(false); strNeedle = string.Empty; }
+
+			return (CultureInfo.CurrentCulture.CompareInfo.IndexOf(
+				strHaystack, strNeedle, c_coTolerant) >= 0);
+		}
+
+		internal static bool GetIgnoreCase(StringComparison sc)
+		{
+			return ((sc == StringComparison.CurrentCultureIgnoreCase) ||
+				(sc == StringComparison.InvariantCultureIgnoreCase) ||
+				(sc == StringComparison.OrdinalIgnoreCase));
 		}
 	}
 }

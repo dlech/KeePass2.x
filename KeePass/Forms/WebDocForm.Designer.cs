@@ -33,16 +33,12 @@
 			// 
 			// m_wbMain
 			// 
-			this.m_wbMain.AllowWebBrowserDrop = false;
 			this.m_wbMain.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_wbMain.IsWebBrowserContextMenuEnabled = false;
 			this.m_wbMain.Location = new System.Drawing.Point(0, 0);
 			this.m_wbMain.MinimumSize = new System.Drawing.Size(20, 20);
 			this.m_wbMain.Name = "m_wbMain";
-			this.m_wbMain.ScriptErrorsSuppressed = true;
 			this.m_wbMain.Size = new System.Drawing.Size(541, 445);
 			this.m_wbMain.TabIndex = 0;
-			this.m_wbMain.WebBrowserShortcutsEnabled = false;
 			this.m_wbMain.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.OnWebNavigating);
 			// 
 			// WebDocForm

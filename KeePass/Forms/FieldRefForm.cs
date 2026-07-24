@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ namespace KeePass.Forms
 			PwEntry pe = this.GetSelectedEntry();
 			if(pe == null) return false;
 
-			string str = @"{REF:";
+			string str = "{REF:";
 			if(m_radioRefTitle.Checked) str += "T";
 			else if(m_radioRefUserName.Checked) str += "U";
 			else if(m_radioRefPassword.Checked) str += "P";
@@ -125,21 +125,21 @@ namespace KeePass.Forms
 			else if(m_radioRefNotes.Checked) str += "N";
 			else { Debug.Assert(false); return false; }
 
-			str += @"@";
+			str += "@";
 
 			string strId;
 			if(m_radioIdTitle.Checked)
-				strId = @"T:" + pe.Strings.ReadSafe(PwDefs.TitleField);
+				strId = "T:" + pe.Strings.ReadSafe(PwDefs.TitleField);
 			else if(m_radioIdUserName.Checked)
-				strId = @"U:" + pe.Strings.ReadSafe(PwDefs.UserNameField);
+				strId = "U:" + pe.Strings.ReadSafe(PwDefs.UserNameField);
 			else if(m_radioIdPassword.Checked)
-				strId = @"P:" + pe.Strings.ReadSafe(PwDefs.PasswordField);
+				strId = "P:" + pe.Strings.ReadSafe(PwDefs.PasswordField);
 			else if(m_radioIdUrl.Checked)
-				strId = @"A:" + pe.Strings.ReadSafe(PwDefs.UrlField);
+				strId = "A:" + pe.Strings.ReadSafe(PwDefs.UrlField);
 			else if(m_radioIdNotes.Checked)
-				strId = @"N:" + pe.Strings.ReadSafe(PwDefs.NotesField);
+				strId = "N:" + pe.Strings.ReadSafe(PwDefs.NotesField);
 			else if(m_radioIdUuid.Checked)
-				strId = @"I:" + pe.Uuid.ToHexString();
+				strId = "I:" + pe.Uuid.ToHexString();
 			else { Debug.Assert(false); return false; }
 
 			char[] vInvalidChars = new char[] { '{', '}', '\r', '\n' };
@@ -157,7 +157,7 @@ namespace KeePass.Forms
 				return false;
 			}
 
-			str += strId + @"}";
+			str += strId + "}";
 
 			m_strResultRef = str;
 			return true;
@@ -231,6 +231,7 @@ namespace KeePass.Forms
 
 				SearchParameters sp = new SearchParameters();
 				sp.SearchString = m_tbFilter.Text;
+				sp.RespectEntrySearchingDisabled = false;
 				sp.SearchInPasswords = true;
 
 				PwObjectList<PwEntry> lResults = new PwObjectList<PwEntry>();

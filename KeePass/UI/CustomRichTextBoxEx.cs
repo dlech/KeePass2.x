@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,27 +38,17 @@ namespace KeePass.UI
 	// Non-sealed for plugins
 	public class CustomRichTextBoxEx : RichTextBox
 	{
-		private static bool? m_bForceRedrawOnScroll = null;
+		private static bool? g_obForceRedrawOnScroll = null;
 
-		private bool m_bSimpleTextOnly = false;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[DefaultValue(false)]
-		public bool SimpleTextOnly
-		{
-			get { return m_bSimpleTextOnly; }
-			set { m_bSimpleTextOnly = value; }
-		}
+		public bool SimpleTextOnly { get; set; }
 
-		private bool m_bCtrlEnterAccepts = false;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[DefaultValue(false)]
-		public bool CtrlEnterAccepts
-		{
-			get { return m_bCtrlEnterAccepts; }
-			set { m_bCtrlEnterAccepts = value; }
-		}
+		public bool CtrlEnterAccepts { get; set; }
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -166,7 +156,7 @@ namespace KeePass.UI
 		{
 			if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
 
-			if(m_bSimpleTextOnly && IsPasteCommand(e))
+			if(this.SimpleTextOnly && IsPasteCommand(e))
 			{
 				UIUtil.SetHandled(e, true);
 
@@ -175,7 +165,7 @@ namespace KeePass.UI
 			}
 
 			// Return == Enter
-			if(m_bCtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
+			if(this.CtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
 			{
 				UIUtil.SetHandled(e, true);
 				Debug.Assert(this.Multiline);
@@ -211,14 +201,14 @@ namespace KeePass.UI
 		{
 			if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
 
-			if(m_bSimpleTextOnly && IsPasteCommand(e))
+			if(this.SimpleTextOnly && IsPasteCommand(e))
 			{
 				UIUtil.SetHandled(e, true);
 				return;
 			}
 
 			// Return == Enter
-			if(m_bCtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
+			if(this.CtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
 			{
 				UIUtil.SetHandled(e, true);
 				return;
@@ -233,7 +223,7 @@ namespace KeePass.UI
 		{
 			try
 			{
-				if(!m_bSimpleTextOnly) Paste();
+				if(!this.SimpleTextOnly) Paste();
 				else if(ClipboardUtil.ContainsData(DataFormats.UnicodeText))
 					Paste(DataFormats.GetFormat(DataFormats.UnicodeText));
 				else if(ClipboardUtil.ContainsData(DataFormats.Text))
@@ -376,7 +366,7 @@ namespace KeePass.UI
 
 			try
 			{
-				if(!m_bSimpleTextOnly && this.ShortcutsEnabled &&
+				if(!this.SimpleTextOnly && this.ShortcutsEnabled &&
 					this.RichTextShortcutsEnabled && !this.ReadOnly)
 				{
 					bool bHandled = true;
@@ -544,7 +534,7 @@ namespace KeePass.UI
 				return;
 			}
 
-			if(m_bSimpleTextOnly)
+			if(this.SimpleTextOnly)
 			{
 				IDataObject d = drgevent.Data;
 				string str = null;
@@ -669,10 +659,10 @@ namespace KeePass.UI
 
 		private void MonoRedrawOnScroll()
 		{
-			if(!m_bForceRedrawOnScroll.HasValue)
-				m_bForceRedrawOnScroll = MonoWorkarounds.IsRequired(1366);
+			if(!g_obForceRedrawOnScroll.HasValue)
+				g_obForceRedrawOnScroll = MonoWorkarounds.IsRequired(1366);
 
-			if(m_bForceRedrawOnScroll.Value) Invalidate();
+			if(g_obForceRedrawOnScroll.Value) Invalidate();
 		}
 
 		protected override void OnLinkClicked(LinkClickedEventArgs e)

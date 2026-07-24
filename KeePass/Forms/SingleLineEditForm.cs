@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ namespace KeePass.Forms
 					m_cmbEdit.Items.Add(strItem);
 				m_cmbEdit.EndUpdate();
 
-				UIUtil.EnableAutoCompletion(m_cmbEdit, false);
+				// UIUtil.EnableAutoCompletion(m_cmbEdit, false); // KPB 2349
 			}
 
 			m_cEdit.Text = m_strDefaultText;

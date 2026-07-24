@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -68,6 +68,8 @@ namespace KeePass.Forms
 			int nWidth = m_lvOverrides.ClientSize.Width - UIUtil.GetVScrollBarWidth();
 			m_lvOverrides.Columns.Add(KPRes.Scheme, nWidth / 4);
 			m_lvOverrides.Columns.Add(KPRes.UrlOverride, (nWidth * 3) / 4);
+
+			m_lvOverrides.ItemDeleteButton = m_btnDelete;
 
 			UpdateOverridesList(false, false);
 
@@ -191,7 +193,7 @@ namespace KeePass.Forms
 		private void OnBtnEdit(object sender, EventArgs e)
 		{
 			ListView.SelectedListViewItemCollection lvsc = m_lvOverrides.SelectedItems;
-			if((lvsc == null) || (lvsc.Count != 1)) { Debug.Assert(false); return; }
+			if(lvsc.Count != 1) { Debug.Assert(false); return; }
 
 			AceUrlSchemeOverride o = (lvsc[0].Tag as AceUrlSchemeOverride);
 			if((o == null) || o.IsBuiltIn) { Debug.Assert(false); return; }
@@ -205,7 +207,7 @@ namespace KeePass.Forms
 		private void OnBtnDelete(object sender, EventArgs e)
 		{
 			ListView.SelectedListViewItemCollection lvsc = m_lvOverrides.SelectedItems;
-			if((lvsc == null) || (lvsc.Count == 0)) { Debug.Assert(false); return; }
+			if(lvsc.Count == 0) { Debug.Assert(false); return; }
 
 			foreach(ListViewItem lvi in lvsc)
 			{
@@ -216,6 +218,7 @@ namespace KeePass.Forms
 			}
 
 			UpdateOverridesList(true, true);
+			UIUtil.SetFocus(m_lvOverrides, this);
 		}
 
 		private void OnOverrideAllCheckedChanged(object sender, EventArgs e)

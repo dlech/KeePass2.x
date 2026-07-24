@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -118,13 +118,9 @@ namespace KeePass.UI
 
 				NativeMethods.ACTCTX ctx = new NativeMethods.ACTCTX();
 				ctx.cbSize = (uint)Marshal.SizeOf(typeof(NativeMethods.ACTCTX));
-				Debug.Assert(((IntPtr.Size == 4) && (ctx.cbSize ==
-					NativeMethods.ACTCTXSize32)) || ((IntPtr.Size == 8) &&
-					(ctx.cbSize == NativeMethods.ACTCTXSize64)));
-
+				ctx.dwFlags = NativeMethods.ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID;
 				ctx.lpSource = strMfLoc;
 				ctx.lpAssemblyDirectory = strInstDir;
-				ctx.dwFlags = NativeMethods.ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID;
 
 				m_nhCtx = NativeMethods.CreateActCtx(ref ctx);
 				if(NativeMethods.IsInvalidHandleValue(m_nhCtx.Value))

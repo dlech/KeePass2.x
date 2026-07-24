@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -666,28 +666,25 @@ namespace KeePassLib.Serialization
 
 			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
 
-#if !KeePassLibSD
-			if(ioc.Path.StartsWith("ftp://", StrUtil.CaseIgnoreCmp))
-			{
-				bool b = SendCommand(ioc, WebRequestMethods.Ftp.GetDateTimestamp);
-				if(!b && bThrowErrors) throw new InvalidOperationException();
-				return b;
-			}
-#endif
-
 			try
 			{
-				Stream s = OpenRead(ioc);
-				if(s == null) throw new FileNotFoundException();
+				if(ioc.Path.StartsWith("ftp://", StrUtil.CaseIgnoreCmp))
+					SendCommand(ioc, WebRequestMethods.Ftp.GetDateTimestamp);
+				else
+				{
+					Stream s = OpenRead(ioc);
+					if(s == null) return false;
 
-				try { s.ReadByte(); }
-				catch(Exception) { }
+					try { s.ReadByte(); }
+					catch(Exception) { }
 
-				// We didn't download the file completely; close may throw
-				// an exception -- that's okay
-				try { s.Dispose(); }
-				catch(Exception) { }
+					// We didn't download the file completely; closing may throw
+					// an exception -- that's okay
+					try { s.Dispose(); }
+					catch(Exception) { }
+				}
 			}
+			catch(FileNotFoundException) { return false; }
 			catch(Exception)
 			{
 				if(bThrowErrors) throw;
@@ -789,30 +786,16 @@ namespace KeePassLib.Serialization
 			}
 #endif
 
-			// using(Stream sIn = IOConnection.OpenRead(iocFrom))
-			// {
-			//	using(Stream sOut = IOConnection.OpenWrite(iocTo))
-			//	{
-			//		MemUtil.CopyStream(sIn, sOut);
-			//	}
-			// }
+			// CopyData(iocFrom, iocTo);
 			// DeleteFile(iocFrom);
 		}
 
-#if !KeePassLibSD
-		private static bool SendCommand(IOConnectionInfo ioc, string strMethod)
+		private static void SendCommand(IOConnectionInfo ioc, string strMethod)
 		{
-			try
-			{
-				WebRequest req = CreateWebRequest(ioc);
-				req.Method = strMethod;
-				DisposeResponse(req.GetResponse(), true);
-			}
-			catch(Exception) { return false; }
-
-			return true;
+			WebRequest req = CreateWebRequest(ioc);
+			req.Method = strMethod;
+			DisposeResponse(req.GetResponse(), true);
 		}
-#endif
 
 		internal static void DisposeResponse(WebResponse wr, bool bGetStream)
 		{
@@ -832,11 +815,49 @@ namespace KeePassLib.Serialization
 			catch(Exception) { Debug.Assert(false); }
 		}
 
+		/// <summary>
+		/// Copy only the data/content from one file to another (no metadata
+		/// like attributes or ACLs).
+		/// </summary>
+		internal static void CopyData(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
+		{
+			if(iocFrom == null) throw new ArgumentNullException("iocFrom");
+			if(iocTo == null) throw new ArgumentNullException("iocTo");
+
+			// File.Copy copies attributes
+			// try
+			// {
+			//	if(iocFrom.IsLocalFile() && iocTo.IsLocalFile())
+			//	{
+			//		// Do not try to copy an encrypted file;
+			//		// https://sourceforge.net/p/keepass/discussion/329220/thread/9c9eb989/
+			//		// https://msdn.microsoft.com/en-us/library/windows/desktop/aa363851.aspx
+			//		if((long)(File.GetAttributes(iocFrom.Path) &
+			//			FileAttributes.Encrypted) == 0)
+			//		{
+			//			RaiseIOAccessPreEvent(iocFrom, IOAccessType.Read);
+			//			RaiseIOAccessPreEvent(iocTo, IOAccessType.Write);
+			//			File.Copy(iocFrom.Path, iocTo.Path, true);
+			//			return;
+			//		}
+			//	}
+			// }
+			// catch(Exception) { Debug.Assert(false); }
+
+			using(Stream sFrom = OpenRead(iocFrom))
+			{
+				using(Stream sTo = OpenWrite(iocTo))
+				{
+					MemUtil.CopyStream(sFrom, sTo);
+				}
+			}
+		}
+
 		public static byte[] ReadFile(IOConnectionInfo ioc)
 		{
 			try
 			{
-				using(Stream s = IOConnection.OpenRead(ioc))
+				using(Stream s = OpenRead(ioc))
 				{
 					return MemUtil.Read(s);
 				}

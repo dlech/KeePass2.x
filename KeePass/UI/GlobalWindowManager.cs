@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2025 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2026 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-using KeePass.App;
 using KeePass.Forms;
 using KeePass.Native;
 using KeePass.Util;
@@ -66,13 +65,11 @@ namespace KeePass.UI
 		{
 			get
 			{
-				uint u;
 				lock(g_oSyncRoot)
 				{
-					u = ((uint)(g_lWindows.Count + g_lDialogs.Count) +
+					return ((uint)(g_lWindows.Count + g_lDialogs.Count) +
 						MessageService.CurrentMessageCount);
 				}
-				return u;
 			}
 		}
 
@@ -82,18 +79,17 @@ namespace KeePass.UI
 			{
 				lock(g_oSyncRoot)
 				{
-					if(g_lDialogs.Count > 0) return false;
-					if(MessageService.CurrentMessageCount > 0) return false;
+					if(g_lDialogs.Count != 0) return false;
+					if(MessageService.CurrentMessageCount != 0) return false;
 
 					foreach(KeyValuePair<Form, IGwmWindow> kvp in g_lWindows)
 					{
-						if(kvp.Value == null) return false;
-						else if(!kvp.Value.CanCloseWithoutDataLoss)
+						if((kvp.Value == null) || !kvp.Value.CanCloseWithoutDataLoss)
 							return false;
 					}
-				}
 
-				return true;
+					return true;
+				}
 			}
 		}
 
@@ -103,11 +99,23 @@ namespace KeePass.UI
 			{
 				lock(g_oSyncRoot)
 				{
-					int n = g_lWindows.Count;
-					if(n > 0) return g_lWindows[n - 1].Key;
+					int c = g_lWindows.Count;
+					Form f = ((c != 0) ? g_lWindows[c - 1].Key : null);
+					Debug.Assert((c == 0) || (f == MessageService.GetTopForm()));
+					return f;
 				}
+			}
+		}
 
-				return null;
+		internal static Form TopWindowEx
+		{
+			get
+			{
+				Form f = ((GlobalWindowManager.TopWindow ?? Program.MainForm) ??
+					MessageService.GetTopForm());
+				Debug.Assert((f == MessageService.GetTopForm()) ||
+					(MessageService.GetTopForm() == null)); // MainForm closed
+				return f;
 			}
 		}
 
@@ -138,12 +146,10 @@ namespace KeePass.UI
 			// https://social.msdn.microsoft.com/Forums/en-US/winforms/thread/67407313-8cb2-42b4-afb9-8be816f0a601/
 			Debug.Assert(form.ControlBox);
 
-			form.TopMost = Program.Config.MainWindow.AlwaysOnTop;
 			// Form formParent = form.ParentForm;
-			// if(formParent != null) form.TopMost = formParent.TopMost;
+			// if(formParent != null) UIUtil.SetTopMost(form, UIUtil.GetTopMost(formParent));
 			// else { Debug.Assert(false); }
-
-			// form.Font = new System.Drawing.Font(System.Drawing.SystemFonts.MessageBoxFont.Name, 12.0f);
+			if(Program.Config.MainWindow.AlwaysOnTop) UIUtil.SetTopMost(form, true);
 
 			CustomizeForm(form);
 
@@ -159,8 +165,7 @@ namespace KeePass.UI
 
 		public static void AddDialog(CommonDialog dlg)
 		{
-			Debug.Assert(dlg != null);
-			if(dlg == null) throw new ArgumentNullException("dlg");
+			if(dlg == null) { Debug.Assert(false); throw new ArgumentNullException("dlg"); }
 
 			lock(g_oSyncRoot) { g_lDialogs.Add(dlg); }
 		}
@@ -171,26 +176,25 @@ namespace KeePass.UI
 
 			lock(g_oSyncRoot)
 			{
-				for(int i = 0; i < g_lWindows.Count; ++i)
+				for(int i = g_lWindows.Count - 1; i >= 0; --i)
 				{
-					if(g_lWindows[i].Key == form)
-					{
-						if(GlobalWindowManager.WindowRemoved != null)
-							GlobalWindowManager.WindowRemoved(null, new GwmWindowEventArgs(
-								form, g_lWindows[i].Value));
+					if(g_lWindows[i].Key != form) continue;
 
-						MonoWorkarounds.Release(form);
+					if(GlobalWindowManager.WindowRemoved != null)
+						GlobalWindowManager.WindowRemoved(null, new GwmWindowEventArgs(
+							form, g_lWindows[i].Value));
 
-						Debug.Assert(!(form is MainForm)); // MainForm calls the following itself
-						CustomizeFormHandleCreated(form, false, false);
+					MonoWorkarounds.Release(form);
+
+					Debug.Assert(!(form is MainForm)); // MainForm calls the following itself
+					CustomizeFormHandleCreated(form, false, false);
 
 #if DEBUG
-						DebugClose(form);
+					DebugClose(form);
 #endif
 
-						g_lWindows.RemoveAt(i);
-						return;
-					}
+					g_lWindows.RemoveAt(i);
+					return;
 				}
 			}
 
@@ -199,8 +203,7 @@ namespace KeePass.UI
 
 		public static void RemoveDialog(CommonDialog dlg)
 		{
-			Debug.Assert(dlg != null);
-			if(dlg == null) throw new ArgumentNullException("dlg");
+			if(dlg == null) { Debug.Assert(false); throw new ArgumentNullException("dlg"); }
 
 			lock(g_oSyncRoot)
 			{
@@ -252,14 +255,16 @@ namespace KeePass.UI
 			{
 				foreach(KeyValuePair<Form, IGwmWindow> kvp in g_lWindows)
 				{
-					if(kvp.Key.Handle == hWnd) return true;
+					Form f = kvp.Key;
+					Debug.Assert(f.IsHandleCreated);
+					if(f.IsHandleCreated && (f.Handle == hWnd)) return true;
 				}
 			}
 
 			return false;
 		}
 
-		internal static bool HasWindowMW(IntPtr hWnd)
+		internal static bool HasWindowEx(IntPtr hWnd)
 		{
 			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return false; }
 
@@ -272,22 +277,34 @@ namespace KeePass.UI
 			try
 			{
 				Form f = GlobalWindowManager.TopWindow;
-				if(f == null) return false;
-
-				f.Activate();
-				return true;
+				Debug.Assert((f == null) || (f.Visible && f.IsHandleCreated)); // For Activate
+				if(f != null) { f.Activate(); return true; }
 			}
 			catch(Exception) { Debug.Assert(false); }
 
 			return false;
 		}
 
-		private static void CustomizeForm(Form f)
+		internal static void ActivateTopWindowEx()
 		{
-			CustomizeControl(f);
-
 			try
 			{
+				Form f = GlobalWindowManager.TopWindowEx;
+				Debug.Assert((f != null) && f.Visible && f.IsHandleCreated); // For Activate
+				if(f != null) f.Activate();
+			}
+			catch(Exception) { Debug.Assert(false); }
+		}
+
+		private static void CustomizeForm(Form f)
+		{
+			try
+			{
+				CustomizeControl(f);
+
+				if(UIUtil.IsUIAccessWorkaroundRequired())
+					EnsureContainersCreated(f);
+
 				// AccessibilityEx.CustomizeForm adds scroll bars
 				// const string strForms = "KeePass.Forms.";
 				// Debug.Assert(typeof(PwEntryForm).FullName.StartsWith(strForms));
@@ -322,6 +339,18 @@ namespace KeePass.UI
 
 			if(c.ContextMenuStrip != null)
 				CustomizeFont(c.ContextMenuStrip, font);
+		}
+
+		private static void EnsureContainersCreated(Control c)
+		{
+			if(c == null) { Debug.Assert(false); return; }
+			if(c.Controls.Count == 0) return;
+
+			IntPtr h = c.Handle; // Creates the handle if necessary
+			Debug.Assert(h != IntPtr.Zero);
+
+			foreach(Control cSub in c.Controls)
+				EnsureContainersCreated(cSub);
 		}
 
 		internal static void CustomizeFormHandleCreated(Form f,
@@ -392,6 +421,11 @@ namespace KeePass.UI
 			if(tc != null)
 			{
 				Debug.Assert(!lInv.Contains(tc.ImageList)); // See above
+
+				// The ShowToolTips property should not be used, because it
+				// can result in problems when uiAccess="true";
+				// https://sourceforge.net/p/keepass/feature-requests/2964/
+				Debug.Assert(!tc.ShowToolTips);
 			}
 
 			ToolStrip ts = (c as ToolStrip);

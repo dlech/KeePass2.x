@@ -33,7 +33,6 @@
 			this.m_picRandom = new System.Windows.Forms.PictureBox();
 			this.m_lblHint = new System.Windows.Forms.Label();
 			this.m_lblGeneratedHint = new System.Windows.Forms.Label();
-			this.m_lblStatus = new System.Windows.Forms.Label();
 			this.m_bannerImage = new System.Windows.Forms.PictureBox();
 			this.m_grpMouse = new System.Windows.Forms.GroupBox();
 			this.m_pbGenerated = new KeePass.UI.QualityProgressBar();
@@ -96,15 +95,6 @@
 			this.m_lblGeneratedHint.TabIndex = 1;
 			this.m_lblGeneratedHint.Text = "Generated bits:";
 			// 
-			// m_lblStatus
-			// 
-			this.m_lblStatus.Location = new System.Drawing.Point(245, 289);
-			this.m_lblStatus.Name = "m_lblStatus";
-			this.m_lblStatus.Size = new System.Drawing.Size(50, 13);
-			this.m_lblStatus.TabIndex = 3;
-			this.m_lblStatus.Text = "0 bits";
-			this.m_lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// m_bannerImage
 			// 
 			this.m_bannerImage.Dock = System.Windows.Forms.DockStyle.Top;
@@ -120,7 +110,6 @@
 			this.m_grpMouse.Controls.Add(this.m_picRandom);
 			this.m_grpMouse.Controls.Add(this.m_lblGeneratedHint);
 			this.m_grpMouse.Controls.Add(this.m_pbGenerated);
-			this.m_grpMouse.Controls.Add(this.m_lblStatus);
 			this.m_grpMouse.Location = new System.Drawing.Point(12, 66);
 			this.m_grpMouse.Name = "m_grpMouse";
 			this.m_grpMouse.Size = new System.Drawing.Size(302, 316);
@@ -130,9 +119,9 @@
 			// 
 			// m_pbGenerated
 			// 
-			this.m_pbGenerated.Location = new System.Drawing.Point(91, 289);
+			this.m_pbGenerated.Location = new System.Drawing.Point(91, 288);
 			this.m_pbGenerated.Name = "m_pbGenerated";
-			this.m_pbGenerated.Size = new System.Drawing.Size(148, 13);
+			this.m_pbGenerated.Size = new System.Drawing.Size(201, 16);
 			this.m_pbGenerated.TabIndex = 2;
 			this.m_pbGenerated.TabStop = false;
 			// 
@@ -216,7 +205,6 @@
 		private System.Windows.Forms.Label m_lblHint;
 		private System.Windows.Forms.Label m_lblGeneratedHint;
 		private KeePass.UI.QualityProgressBar m_pbGenerated;
-		private System.Windows.Forms.Label m_lblStatus;
 		private System.Windows.Forms.PictureBox m_bannerImage;
 		private System.Windows.Forms.GroupBox m_grpMouse;
 		private System.Windows.Forms.GroupBox m_grpKeyboard;
